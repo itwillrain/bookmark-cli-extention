@@ -111,15 +111,8 @@ const expectedEntries = [
  * @param {readonly BookmarkEntry[]} entries IDを取り出すentry一覧です。
  * @returns {readonly string[]} entry ID一覧です。
  */
-const getEntryIds = (entries: readonly BookmarkEntry[]): readonly string[] => {
-  const entryIds: string[] = [];
-
-  for (const entry of entries) {
-    entryIds.push(entry.id);
-  }
-
-  return entryIds;
-};
+const getEntryIds = (entries: readonly BookmarkEntry[]): readonly string[] =>
+  entries.map((entry) => entry.id);
 
 /**
  * Bookmark Tree正規化のテストスイートです。

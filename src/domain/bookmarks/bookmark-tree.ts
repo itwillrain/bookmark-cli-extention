@@ -200,15 +200,7 @@ const normalizeChildren = (
   nodes: readonly RawBookmarkTreeNode[],
   folderPath: string,
   normalizer: NodeNormalizer,
-): readonly BookmarkEntry[] => {
-  const entries: BookmarkEntry[] = [];
-
-  for (const node of nodes) {
-    entries.push(...normalizer(node, folderPath));
-  }
-
-  return entries;
-};
+): readonly BookmarkEntry[] => nodes.flatMap((node) => normalizer(node, folderPath));
 
 /**
  * Folder nodeを正規化します。
@@ -252,15 +244,8 @@ const normalizeNode = (node: RawBookmarkTreeNode, folderPath: string): readonly 
  * @param {readonly RawBookmarkTreeNode[]} nodes 正規化するroot node一覧です。
  * @returns {readonly BookmarkEntry[]} 正規化済みentry一覧です。
  */
-const normalizeRootNodes = (nodes: readonly RawBookmarkTreeNode[]): readonly BookmarkEntry[] => {
-  const entries: BookmarkEntry[] = [];
-
-  for (const node of nodes) {
-    entries.push(...normalizeNode(node, rootFolderPath));
-  }
-
-  return entries;
-};
+const normalizeRootNodes = (nodes: readonly RawBookmarkTreeNode[]): readonly BookmarkEntry[] =>
+  nodes.flatMap((node) => normalizeNode(node, rootFolderPath));
 
 /**
  * 指定kindのentryだけを抽出します。
@@ -271,17 +256,7 @@ const normalizeRootNodes = (nodes: readonly RawBookmarkTreeNode[]): readonly Boo
 const filterEntriesByKind = (
   entries: readonly BookmarkEntry[],
   kind: BookmarkEntryKind,
-): readonly BookmarkEntry[] => {
-  const filteredEntries: BookmarkEntry[] = [];
-
-  for (const entry of entries) {
-    if (entry.kind === kind) {
-      filteredEntries.push(entry);
-    }
-  }
-
-  return filteredEntries;
-};
+): readonly BookmarkEntry[] => entries.filter((entry) => entry.kind === kind);
 
 /**
  * Chrome Bookmark Treeを疑似CLI向けの平坦なBookmark Treeへ正規化します。
