@@ -16,6 +16,7 @@ Bookmark CLI Extensionは、Chrome Bookmark Managerを拡張機能内の疑似CL
 - [Chrome 連携仕様](./chrome-bookmarks/)
 - [保存データ構造と権限](./storage-permissions/)
 - [アーキテクチャと責務境界](./architecture/)
+- [実装ロードマップ](./implementation-roadmap/)
 
 ## まず決めること
 
@@ -26,6 +27,7 @@ Bookmark CLI Extensionは、Chrome Bookmark Managerを拡張機能内の疑似CL
 5. 破壊的操作は確認やpreviewを挟む
 6. 拡張機能側の保存データとChrome拡張権限を決める
 7. Domain、Application、Infrastructure、Presentationの責務境界を決める
+8. v1を動く縦切り順へ分解する
 
 ## v1方針
 
