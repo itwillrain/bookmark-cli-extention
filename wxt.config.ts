@@ -18,6 +18,12 @@ const extensionName = "Bookmark CLI Extension";
 const extensionDescription = "Bookmark CLI browser extension built with WXT.";
 
 /**
+ * WXT のbuild成果物を配置するディレクトリ。
+ * @see https://wxt.dev/api/reference/wxt/interfaces/InlineConfig#outdir
+ */
+const outputDirectory = "dist";
+
+/**
  * Dedicated extension pageを開くcommand名です。
  */
 const openCliPageCommandName = "open-cli-page";
@@ -61,6 +67,7 @@ export default defineConfig({
     permissions: manifestPermissions,
   },
   modules: enabledModules,
+  outDir: outputDirectory,
   srcDir: sourceDirectory,
   vite: createViteConfig,
 });
