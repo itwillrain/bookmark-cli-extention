@@ -1,4 +1,4 @@
-import type { Preview } from "@storybook/web-components-vite";
+import type { Preview } from "@storybook/react-vite";
 
 /**
  * Storybook の操作パネルに設定する正規表現です。
