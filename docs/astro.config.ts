@@ -1,6 +1,7 @@
 import starlight from "@astrojs/starlight";
 import starlightThemeSix from "@six-tech/starlight-theme-six";
 import { defineConfig } from "astro/config";
+import starlightTypeDoc, { typeDocSidebarGroup } from "starlight-typedoc";
 
 /** ドキュメントサイトのタイトルです。 */
 const documentationTitle = "Bookmark CLI Extension";
@@ -26,11 +27,21 @@ const documentationBasePath = "/bookmark-cli-extention";
 /** Six テーマのフッター文言です。 */
 const footerText = "Designed for Bookmark CLI Extension.";
 
+/** TypeDoc が API リファレンスとして読み込む entrypoint です。 */
+const typeDocEntryPoints = ["../src/entrypoints/background.ts"];
+
+/** TypeDoc が参照する TypeScript 設定ファイルです。 */
+const typeDocTsconfig = "../tsconfig.json";
+
+/** TypeDoc が生成する Starlight content 配下の出力先です。 */
+const typeDocOutputDirectory = "api";
+
 /** Astro と Starlight のドキュメントサイト設定です。
  *
  * @see https://docs.astro.build/en/reference/configuration-reference/
  * @see https://starlight.astro.build/getting-started/
  * @see https://six-tech.github.io/Six.StarlightTheme/
+ * @see https://starlight-typedoc.vercel.app/getting-started/
  */
 export default defineConfig({
   base: documentationBasePath,
@@ -40,6 +51,15 @@ export default defineConfig({
       description: documentationDescription,
       favicon: "/favicon.svg",
       plugins: [
+        starlightTypeDoc({
+          entryPoints: typeDocEntryPoints,
+          errorOnEmptyDocumentation: false,
+          output: typeDocOutputDirectory,
+          sidebar: {
+            label: "APIリファレンス",
+          },
+          tsconfig: typeDocTsconfig,
+        }),
         starlightThemeSix({
           footerText,
           navLinks: [
@@ -73,6 +93,7 @@ export default defineConfig({
           items: [{ label: "開発環境", slug: "development/environment" }],
           label: "開発",
         },
+        typeDocSidebarGroup,
       ],
       social: [
         {
