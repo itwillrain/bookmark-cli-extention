@@ -150,6 +150,85 @@ Work/Research
 
 共通prefixがない場合は候補一覧だけを表示します。
 
+## previewと確認
+
+`mv`、`rm`、`rename` は実行前に変更内容をpreviewします。
+
+`--preview` を指定した場合は、変更内容だけを表示し、書き込みは行いません。
+
+`--yes` を指定した場合は、確認を省略して実行します。
+
+### rm
+
+`rm` は `--yes` を指定した場合だけ実行します。
+
+`rm` に `--yes` がない場合はpreviewを表示し、`confirmation_required` を返します。
+
+```bash
+rm 5 --preview
+rm 5 --yes
+```
+
+v1の `rm` はBookmarkの削除だけを対象にします。
+
+Folder削除は扱いません。
+
+### mv
+
+`mv` は実行前に移動元と移動先をpreviewします。
+
+`--preview` なし、かつ `--yes` なしの場合は、preview表示後にEnterで確定し、Escでキャンセルします。
+
+```bash
+mv 3 Archive
+mv 3 Archive --preview
+mv 3 Archive --yes
+```
+
+### rename
+
+`rename` は実行前に変更前titleと変更後titleをpreviewします。
+
+`--preview` なし、かつ `--yes` なしの場合は、preview表示後にEnterで確定し、Escでキャンセルします。
+
+```bash
+rename 3 "GitHub Pull Requests"
+rename 3 "GitHub Pull Requests" --preview
+rename 3 "GitHub Pull Requests" --yes
+```
+
+### preview表示
+
+previewは、操作種別、対象、変更前、変更後を表示します。
+
+```text
+operation: move
+target: [url] /Work/GitHub
+from: /Work
+to: /Archive
+```
+
+```text
+operation: rename
+target: [url] /Work/GitHub
+from: GitHub
+to: GitHub Pull Requests
+```
+
+```text
+operation: remove
+target: [url] /Work/GitHub
+url: https://github.com/
+```
+
+### undo
+
+v1では `undo` コマンドを提供しません。
+
+ただし、`mv`、`rm`、`rename` の実行結果はコマンド履歴に残します。
+
+削除後に復元できるよう、`rm` の実行結果には削除したBookmarkのtitle、url、folder pathを表示します。
+
 ## mark保存仕様
 
 `mark` は現在のタブを指定したディレクトリへ保存します。
@@ -315,7 +394,7 @@ Bookmarkを削除します。
 
 ```bash
 rm 5 --preview
-rm 5
+rm 5 --yes
 ```
 
 ### rename
@@ -324,6 +403,7 @@ Bookmarkまたはfolderのtitleを更新します。
 
 ```bash
 rename 3 "GitHub Pull Requests"
+rename 3 "GitHub Pull Requests" --preview
 ```
 
 ### tag
@@ -363,3 +443,4 @@ JSON出力は `--format json` で指定します。
 - 指定したfolder pathが見つからない場合は `folder_not_found` を返す
 - Chrome Bookmarks APIの呼び出しに失敗した場合は `chrome_bookmarks_failed` を返す
 - 破壊的操作の確認が不足している場合は `confirmation_required` を返す
+- ユーザーがpreview後の確認をキャンセルした場合は `cancelled` を返す
