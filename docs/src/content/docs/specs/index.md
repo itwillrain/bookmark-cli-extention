@@ -14,6 +14,7 @@ Bookmark CLI Extensionは、Chrome Bookmark Managerを拡張機能内の疑似CL
 - [プロダクト仕様](./product/)
 - [CLI 仕様](./cli/)
 - [Chrome 連携仕様](./chrome-bookmarks/)
+- [保存データ構造と権限](./storage-permissions/)
 
 ## まず決めること
 
@@ -22,6 +23,7 @@ Bookmark CLI Extensionは、Chrome Bookmark Managerを拡張機能内の疑似CL
 3. `mark` で現在のタブを現在のディレクトリへ保存する流れを定義する
 4. 拡張機能UI、コマンドパーサー、Bookmark操作の責務境界を決める
 5. 破壊的操作は確認やpreviewを挟む
+6. 拡張機能側の保存データとChrome拡張権限を決める
 
 ## v1方針
 
