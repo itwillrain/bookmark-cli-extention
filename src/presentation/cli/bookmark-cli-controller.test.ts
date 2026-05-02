@@ -8,11 +8,10 @@ import type {
   BookmarkRepositoryPort,
 } from "../../application/bookmarks/bookmark-use-cases";
 import { describe, expect, it } from "vitest";
+import type { BookmarkCreatorPort } from "../../application/bookmarks/mark-bookmark-use-case";
 import { createInitialExtensionState } from "../../domain/storage/extension-state";
 
-/**
- * Work folderのentryです。
- */
+/** Work folderのentryです。 */
 const workFolderEntry = {
   childrenCount: 2,
   folderPath: "/Work",
@@ -22,9 +21,7 @@ const workFolderEntry = {
   title: "Work",
 } satisfies BookmarkEntry;
 
-/**
- * Admin folderのentryです。
- */
+/** Admin folderのentryです。 */
 const adminFolderEntry = {
   childrenCount: 0,
   folderPath: "/Work/Admin",
@@ -34,9 +31,7 @@ const adminFolderEntry = {
   title: "Admin",
 } satisfies BookmarkEntry;
 
-/**
- * Stripe DashboardのBookmark Entryです。
- */
+/** Stripe DashboardのBookmark Entryです。 */
 const stripeDashboardEntry = {
   childrenCount: 0,
   folderPath: "/Work",
@@ -47,28 +42,20 @@ const stripeDashboardEntry = {
   url: "https://dashboard.stripe.com/",
 } satisfies BookmarkEntry;
 
-/**
- * Controller testで使うBookmark Treeです。
- */
+/** Controller testで使うBookmark Treeです。 */
 const bookmarkTree = {
   bookmarks: [stripeDashboardEntry],
   entries: [workFolderEntry, adminFolderEntry, stripeDashboardEntry],
   folders: [workFolderEntry, adminFolderEntry],
 } satisfies BookmarkTree;
 
-/**
- * Root current directoryです。
- */
+/** Root current directoryです。 */
 const rootCurrentDirectory = "/";
 
-/**
- * 空の直前結果一覧です。
- */
+/** 空の直前結果一覧です。 */
 const emptyLastResultEntries = [] as const satisfies readonly BookmarkEntry[];
 
-/**
- * 初期拡張状態fixture。
- */
+/** 初期拡張状態fixture。 */
 const initialExtensionState = createInitialExtensionState();
 
 /**
@@ -162,6 +149,29 @@ const createRecordingBookmarkOpener = (): RecordingBookmarkOpener => {
 };
 
 /**
+ * Bookmark作成port fixtureです。
+ */
+const bookmarkCreator = {
+  /**
+   * Bookmark作成結果を返します。
+   * @returns {Promise<BookmarkEntry>} 作成済みBookmark fixtureです。
+   */
+  createBookmark: async (): Promise<BookmarkEntry> => {
+    await Promise.resolve();
+
+    return {
+      childrenCount: 0,
+      folderPath: "/Work",
+      id: "100",
+      kind: "bookmark",
+      parentId: "10",
+      title: "Production Admin",
+      url: "https://admin.example.com/",
+    };
+  },
+} satisfies BookmarkCreatorPort;
+
+/**
  * Bookmark CLI command dependencies fixtureを作ります。
  * @param {readonly BookmarkEntry[]} lastResultEntries 直前結果一覧です。
  * @returns {BookmarkCliCommandDependencies} Command実行依存です。
@@ -169,6 +179,7 @@ const createRecordingBookmarkOpener = (): RecordingBookmarkOpener => {
 const createCommandDependencies = (
   lastResultEntries: readonly BookmarkEntry[] = emptyLastResultEntries,
 ): BookmarkCliCommandDependencies => ({
+  creator: bookmarkCreator,
   currentDirectory: rootCurrentDirectory,
   extensionState: initialExtensionState,
   lastResultEntries,
@@ -204,6 +215,7 @@ describe("executeBookmarkCliCommand search commands", (): void => {
   it("opens top candidate for go command", async (): Promise<void> => {
     const recordingOpener = createRecordingBookmarkOpener();
     const state = await executeBookmarkCliCommand(goInput, {
+      creator: bookmarkCreator,
       currentDirectory: rootCurrentDirectory,
       extensionState: initialExtensionState,
       lastResultEntries: emptyLastResultEntries,

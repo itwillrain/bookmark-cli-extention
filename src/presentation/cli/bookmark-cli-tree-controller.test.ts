@@ -1,5 +1,6 @@
 import type { BookmarkEntry, BookmarkTree } from "../../domain/bookmarks/bookmark-tree";
 import { describe, expect, it } from "vitest";
+import type { BookmarkCreatorPort } from "../../application/bookmarks/mark-bookmark-use-case";
 import type { BookmarkRepositoryPort } from "../../application/bookmarks/bookmark-use-cases";
 import { createInitialExtensionState } from "../../domain/storage/extension-state";
 import { executeBookmarkCliCommand } from "./bookmark-cli-controller";
@@ -102,6 +103,21 @@ const openBookmarkUrl = async (): Promise<void> => {
 };
 
 /**
+ * 何もしないBookmark creatorです。
+ * @returns {Promise<BookmarkEntry>} 作成済みBookmark fixtureです。
+ */
+const createBookmark = async (): Promise<BookmarkEntry> => {
+  await Promise.resolve();
+
+  return stripeDashboardEntry;
+};
+
+/**
+ * Bookmark creator fixtureです。
+ */
+const bookmarkCreator = { createBookmark } satisfies BookmarkCreatorPort;
+
+/**
  * Bookmark tree CLI controllerのテストスイートです。
  */
 describe("executeBookmarkCliCommand tree commands", (): void => {
@@ -110,6 +126,7 @@ describe("executeBookmarkCliCommand tree commands", (): void => {
    */
   it("returns tree result items for tree command", async (): Promise<void> => {
     const state = await executeBookmarkCliCommand(showDirectoryTreeInput, {
+      creator: bookmarkCreator,
       currentDirectory: rootCurrentDirectory,
       extensionState: initialExtensionState,
       lastResultEntries: emptyLastResultEntries,

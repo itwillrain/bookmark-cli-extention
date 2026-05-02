@@ -36,7 +36,7 @@ const enabledModules = ["@wxt-dev/module-react"];
 /**
  * Manifestへ追加する権限です。
  */
-const manifestPermissions = ["bookmarks", "storage"];
+const manifestPermissions = ["activeTab", "bookmarks", "storage"];
 
 /**
  * Vite に追加する plugin 設定を組み立てます。

@@ -83,6 +83,28 @@ export interface ShowDirectoryTreeCommand {
 }
 
 /**
+ * Mark commandです。
+ */
+export interface MarkBookmarkCommand {
+  /**
+   * 重複URLの保存を許可するかです。
+   */
+  readonly allowDuplicate: boolean;
+  /**
+   * Command種別です。
+   */
+  readonly kind: "mark";
+  /**
+   * 保存先folder path入力です。
+   */
+  readonly targetFolderPathInput: string;
+  /**
+   * Bookmark title入力です。
+   */
+  readonly titleInput: string;
+}
+
+/**
  * 空入力commandです。
  */
 export interface EmptyBookmarkCommand {
@@ -119,6 +141,7 @@ export type ParsedBookmarkCommand =
   | FindBookmarkCommand
   | GoBookmarkCommand
   | ListDirectoryCommand
+  | MarkBookmarkCommand
   | PrintWorkingDirectoryCommand
   | ShowDirectoryTreeCommand
   | UnknownBookmarkCommand;

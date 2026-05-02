@@ -1,4 +1,8 @@
 import type {
+  BookmarkCreatorPort,
+  CreatedBookmarkInput,
+} from "../../application/bookmarks/mark-bookmark-use-case";
+import type {
   BookmarkOpenerPort,
   BookmarkRepositoryPort,
 } from "../../application/bookmarks/bookmark-use-cases";
@@ -14,9 +18,34 @@ import {
  */
 export interface ChromeBookmarksApi {
   /**
+   * Chrome Bookmarkを作成します。
+   */
+  readonly create: (
+    createProperties: ChromeBookmarkCreateProperties,
+  ) => Promise<RawBookmarkTreeNode>;
+  /**
    * Chrome Bookmark Treeを取得します。
    */
   readonly getTree: () => Promise<readonly RawBookmarkTreeNode[]>;
+}
+
+/**
+ * Chrome Bookmarks APIでbookmarkを作成する入力です。
+ * @see https://developer.chrome.com/docs/extensions/reference/api/bookmarks#method-create
+ */
+export interface ChromeBookmarkCreateProperties {
+  /**
+   * 保存先parent folder IDです。
+   */
+  readonly parentId?: string;
+  /**
+   * Bookmark titleです。
+   */
+  readonly title: string;
+  /**
+   * Bookmark URLです。
+   */
+  readonly url: string;
 }
 
 /**
@@ -60,6 +89,38 @@ export const createChromeBookmarkRepository = (
   };
 
   return { getBookmarkTree };
+};
+
+/**
+ * Chrome Bookmarks APIをApplication層のcreator portへ変換します。
+ * @param {ChromeBookmarksApi} bookmarksApi Chrome Bookmarks APIです。
+ * @returns {BookmarkCreatorPort} Bookmark作成portです。
+ */
+export const createChromeBookmarkCreator = (
+  bookmarksApi: ChromeBookmarksApi,
+): BookmarkCreatorPort => {
+  /**
+   * Chrome Bookmarks APIでBookmarkを作成します。
+   * @param {CreatedBookmarkInput} input Bookmark作成入力です。
+   * @returns {Promise<BookmarkTree["bookmarks"][number]>} 作成済みBookmark entryです。
+   */
+  const createBookmark = async (
+    input: CreatedBookmarkInput,
+  ): Promise<BookmarkTree["bookmarks"][number]> => {
+    const createdNode = await bookmarksApi.create(input);
+
+    return {
+      childrenCount: 0,
+      folderPath: "/",
+      id: createdNode.id,
+      kind: "bookmark",
+      parentId: createdNode.parentId ?? "",
+      title: createdNode.title,
+      url: createdNode.url ?? input.url,
+    };
+  };
+
+  return { createBookmark };
 };
 
 /**

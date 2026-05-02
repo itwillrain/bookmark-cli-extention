@@ -12,6 +12,7 @@ import {
   executeFindCommand,
   executeGoCommand,
   executeListDirectoryCommand,
+  executeMarkCommand,
   executePrintWorkingDirectoryCommand,
   executeShowDirectoryTreeCommand,
   executeUnknownCommand,
@@ -193,6 +194,27 @@ const executeParsedShowDirectoryTreeCommand = async (
 };
 
 /**
+ * Mark command executor adapterです。
+ * @param {ParsedBookmarkCommand} command Parsed commandです。
+ * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存です。
+ * @returns {Promise<BookmarkCliCommandState>} 画面に反映する状態です。
+ */
+const executeParsedMarkCommand = async (
+  command: ParsedBookmarkCommand,
+  dependencies: BookmarkCliCommandDependencies,
+): Promise<BookmarkCliCommandState> => {
+  if (command.kind === "mark") {
+    const state = await executeMarkCommand(command, dependencies);
+
+    return state;
+  }
+
+  await Promise.resolve();
+
+  return executeEmptyCommand(dependencies);
+};
+
+/**
  * Command kindごとのexecutorです。
  */
 const parsedBookmarkCommandExecutors = {
@@ -201,6 +223,7 @@ const parsedBookmarkCommandExecutors = {
   find: executeParsedFindCommand,
   go: executeParsedGoCommand,
   ls: executeParsedListDirectoryCommand,
+  mark: executeParsedMarkCommand,
   pwd: executeParsedPrintWorkingDirectoryCommand,
   tree: executeParsedShowDirectoryTreeCommand,
   unknown: executeParsedUnknownCommand,

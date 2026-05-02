@@ -1,4 +1,8 @@
 import type {
+  BookmarkCreatorPort,
+  LaunchContext,
+} from "../../application/bookmarks/mark-bookmark-use-case";
+import type {
   BookmarkOpenerPort,
   BookmarkRepositoryPort,
 } from "../../application/bookmarks/bookmark-use-cases";
@@ -23,6 +27,14 @@ export interface BookmarkCliCommandDependencies {
    * 直前結果一覧です。
    */
   readonly lastResultEntries: readonly BookmarkEntry[];
+  /**
+   * CLI起動元タブcontext。
+   */
+  readonly launchContext?: LaunchContext;
+  /**
+   * Bookmark作成port。
+   */
+  readonly creator: BookmarkCreatorPort;
   /**
    * Bookmark Tree取得portです。
    */
