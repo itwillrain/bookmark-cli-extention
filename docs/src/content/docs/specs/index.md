@@ -17,13 +17,18 @@ Bookmark CLI Extensionは、Chrome Bookmark Managerを拡張機能内の疑似CL
 
 ## まず決めること
 
-1. 疑似CLIで実行したいBookmark Managerの操作を定義する
-2. ChromeのBookmark Treeを疑似CLIで扱うための表現に落とす
-3. 拡張機能UI、コマンドパーサー、Bookmark操作の責務境界を決める
-4. 読み取り操作から始め、破壊的操作は確認やpreviewを挟む
+1. `go` と `find` のfuzzy検索体験を定義する
+2. ChromeのBookmark Treeをfilesystemとして扱うための表現に落とす
+3. `mark` で現在のタブを現在のディレクトリへ保存する流れを定義する
+4. 拡張機能UI、コマンドパーサー、Bookmark操作の責務境界を決める
+5. 破壊的操作は確認やpreviewを挟む
 
-## 初期方針
+## v1方針
 
-初期実装では、ChromeのBookmarkを安全に読み取り、拡張機能内の入力欄で検索・一覧できる状態を最初の目標にします。
+v1では、ChromeのBookmarkを安全に読み取り、拡張機能内の入力欄からfuzzy検索で素早く開ける状態を最初の目標にします。
 
-追加、更新、削除、移動などの書き込み操作は、仕様とテスト観点をdocsに整理してから実装します。
+また、Bookmark CLIとして一通り使えるように、保存、一覧、移動、削除、名称変更、仮想タグ付けまで扱います。
+
+破壊的操作は確認またはpreviewを挟みます。
+
+Chrome履歴統合とOSターミナル連携はv1には含めず、後続未定として扱います。

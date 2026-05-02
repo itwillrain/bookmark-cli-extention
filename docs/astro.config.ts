@@ -24,6 +24,9 @@ const documentationSiteUrl = "https://itwillrain.github.io";
  */
 const documentationBasePath = "/bookmark-cli-extention";
 
+/** GitHub Pages 向けのビルドかどうかです。 */
+const isGitHubPagesBuild = process.env.GITHUB_ACTIONS === "true";
+
 /** Six テーマのフッター文言です。 */
 const footerText = "Designed for Bookmark CLI Extension.";
 
@@ -44,7 +47,12 @@ const typeDocOutputDirectory = "api";
  * @see https://starlight-typedoc.vercel.app/getting-started/
  */
 export default defineConfig({
-  base: documentationBasePath,
+  ...(isGitHubPagesBuild
+    ? {
+        base: documentationBasePath,
+        site: documentationSiteUrl,
+      }
+    : {}),
   integrations: [
     starlight({
       customCss: ["./src/styles/fonts.css"],
@@ -105,5 +113,4 @@ export default defineConfig({
       title: documentationTitle,
     }),
   ],
-  site: documentationSiteUrl,
 });
