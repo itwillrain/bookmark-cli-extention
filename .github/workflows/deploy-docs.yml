@@ -7,6 +7,12 @@ on:
     paths:
       - ".github/workflows/deploy-docs.yml"
       - "docs/**"
+      - ".storybook/**"
+      - "src/**/*.stories.ts"
+      - "src/**/*.stories.tsx"
+      - "src/**/*.mdx"
+      - "package.json"
+      - "pnpm-lock.yaml"
   workflow_dispatch:
 
 permissions:
@@ -20,17 +26,45 @@ concurrency:
 
 jobs:
   build:
-    name: Build Starlight docs
+    name: Build docs and Storybook
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Install, build, and upload docs
-        uses: withastro/action@v6
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          path: ./docs
-          package-manager: pnpm@10.30.0
+          cache: pnpm
+          cache-dependency-path: |
+            pnpm-lock.yaml
+            docs/pnpm-lock.yaml
+          node-version: 24.15.0
+
+      - name: Install extension dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install docs dependencies
+        run: pnpm --dir docs install --frozen-lockfile
+
+      - name: Build Storybook
+        run: pnpm run storybook:build
+
+      - name: Build Starlight docs
+        run: pnpm --dir docs run build
+
+      - name: Add Storybook to Pages artifact
+        run: |
+          mkdir -p docs/dist/storybook
+          cp -R storybook-static/. docs/dist/storybook/
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: docs/dist
 
   deploy:
     name: Deploy to GitHub Pages
