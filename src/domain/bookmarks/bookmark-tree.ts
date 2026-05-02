@@ -1,3 +1,5 @@
+import { type FolderPath, joinFolderPath, rootFolderPath } from "./folder-path";
+
 /**
  * Chrome Bookmark Tree由来のnode種別です。
  */
@@ -68,7 +70,7 @@ export interface BookmarkEntry {
   /**
    * 疑似CLIで表示するfolder pathです。
    */
-  readonly folderPath: string;
+  readonly folderPath: FolderPath;
   /**
    * 直下の子node数です。
    */
@@ -97,11 +99,6 @@ export interface BookmarkTree {
  * Chrome Bookmark Treeのroot node IDです。
  */
 const chromeRootNodeId = "0";
-
-/**
- * 疑似CLIのroot folder pathです。
- */
-const rootFolderPath = "/";
 
 /**
  * 親IDがないnodeへ付与するfallback parent IDです。
@@ -145,26 +142,12 @@ const getChildren = (node: RawBookmarkTreeNode): readonly RawBookmarkTreeNode[] 
 const getParentId = (node: RawBookmarkTreeNode): string => node.parentId ?? missingParentId;
 
 /**
- * Folder pathへtitleを追加します。
- * @param {string} parentFolderPath 親folder pathです。
- * @param {string} title 追加するfolder titleです。
- * @returns {string} 追加後のfolder pathです。
- */
-const appendFolderPath = (parentFolderPath: string, title: string): string => {
-  if (parentFolderPath === rootFolderPath) {
-    return `${rootFolderPath}${title}`;
-  }
-
-  return `${parentFolderPath}/${title}`;
-};
-
-/**
  * Folder entryを作ります。
  * @param {RawBookmarkTreeNode} node folder nodeです。
- * @param {string} folderPath folder自身のpathです。
+ * @param {FolderPath} folderPath folder自身のpathです。
  * @returns {BookmarkEntry} 正規化済みfolder entryです。
  */
-const createFolderEntry = (node: RawBookmarkTreeNode, folderPath: string): BookmarkEntry => ({
+const createFolderEntry = (node: RawBookmarkTreeNode, folderPath: FolderPath): BookmarkEntry => ({
   childrenCount: getChildren(node).length,
   folderPath,
   id: node.id,
@@ -176,10 +159,10 @@ const createFolderEntry = (node: RawBookmarkTreeNode, folderPath: string): Bookm
 /**
  * Bookmark entryを作ります。
  * @param {RawBookmarkTreeNode} node Bookmark nodeです。
- * @param {string} folderPath Bookmarkが所属するfolder pathです。
+ * @param {FolderPath} folderPath Bookmarkが所属するfolder pathです。
  * @returns {BookmarkEntry} 正規化済みBookmark entryです。
  */
-const createBookmarkEntry = (node: RawBookmarkNode, folderPath: string): BookmarkEntry => ({
+const createBookmarkEntry = (node: RawBookmarkNode, folderPath: FolderPath): BookmarkEntry => ({
   childrenCount: 0,
   folderPath,
   id: node.id,
@@ -192,29 +175,29 @@ const createBookmarkEntry = (node: RawBookmarkNode, folderPath: string): Bookmar
 /**
  * 子node一覧を正規化します。
  * @param {readonly RawBookmarkTreeNode[]} nodes 正規化する子node一覧です。
- * @param {string} folderPath 子nodeが属するfolder pathです。
+ * @param {FolderPath} folderPath 子nodeが属するfolder pathです。
  * @param {NodeNormalizer} normalizer node正規化関数です。
  * @returns {readonly BookmarkEntry[]} 正規化済みentry一覧です。
  */
 const normalizeChildren = (
   nodes: readonly RawBookmarkTreeNode[],
-  folderPath: string,
+  folderPath: FolderPath,
   normalizer: NodeNormalizer,
 ): readonly BookmarkEntry[] => nodes.flatMap((node) => normalizer(node, folderPath));
 
 /**
  * Folder nodeを正規化します。
  * @param {RawBookmarkTreeNode} node 正規化するfolder nodeです。
- * @param {string} folderPath 親folder pathです。
+ * @param {FolderPath} folderPath 親folder pathです。
  * @param {NodeNormalizer} normalizer node正規化関数です。
  * @returns {readonly BookmarkEntry[]} folderと子entryの一覧です。
  */
 const normalizeFolderNode = (
   node: RawBookmarkTreeNode,
-  folderPath: string,
+  folderPath: FolderPath,
   normalizer: NodeNormalizer,
 ): readonly BookmarkEntry[] => {
-  const nextFolderPath = appendFolderPath(folderPath, node.title);
+  const nextFolderPath = joinFolderPath(folderPath, node.title);
   const folderEntry = createFolderEntry(node, nextFolderPath);
   const childEntries = normalizeChildren(getChildren(node), nextFolderPath, normalizer);
 
@@ -224,10 +207,13 @@ const normalizeFolderNode = (
 /**
  * 単一nodeを正規化します。
  * @param {RawBookmarkTreeNode} node 正規化するnodeです。
- * @param {string} folderPath 現在のfolder pathです。
+ * @param {FolderPath} folderPath 現在のfolder pathです。
  * @returns {readonly BookmarkEntry[]} 正規化済みentry一覧です。
  */
-const normalizeNode = (node: RawBookmarkTreeNode, folderPath: string): readonly BookmarkEntry[] => {
+const normalizeNode = (
+  node: RawBookmarkTreeNode,
+  folderPath: FolderPath,
+): readonly BookmarkEntry[] => {
   if (isChromeRootContainer(node)) {
     return normalizeChildren(getChildren(node), rootFolderPath, normalizeNode);
   }
