@@ -59,6 +59,8 @@ Chrome連携層はChrome Bookmarks APIへのアクセスを担当します。
 
 Bookmark Treeの正規化や検索条件の評価は、純粋関数として実装し、テスト対象にします。
 
+実装全体の責務境界は、[アーキテクチャと責務境界](../architecture/)で管理します。
+
 ## 書き込み操作の扱い
 
 追加、更新、削除、移動はChrome Bookmarks APIの書き込み操作に対応します。
