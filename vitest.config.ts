@@ -1,4 +1,5 @@
 import { defineConfig } from "vitest/config";
+import typiaVitePlugin from "@typia/unplugin/vite";
 
 /**
  * Vitest がテスト対象として扱うファイルの glob です。
@@ -17,9 +18,15 @@ const coverageExcludePatterns = [
 ];
 
 /**
+ * Vitest のVite pipelineへ追加するpluginです。
+ */
+const vitestVitePlugins = [typiaVitePlugin()];
+
+/**
  * Vitest のテスト実行設定です。
  */
 export default defineConfig({
+  plugins: vitestVitePlugins,
   test: {
     coverage: {
       exclude: coverageExcludePatterns,
