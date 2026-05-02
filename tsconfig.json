@@ -17,6 +17,7 @@
   },
   "include": [
     ".wxt/wxt.d.ts",
+    ".storybook/**/*.ts",
     "eslint.config.ts",
     "src/**/*.ts",
     "test/**/*.ts",

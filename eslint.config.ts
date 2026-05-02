@@ -13,6 +13,7 @@ const ignoredPaths = [
   "dist/**",
   "docs/**",
   "node_modules/**",
+  "storybook-static/**",
 ];
 
 /** JSDoc の存在を必須にする TypeScript AST セレクターです。 */
@@ -27,7 +28,7 @@ const requiredJsdocContexts = [
   "TSInterfaceDeclaration",
   "TSTypeAliasDeclaration",
   "TSEnumDeclaration",
-  "VariableDeclaration[kind='const']",
+  "Program > VariableDeclaration[kind='const']",
 ];
 
 /** ESLint の flat config です。 */
