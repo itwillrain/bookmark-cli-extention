@@ -6,10 +6,10 @@ hero:
   tagline: Chrome Bookmark Manager を、拡張機能内の疑似 CLI から扱える作業道具にするための拡張です。
   actions:
     - text: 仕様を読む
-      link: /specs/
+      link: ./specs/
       icon: right-arrow
     - text: 概要
-      link: /guides/overview/
+      link: ./guides/overview/
       variant: secondary
 ---
 
