@@ -60,11 +60,68 @@ interface FormSubmitEvent {
 const commandInputPlaceholder = "find stripe dashboard";
 
 /**
- * Dedicated extension page向けBookmark CLI画面を描画します。
- * @param {BookmarkCliScreenProps} props Bookmark CLI画面のpropsです。
- * @returns {ReactElement} Bookmark CLI画面のReact elementです。
+ * CLI promptの表示textです。
  */
-export const BookmarkCliScreen = (props: BookmarkCliScreenProps): ReactElement => {
+const commandPromptText = "bookmark-cli $";
+
+/**
+ * Terminal windowのtitleです。
+ */
+const terminalWindowTitle = "bookmark-cli";
+
+/**
+ * Command formのpropsです。
+ */
+interface CommandFormProps {
+  /**
+   * CLI入力値です。
+   */
+  readonly inputValue: string;
+  /**
+   * 入力値を更新するcallbackです。
+   */
+  readonly onInputChange: (value: string) => void;
+  /**
+   * Commandを実行するcallbackです。
+   */
+  readonly onSubmit: () => void;
+}
+
+/**
+ * Terminal headerのpropsです。
+ */
+interface TerminalHeaderProps {
+  /**
+   * Status lineに表示するtextです。
+   */
+  readonly statusText: string;
+}
+
+/**
+ * Terminal windowのheaderを描画します。
+ * @param {TerminalHeaderProps} props Terminal headerのpropsです。
+ * @returns {ReactElement} Terminal headerのReact elementです。
+ */
+const TerminalHeader = (props: TerminalHeaderProps): ReactElement => (
+  <header className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border-b border-zinc-800 bg-zinc-950 px-4 py-3">
+    <span className="flex gap-1.5" aria-hidden="true">
+      <span className="h-3 w-3 rounded-full bg-red-500" />
+      <span className="h-3 w-3 rounded-full bg-amber-400" />
+      <span className="h-3 w-3 rounded-full bg-emerald-500" />
+    </span>
+    <h1 className="truncate text-center font-mono text-xs font-medium text-zinc-400">
+      {terminalWindowTitle}
+    </h1>
+    <p className="font-mono text-xs text-zinc-500">{props.statusText}</p>
+  </header>
+);
+
+/**
+ * CLI commandのprompt formを描画します。
+ * @param {CommandFormProps} props Command formのpropsです。
+ * @returns {ReactElement} Prompt formのReact elementです。
+ */
+const CommandForm = (props: CommandFormProps): ReactElement => {
   /**
    * 入力変更を親componentへ通知します。
    * @param {InputChangeEvent} event 入力変更eventです。
@@ -85,32 +142,48 @@ export const BookmarkCliScreen = (props: BookmarkCliScreenProps): ReactElement =
   };
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-100">
-      <section className="mx-auto flex min-h-screen w-full max-w-5xl flex-col px-4 py-6 sm:px-6">
-        <header className="flex items-center justify-between border-b border-zinc-800 pb-4">
-          <h1 className="font-mono text-lg font-semibold">Bookmark CLI</h1>
-          <p className="font-mono text-xs text-zinc-500">{props.statusText}</p>
-        </header>
-        <form className="mt-5 flex gap-2" onSubmit={handleSubmit}>
-          <input
-            autoFocus
-            className="min-w-0 flex-1 rounded border border-zinc-700 bg-zinc-900 px-4 py-3 font-mono text-sm text-zinc-100 outline-none transition focus:border-emerald-400"
-            onChange={handleInputChange}
-            placeholder={commandInputPlaceholder}
-            spellCheck={false}
-            value={props.inputValue}
-          />
-          <button
-            className="rounded bg-emerald-400 px-4 py-3 font-mono text-sm font-semibold text-zinc-950 transition hover:bg-emerald-300"
-            type="submit"
-          >
-            Run
-          </button>
-        </form>
-        <section className="mt-5 overflow-hidden rounded border border-zinc-800 bg-zinc-900/70">
-          <BookmarkCliResultList resultItems={props.resultItems} />
-        </section>
-      </section>
-    </main>
+    <form
+      className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-2 border-b border-zinc-900 pb-3"
+      onSubmit={handleSubmit}
+    >
+      <label className="whitespace-nowrap text-emerald-300" htmlFor="bookmark-cli-command">
+        {commandPromptText}
+      </label>
+      <input
+        aria-label="Bookmark CLI command"
+        autoFocus
+        className="min-w-0 bg-transparent text-zinc-100 caret-emerald-300 outline-none placeholder:text-zinc-600"
+        id="bookmark-cli-command"
+        onChange={handleInputChange}
+        placeholder={commandInputPlaceholder}
+        spellCheck={false}
+        value={props.inputValue}
+      />
+    </form>
   );
 };
+
+/**
+ * Dedicated extension page向けBookmark CLI画面を描画します。
+ * @param {BookmarkCliScreenProps} props Bookmark CLI画面のpropsです。
+ * @returns {ReactElement} Bookmark CLI画面のReact elementです。
+ */
+export const BookmarkCliScreen = (props: BookmarkCliScreenProps): ReactElement => (
+  <main className="min-h-screen bg-[#050607] text-zinc-100">
+    <section className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-3 py-4 sm:px-6 sm:py-7">
+      <section className="flex min-h-[calc(100vh-2rem)] flex-col overflow-hidden rounded-md border border-zinc-800 bg-[#090b0c] shadow-2xl shadow-black/40 sm:min-h-[calc(100vh-3.5rem)]">
+        <TerminalHeader statusText={props.statusText} />
+        <section className="flex flex-1 flex-col px-4 py-4 font-mono text-sm leading-6 sm:px-5">
+          <CommandForm
+            inputValue={props.inputValue}
+            onInputChange={props.onInputChange}
+            onSubmit={props.onSubmit}
+          />
+          <section className="min-h-0 flex-1 overflow-auto pt-4">
+            <BookmarkCliResultList resultItems={props.resultItems} />
+          </section>
+        </section>
+      </section>
+    </section>
+  </main>
+);

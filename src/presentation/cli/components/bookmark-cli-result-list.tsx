@@ -48,7 +48,7 @@ export interface BookmarkCliResultListProps {
 /**
  * 結果がない場合に表示するtextです。
  */
-const emptyResultText = "No candidates";
+const emptyResultText = "No output";
 
 /**
  * Score表示の小数桁です。
@@ -58,12 +58,12 @@ const scoreFractionDigits = 2;
 /**
  * Bookmark種別の表示labelです。
  */
-const bookmarkKindLabel = "url";
+const bookmarkKindLabel = "URL";
 
 /**
  * Folder種別の表示labelです。
  */
-const folderKindLabel = "dir";
+const folderKindLabel = "DIR";
 
 /**
  * 空のresult item件数です。
@@ -117,6 +117,21 @@ const formatScore = (score: number | undefined): string => {
 };
 
 /**
+ * Score表示のprefix付き文字列を作ります。
+ * @param {number | undefined} score 検索scoreです。
+ * @returns {string} prefix付きscoreです。
+ */
+const formatScoreToken = (score: number | undefined): string => {
+  const formattedScore = formatScore(score);
+
+  if (formattedScore === "") {
+    return "";
+  }
+
+  return `score=${formattedScore}`;
+};
+
+/**
  * Result numberを表示用文字列へ変換します。
  * @param {number} itemIndex 0-based result item indexです。
  * @returns {string} 表示用result numberです。
@@ -167,7 +182,7 @@ const createResultItemStyle = (item: BookmarkCliResultItem): CSSProperties => ({
  */
 const renderResultUrl = (item: BookmarkCliResultItem): ReactElement => {
   if (typeof item.url === "string") {
-    return <span className="block truncate text-xs text-cyan-300">{item.url}</span>;
+    return <span className="block truncate text-cyan-300">{item.url}</span>;
   }
 
   return <></>;
@@ -181,22 +196,21 @@ const renderResultUrl = (item: BookmarkCliResultItem): ReactElement => {
  */
 const renderResultItem = (item: BookmarkCliResultItem, itemIndex: number): ReactElement => (
   <li
-    className="grid grid-cols-[auto_auto_minmax(0,1fr)_auto] items-center gap-3 border-b border-zinc-800 py-3 pr-4 last:border-b-0"
+    className="grid grid-cols-[3ch_4ch_minmax(0,1fr)_auto] items-start gap-3 py-1.5 pr-2 text-sm"
     key={`${formatResultNumber(itemIndex)}:${item.kind}:${item.folderPath}:${item.title}`}
     style={createResultItemStyle(item)}
   >
-    <span className="w-8 text-right font-mono text-xs text-zinc-500">
+    <span className="text-right text-zinc-600">
       {formatResultNumber(itemIndex)}
+      <span className="text-zinc-700">:</span>
     </span>
-    <span className="rounded bg-emerald-400 px-2 py-1 font-mono text-[11px] font-semibold uppercase text-zinc-950">
-      {formatKindLabel(item.kind)}
-    </span>
+    <span className="text-amber-300">{formatKindLabel(item.kind)}</span>
     <span className="min-w-0">
-      <span className="block truncate font-medium text-zinc-100">{item.folderPath}</span>
-      <span className="block truncate text-sm text-zinc-400">{item.title}</span>
+      <span className="block truncate text-zinc-100">{item.folderPath}</span>
+      <span className="block truncate text-zinc-400">{item.title}</span>
       {renderResultUrl(item)}
     </span>
-    <span className="font-mono text-xs text-zinc-500">{formatScore(item.score)}</span>
+    <span className="text-xs text-zinc-600">{formatScoreToken(item.score)}</span>
   </li>
 );
 
@@ -207,7 +221,7 @@ const renderResultItem = (item: BookmarkCliResultItem, itemIndex: number): React
  */
 export const BookmarkCliResultList = (props: BookmarkCliResultListProps): ReactElement => {
   if (props.resultItems.length === emptyResultItemCount) {
-    return <p className="px-4 py-6 text-sm text-zinc-500">{emptyResultText}</p>;
+    return <p className="py-1.5 text-sm text-zinc-600">{emptyResultText}</p>;
   }
 
   return <ul>{props.resultItems.map((item, itemIndex) => renderResultItem(item, itemIndex))}</ul>;
