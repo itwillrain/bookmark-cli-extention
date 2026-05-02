@@ -1,6 +1,7 @@
 import type { ParsedBookmarkCommand } from "./bookmark-command-types";
 import { parseMarkBookmarkCommand } from "./bookmark-mark-command-parser";
 import { parseShowDirectoryTreeCommand } from "./bookmark-tree-command-parser";
+import { parseTagBookmarkCommand } from "./bookmark-tag-command-parser";
 
 export type {
   ChangeDirectoryCommand,
@@ -12,6 +13,7 @@ export type {
   ParsedBookmarkCommand,
   PrintWorkingDirectoryCommand,
   ShowDirectoryTreeCommand,
+  TagBookmarkCommand,
   UnknownBookmarkCommand,
 } from "./bookmark-command-types";
 
@@ -49,6 +51,11 @@ const showDirectoryTreeCommandName = "tree";
  * Mark command名です。
  */
 const markBookmarkCommandName = "mark";
+
+/**
+ * Tag command名です。
+ */
+const tagBookmarkCommandName = "tag";
 
 /**
  * 空command名です。
@@ -191,6 +198,14 @@ const createMarkBookmarkCommand = (context: CommandParseContext): ParsedBookmark
   parseMarkBookmarkCommand(context.queryParts);
 
 /**
+ * Tag commandを作ります。
+ * @param {CommandParseContext} context Command parse contextです。
+ * @returns {ParsedBookmarkCommand} Tag commandです。
+ */
+const createTagBookmarkCommand = (context: CommandParseContext): ParsedBookmarkCommand =>
+  parseTagBookmarkCommand(context.queryParts);
+
+/**
  * Unknown commandを作ります。
  * @param {CommandParseContext} context Command parse contextです。
  * @returns {ParsedBookmarkCommand} Unknown commandです。
@@ -212,6 +227,7 @@ const bookmarkCommandFactories: Readonly<Record<string, BookmarkCommandFactory>>
   [markBookmarkCommandName]: createMarkBookmarkCommand,
   [printWorkingDirectoryCommandName]: createPrintWorkingDirectoryCommand,
   [showDirectoryTreeCommandName]: createTreeCommand,
+  [tagBookmarkCommandName]: createTagBookmarkCommand,
 };
 
 /**

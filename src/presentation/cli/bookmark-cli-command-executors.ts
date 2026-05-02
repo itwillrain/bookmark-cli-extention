@@ -12,6 +12,7 @@ export {
   executeShowDirectoryTreeCommand,
 } from "./bookmark-cli-directory-command-executors";
 export { executeMarkCommand } from "./bookmark-cli-mark-command-executors";
+export { executeTagCommand } from "./bookmark-cli-tag-command-executors";
 export { executeFindCommand, executeGoCommand } from "./bookmark-cli-search-command-executors";
 
 /**

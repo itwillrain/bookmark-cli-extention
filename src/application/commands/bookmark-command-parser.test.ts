@@ -42,6 +42,16 @@ const markBookmarkCommandInput = 'mark "Production Admin" --to Work/Admin --allo
 const markBookmarkToDirectoryCommandInput = "mark --to Work/Admin";
 
 /**
+ * Tag commandの入力です。
+ */
+const tagBookmarkCommandInput = "tag 3 prod finance";
+
+/**
+ * Tag remove commandの入力です。
+ */
+const removeTagBookmarkCommandInput = "tag 3 --remove prod";
+
+/**
  * Depth指定だけのTree command入力です。
  */
 const showCurrentDirectoryTreeCommandInput = "tree --depth 3";
@@ -172,6 +182,35 @@ describe("parseBookmarkCommand mark commands", (): void => {
       kind: "mark",
       targetFolderPathInput: "Work/Admin",
       titleInput: "",
+    });
+  });
+});
+
+/**
+ * Bookmark仮想タグcommand parserの正常系テストスイートです。
+ */
+describe("parseBookmarkCommand tag commands", (): void => {
+  /**
+   * Tag commandを対象番号とtag一覧付きで解析できることを検証します。
+   */
+  it("parses tag command with result number and tags", (): void => {
+    expect(parseBookmarkCommand(tagBookmarkCommandInput)).toStrictEqual({
+      kind: "tag",
+      remove: false,
+      tagInputs: ["prod", "finance"],
+      targetInput: "3",
+    });
+  });
+
+  /**
+   * Tag remove commandを解析できることを検証します。
+   */
+  it("parses tag remove command", (): void => {
+    expect(parseBookmarkCommand(removeTagBookmarkCommandInput)).toStrictEqual({
+      kind: "tag",
+      remove: true,
+      tagInputs: ["prod"],
+      targetInput: "3",
     });
   });
 });

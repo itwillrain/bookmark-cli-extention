@@ -15,6 +15,7 @@ import {
   executeMarkCommand,
   executePrintWorkingDirectoryCommand,
   executeShowDirectoryTreeCommand,
+  executeTagCommand,
   executeUnknownCommand,
 } from "./bookmark-cli-command-executors";
 
@@ -215,6 +216,25 @@ const executeParsedMarkCommand = async (
 };
 
 /**
+ * Tag command executor adapterです。
+ * @param {ParsedBookmarkCommand} command Parsed commandです。
+ * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存です。
+ * @returns {Promise<BookmarkCliCommandState>} 画面に反映する状態です。
+ */
+const executeParsedTagCommand = async (
+  command: ParsedBookmarkCommand,
+  dependencies: BookmarkCliCommandDependencies,
+): Promise<BookmarkCliCommandState> => {
+  await Promise.resolve();
+
+  if (command.kind === "tag") {
+    return executeTagCommand(command, dependencies);
+  }
+
+  return executeEmptyCommand(dependencies);
+};
+
+/**
  * Command kindごとのexecutorです。
  */
 const parsedBookmarkCommandExecutors = {
@@ -225,6 +245,7 @@ const parsedBookmarkCommandExecutors = {
   ls: executeParsedListDirectoryCommand,
   mark: executeParsedMarkCommand,
   pwd: executeParsedPrintWorkingDirectoryCommand,
+  tag: executeParsedTagCommand,
   tree: executeParsedShowDirectoryTreeCommand,
   unknown: executeParsedUnknownCommand,
 } satisfies Readonly<Record<ParsedBookmarkCommand["kind"], ParsedBookmarkCommandExecutor>>;

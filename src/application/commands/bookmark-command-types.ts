@@ -105,6 +105,28 @@ export interface MarkBookmarkCommand {
 }
 
 /**
+ * Virtual tag commandです。
+ */
+export interface TagBookmarkCommand {
+  /**
+   * Command種別です。
+   */
+  readonly kind: "tag";
+  /**
+   * 削除操作ならtrueです。
+   */
+  readonly remove: boolean;
+  /**
+   * 仮想タグ入力一覧です。
+   */
+  readonly tagInputs: readonly string[];
+  /**
+   * 対象の直前結果番号です。
+   */
+  readonly targetInput: string;
+}
+
+/**
  * 空入力commandです。
  */
 export interface EmptyBookmarkCommand {
@@ -144,4 +166,5 @@ export type ParsedBookmarkCommand =
   | MarkBookmarkCommand
   | PrintWorkingDirectoryCommand
   | ShowDirectoryTreeCommand
+  | TagBookmarkCommand
   | UnknownBookmarkCommand;

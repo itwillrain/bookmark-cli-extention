@@ -5,7 +5,7 @@ import type { FolderPath } from "../bookmarks/folder-path";
 /**
  * URLを持つBookmark Entryです。
  */
-type SearchableBookmarkEntry = BookmarkEntry & {
+export type SearchableBookmarkEntry = BookmarkEntry & {
   /**
    * Bookmark種別です。
    */
@@ -207,6 +207,20 @@ export const createBookmarkSearchDocuments = (
  */
 export const convertFuseScoreToCommandScore = (fuseScore: number): number =>
   worstFuseScore - fuseScore;
+
+/**
+ * Bookmark Entry一覧を完全一致相当の検索結果へ変換します。
+ * @param {readonly BookmarkEntry[]} entries 検索結果として扱うBookmark Entry一覧です。
+ * @returns {readonly BookmarkSearchResult[]} 検索結果一覧です。
+ */
+export const createBookmarkSearchResultsFromEntries = (
+  entries: readonly BookmarkEntry[],
+): readonly BookmarkSearchResult[] =>
+  createBookmarkSearchDocuments(entries).map((document) => ({
+    entry: document.entry,
+    matches: emptyMatches,
+    score: convertFuseScoreToCommandScore(bestFuseScore),
+  }));
 
 /**
  * Fuse.js scoreがない場合のscoreを補います。

@@ -68,6 +68,7 @@ export const executeFindCommand = async (
   const result = await findBookmarks({
     query: command.query,
     repository: dependencies.repository,
+    virtualTagsByBookmarkId: dependencies.extensionState.virtualTagsByBookmarkId,
   });
 
   if (!result.ok) {
@@ -97,6 +98,7 @@ export const executeGoCommand = async (
     opener: dependencies.opener,
     query: command.query,
     repository: dependencies.repository,
+    virtualTagsByBookmarkId: dependencies.extensionState.virtualTagsByBookmarkId,
   });
 
   if (!result.ok) {
