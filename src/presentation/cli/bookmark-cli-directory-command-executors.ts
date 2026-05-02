@@ -72,6 +72,7 @@ export const executeListDirectoryCommand = async (
 
   return createCommandState({
     currentDirectory: dependencies.currentDirectory,
+    extensionState: dependencies.extensionState,
     lastResultEntries: result.value.entries,
     resultItems: createBookmarkCliResultItemsFromEntries(result.value.entries),
     statusText: createEntryStatusText(result.value.entries.length),
@@ -101,6 +102,7 @@ export const executeChangeDirectoryCommand = async (
 
   return createCommandState({
     currentDirectory: result.value.currentDirectory,
+    extensionState: dependencies.extensionState,
     lastResultEntries: dependencies.lastResultEntries,
     resultItems: emptyResultItems,
     statusText: createChangedDirectoryStatusText(result.value.currentDirectory),
@@ -123,6 +125,7 @@ export const executePrintWorkingDirectoryCommand = (
 
   return createCommandState({
     currentDirectory: result.value.currentDirectory,
+    extensionState: dependencies.extensionState,
     lastResultEntries: dependencies.lastResultEntries,
     resultItems: emptyResultItems,
     statusText: result.value.currentDirectory,
@@ -152,6 +155,7 @@ export const executeShowDirectoryTreeCommand = async (
 
   return createCommandState({
     currentDirectory: dependencies.currentDirectory,
+    extensionState: dependencies.extensionState,
     lastResultEntries: result.value.entries.map((item) => item.entry),
     resultItems: createBookmarkCliResultItemsFromTreeEntries(result.value.entries),
     statusText: createEntryStatusText(result.value.entries.length),

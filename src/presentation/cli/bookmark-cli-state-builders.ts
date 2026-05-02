@@ -19,6 +19,7 @@ export const createCommandState = (
   input: BookmarkCliCommandStateInput,
 ): BookmarkCliCommandState => ({
   currentDirectory: input.currentDirectory,
+  extensionState: input.extensionState,
   lastResultEntries: input.lastResultEntries,
   resultItems: input.resultItems,
   statusText: input.statusText,
@@ -36,6 +37,7 @@ export const createEmptyResultState = (
 ): BookmarkCliCommandState =>
   createCommandState({
     currentDirectory: dependencies.currentDirectory,
+    extensionState: dependencies.extensionState,
     lastResultEntries: dependencies.lastResultEntries,
     resultItems: emptyResultItems,
     statusText,

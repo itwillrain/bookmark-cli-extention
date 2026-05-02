@@ -8,6 +8,7 @@ import type {
   BookmarkRepositoryPort,
 } from "../../application/bookmarks/bookmark-use-cases";
 import { describe, expect, it } from "vitest";
+import { createInitialExtensionState } from "../../domain/storage/extension-state";
 
 /**
  * Work folderのentryです。
@@ -64,6 +65,11 @@ const rootCurrentDirectory = "/";
  * 空の直前結果一覧です。
  */
 const emptyLastResultEntries = [] as const satisfies readonly BookmarkEntry[];
+
+/**
+ * 初期拡張状態fixture。
+ */
+const initialExtensionState = createInitialExtensionState();
 
 /**
  * Find commandの入力です。
@@ -164,6 +170,7 @@ const createCommandDependencies = (
   lastResultEntries: readonly BookmarkEntry[] = emptyLastResultEntries,
 ): BookmarkCliCommandDependencies => ({
   currentDirectory: rootCurrentDirectory,
+  extensionState: initialExtensionState,
   lastResultEntries,
   opener: createRecordingBookmarkOpener().opener,
   repository: createBookmarkRepository(),
@@ -198,6 +205,7 @@ describe("executeBookmarkCliCommand search commands", (): void => {
     const recordingOpener = createRecordingBookmarkOpener();
     const state = await executeBookmarkCliCommand(goInput, {
       currentDirectory: rootCurrentDirectory,
+      extensionState: initialExtensionState,
       lastResultEntries: emptyLastResultEntries,
       opener: recordingOpener.opener,
       repository: createBookmarkRepository(),
@@ -267,6 +275,7 @@ describe("executeBookmarkCliCommand unknown commands", (): void => {
 
     expect(state).toStrictEqual({
       currentDirectory: rootCurrentDirectory,
+      extensionState: initialExtensionState,
       lastResultEntries: emptyLastResultEntries,
       resultItems: [],
       statusText: "Unknown command: open",

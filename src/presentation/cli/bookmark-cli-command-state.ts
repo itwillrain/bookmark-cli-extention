@@ -5,6 +5,7 @@ import type {
 import type { BookmarkCliResultItem } from "./components/bookmark-cli-screen";
 import type { BookmarkEntry } from "../../domain/bookmarks/bookmark-tree";
 import type { CurrentDirectory } from "../../domain/bookmarks/current-directory";
+import type { ExtensionState } from "../../domain/storage/extension-state";
 
 /**
  * Bookmark CLI command実行に必要な依存です。
@@ -14,6 +15,10 @@ export interface BookmarkCliCommandDependencies {
    * 現在ディレクトリです。
    */
   readonly currentDirectory: CurrentDirectory;
+  /**
+   * 永続化対象の拡張状態。
+   */
+  readonly extensionState: ExtensionState;
   /**
    * 直前結果一覧です。
    */
@@ -37,6 +42,10 @@ export interface BookmarkCliCommandState {
    */
   readonly currentDirectory: CurrentDirectory;
   /**
+   * 永続化対象の拡張状態。
+   */
+  readonly extensionState: ExtensionState;
+  /**
    * 直前結果一覧です。
    */
   readonly lastResultEntries: readonly BookmarkEntry[];
@@ -58,6 +67,10 @@ export interface BookmarkCliCommandStateInput {
    * 現在ディレクトリです。
    */
   readonly currentDirectory: CurrentDirectory;
+  /**
+   * 永続化対象の拡張状態。
+   */
+  readonly extensionState: ExtensionState;
   /**
    * 直前結果一覧です。
    */

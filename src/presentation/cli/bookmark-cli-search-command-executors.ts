@@ -76,6 +76,7 @@ export const executeFindCommand = async (
 
   return createCommandState({
     currentDirectory: dependencies.currentDirectory,
+    extensionState: dependencies.extensionState,
     lastResultEntries: createLastResultEntriesFromSearchResults(result.value.results),
     resultItems: createBookmarkCliResultItems(result.value.results),
     statusText: createCandidateStatusText(result.value.results.length),
@@ -104,6 +105,7 @@ export const executeGoCommand = async (
 
   return createCommandState({
     currentDirectory: dependencies.currentDirectory,
+    extensionState: dependencies.extensionState,
     lastResultEntries: [result.value.entry],
     resultItems: createBookmarkCliResultItems([result.value]),
     statusText: createOpenedStatusText(result.value.entry.title),

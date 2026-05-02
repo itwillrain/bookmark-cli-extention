@@ -1,6 +1,7 @@
 import type { BookmarkEntry, BookmarkTree } from "../../domain/bookmarks/bookmark-tree";
 import { describe, expect, it } from "vitest";
 import type { BookmarkRepositoryPort } from "../../application/bookmarks/bookmark-use-cases";
+import { createInitialExtensionState } from "../../domain/storage/extension-state";
 import { executeBookmarkCliCommand } from "./bookmark-cli-controller";
 
 /**
@@ -60,6 +61,11 @@ const rootCurrentDirectory = "/";
 const emptyLastResultEntries = [] as const satisfies readonly BookmarkEntry[];
 
 /**
+ * 初期拡張状態fixtureです。
+ */
+const initialExtensionState = createInitialExtensionState();
+
+/**
  * Tree commandの入力です。
  */
 const showDirectoryTreeInput = "tree Work --depth 2";
@@ -105,6 +111,7 @@ describe("executeBookmarkCliCommand tree commands", (): void => {
   it("returns tree result items for tree command", async (): Promise<void> => {
     const state = await executeBookmarkCliCommand(showDirectoryTreeInput, {
       currentDirectory: rootCurrentDirectory,
+      extensionState: initialExtensionState,
       lastResultEntries: emptyLastResultEntries,
       opener: { openBookmarkUrl },
       repository: createBookmarkRepository(),
