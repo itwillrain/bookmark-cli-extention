@@ -1,4 +1,4 @@
-import type { StorybookConfig } from "@storybook/web-components-vite";
+import type { StorybookConfig } from "@storybook/react-vite";
 
 /**
  * Storybook が Story として読み込むファイルの glob です。
@@ -11,12 +11,12 @@ const storyPatterns = ["../src/**/*.stories.@(ts|tsx|js|jsx|mjs)"];
 const enabledAddons = ["@storybook/addon-docs"];
 
 /**
- * Storybook の Web Components 向け設定です。
+ * Storybook の React 向け設定です。
  */
 const config: StorybookConfig = {
   addons: enabledAddons,
   framework: {
-    name: "@storybook/web-components-vite",
+    name: "@storybook/react-vite",
     options: {},
   },
   stories: storyPatterns,
