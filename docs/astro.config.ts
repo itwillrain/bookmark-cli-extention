@@ -16,6 +16,7 @@ const footerText = "Designed for Bookmark CLI Extension.";
 
 /** Astro と Starlight のドキュメントサイト設定です。
  *
+ * @see https://docs.astro.build/en/reference/configuration-reference/
  * @see https://starlight.astro.build/getting-started/
  * @see https://six-tech.github.io/Six.StarlightTheme/
  */
@@ -44,6 +45,16 @@ export default defineConfig({
             { label: "ドキュメント方針", slug: "guides/documentation-policy" },
           ],
           label: "はじめに",
+        },
+        {
+          items: [
+            { label: "仕様トップ", slug: "specs" },
+            { label: "プロダクト仕様", slug: "specs/product" },
+            { label: "CLI仕様", slug: "specs/cli" },
+            { label: "Chrome連携仕様", slug: "specs/chrome-bookmarks" },
+            { label: "未決事項", slug: "specs/open-questions" },
+          ],
+          label: "仕様",
         },
         {
           items: [{ label: "開発環境", slug: "development/environment" }],

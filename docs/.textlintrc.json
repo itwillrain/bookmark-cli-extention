@@ -1,0 +1,24 @@
+{
+  "filters": {
+    "comments": true
+  },
+  "rules": {
+    "preset-ja-spacing": true,
+    "preset-ja-technical-writing": {
+      "sentence-length": {
+        "max": 120
+      },
+      "max-comma": {
+        "max": 4
+      },
+      "max-ten": {
+        "max": 4
+      },
+      "max-kanji-continuous-len": {
+        "max": 8
+      },
+      "no-mix-dearu-desumasu": false,
+      "no-exclamation-question-mark": false
+    }
+  }
+}

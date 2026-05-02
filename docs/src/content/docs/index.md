@@ -3,18 +3,18 @@ title: Bookmark CLI Extension
 description: Bookmark を CLI 管理するブラウザ拡張のドキュメントです。
 template: splash
 hero:
-  tagline: ブラウザのブックマークを、コマンドラインから扱いやすい資産として管理するための拡張です。
+  tagline: Chrome Bookmark Manager を、拡張機能内の疑似 CLI から扱える作業道具にするための拡張です。
   actions:
-    - text: 概要を読む
-      link: /guides/overview/
+    - text: 仕様を読む
+      link: /specs/
       icon: right-arrow
-    - text: 開発環境
-      link: /development/environment/
+    - text: 概要
+      link: /guides/overview/
       variant: secondary
 ---
 
 ## このドキュメントで整えること
 
-Bookmark CLI Extension は、ブラウザに保存された Bookmark と CLI の操作体験を接続するための拡張です。
+Bookmark CLI Extensionは、Chrome Bookmark Managerの操作体験を拡張機能内の疑似CLIに広げるための拡張です。
 
-まずは目的、設計方針、開発環境を小さく整理し、実装が進むたびにドメインモデルとユースケースを追記していきます。
+まずは目的、仕様、Chrome連携、疑似CLIの操作単位をdocs配下に集約し、実装が進むたびにドメインモデルとユースケースを追記していきます。
