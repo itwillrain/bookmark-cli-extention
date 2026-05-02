@@ -423,9 +423,15 @@ pwd
 
 現在のディレクトリ、または指定したpath配下のBookmark Treeをツリー表示します。
 
+初期表示の深さは2階層です。
+
+`--depth` で表示する深さを指定できます。
+
 ```bash
 tree
 tree Work
+tree --depth 3
+tree Work --depth 3
 ```
 
 ### help
@@ -451,16 +457,22 @@ clear
 
 最近開いたBookmarkを表示します。
 
+初期表示件数は10件です。
+
 ```bash
 recent
+recent --limit 20
 ```
 
 ### freq
 
 よく使うBookmarkを表示します。
 
+初期表示件数は10件です。
+
 ```bash
 freq
+freq --limit 20
 ```
 
 ### mkdir
@@ -512,20 +524,92 @@ tag 3 --remove prod
 
 初期状態では、人間向けの番号付き一覧を標準とします。
 
+番号は実行ごとに `1` から振り直します。
+
+番号付き一覧は、直前の結果一覧としてセッションメモリに保持します。
+
+`cd 2` や `mv 3 Archive` のような番号指定は、この直前の結果一覧を参照します。
+
+表示種別は `[dir]` と `[url]` を使います。
+
+仮想タグを一覧する専用表示を追加する場合だけ `[tag]` を使います。
+
+Bookmarkの仮想タグは種別ではなく、行の補足情報として表示します。
+
+`ls` はfolderを先に表示し、その後にBookmarkを表示します。
+
+各group内はtitle昇順で表示します。
+
+`find` はtitle、folder path、url、仮想タグを表示します。
+
+`find` の結果はscore順で表示します。
+
+`tree` は初期状態で2階層まで表示します。
+
+`tree --depth <number>` を指定した場合は、その深さまで表示します。
+
+`recent` と `freq` は初期状態で10件まで表示します。
+
+`--limit <number>` を指定した場合は、その件数まで表示します。
+
 JSON出力は `--format json` で指定します。
 
 ```text
-1. [url] /Work/Admin/Stripe Dashboard
-2. [url] /Finance/Stripe Billing
-3. [dir] /Work/Admin
+1. [dir] /Work/Admin
+2. [url] /Work/Admin/Stripe Dashboard #prod #finance
+3. [url] /Finance/Stripe Billing #finance
 ```
 
 ```json
 {
-  "id": "42",
-  "title": "Starlight",
-  "url": "https://starlight.astro.build/",
-  "folderPath": "Docs/Astro"
+  "command": "find stripe",
+  "format": "json",
+  "items": [
+    {
+      "index": 1,
+      "id": "42",
+      "type": "url",
+      "title": "Stripe Dashboard",
+      "url": "https://dashboard.stripe.com/",
+      "folderPath": "/Work/Admin",
+      "tags": ["prod", "finance"],
+      "score": 0.96,
+      "childrenCount": null
+    }
+  ],
+  "meta": {
+    "currentDirectory": "/",
+    "total": 1
+  }
+}
+```
+
+JSON出力の `items` は、コマンド間で共通のshapeを優先します。
+
+`tree` のJSON出力も、初期実装では `depth` を持つflat listとして扱います。
+
+```json
+{
+  "command": "tree Work --depth 2",
+  "format": "json",
+  "items": [
+    {
+      "index": 1,
+      "id": "10",
+      "type": "dir",
+      "title": "Admin",
+      "url": null,
+      "folderPath": "/Work",
+      "tags": [],
+      "score": null,
+      "childrenCount": 4,
+      "depth": 1
+    }
+  ],
+  "meta": {
+    "currentDirectory": "/Work",
+    "total": 1
+  }
 }
 ```
 
