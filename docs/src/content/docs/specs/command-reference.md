@@ -9,6 +9,8 @@ description: Bookmark CLI Extension v1 の疑似 CLI コマンド、引数、例
 
 詳細な設計方針は [CLI仕様](../cli/) を正とします。
 
+エラーコードの詳細は [エラーコード一覧](../error-codes/) を参照します。
+
 ## 共通仕様
 
 コマンドはDedicated extension pageの入力欄から実行します。
