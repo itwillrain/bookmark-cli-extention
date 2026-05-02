@@ -23,6 +23,8 @@ Popupは疑似CLI本体ではなく、設定画面として扱います。
 - コマンド履歴を `Ctrl+k`、`Ctrl+j`、上下キーで再利用できるようにする
 - 入力中に候補やエラーを表示できる余地を残す
 - 破壊的操作は結果表示エリアで確認してから実行する
+- 結果一覧はPowerline風のsegment UIとして表示する
+- 結果一覧のplain text表現はcopy、debug、fallback用に保持する
 
 ## キーバインド
 
@@ -553,6 +555,18 @@ Bookmarkの仮想タグは種別ではなく、行の補足情報として表示
 `--limit <number>` を指定した場合は、その件数まで表示します。
 
 JSON出力は `--format json` で指定します。
+
+Dedicated extension page上の結果一覧は、Powerline風のsegment UIとして表示します。
+
+番号、種別、folder path、title、仮想タグをそれぞれ独立したsegmentとして扱います。
+
+Nerd Font互換のiconやPowerline glyphは視覚表現として利用できます。
+
+ただし、Nerd Fontの有無に結果の意味を依存させません。
+
+Fontが利用できない環境では、CSSのshapeまたはplain text表現へfallbackします。
+
+copy、debug、JSON出力では、装飾を含めない値を使います。
 
 ```text
 1. [dir] /Work/Admin
