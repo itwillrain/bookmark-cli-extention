@@ -98,6 +98,7 @@ export default defineConfig({
             { label: "Chrome連携仕様", slug: "specs/chrome-bookmarks" },
             { label: "保存データ構造と権限", slug: "specs/storage-permissions" },
             { label: "アーキテクチャと責務境界", slug: "specs/architecture" },
+            { label: "UI実装方針", slug: "specs/ui-implementation" },
             { label: "実装ロードマップ", slug: "specs/implementation-roadmap" },
             { label: "ユースケース", slug: "specs/use-cases" },
             { label: "テスト方針", slug: "specs/testing-policy" },

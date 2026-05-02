@@ -87,6 +87,35 @@ v1では、次のtop-level keyを保存します。
 
 保存データのshapeを変更する場合は、この値を上げます。
 
+## 保存データのschema検証
+
+`chrome.storage.local` から読み込んだ値は、必ず `unknown` として扱います。
+
+保存データのruntime validationには `typia` を使います。
+
+typiaはstorage adapterの境界で使います。
+
+Application層やPresentation層からtypiaを直接呼びません。
+
+検証対象は保存データ全体を表す `ExtensionState` です。
+
+保存データの読み込みは、次の順番で扱います。
+
+1. `chrome.storage.local` からraw valueを読み込む
+2. raw valueを `unknown` として受け取る
+3. `schemaVersion` を確認する
+4. versionが古い場合はmigrationを通す
+5. migration後の値を `ExtensionState` として検証する
+6. 検証に成功した値だけをApplication層へ渡す
+
+`schemaVersion` がない値、未対応version、検証に失敗した値は、復旧可能な範囲で初期値へ戻します。
+
+復旧できない場合は `storage_failed` を返します。
+
+schema検証とmigrationは、拡張機能側の保存データだけを対象にします。
+
+Chrome Bookmark Manager側のBookmark本体、folder、title、urlは変更しません。
+
 ### currentDirectory
 
 `currentDirectory` は疑似CLIの現在ディレクトリを表します。
@@ -238,3 +267,4 @@ Chrome Bookmark Manager側のBookmarkやfolderは削除しません。
 - [Chrome Extensions activeTab](https://developer.chrome.com/docs/extensions/activeTab)
 - [Chrome Extensions Permissions](https://developer.chrome.com/docs/extensions/reference/permissions-list)
 - [Chrome Extensions Declare permissions](https://developer.chrome.com/docs/extensions/develop/concepts/declare-permissions)
+- [Typia Setup](https://typia.io/docs/setup/)

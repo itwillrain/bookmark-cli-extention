@@ -88,7 +88,15 @@ vimmer friendlyな操作を優先します。
 
 利用頻度、最近開いた日時、Chrome履歴は初期スコアに含めません。
 
-検索文字列は空白でtokenに分割し、title、folder path、urlを対象に一致度を計算します。
+v1のfuzzy検索はFuse.jsを使います。
+
+`match-sorter` はv1では採用しません。
+
+理由は、`find` と `go` でscore、weighted keys、match情報を扱いやすくするためです。
+
+Fuse.jsのscoreを検索順位の基本とし、独自の順位付けは最小限にします。
+
+検索文字列は空白でtokenに分割します。
 
 `#` で始まるtokenは仮想タグとして扱います。
 
@@ -99,23 +107,40 @@ go #finance stripe
 
 仮想タグtokenが含まれる場合は、対象のBookmarkがすべての仮想タグを持つ候補だけを検索対象にします。
 
-仮想タグtoken以外のtokenは、通常どおりtitle、folder path、urlを対象に一致度を計算します。
+仮想タグtoken以外のqueryは、Fuse.jsでtitle、folder path、urlを対象に検索します。
 
-順位付けは次の優先度で行います。
+Fuse.jsの設定は、初期値として次の方針にします。
 
-1. titleの完全一致
-2. titleの前方一致
-3. folder pathの一致
-4. titleの部分一致
-5. urlまたはdomainの一致
+```ts
+const fuseOptions = {
+  includeMatches: true,
+  includeScore: true,
+  ignoreLocation: true,
+  keys: [
+    { name: "title", weight: 0.55 },
+    { name: "folderPath", weight: 0.3 },
+    { name: "url", weight: 0.15 },
+  ],
+  minMatchCharLength: 2,
+  threshold: 0.4,
+};
+```
 
-同じ優先度の候補が複数ある場合は、folder pathが短い候補を先に表示します。
+Fuse.jsのscoreは `0` が最良で、`1` に近いほど一致度が低い値として扱います。
+
+疑似CLIのJSON出力では、読みやすさのため `1 - fuseScore` を `score` として返します。
+
+そのため、JSON出力の `score` は `1` に近いほど一致度が高い値です。
+
+検索順位はFuse.jsのscore順を正とします。
+
+同点の場合は、folder pathが短い候補を先に表示します。
 
 さらに同点の場合は、titleの昇順で表示します。
 
 `go` は最上位候補を開きます。
 
-ただし、上位候補の一致度が同程度の場合は候補一覧を表示し、ユーザーに選択を求めます。
+ただし、上位候補のscore差が小さい場合は候補一覧を表示し、ユーザーに選択を求めます。
 
 `find` は候補一覧だけを表示し、Bookmarkを開きません。
 

@@ -36,10 +36,13 @@ Chrome APIに依存する処理はPortの外側へ閉じ込めます。
 - Chrome Bookmarks APIからBookmark Treeを取得するadapter
 - Bookmark Treeを `BookmarkTree` と `BookmarkEntry` へ正規化するDomain関数
 - `FolderPath` を生成するDomain関数
-- title、url、folder pathを対象にしたfuzzy検索
+- Fuse.jsを使ったfuzzy検索
+- title、url、folder pathのweighted keys設定
 - `find` use case
 - `go` use case
-- Dedicated extension pageの最小UI
+- Storybookで確認する最小UI component
+- Reactで実装するDedicated extension pageの最小UI
+- Tailwind CSSで実装する基本layout
 - コマンド入力欄と結果一覧
 - `go` 実行時のBookmark URL open
 
@@ -48,6 +51,7 @@ Chrome APIに依存する処理はPortの外側へ閉じ込めます。
 - `find stripe` で一致したBookmarkが番号付き一覧で表示される
 - `go stripe` で最上位のBookmarkが開く
 - Bookmark Tree正規化とfuzzy検索にテストがある
+- Fuse.jsのscoreをCommandResultのscoreへ変換できる
 - Chrome Bookmarks APIの呼び出しがInfrastructure層に閉じている
 - Application層がChrome APIを直接参照していない
 
@@ -85,6 +89,8 @@ Chrome APIに依存する処理はPortの外側へ閉じ込めます。
 - `chrome.storage.local` adapter
 - `ExtensionState`
 - `schemaVersion`
+- typiaによる保存データのschema検証
+- storage migration
 - `currentDirectory`
 - `commandHistory`
 - `settings`
@@ -97,7 +103,8 @@ Chrome APIに依存する処理はPortの外側へ閉じ込めます。
 - 連続した同じコマンドは重複保存されない
 - 最後の現在ディレクトリが再起動後に復元される
 - 存在しないcurrent directoryは `/` に戻る
-- storage migrationまたは初期化にテストがある
+- 不正な保存データは初期値または `storage_failed` として扱える
+- storage migrationとschema検証にテストがある
 
 ## Slice 4: 現在タブを保存する
 
@@ -183,6 +190,7 @@ Chrome APIに依存する処理はPortの外側へ閉じ込めます。
 - Powerline風segment UI
 - plain text fallback
 - Nerd Font設定
+- React componentの細分化
 - `Ctrl+j`
 - `Ctrl+k`
 - `Tab` 補完
@@ -195,6 +203,7 @@ Chrome APIに依存する処理はPortの外側へ閉じ込めます。
 - `--limit 20` で表示件数を変えられる
 - 結果一覧がPowerline風segment UIで表示される
 - Fontがない場合もplain textで意味が読める
+- 主要UI componentがStorybookで確認できる
 - `Ctrl+j` と `Ctrl+k` で候補や履歴を移動できる
 
 ## 実装順まとめ

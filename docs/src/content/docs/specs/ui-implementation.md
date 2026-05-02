@@ -1,0 +1,251 @@
+---
+title: UI実装方針
+description: Bookmark CLI Extension のUI技術選定、React component設計、Tailwind CSS利用方針を定義します。
+---
+
+# UI実装方針
+
+このページでは、Bookmark CLI ExtensionのPresentation層をどう実装するかを定義します。
+
+v1のUIは最初からReactで実装します。
+
+スタイルは基本的にTailwind CSSで実装します。
+
+UI componentは小さく分け、疑似CLIの状態と表示を読みやすく保ちます。
+
+UI componentはStory Firstで実装します。
+
+Dedicated extension pageへ組み込む前に、Storybook上でcomponentのprops、状態、見た目を確認します。
+
+## 技術選定
+
+UIはReactとTypeScriptで実装します。
+
+WXTのReact moduleを使い、entrypointごとにReact appをmountします。
+
+Tailwind CSSはVite pluginとして導入します。
+
+StorybookはReact componentを先に確認するための作業場として使います。
+
+Dedicated extension pageとpopupは、同じUI基盤を使います。
+
+ただし、疑似CLI本体はDedicated extension pageに置きます。
+
+popupは設定画面とDedicated extension pageへの導線に限定します。
+
+## 導入する主なpackage
+
+UI実装を始めるタイミングで、次のpackageを追加します。
+
+```bash
+pnpm add react react-dom
+pnpm add fuse.js
+pnpm add -D @wxt-dev/module-react tailwindcss @tailwindcss/vite
+pnpm add -D @storybook/react-vite
+```
+
+Reactの型が必要な場合は、次のpackageも追加します。
+
+```bash
+pnpm add -D @types/react @types/react-dom
+```
+
+## WXT entrypoint方針
+
+Reactを使うentrypointはdirectory形式にします。
+
+entrypoint配下には `index.html`、`main.tsx`、`App.tsx`、entrypoint固有のstyleを置きます。
+
+WXTのentrypoint discoveryに合わせ、深い階層をentrypointとして扱わせません。
+
+```text
+src/
+  entrypoints/
+    cli-page/
+      index.html
+      main.tsx
+      App.tsx
+      style.css
+    popup/
+      index.html
+      main.tsx
+      App.tsx
+      style.css
+```
+
+共有componentは `entrypoints` 配下ではなく、Presentation層に配置します。
+
+```text
+src/
+  presentation/
+    cli/
+      components/
+      hooks/
+      view-models/
+```
+
+## Component分割方針
+
+Componentは小さく分けます。
+
+1つのcomponentは、できるだけ1つの表示責務だけを持ちます。
+
+新しいcomponentは、原則としてStorybook storyを先に作ります。
+
+巨大な `App.tsx` に状態、layout、結果表示、候補表示、入力処理を詰め込みません。
+
+Container componentは状態とuse case呼び出しを扱います。
+
+Presentational componentはpropsから表示を作ります。
+
+Presentational componentからChrome APIや `chrome.storage` を直接呼びません。
+
+UI stateを持つhookは、componentから切り出します。
+
+## Story First方針
+
+UI componentは、Dedicated extension pageやpopupへ組み込む前にStorybook上で作ります。
+
+Storyでは、通常状態、空状態、選択状態、エラー状態、長い文字列、キーボード操作中の状態を確認します。
+
+Storyはcomponentの仕様書として扱います。
+
+Storyに出せないcomponentは責務過多と判断し、component分割を検討します。
+
+Storybookで確認する対象は次のとおりです。
+
+- `CommandPrompt`
+- `SuggestionList`
+- `ResultList`
+- `ResultItem`
+- `ResultSegment`
+- `PreviewPanel`
+- `ErrorMessage`
+- `StatusBar`
+- popupの設定component
+
+Story fileはcomponentの近くに置きます。
+
+```text
+src/
+  presentation/
+    cli/
+      components/
+        ResultItem.tsx
+        ResultItem.stories.tsx
+```
+
+StorybookではApplication層のuse caseを直接呼びません。
+
+Storyに渡す値は、CommandResultまたはview modelのfixtureとして用意します。
+
+Chrome API、`chrome.storage`、runtime messagingはStoryから直接呼びません。
+
+Storybookで確認したcomponentを、entrypointのcontainer componentから組み込みます。
+
+## Dedicated extension pageのcomponent候補
+
+Dedicated extension pageは、次のcomponentへ分ける想定です。
+
+- `CliPage`
+- `CommandPrompt`
+- `CommandHistory`
+- `SuggestionList`
+- `ResultPanel`
+- `ResultList`
+- `ResultItem`
+- `ResultSegment`
+- `PreviewPanel`
+- `ErrorMessage`
+- `StatusBar`
+
+`ResultItem` はPowerline風segment UIを組み立てます。
+
+`ResultSegment` は番号、種別、folder path、title、仮想タグなどのsegmentを表示します。
+
+番号指定やResult Listの意味はDomain層で扱い、componentは表示だけを担当します。
+
+## Popupのcomponent候補
+
+popupは設定画面として扱います。
+
+次のcomponentへ分ける想定です。
+
+- `PopupApp`
+- `OpenCliButton`
+- `ShortcutHint`
+- `DisplaySettings`
+- `FontPreferenceToggle`
+- `SettingsSection`
+
+popupには疑似CLI本体を置きません。
+
+## Tailwind CSS利用方針
+
+スタイルはTailwind CSSのutility classを基本にします。
+
+CSS moduleやglobal CSSは、Tailwindだけでは表現しづらい基盤styleに限定します。
+
+Powerline風segment UIのshape、focus ring、scrollbarなど、utility classだけで読みにくくなる場合は小さなCSS classへ切り出します。
+
+Tailwind classはcomponentの責務に沿って配置します。
+
+複数componentで繰り返すclassは、component化または小さなstyle helperへ切り出します。
+
+色、spacing、fontはTailwind themeで管理します。
+
+## Powerline風表示
+
+結果一覧はPowerline風segment UIとして表示します。
+
+Nerd Font互換iconやPowerline glyphは視覚表現として利用できます。
+
+ただし、Fontの有無に意味を依存させません。
+
+Fontが利用できない環境では、CSS shapeまたはplain text fallbackで同じ情報を表示します。
+
+copy、debug、JSON出力では装飾を含めない値を使います。
+
+## 状態管理方針
+
+v1では外部状態管理libraryを導入しません。
+
+Reactのlocal state、`useReducer`、custom hookで始めます。
+
+状態が複雑になった場合だけ、状態管理libraryを検討します。
+
+Command実行結果はApplication層のCommandResultを受け取り、Presentation層でview modelへ変換します。
+
+view modelはcomponentが直接使いやすい形にします。
+
+## アクセシビリティ方針
+
+入力欄、候補リスト、preview確認はキーボード操作を前提にします。
+
+`Ctrl+j`、`Ctrl+k`、上下キー、`Tab`、`Enter`、`Esc` の操作をcomponent設計に含めます。
+
+選択中の候補やpreview確認中の状態は、視覚的に分かるようにします。
+
+iconだけのbuttonには、ユーザーが意味を理解できるlabelを持たせます。
+
+## テスト方針
+
+UIのテストはview modelと状態遷移を中心にします。
+
+Componentの見た目はStorybookで先に確認します。
+
+ブラウザ上の統合確認は、entrypointへ組み込んだ後に行います。
+
+Domain層の仕様をcomponent testで重複して確認しません。
+
+Presentation層では、CommandResultから表示用view modelへの変換をテストします。
+
+キーバインドはcustom hookまたはreducerとして切り出し、状態遷移をテストします。
+
+## 参考
+
+- [WXT Frontend Frameworks](https://wxt.dev/guide/essentials/frontend-frameworks.html)
+- [WXT Entrypoints](https://wxt.dev/guide/essentials/entrypoints.html)
+- [Tailwind CSS with Vite](https://tailwindcss.com/docs/installation/using-vite)
+- [React: Describing the UI](https://react.dev/learn/describing-the-ui)
+- [Storybook for React with Vite](https://storybook.js.org/docs/get-started/frameworks/react-vite)
