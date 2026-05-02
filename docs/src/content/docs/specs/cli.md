@@ -48,6 +48,17 @@ Popupは疑似CLI本体ではなく、設定画面として扱います。
 
 検索文字列は空白でtokenに分割し、title、folder path、urlを対象に一致度を計算します。
 
+`#` で始まるtokenは仮想タグとして扱います。
+
+```bash
+find #prod
+go #finance stripe
+```
+
+仮想タグtokenが含まれる場合は、対象のBookmarkがすべての仮想タグを持つ候補だけを検索対象にします。
+
+仮想タグtoken以外のtokenは、通常どおりtitle、folder path、urlを対象に一致度を計算します。
+
 順位付けは次の優先度で行います。
 
 1. titleの完全一致
@@ -228,6 +239,47 @@ v1では `undo` コマンドを提供しません。
 ただし、`mv`、`rm`、`rename` の実行結果はコマンド履歴に残します。
 
 削除後に復元できるよう、`rm` の実行結果には削除したBookmarkのtitle、url、folder pathを表示します。
+
+## 仮想タグ仕様
+
+仮想タグはChrome Bookmark Managerには保存せず、拡張機能側のメタ情報として扱います。
+
+保存先は `chrome.storage` です。
+
+保存キーはBookmark IDを基準にします。
+
+`tag` は指定したBookmarkへ仮想タグを追加します。
+
+既存の仮想タグは置き換えず、追加します。
+
+```bash
+tag 3 prod finance
+tag current urgent
+```
+
+`current` は現在のタブと同じURLを持つBookmarkを対象にします。
+
+同じURLを持つBookmarkが複数ある場合は候補一覧を表示し、ユーザーに選択を求めます。
+
+仮想タグを削除する場合は `tag --remove` を使います。
+
+`untag` コマンドはv1では提供しません。
+
+```bash
+tag 3 --remove prod
+tag 3 --remove prod finance
+```
+
+`go` と `find` は `#tag` 検索に対応します。
+
+```bash
+find #prod
+go #finance stripe
+```
+
+削除済みBookmarkの仮想タグは、起動時にBookmark Treeと照合して掃除します。
+
+存在しないBookmark IDに紐づく仮想タグは削除します。
 
 ## mark保存仕様
 
@@ -413,6 +465,7 @@ Bookmarkへ仮想タグを付与します。
 ```bash
 tag 3 prod finance
 tag current urgent
+tag 3 --remove prod
 ```
 
 ## 出力形式

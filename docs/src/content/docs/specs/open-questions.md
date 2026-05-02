@@ -13,12 +13,6 @@ description: Bookmark CLI Extension の仕様決定が必要な論点です。
 
 初期案では、拡張機能内のセッション中だけ保持します。
 
-## 仮想タグ
-
-Chrome Bookmark Managerに存在しない仮想タグをどこへ保存するかを決めます。
-
-初期案では、v1に含めたうえで `chrome.storage` への保存を検討します。
-
 ## Chrome履歴統合
 
 BookmarkだけでなくChrome履歴も検索対象に含めるかを決めます。
