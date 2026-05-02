@@ -4,7 +4,7 @@ import type { BookmarkTree } from "../../domain/bookmarks/bookmark-tree";
 /**
  * Bookmark commandのエラー種別です。
  */
-export type BookmarkCommandErrorCode = "not_found";
+export type BookmarkCommandErrorCode = "folder_not_found" | "not_found";
 
 /**
  * Bookmark commandの成功結果です。
