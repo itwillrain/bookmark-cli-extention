@@ -91,6 +91,7 @@ export default defineConfig({
           items: [
             { label: "仕様トップ", slug: "specs" },
             { label: "プロダクト仕様", slug: "specs/product" },
+            { label: "用語集", slug: "specs/glossary" },
             { label: "CLI仕様", slug: "specs/cli" },
             { label: "Chrome連携仕様", slug: "specs/chrome-bookmarks" },
             { label: "保存データ構造と権限", slug: "specs/storage-permissions" },
