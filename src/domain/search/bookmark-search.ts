@@ -1,4 +1,4 @@
-import Fuse, { type FuseResultMatch, type IFuseOptions } from "fuse.js";
+import Fuse, { type IFuseOptions } from "fuse.js";
 import type { BookmarkEntry } from "../bookmarks/bookmark-tree";
 import type { FolderPath } from "../bookmarks/folder-path";
 
@@ -31,7 +31,7 @@ interface BookmarkFuseResult {
   /**
    * Fuse.jsのmatch情報です。
    */
-  readonly matches?: readonly Readonly<FuseResultMatch>[];
+  readonly matches?: readonly BookmarkSearchMatch[];
 }
 
 /**
@@ -61,6 +61,33 @@ export interface BookmarkSearchDocument {
 }
 
 /**
+ * Bookmark検索で一致した文字位置の範囲です。
+ */
+export type BookmarkSearchMatchRange = readonly [number, number];
+
+/**
+ * Bookmark検索で一致したfield情報です。
+ */
+export interface BookmarkSearchMatch {
+  /**
+   * 一致範囲の一覧です。
+   */
+  readonly indices: readonly BookmarkSearchMatchRange[];
+  /**
+   * 一致した検索keyです。
+   */
+  readonly key?: string;
+  /**
+   * 配列要素の参照indexです。
+   */
+  readonly refIndex?: number;
+  /**
+   * 一致した値です。
+   */
+  readonly value?: string;
+}
+
+/**
  * Bookmark検索結果です。
  */
 export interface BookmarkSearchResult {
@@ -75,7 +102,7 @@ export interface BookmarkSearchResult {
   /**
    * Fuse.jsが返したmatch情報です。
    */
-  readonly matches: readonly FuseResultMatch[];
+  readonly matches: readonly BookmarkSearchMatch[];
 }
 
 /**
@@ -121,7 +148,7 @@ const worstFuseScore = 1;
 /**
  * Fuse.jsのmatch情報がない場合に使う空配列です。
  */
-const emptyMatches = [] as const satisfies readonly FuseResultMatch[];
+const emptyMatches = [] as const satisfies readonly BookmarkSearchMatch[];
 
 /**
  * Bookmark検索に使うFuse.js optionです。
