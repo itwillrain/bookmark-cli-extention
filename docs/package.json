@@ -1,0 +1,22 @@
+{
+  "name": "bookmark-cli-extension-docs",
+  "version": "0.0.0",
+  "description": "Documentation site for Bookmark CLI Extension.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "astro": "astro",
+    "build": "astro check && astro build",
+    "dev": "astro dev",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/starlight": "^0.38.4",
+    "@fontsource/inter": "^5.1.1",
+    "@fontsource/jetbrains-mono": "^5.1.1",
+    "@six-tech/starlight-theme-six": "^1.0.13",
+    "astro": "^6.2.1",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img">
+  <title>Bookmark CLI Extension</title>
+  <rect width="64" height="64" rx="14" fill="#111827" />
+  <path d="M20 14h24a4 4 0 0 1 4 4v34L32 42 16 52V18a4 4 0 0 1 4-4Z" fill="#f8fafc" />
+  <path d="M25 26h14M25 34h9" stroke="#111827" stroke-width="4" stroke-linecap="round" />
+</svg>
