@@ -20,6 +20,8 @@ Bookmark CLI Extensionは、Chrome Bookmark Managerを拡張機能内の疑似CL
 - [保存データ構造と権限](./storage-permissions/)
 - [アーキテクチャと責務境界](./architecture/)
 - [実装ロードマップ](./implementation-roadmap/)
+- [ユースケース](./use-cases/)
+- [テスト方針](./testing-policy/)
 
 ## まず決めること
 
@@ -34,6 +36,8 @@ Bookmark CLI Extensionは、Chrome Bookmark Managerを拡張機能内の疑似CL
 9. ユビキタス言語を固定する
 10. ユーザー視点のコマンド仕様を引ける形にする
 11. CommandResultのエラーコードを一覧化する
+12. ユースケースをApplication層の単位として整理する
+13. テスト方針を実装前に固定する
 
 ## v1方針
 

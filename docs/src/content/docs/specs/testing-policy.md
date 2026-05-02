@@ -1,0 +1,183 @@
+---
+title: テスト方針
+description: Bookmark CLI Extension のTDD方針、テスト対象、レイヤー別の確認範囲を定義します。
+---
+
+# テスト方針
+
+このページでは、Bookmark CLI Extensionのテスト方針を定義します。
+
+基本方針は、Kent BeckのTDDを小さく適用し、Domain層の純粋関数を厚くテストすることです。
+
+## 基本方針
+
+Domain層の純粋関数にはテストを書きます。
+
+テストは仕様を固定するために書きます。
+
+不要な網羅ではなく、仕様上意味のあるケースだけを残します。
+
+Chrome API、DOM、storage、時刻、乱数へ直接依存する処理はDomain層に置きません。
+
+Application層はPortをmockしてuse caseの分岐を確認します。
+
+Infrastructure層は薄く保ち、Chrome APIとのadapter境界を確認します。
+
+Presentation層は表示用view modelとキーバインドの状態遷移を確認します。
+
+## TDDサイクル
+
+実装は次の順番で進めます。
+
+1. 失敗する最小のテストを書く
+2. そのテストを通す最小実装を書く
+3. 仕様を壊さずに整理する
+4. 不要なテストケースを削る
+5. 次の振る舞いへ進む
+
+先に大きな抽象を作りません。
+
+重複や複雑さが実際に見えてから抽象化します。
+
+## レイヤー別テスト
+
+| レイヤー       | 主な対象                                  | 方針                     |
+| -------------- | ----------------------------------------- | ------------------------ |
+| Domain         | 純粋関数、値の正規化、検索、path解決      | 厚くテストする           |
+| Application    | use case、CommandResult、Port失敗時の分岐 | Portをmockする           |
+| Infrastructure | Chrome API adapter、storage adapter       | 薄く確認する             |
+| Presentation   | view model、キーバインド、表示状態        | 状態遷移を中心に確認する |
+| E2E            | 主要sliceの通し動作                       | v1後半で最小限追加する   |
+
+## Domain層
+
+Domain層はもっとも厚くテストします。
+
+対象は次のとおりです。
+
+- Bookmark Tree正規化
+- `FolderPath` 生成
+- path解決
+- fuzzy検索
+- 仮想タグ正規化
+- Result Listの番号解決
+- preview生成
+- 利用統計の並び順
+
+同じ入力に対して同じ出力を返すことを確認します。
+
+外部APIのmockは使いません。
+
+## Application層
+
+Application層はuse caseの分岐を確認します。
+
+対象は次のとおりです。
+
+- `findBookmarks`
+- `goBookmark`
+- `changeCurrentDirectory`
+- `markCurrentTab`
+- `addVirtualTags`
+- `moveBookmark`
+- `removeBookmark`
+- `renameBookmark`
+
+Portはmockまたはfakeで差し替えます。
+
+Chrome APIの具体的な戻り値ではなく、Portが返すDomain寄りの値を使います。
+
+正常系、代表的な異常系、書き込みの有無を確認します。
+
+## Infrastructure層
+
+Infrastructure層はadapter境界を確認します。
+
+対象は次のとおりです。
+
+- Chrome Bookmarks API adapter
+- Chrome Storage API adapter
+- TabContext adapter
+
+Chrome API由来の失敗は、Application層で扱えるerror codeへ変換します。
+
+Infrastructure層では複雑な分岐を持たせません。
+
+複雑な変換が必要な場合は、Domain層またはApplication層の純粋関数へ切り出します。
+
+## Presentation層
+
+Presentation層はUIの状態変化を確認します。
+
+対象は次のとおりです。
+
+- CommandResultから結果一覧view modelへの変換
+- Powerline風segment UI用のview model
+- plain text fallback
+- `Ctrl+j` と `Ctrl+k` の移動
+- `Tab` 補完
+- `Esc` による候補とpreview確認の終了
+
+見た目そのものより、状態と表示用データの整合性を優先します。
+
+## E2E
+
+E2Eはv1後半で最小限追加します。
+
+最初からE2Eを厚くしません。
+
+候補は次のとおりです。
+
+- Dedicated extension pageを開ける
+- `find` の結果が表示される
+- `go` でBookmark URLを開ける
+- `mark` でCLI起動元タブを保存できる
+- `rm` が確認なしでは実行されない
+
+E2Eはブラウザ拡張の統合確認として扱います。
+
+Domainの詳細な仕様確認は単体テストで行います。
+
+## テストデータ
+
+テストでは小さなBookmark Treeを使います。
+
+1つのテストに必要なnodeだけを含めます。
+
+巨大なfixtureは避けます。
+
+共通fixtureを使う場合も、テストの意図が読める名前にします。
+
+## 優先して書くテスト
+
+Slice 1では、次のテストを優先します。
+
+- Bookmark TreeをBookmark EntryとFolder Entryへ正規化できる
+- folder pathを生成できる
+- title完全一致が最優先になる
+- title前方一致が部分一致より優先される
+- folder path一致が検索結果へ反映される
+- `find #tag` が仮想タグで絞り込む
+- `go` の候補がない場合は `not_found` を返す
+
+Slice 2以降は、実装ロードマップの完了条件に合わせて追加します。
+
+## テストしないこと
+
+Chrome Bookmarks APIそのものの挙動はテストしません。
+
+Chrome Extensions Storage APIそのものの永続化性能はテストしません。
+
+Nerd Fontの描画品質は単体テストしません。
+
+CSSの見た目は、必要になった時点でStorybookやブラウザ確認へ寄せます。
+
+## 完了条件
+
+テスト方針としての完了条件は次のとおりです。
+
+- Domain層の主要な純粋関数にテストがある
+- Application層の主要use caseにPort mockのテストがある
+- 書き込み操作のpreviewと確認不足をテストしている
+- storage migrationまたは初期化をテストしている
+- E2Eは主要sliceに絞っている

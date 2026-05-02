@@ -239,6 +239,8 @@ Presentation層でerrorの意味を再解釈しません。
 
 ## テスト方針
 
+テスト方針の詳細は [テスト方針](../testing-policy/) で管理します。
+
 Domain層の純粋関数にはテストを書きます。
 
 対象は、Bookmark Tree正規化、folder path解決、fuzzy検索、仮想タグ正規化、結果一覧の番号解決です。
