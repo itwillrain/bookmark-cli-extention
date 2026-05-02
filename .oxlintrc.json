@@ -1,0 +1,32 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["eslint", "typescript", "unicorn", "jsdoc"],
+  "categories": {
+    "correctness": "error",
+    "pedantic": "error",
+    "perf": "error",
+    "restriction": "error",
+    "suspicious": "error",
+    "style": "error"
+  },
+  "ignorePatterns": ["docs/**", ".pnpm-store/**"],
+  "options": {
+    "typeAware": true
+  },
+  "env": {
+    "browser": true,
+    "webextensions": true
+  },
+  "rules": {
+    "typescript/explicit-function-return-type": "error",
+    "typescript/explicit-module-boundary-types": "error",
+    "typescript/switch-exhaustiveness-check": "error",
+    "unicorn/filename-case": [
+      "error",
+      {
+        "case": "kebabCase"
+      }
+    ],
+    "unicorn/prefer-module": "error"
+  }
+}

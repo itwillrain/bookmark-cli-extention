@@ -1,0 +1,34 @@
+{
+  "name": "bookmark-cli-extention",
+  "version": "0.0.0",
+  "description": "Bookmark CLI browser extension built with WXT.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "wxt build",
+    "check": "pnpm run compile && pnpm run lint && pnpm run format:check",
+    "compile": "wxt prepare && tsc --noEmit",
+    "dev": "wxt",
+    "dev:firefox": "wxt -b firefox",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "pnpm run lint:oxlint && pnpm run lint:docs",
+    "lint:docs": "eslint \"**/*.{ts,tsx}\"",
+    "lint:fix": "oxlint --fix . && eslint \"**/*.{ts,tsx}\" --fix",
+    "lint:oxlint": "oxlint .",
+    "postinstall": "wxt prepare",
+    "zip": "wxt zip"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.3.0",
+    "eslint-plugin-jsdoc": "^62.9.0",
+    "globals": "^17.6.0",
+    "oxlint": "^1.62.0",
+    "oxlint-tsgolint": "^0.22.1",
+    "prettier": "^3.8.3",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.59.1",
+    "wxt": "^0.20.25"
+  }
+}
