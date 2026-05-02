@@ -15,5 +15,12 @@
     "strict": true,
     "verbatimModuleSyntax": true
   },
-  "include": [".wxt/wxt.d.ts", "entrypoints/**/*.ts", "wxt.config.ts"]
+  "include": [
+    ".wxt/wxt.d.ts",
+    "eslint.config.ts",
+    "src/**/*.ts",
+    "test/**/*.ts",
+    "vitest.config.ts",
+    "wxt.config.ts"
+  ]
 }

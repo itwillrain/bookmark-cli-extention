@@ -1,6 +1,7 @@
 .wxt
 .pnpm-store
 .output
+coverage
 dist
 docs
 node_modules

@@ -1,6 +1,11 @@
 import { defineConfig } from "wxt";
 
 /**
+ * 拡張機能のソースコードを配置するディレクトリです。
+ */
+const sourceDirectory = "src";
+
+/**
  * 拡張機能の表示名です。
  */
 const extensionName = "Bookmark CLI Extension";
@@ -19,4 +24,5 @@ export default defineConfig({
     description: extensionDescription,
     name: extensionName,
   },
+  srcDir: sourceDirectory,
 });

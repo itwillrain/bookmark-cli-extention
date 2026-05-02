@@ -17,10 +17,14 @@
     "lint:fix": "oxlint --fix . && eslint \"**/*.{ts,tsx}\" --fix",
     "lint:oxlint": "oxlint .",
     "postinstall": "wxt prepare",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:watch": "vitest",
     "zip": "wxt zip"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@vitest/coverage-v8": "^4.1.5",
     "eslint": "^10.3.0",
     "eslint-plugin-jsdoc": "^62.9.0",
     "globals": "^17.6.0",
@@ -29,6 +33,7 @@
     "prettier": "^3.8.3",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.59.1",
+    "vitest": "^4.1.5",
     "wxt": "^0.20.25"
   }
 }

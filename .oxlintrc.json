@@ -9,7 +9,7 @@
     "suspicious": "error",
     "style": "error"
   },
-  "ignorePatterns": ["docs/**", ".pnpm-store/**"],
+  "ignorePatterns": ["coverage/**", "docs/**", ".pnpm-store/**"],
   "options": {
     "typeAware": true
   },

@@ -9,6 +9,7 @@ const ignoredPaths = [
   ".output/**",
   ".pnpm-store/**",
   ".wxt/**",
+  "coverage/**",
   "dist/**",
   "docs/**",
   "node_modules/**",
