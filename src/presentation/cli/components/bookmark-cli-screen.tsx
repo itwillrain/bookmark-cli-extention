@@ -1,35 +1,7 @@
+import { type BookmarkCliResultItem, BookmarkCliResultList } from "./bookmark-cli-result-list";
 import type { ReactElement } from "react";
 
-/**
- * CLI resultの表示種別です。
- */
-export type BookmarkCliResultKind = "bookmark" | "folder";
-
-/**
- * CLI resultとして表示するitemです。
- */
-export interface BookmarkCliResultItem {
-  /**
-   * Bookmarkまたはfolderを表す種別です。
-   */
-  readonly kind: BookmarkCliResultKind;
-  /**
-   * 表示名です。
-   */
-  readonly title: string;
-  /**
-   * Folder pathです。
-   */
-  readonly folderPath: string;
-  /**
-   * Bookmark URLです。
-   */
-  readonly url?: string;
-  /**
-   * 検索scoreです。
-   */
-  readonly score?: number;
-}
+export type { BookmarkCliResultItem, BookmarkCliResultKind } from "./bookmark-cli-result-list";
 
 /**
  * Bookmark CLI画面のpropsです。
@@ -83,108 +55,9 @@ interface FormSubmitEvent {
 }
 
 /**
- * 結果がない場合に表示するtextです。
- */
-const emptyResultText = "No candidates";
-
-/**
  * 入力欄のplaceholderです。
  */
 const commandInputPlaceholder = "find stripe dashboard";
-
-/**
- * Score表示の小数桁です。
- */
-const scoreFractionDigits = 2;
-
-/**
- * Bookmark種別の表示labelです。
- */
-const bookmarkKindLabel = "url";
-
-/**
- * Folder種別の表示labelです。
- */
-const folderKindLabel = "dir";
-
-/**
- * 空のresult item件数です。
- */
-const emptyResultItemCount = 0;
-
-/**
- * Result itemのkind labelを作ります。
- * @param {BookmarkCliResultKind} kind Result itemのkindです。
- * @returns {string} 表示用kind labelです。
- */
-const formatKindLabel = (kind: BookmarkCliResultKind): string => {
-  if (kind === "bookmark") {
-    return bookmarkKindLabel;
-  }
-
-  return folderKindLabel;
-};
-
-/**
- * Scoreを表示用文字列へ変換します。
- * @param {number | undefined} score 検索scoreです。
- * @returns {string} 表示用scoreです。
- */
-const formatScore = (score: number | undefined): string => {
-  if (typeof score === "number") {
-    return score.toFixed(scoreFractionDigits);
-  }
-
-  return "";
-};
-
-/**
- * Bookmark URLを描画します。
- * @param {BookmarkCliResultItem} item URLを描画するresult itemです。
- * @returns {ReactElement} URL表示のReact elementです。
- */
-const renderResultUrl = (item: BookmarkCliResultItem): ReactElement => {
-  if (typeof item.url === "string") {
-    return <span className="block truncate text-xs text-cyan-300">{item.url}</span>;
-  }
-
-  return <></>;
-};
-
-/**
- * Bookmark CLIのresult itemを描画します。
- * @param {BookmarkCliResultItem} item 描画するresult itemです。
- * @returns {ReactElement} Result itemのReact elementです。
- */
-const renderResultItem = (item: BookmarkCliResultItem): ReactElement => (
-  <li
-    className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border-b border-zinc-800 px-4 py-3 last:border-b-0"
-    key={`${item.kind}:${item.folderPath}:${item.title}`}
-  >
-    <span className="rounded bg-emerald-400 px-2 py-1 font-mono text-[11px] font-semibold uppercase text-zinc-950">
-      {formatKindLabel(item.kind)}
-    </span>
-    <span className="min-w-0">
-      <span className="block truncate font-medium text-zinc-100">{item.folderPath}</span>
-      <span className="block truncate text-sm text-zinc-400">{item.title}</span>
-      {renderResultUrl(item)}
-    </span>
-    <span className="font-mono text-xs text-zinc-500">{formatScore(item.score)}</span>
-  </li>
-);
-
-/**
- * Bookmark CLIのresult listを描画します。
- * @param {readonly BookmarkCliResultItem[]} resultItems 描画するresult item一覧です。
- * @returns {ReactElement} Result listのReact elementです。
- */
-const renderResultList = (resultItems: readonly BookmarkCliResultItem[]): ReactElement => {
-  if (resultItems.length === emptyResultItemCount) {
-    return <p className="px-4 py-6 text-sm text-zinc-500">{emptyResultText}</p>;
-  }
-
-  return <ul>{resultItems.map((item) => renderResultItem(item))}</ul>;
-};
 
 /**
  * Dedicated extension page向けBookmark CLI画面を描画します。
@@ -235,7 +108,7 @@ export const BookmarkCliScreen = (props: BookmarkCliScreenProps): ReactElement =
           </button>
         </form>
         <section className="mt-5 overflow-hidden rounded border border-zinc-800 bg-zinc-900/70">
-          {renderResultList(props.resultItems)}
+          <BookmarkCliResultList resultItems={props.resultItems} />
         </section>
       </section>
     </main>
