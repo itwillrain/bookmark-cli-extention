@@ -28,7 +28,7 @@ const documentationBasePath = "/bookmark-cli-extention";
 const isGitHubPagesBuild = process.env.GITHUB_ACTIONS === "true";
 
 /** Storybook の静的公開先パスです。 */
-const storybookCatalogPath = isGitHubPagesBuild ? `${documentationBasePath}/storybook/` : "/storybook/";
+const storybookCatalogPath = "/storybook/";
 
 /** Six テーマのフッター文言です。 */
 const footerText = "Designed for Bookmark CLI Extension.";

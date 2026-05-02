@@ -7,12 +7,14 @@
   "packageManager": "pnpm@10.30.0",
   "scripts": {
     "astro": "astro",
-    "build": "pnpm run check && astro build",
+    "build": "pnpm run storybook:build && pnpm run check && astro build && pnpm run storybook:copy",
     "check": "pnpm run lint:text && astro check",
     "dev": "astro dev",
     "lint:text": "textlint \"src/content/docs/**/*.md\"",
     "lint:text:fix": "textlint \"src/content/docs/**/*.md\" --fix",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "storybook:build": "pnpm --dir .. run storybook:build",
+    "storybook:copy": "mkdir -p dist/storybook && cp -R ../storybook-static/. dist/storybook/"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",

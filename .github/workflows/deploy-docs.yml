@@ -50,16 +50,8 @@ jobs:
       - name: Install docs dependencies
         run: pnpm --dir docs install --frozen-lockfile
 
-      - name: Build Storybook
-        run: pnpm run storybook:build
-
       - name: Build Starlight docs
         run: pnpm --dir docs run build
-
-      - name: Add Storybook to Pages artifact
-        run: |
-          mkdir -p docs/dist/storybook
-          cp -R storybook-static/. docs/dist/storybook/
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v4
