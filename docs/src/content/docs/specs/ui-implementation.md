@@ -214,6 +214,14 @@ Reactのlocal state、`useReducer`、custom hookで始めます。
 
 状態が複雑になった場合だけ、状態管理libraryを検討します。
 
+RxJSのようなstream libraryは、v1初期では導入しません。
+
+コマンド入力、候補補完、キーバインド、debounce、cancel、非同期実行状態が複雑になった時点で検討します。
+
+streamを導入する場合も、Domain層へ依存を持ち込みません。
+
+UI event streamはPresentation層に閉じ、Application層へはplain dataのcommandとして渡します。
+
 Command実行結果はApplication層のCommandResultを受け取り、Presentation層でview modelへ変換します。
 
 view modelはcomponentが直接使いやすい形にします。

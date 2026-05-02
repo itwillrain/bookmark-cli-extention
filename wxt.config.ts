@@ -18,9 +18,19 @@ const extensionName = "Bookmark CLI Extension";
 const extensionDescription = "Bookmark CLI browser extension built with WXT.";
 
 /**
+ * Dedicated extension pageを開くcommand名です。
+ */
+const openCliPageCommandName = "open-cli-page";
+
+/**
  * WXT に登録する module 名です。
  */
 const enabledModules = ["@wxt-dev/module-react"];
+
+/**
+ * Manifestへ追加する権限です。
+ */
+const manifestPermissions = ["bookmarks", "storage"];
 
 /**
  * Vite に追加する plugin 設定を組み立てます。
@@ -38,8 +48,17 @@ const createViteConfig = (): WxtViteConfig => ({
  */
 export default defineConfig({
   manifest: {
+    action: {
+      default_title: extensionName,
+    },
+    commands: {
+      [openCliPageCommandName]: {
+        description: "Open Bookmark CLI",
+      },
+    },
     description: extensionDescription,
     name: extensionName,
+    permissions: manifestPermissions,
   },
   modules: enabledModules,
   srcDir: sourceDirectory,

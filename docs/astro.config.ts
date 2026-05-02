@@ -27,6 +27,9 @@ const documentationBasePath = "/bookmark-cli-extention";
 /** GitHub Pages 向けのビルドかどうかです。 */
 const isGitHubPagesBuild = process.env.GITHUB_ACTIONS === "true";
 
+/** Storybook の静的公開先パスです。 */
+const storybookCatalogPath = isGitHubPagesBuild ? `${documentationBasePath}/storybook/` : "/storybook/";
+
 /** Six テーマのフッター文言です。 */
 const footerText = "Designed for Bookmark CLI Extension.";
 
@@ -71,6 +74,11 @@ export default defineConfig({
         starlightThemeSix({
           footerText,
           navLinks: [
+            {
+              attrs: { target: "_blank" },
+              label: "UIカタログ",
+              link: storybookCatalogPath,
+            },
             {
               attrs: { target: "_blank" },
               label: "GitHub",
