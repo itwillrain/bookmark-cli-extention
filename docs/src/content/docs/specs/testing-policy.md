@@ -15,9 +15,13 @@ Domain層の純粋関数にはテストを書きます。
 
 テストは仕様を固定するために書きます。
 
+Domain層はfunctional coreとして扱い、入力と出力の対応をテストします。
+
 不要な網羅ではなく、仕様上意味のあるケースだけを残します。
 
 Chrome API、DOM、storage、時刻、乱数へ直接依存する処理はDomain層に置きません。
+
+stream libraryを導入した場合も、Domain層のテストはplain dataの入出力を確認します。
 
 Application層はPortをmockしてuse caseの分岐を確認します。
 
@@ -70,6 +74,8 @@ Domain層はもっとも厚くテストします。
 
 外部APIのmockは使いません。
 
+`map`、`filter`、`flatMap`、`reduce` を使う場合でも、配列操作の実装詳細ではなく、変換結果をテストします。
+
 ## Application層
 
 Application層はuse caseの分岐を確認します。
@@ -118,6 +124,8 @@ Infrastructure層では複雑な分岐を持たせません。
 Presentation層はUIの状態変化を確認します。
 
 UI componentはStory Firstで作り、Storybook上で状態を確認してからentrypointへ組み込みます。
+
+RxJSのようなstream libraryを導入した場合は、streamそのものではなく、入力eventからview modelまたはCommandResultへ至る境界をテストします。
 
 対象は次のとおりです。
 
