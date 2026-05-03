@@ -12,6 +12,11 @@ const findCommandInput = "find stripe dashboard";
 const goCommandInput = "  go   /Work/Admin  ";
 
 /**
+ * Debug option付きFind commandの入力です。
+ */
+const findCommandWithDebugInput = "find --debug stripe dashboard";
+
+/**
  * Ls commandの入力です。
  */
 const listDirectoryCommandInput = "ls Work/Admin";
@@ -85,6 +90,7 @@ describe("parseBookmarkCommand search commands", (): void => {
    */
   it("parses find command with query", (): void => {
     expect(parseBookmarkCommand(findCommandInput)).toStrictEqual({
+      debug: false,
       kind: "find",
       query: "stripe dashboard",
     });
@@ -95,8 +101,20 @@ describe("parseBookmarkCommand search commands", (): void => {
    */
   it("parses go command with normalized whitespace", (): void => {
     expect(parseBookmarkCommand(goCommandInput)).toStrictEqual({
+      debug: false,
       kind: "go",
       query: "/Work/Admin",
+    });
+  });
+
+  /**
+   * Find commandのdebug optionを解析できることを検証します。
+   */
+  it("parses find command with debug option", (): void => {
+    expect(parseBookmarkCommand(findCommandWithDebugInput)).toStrictEqual({
+      debug: true,
+      kind: "find",
+      query: "stripe dashboard",
     });
   });
 });

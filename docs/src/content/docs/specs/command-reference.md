@@ -25,6 +25,8 @@ JSON出力は `--format json` で指定します。
 
 破壊的操作はpreviewまたは確認を挟みます。
 
+`rm` はUnix commandの操作感に寄せ、通常実行では対話確認を挟み、`-f` または `--force` で確認なしに削除します。
+
 ## コマンド一覧
 
 | コマンド | 目的                                   | v1   |
@@ -48,7 +50,7 @@ JSON出力は `--format json` で指定します。
 
 ## `go`
 
-Bookmarkをfuzzy検索し、もっとも一致したBookmarkを開きます。
+BookmarkとChrome履歴をfuzzy検索し、もっとも一致したURLを開きます。
 
 ```bash
 go <query>
@@ -60,15 +62,16 @@ go github pr
 go #prod admin
 ```
 
-候補が明確に1件へ絞れる場合は、そのBookmarkを開きます。
+候補が明確に1件へ絞れる場合は、そのURLを開きます。
 
+直前結果一覧のBookmarkまたはChrome履歴を開く場合は、`go 3` のように番号指定できます。
 候補が複数ある場合は、番号付き一覧を表示して選択を求めます。
 
 代表的なエラーは `not_found`、`chrome_bookmarks_failed`、`permission_denied` です。
 
 ## `find`
 
-Bookmarkをfuzzy検索し、候補一覧だけを表示します。
+BookmarkとChrome履歴をfuzzy検索し、候補一覧だけを表示します。
 
 ```bash
 find <query> [--format json]
@@ -81,10 +84,19 @@ find #finance stripe
 find "github.com" --format json
 ```
 
-検索対象はtitle、url、folder path、仮想タグです。
+検索対象はBookmarkのtitle、url、folder path、仮想タグと、Chrome履歴のtitle、urlです。
 
 `#` で始まるtokenは仮想タグとして扱います。
 
+Chrome履歴は仮想タグを持たないため、`#tag` 検索ではBookmarkだけを対象にします。
+
+BookmarkとChrome履歴に同じURLが存在する場合はBookmark resultとして表示し、Chrome履歴はscore補強にだけ使います。
+
+Bookmark化されていないChrome履歴は `HIST` resultとして表示します。
+
+通常の一覧では検索scoreを表示しません。
+
+検索scoreを確認したい場合は `--debug` を指定します。
 代表的なエラーは `not_found`、`chrome_bookmarks_failed` です。
 
 ## `mark`
@@ -194,16 +206,25 @@ tree Work --depth 3
 
 ## `help`
 
-コマンド一覧、または指定したコマンドの説明を表示します。
+コマンド一覧、または指定したコマンドや概念topicの説明を表示します。
 
 ```bash
 help [command]
+man <command>
+<command> --help
+<command> -h
 ```
 
 ```bash
 help
 help go
+help history
+man ls
+go --help
+ls -h
 ```
+
+`history` topicでは、Chrome履歴が `find` / `go` の検索候補として扱われること、`HIST` result、`#tag` 検索では履歴を含めないことを確認できます。
 
 代表的なエラーは `not_found` です。
 
@@ -302,19 +323,31 @@ mv "GitHub" Work/DevTools
 Bookmarkを削除します。
 
 ```bash
-rm <item> [--preview] [--yes]
+rm <item>
+rm -f <item>
+rm --force <item>
 ```
 
 ```bash
-rm 5 --preview
-rm 5 --yes
+rm 5
+rm -f 5
 ```
 
 v1ではfolder削除を扱いません。
 
-`--yes` がない場合は削除せず、previewを表示して `confirmation_required` を返します。
+`rm <item>` は対象を表示し、`Remove <title>? y/N` の確認待ちに入ります。
 
-代表的なエラーは `not_found`、`confirmation_required`、`permission_denied` です。
+確認待ちはcommand行とは別の新しいstatus output行に表示します。
+
+`rm` は直前の結果番号から対象を解決するため、削除対象のBookmark行を結果一覧として再表示しません。
+
+確認待ちの次の入力で `y` または `yes` を入力すると削除します。
+
+`n`、`no`、空入力、またはそれ以外の入力は削除せず確認待ちを解除します。
+
+`-f` または `--force` を指定した場合は確認なしで削除します。
+
+代表的なエラーは `not_found`、`permission_denied` です。
 
 ## `rename`
 

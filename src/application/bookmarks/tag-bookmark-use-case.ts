@@ -9,6 +9,7 @@ import {
   normalizeVirtualTags,
   removeVirtualTagsFromBookmark,
 } from "../../domain/tags/virtual-tag";
+import type { BookmarkCliEntry } from "../../domain/cli/bookmark-cli-entry";
 import type { BookmarkEntry } from "../../domain/bookmarks/bookmark-tree";
 import type { ExtensionState } from "../../domain/storage/extension-state";
 import { resolveEntryByResultNumber } from "../../domain/bookmarks/result-selection";
@@ -18,7 +19,7 @@ export interface TagBookmarkInput {
   /** 現在の拡張状態。 */
   readonly extensionState: ExtensionState;
   /** 直前結果一覧。 */
-  readonly lastResultEntries: readonly BookmarkEntry[];
+  readonly lastResultEntries: readonly BookmarkCliEntry[];
   /** 削除操作ならtrue。 */
   readonly remove: boolean;
   /** 仮想タグ入力一覧。 */
@@ -79,11 +80,11 @@ const createInvalidTagFailure = (): BookmarkCommandFailure => ({
 
 /**
  * EntryがBookmarkかを判定。
- * @param {BookmarkEntry} entry 判定対象entry。
+ * @param {BookmarkCliEntry} entry 判定対象entry。
  * @returns {boolean} Bookmarkならtrue。
  */
 const isBookmarkEntry = (
-  entry: BookmarkEntry,
+  entry: BookmarkCliEntry,
 ): entry is BookmarkEntry & { readonly kind: "bookmark"; readonly url: string } =>
   entry.kind === "bookmark" && typeof entry.url === "string";
 

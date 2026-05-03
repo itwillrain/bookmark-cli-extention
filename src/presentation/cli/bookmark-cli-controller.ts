@@ -1,3 +1,5 @@
+/* oxlint-disable max-lines -- Parsed command executor mapをCLI controllerの境界に集約するため。 */
+
 import type {
   BookmarkCliCommandDependencies,
   BookmarkCliCommandState,
@@ -11,8 +13,10 @@ import {
   executeEmptyCommand,
   executeFindCommand,
   executeGoCommand,
+  executeHelpCommand,
   executeListDirectoryCommand,
   executeMarkCommand,
+  executePendingConfirmationCommand,
   executePrintWorkingDirectoryCommand,
   executeShowDirectoryTreeCommand,
   executeTagCommand,
@@ -110,6 +114,25 @@ const executeParsedGoCommand = async (
   }
 
   await Promise.resolve();
+
+  return executeEmptyCommand(dependencies);
+};
+
+/**
+ * Help command executor adapterです。
+ * @param {ParsedBookmarkCommand} command Parsed commandです。
+ * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存です。
+ * @returns {Promise<BookmarkCliCommandState>} 画面に反映する状態です。
+ */
+const executeParsedHelpCommand = async (
+  command: ParsedBookmarkCommand,
+  dependencies: BookmarkCliCommandDependencies,
+): Promise<BookmarkCliCommandState> => {
+  await Promise.resolve();
+
+  if (command.kind === "help") {
+    return executeHelpCommand(command, dependencies);
+  }
 
   return executeEmptyCommand(dependencies);
 };
@@ -245,6 +268,7 @@ const parsedBookmarkCommandExecutors = {
   find: executeParsedFindCommand,
   freq: executeParsedUsageCommand,
   go: executeParsedGoCommand,
+  help: executeParsedHelpCommand,
   ls: executeParsedListDirectoryCommand,
   mark: executeParsedMarkCommand,
   mkdir: executeParsedOrganizeCommand,
@@ -277,6 +301,10 @@ export const executeBookmarkCliCommand = async (
   input: string,
   dependencies: BookmarkCliCommandDependencies,
 ): Promise<BookmarkCliCommandState> => {
+  if (dependencies.pendingConfirmation) {
+    return executePendingConfirmationCommand(input, dependencies);
+  }
+
   const command = parseBookmarkCommand(input);
   const executor = getParsedBookmarkCommandExecutor(command);
   const state = await executor(command, dependencies);

@@ -63,6 +63,20 @@ describe("createBookmarkCliResultItems", (): void => {
       {
         folderPath: "/Work/Admin",
         kind: "bookmark",
+        title: "Stripe Dashboard",
+        url: "https://dashboard.stripe.com/",
+      },
+    ]);
+  });
+
+  /**
+   * Debug option指定時だけscoreを画面表示itemへ含めることを検証します。
+   */
+  it("includes score when debug option is enabled", (): void => {
+    expect(createBookmarkCliResultItems([stripeSearchResult], { debug: true })).toStrictEqual([
+      {
+        folderPath: "/Work/Admin",
+        kind: "bookmark",
         score: 0.98,
         title: "Stripe Dashboard",
         url: "https://dashboard.stripe.com/",

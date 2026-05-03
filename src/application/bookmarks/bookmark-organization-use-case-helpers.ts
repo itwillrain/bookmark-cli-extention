@@ -4,6 +4,7 @@ import type {
   BookmarkCommandSuccess,
 } from "./bookmark-use-cases";
 import type { BookmarkEntry, BookmarkTree } from "../../domain/bookmarks/bookmark-tree";
+import type { BookmarkCliEntry } from "../../domain/cli/bookmark-cli-entry";
 import type { BookmarkOrganizationPreview } from "../../domain/bookmarks/bookmark-organization-preview";
 import type { CurrentDirectory } from "../../domain/bookmarks/current-directory";
 import type { OrganizeBookmarkValue } from "./bookmark-organization-use-case-types";
@@ -83,10 +84,11 @@ export const createConfirmationRequiredFailure = (
 
 /**
  * EntryがBookmarkかを判定。
- * @param {BookmarkEntry} entry 判定対象entry。
+ * @param {BookmarkCliEntry} entry 判定対象entry。
  * @returns {boolean} Bookmarkならtrue。
  */
-const isBookmarkEntry = (entry: BookmarkEntry): boolean => entry.kind === "bookmark";
+const isBookmarkEntry = (entry: BookmarkCliEntry): entry is BookmarkEntry =>
+  entry.kind === "bookmark";
 
 /**
  * Bookmark Treeからfolder pathに対応するfolder IDを取得。
@@ -124,12 +126,12 @@ export const getFolderName = (folderPath: CurrentDirectory): string => {
 
 /**
  * 直前結果番号からBookmarkを解決。
- * @param {readonly BookmarkEntry[]} lastResultEntries 直前結果一覧。
+ * @param {readonly BookmarkCliEntry[]} lastResultEntries 直前結果一覧。
  * @param {string} targetInput 対象番号入力。
  * @returns {BookmarkCommandResult<BookmarkEntry>} Bookmark解決結果。
  */
 export const resolveTargetBookmark = (
-  lastResultEntries: readonly BookmarkEntry[],
+  lastResultEntries: readonly BookmarkCliEntry[],
   targetInput: string,
 ): BookmarkCommandResult<BookmarkEntry> => {
   const resolution = resolveEntryByResultNumber(lastResultEntries, targetInput);

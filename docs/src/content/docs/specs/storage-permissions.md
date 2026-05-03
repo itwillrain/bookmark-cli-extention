@@ -190,15 +190,21 @@ CLI起動元タブのURLまたはtitleを取得できない場合は `unsupporte
 
 ## 必要な権限
 
-v1の必須権限は `bookmarks`、`storage`、`activeTab` です。
+v1の必須権限は `bookmarks`、`history`、`storage`、`activeTab`、`favicon` です。
 
 ```json
 {
-  "permissions": ["bookmarks", "storage", "activeTab"]
+  "permissions": ["bookmarks", "history", "storage", "activeTab", "favicon"]
 }
 ```
 
 `bookmarks` はChrome Bookmark Managerの読み取り、追加、更新、移動、削除に使います。
+
+`history` はChrome履歴を読み取り、`find` と `go` の候補へ含めるために使います。
+
+Chrome履歴は読み取り専用で扱い、履歴の追加、削除、変更は行いません。
+
+Chrome History APIの `history.search()` は `startTime` を省略すると既定で直近24時間だけを対象にするため、疑似CLIでは `startTime: 0` を明示して検索対象を全期間にします。
 
 `storage` は拡張機能側の設定、コマンド履歴、仮想タグ、利用統計を保存するために使います。
 
@@ -230,10 +236,6 @@ hot keyは `commands` manifest keyで定義します。
 
 現在タブのtitleやurlが必要な場面は、ユーザー操作に紐づく `activeTab` で扱います。
 
-`history` はv1では要求しません。
-
-Chrome履歴統合は後続未定として扱います。
-
 `host_permissions` はv1では要求しません。
 
 Webページ上へcontent scriptを注入しないためです。
@@ -264,6 +266,7 @@ Chrome Bookmark Manager側のBookmarkやfolderは削除しません。
 
 - [Chrome Extensions Storage API](https://developer.chrome.com/docs/extensions/reference/api/storage)
 - [Chrome Extensions Bookmarks API](https://developer.chrome.com/docs/extensions/reference/api/bookmarks)
+- [Chrome Extensions History API](https://developer.chrome.com/docs/extensions/reference/api/history)
 - [Chrome Extensions activeTab](https://developer.chrome.com/docs/extensions/activeTab)
 - [Chrome Extensions Permissions](https://developer.chrome.com/docs/extensions/reference/permissions-list)
 - [Chrome Extensions Declare permissions](https://developer.chrome.com/docs/extensions/develop/concepts/declare-permissions)

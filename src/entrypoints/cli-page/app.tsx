@@ -1,3 +1,5 @@
+/* oxlint-disable max-lines -- App componentはChrome adapterとCLI state接続の境界として依存を集約するため。 */
+
 import {
   type BookmarkCliCommandDependencies,
   type BookmarkCliCommandState,
@@ -18,6 +20,7 @@ import {
 import { BookmarkCliAppScreen } from "./bookmark-cli-app-screen";
 import type { LaunchContext } from "../../application/bookmarks/mark-bookmark-use-case";
 import { createChromeExtensionStateStorage } from "../../infrastructure/chrome/extension-state-storage-adapter";
+import { createChromeHistoryRepository } from "../../infrastructure/chrome/history-adapter";
 import { createChromeLaunchContextStorage } from "../../infrastructure/chrome/launch-context-storage-adapter";
 import { createCurrentCommandExecutor } from "./current-command-executor";
 import { createInitialExtensionState } from "../../domain/storage/extension-state";
@@ -66,6 +69,11 @@ const bookmarkOrganizer = createChromeBookmarkOrganizer(browser.bookmarks);
  * Chrome Tabs APIを使うopenerです。
  */
 const bookmarkOpener = createChromeBookmarkOpener(browser.tabs);
+
+/**
+ * Chrome History APIを使うhistory repositoryです。
+ */
+const historyRepository = createChromeHistoryRepository(browser.history);
 
 /**
  * Chrome Storage APIを使う拡張状態storage。
@@ -131,6 +139,7 @@ const createCommandDependencies = (
     creator: bookmarkCreator,
     currentDirectory: commandState.currentDirectory,
     extensionState: commandState.extensionState,
+    historyRepository,
     lastResultEntries: commandState.lastResultEntries,
     now: nowIsoString,
     opener: bookmarkOpener,
@@ -139,12 +148,28 @@ const createCommandDependencies = (
   } satisfies BookmarkCliCommandDependencies;
 
   if (!launchContext) {
-    return dependencies;
+    if (!commandState.pendingConfirmation) {
+      return dependencies;
+    }
+
+    return {
+      ...dependencies,
+      pendingConfirmation: commandState.pendingConfirmation,
+    };
+  }
+
+  const dependenciesWithLaunchContext = {
+    ...dependencies,
+    launchContext,
+  };
+
+  if (!commandState.pendingConfirmation) {
+    return dependenciesWithLaunchContext;
   }
 
   return {
-    ...dependencies,
-    launchContext,
+    ...dependenciesWithLaunchContext,
+    pendingConfirmation: commandState.pendingConfirmation,
   };
 };
 

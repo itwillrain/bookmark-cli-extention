@@ -38,6 +38,7 @@ mark "Production Admin"
 ## v1スコープ
 
 - title、url、folder pathによるfuzzy検索
+- Chrome履歴を含めたURL再訪検索
 - 検索結果からのBookmark起動
 - 現在のタブを指定したディレクトリへ保存
 - Bookmark Treeの一覧表示とディレクトリ移動
@@ -58,7 +59,6 @@ mark "Production Admin"
 - JSONエクスポート
 - インポート
 - preview付きの一括整理
-- Chrome履歴統合
 - OSターミナルから利用できるローカルCLI
 
 ## 非スコープ
@@ -70,7 +70,7 @@ mark "Production Admin"
 ## 成功条件
 
 - 拡張機能内の疑似CLIからChromeのBookmark Treeを読める
-- `go` と `find` の検索結果がChrome Bookmark Managerの内容と一致する
+- `go` と `find` の検索結果がChrome Bookmark ManagerとChrome履歴の内容を反映する
 - `mark` で現在のタブを現在のディレクトリへ保存できる
 - 書き込み操作はpreviewまたは確認を通してから実行される
 - ドメインロジックは純粋関数として切り出され、テストで保証される

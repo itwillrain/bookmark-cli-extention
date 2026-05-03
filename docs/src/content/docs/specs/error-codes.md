@@ -47,7 +47,7 @@ JSON出力では `ok: false` と `error.code` を返します。
 | `already_exists`          | 同じ親folderに同名のfolderが存在する      | `mkdir`                                         |
 | `unsupported_tab`         | CLI起動元タブをBookmarkとして保存できない | `mark`, `tag current`                           |
 | `invalid_argument`        | 引数の形や組み合わせが不正                | 全コマンド                                      |
-| `confirmation_required`   | 破壊的操作の確認が不足している            | `mv`, `rm`, `rename`                            |
+| `confirmation_required`   | 破壊的操作の確認が不足している            | `mv`, `rename`                                  |
 | `permission_denied`       | Chrome APIの権限が不足している            | 書き込み系                                      |
 | `chrome_bookmarks_failed` | Chrome Bookmarks APIの呼び出しに失敗した  | Bookmark操作全般                                |
 | `storage_failed`          | `chrome.storage` の読み書きに失敗した     | 状態保存、仮想タグ、利用統計                    |
@@ -65,7 +65,7 @@ JSON出力では `ok: false` と `error.code` を返します。
 ```bash
 go unknown-keyword
 cd 99
-rm 99 --yes
+rm -f 99
 ```
 
 ## `folder_not_found`
@@ -136,10 +136,11 @@ rename 3
 
 破壊的操作に確認が必要な場合に返します。
 
-v1では `rm`、`mv`、`rename` で使います。
+v1では `mv`、`rename` で使います。
+
+`rm` は `confirmation_required` を返さず、通常実行ではCLI上の確認待ち状態に入ります。
 
 ```bash
-rm 5
 mv 3 Archive
 rename 3 "GitHub Pull Requests"
 ```
@@ -148,7 +149,7 @@ rename 3 "GitHub Pull Requests"
 
 `--yes` は確認を省略して実行します。
 
-`rm` は `--yes` がない場合、削除せず `confirmation_required` を返します。
+`rm` は `-f` または `--force` で確認なしに削除します。
 
 ## `permission_denied`
 

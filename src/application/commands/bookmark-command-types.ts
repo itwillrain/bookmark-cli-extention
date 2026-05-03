@@ -1,3 +1,5 @@
+/* oxlint-disable max-lines -- Command AST型の集約地点としてunionを同じfileに保つため。 */
+
 import type {
   FrequentBookmarksCommand,
   RecentBookmarksCommand,
@@ -13,6 +15,10 @@ export type {
  */
 export interface FindBookmarkCommand {
   /**
+   * Debug情報を表示するかです。
+   */
+  readonly debug: boolean;
+  /**
    * Command種別です。
    */
   readonly kind: "find";
@@ -26,6 +32,10 @@ export interface FindBookmarkCommand {
  * Go commandです。
  */
 export interface GoBookmarkCommand {
+  /**
+   * Debug情報を表示するかです。
+   */
+  readonly debug: boolean;
   /**
    * Command種別です。
    */
@@ -189,21 +199,17 @@ export interface MoveBookmarkCommand {
  */
 export interface RemoveBookmarkCommand {
   /**
+   * 確認なしで削除するかです。
+   */
+  readonly force: boolean;
+  /**
    * Command種別です。
    */
   readonly kind: "rm";
   /**
-   * Previewだけ表示するかです。
-   */
-  readonly preview: boolean;
-  /**
    * 対象の直前結果番号です。
    */
   readonly targetInput: string;
-  /**
-   * 確認済みとして実行するかです。
-   */
-  readonly yes: boolean;
 }
 
 /**
@@ -243,6 +249,20 @@ export interface EmptyBookmarkCommand {
 }
 
 /**
+ * Help表示commandです。
+ */
+export interface HelpBookmarkCommand {
+  /**
+   * Command種別です。
+   */
+  readonly kind: "help";
+  /**
+   * Help対象command名です。空文字の場合はtopic一覧を表示します。
+   */
+  readonly topicInput: string;
+}
+
+/**
  * 未対応commandです。
  */
 export interface UnknownBookmarkCommand {
@@ -268,6 +288,7 @@ export type ParsedBookmarkCommand =
   | EmptyBookmarkCommand
   | FindBookmarkCommand
   | GoBookmarkCommand
+  | HelpBookmarkCommand
   | ListDirectoryCommand
   | MakeDirectoryCommand
   | MarkBookmarkCommand
