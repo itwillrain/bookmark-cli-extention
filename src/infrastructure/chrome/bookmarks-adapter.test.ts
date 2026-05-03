@@ -1,7 +1,9 @@
 import {
+  type ChromeBookmarkCreateProperties,
   type ChromeBookmarksApi,
   type ChromeTabCreateProperties,
   type ChromeTabsApi,
+  createChromeBookmarkCreator,
   createChromeBookmarkOpener,
   createChromeBookmarkRepository,
 } from "./bookmarks-adapter";
@@ -63,6 +65,20 @@ interface RecordingTabsApi {
 }
 
 /**
+ * Chrome Bookmarks APIの記録fixtureです。
+ */
+interface RecordingBookmarksApi {
+  /**
+   * 作成されたbookmarkの入力一覧です。
+   */
+  readonly createdBookmarks: readonly ChromeBookmarkCreateProperties[];
+  /**
+   * Chrome Bookmarks API fixtureです。
+   */
+  readonly bookmarksApi: ChromeBookmarksApi;
+}
+
+/**
  * Bookmark tree node fixtureを返します。
  * @returns {Promise<readonly RawBookmarkTreeNode[]>} Bookmark tree node fixtureです。
  */
@@ -73,12 +89,102 @@ const getTreeFixture = async (): Promise<readonly RawBookmarkTreeNode[]> => {
 };
 
 /**
+ * 作成済みBookmark node fixtureを返します。
+ * @returns {Promise<RawBookmarkTreeNode>} 作成済みBookmark node fixtureです。
+ */
+const createBookmarkFixture = async (): Promise<RawBookmarkTreeNode> => {
+  await Promise.resolve();
+
+  return {
+    id: "100",
+    parentId: "10",
+    title: "Created",
+    url: targetUrl,
+  };
+};
+
+/**
+ * Chrome Bookmark作成結果nodeを作ります。
+ * @param {ChromeBookmarkCreateProperties} createProperties Bookmark作成入力です。
+ * @returns {RawBookmarkTreeNode} 作成結果nodeです。
+ */
+const createCreatedBookmarkNode = (
+  createProperties: ChromeBookmarkCreateProperties,
+): RawBookmarkTreeNode => {
+  const nodeBase = {
+    id: "100",
+    title: createProperties.title,
+  };
+  const node = nodeBase satisfies RawBookmarkTreeNode;
+
+  if (typeof createProperties.url !== "string") {
+    return node;
+  }
+
+  return {
+    ...node,
+    url: createProperties.url,
+  };
+};
+
+/**
+ * Chrome Bookmark nodeへparent IDを追加します。
+ * @param {RawBookmarkTreeNode} node Chrome Bookmark nodeです。
+ * @param {ChromeBookmarkCreateProperties} createProperties Bookmark作成入力です。
+ * @returns {RawBookmarkTreeNode} parent ID付きBookmark nodeです。
+ */
+const addParentIdToNode = (
+  node: RawBookmarkTreeNode,
+  createProperties: ChromeBookmarkCreateProperties,
+): RawBookmarkTreeNode => {
+  if (typeof createProperties.parentId !== "string") {
+    return node;
+  }
+
+  return {
+    ...node,
+    parentId: createProperties.parentId,
+  };
+};
+
+/**
  * Chrome Bookmarks API fixtureを作ります。
  * @returns {ChromeBookmarksApi} Chrome Bookmarks API fixtureです。
  */
 const createBookmarksApi = (): ChromeBookmarksApi => ({
+  create: createBookmarkFixture,
   getTree: getTreeFixture,
 });
+
+/**
+ * Bookmark作成入力を記録するChrome Bookmarks API fixtureを作ります。
+ * @returns {RecordingBookmarksApi} Chrome Bookmarks API fixtureです。
+ */
+const createRecordingBookmarksApi = (): RecordingBookmarksApi => {
+  const createdBookmarks: ChromeBookmarkCreateProperties[] = [];
+
+  /**
+   * Bookmark作成入力を記録します。
+   * @param {ChromeBookmarkCreateProperties} createProperties Bookmark作成入力です。
+   * @returns {Promise<RawBookmarkTreeNode>} 作成済みBookmark nodeです。
+   */
+  const create = async (
+    createProperties: ChromeBookmarkCreateProperties,
+  ): Promise<RawBookmarkTreeNode> => {
+    createdBookmarks.push(createProperties);
+    await Promise.resolve();
+
+    return addParentIdToNode(createCreatedBookmarkNode(createProperties), createProperties);
+  };
+
+  return {
+    bookmarksApi: {
+      create,
+      getTree: getTreeFixture,
+    },
+    createdBookmarks,
+  };
+};
 
 /**
  * Tab作成入力を記録するChrome Tabs API fixtureを作ります。
@@ -117,6 +223,39 @@ describe("createChromeBookmarkRepository", (): void => {
     expect(bookmarkTree.bookmarks).toHaveLength(expectedBookmarkCount);
     expect(bookmarkTree.bookmarks[firstBookmarkIndex]?.folderPath).toBe("/Work");
     expect(bookmarkTree.bookmarks[firstBookmarkIndex]?.title).toBe("Stripe Dashboard");
+  });
+});
+
+/**
+ * Chrome Bookmark creator adapterのテストスイートです。
+ */
+describe("createChromeBookmarkCreator", (): void => {
+  /**
+   * Chrome Bookmarks APIでBookmarkを作成できることを検証します。
+   */
+  it("creates bookmark through Chrome Bookmarks API", async (): Promise<void> => {
+    const recordingBookmarksApi = createRecordingBookmarksApi();
+    const creator = createChromeBookmarkCreator(recordingBookmarksApi.bookmarksApi);
+
+    const entry = await creator.createBookmark({
+      parentId: "10",
+      title: "Stripe Dashboard",
+      url: targetUrl,
+    });
+
+    expect(recordingBookmarksApi.createdBookmarks).toStrictEqual([
+      {
+        parentId: "10",
+        title: "Stripe Dashboard",
+        url: targetUrl,
+      },
+    ]);
+    expect(entry).toMatchObject({
+      id: "100",
+      parentId: "10",
+      title: "Stripe Dashboard",
+      url: targetUrl,
+    });
   });
 });
 

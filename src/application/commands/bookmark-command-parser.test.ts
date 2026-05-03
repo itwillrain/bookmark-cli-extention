@@ -12,6 +12,56 @@ const findCommandInput = "find stripe dashboard";
 const goCommandInput = "  go   /Work/Admin  ";
 
 /**
+ * Ls commandの入力です。
+ */
+const listDirectoryCommandInput = "ls Work/Admin";
+
+/**
+ * Cd commandの入力です。
+ */
+const changeDirectoryCommandInput = "cd ../Research";
+
+/**
+ * Pwd commandの入力です。
+ */
+const printWorkingDirectoryCommandInput = "pwd";
+
+/**
+ * Tree commandの入力です。
+ */
+const showDirectoryTreeCommandInput = "tree Work --depth 3";
+
+/**
+ * Mark commandの入力です。
+ */
+const markBookmarkCommandInput = 'mark "Production Admin" --to Work/Admin --allow-duplicate';
+
+/**
+ * Mark commandの保存先だけを指定する入力です。
+ */
+const markBookmarkToDirectoryCommandInput = "mark --to Work/Admin";
+
+/**
+ * Tag commandの入力です。
+ */
+const tagBookmarkCommandInput = "tag 3 prod finance";
+
+/**
+ * Tag remove commandの入力です。
+ */
+const removeTagBookmarkCommandInput = "tag 3 --remove prod";
+
+/**
+ * Depth指定だけのTree command入力です。
+ */
+const showCurrentDirectoryTreeCommandInput = "tree --depth 3";
+
+/**
+ * Tree commandのdepth期待値です。
+ */
+const expectedTreeDepth = 3;
+
+/**
  * 未対応commandの入力です。
  */
 const unknownCommandInput = "open stripe";
@@ -22,9 +72,9 @@ const unknownCommandInput = "open stripe";
 const emptyCommandInput = "   ";
 
 /**
- * Bookmark command parserの正常系テストスイートです。
+ * Bookmark検索系command parserの正常系テストスイートです。
  */
-describe("parseBookmarkCommand valid input", (): void => {
+describe("parseBookmarkCommand search commands", (): void => {
   /**
    * Find commandをquery付きで解析できることを検証します。
    */
@@ -42,6 +92,125 @@ describe("parseBookmarkCommand valid input", (): void => {
     expect(parseBookmarkCommand(goCommandInput)).toStrictEqual({
       kind: "go",
       query: "/Work/Admin",
+    });
+  });
+});
+
+/**
+ * Bookmark directory系command parserの正常系テストスイートです。
+ */
+describe("parseBookmarkCommand directory commands", (): void => {
+  /**
+   * Ls commandをpath付きで解析できることを検証します。
+   */
+  it("parses ls command with path", (): void => {
+    expect(parseBookmarkCommand(listDirectoryCommandInput)).toStrictEqual({
+      kind: "ls",
+      pathInput: "Work/Admin",
+    });
+  });
+
+  /**
+   * Cd commandをpath付きで解析できることを検証します。
+   */
+  it("parses cd command with path", (): void => {
+    expect(parseBookmarkCommand(changeDirectoryCommandInput)).toStrictEqual({
+      kind: "cd",
+      pathInput: "../Research",
+    });
+  });
+
+  /**
+   * Pwd commandを解析できることを検証します。
+   */
+  it("parses pwd command", (): void => {
+    expect(parseBookmarkCommand(printWorkingDirectoryCommandInput)).toStrictEqual({
+      kind: "pwd",
+    });
+  });
+});
+
+/**
+ * Bookmark tree command parserの正常系テストスイートです。
+ */
+describe("parseBookmarkCommand tree commands", (): void => {
+  /**
+   * Tree commandをpathとdepth付きで解析できることを検証します。
+   */
+  it("parses tree command with path and depth", (): void => {
+    expect(parseBookmarkCommand(showDirectoryTreeCommandInput)).toStrictEqual({
+      depth: expectedTreeDepth,
+      kind: "tree",
+      pathInput: "Work",
+    });
+  });
+
+  /**
+   * Tree commandをdepthだけで解析できることを検証します。
+   */
+  it("parses tree command with depth only", (): void => {
+    expect(parseBookmarkCommand(showCurrentDirectoryTreeCommandInput)).toStrictEqual({
+      depth: expectedTreeDepth,
+      kind: "tree",
+      pathInput: "",
+    });
+  });
+});
+
+/**
+ * Bookmark保存command parserの正常系テストスイートです。
+ */
+describe("parseBookmarkCommand mark commands", (): void => {
+  /**
+   * Mark commandをtitle、保存先、重複許可付きで解析できることを検証します。
+   */
+  it("parses mark command with title and options", (): void => {
+    expect(parseBookmarkCommand(markBookmarkCommandInput)).toStrictEqual({
+      allowDuplicate: true,
+      kind: "mark",
+      targetFolderPathInput: "Work/Admin",
+      titleInput: "Production Admin",
+    });
+  });
+
+  /**
+   * Mark commandを保存先だけで解析できることを検証します。
+   */
+  it("parses mark command with target folder only", (): void => {
+    expect(parseBookmarkCommand(markBookmarkToDirectoryCommandInput)).toStrictEqual({
+      allowDuplicate: false,
+      kind: "mark",
+      targetFolderPathInput: "Work/Admin",
+      titleInput: "",
+    });
+  });
+});
+
+/**
+ * Bookmark仮想タグcommand parserの正常系テストスイートです。
+ */
+describe("parseBookmarkCommand tag commands", (): void => {
+  /**
+   * Tag commandを対象番号とtag一覧付きで解析できることを検証します。
+   */
+  it("parses tag command with result number and tags", (): void => {
+    expect(parseBookmarkCommand(tagBookmarkCommandInput)).toStrictEqual({
+      kind: "tag",
+      remove: false,
+      tagInputs: ["prod", "finance"],
+      targetInput: "3",
+    });
+  });
+
+  /**
+   * Tag remove commandを解析できることを検証します。
+   */
+  it("parses tag remove command", (): void => {
+    expect(parseBookmarkCommand(removeTagBookmarkCommandInput)).toStrictEqual({
+      kind: "tag",
+      remove: true,
+      tagInputs: ["prod"],
+      targetInput: "3",
     });
   });
 });

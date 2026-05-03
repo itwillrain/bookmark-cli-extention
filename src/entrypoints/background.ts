@@ -1,3 +1,6 @@
+import type { LaunchContext } from "../application/bookmarks/mark-bookmark-use-case";
+import { createChromeLaunchContextStorage } from "../infrastructure/chrome/launch-context-storage-adapter";
+
 /**
  * Dedicated extension pageのpathです。
  */
@@ -9,16 +12,98 @@ const cliPagePath = "/cli-page.html";
 const openCliPageCommandName = "open-cli-page";
 
 /**
+ * 先頭tab indexです。
+ */
+const firstTabIndex = 0;
+
+/**
+ * Launch context storageです。
+ */
+const launchContextStorage = createChromeLaunchContextStorage(browser.storage.session);
+
+/**
+ * Launch context生成に使うtabの最小shapeです。
+ */
+interface LaunchContextSourceTab {
+  /**
+   * Tab IDです。
+   */
+  readonly id?: number | undefined;
+  /**
+   * Tab titleです。
+   */
+  readonly title?: string | undefined;
+  /**
+   * Tab URLです。
+   */
+  readonly url?: string | undefined;
+}
+
+/** LaunchContext生成成功結果。 */
+interface LaunchContextResolutionSuccess {
+  /** 生成成功。 */
+  readonly ok: true;
+  /** LaunchContext。 */
+  readonly value: LaunchContext;
+}
+
+/** LaunchContext生成失敗結果。 */
+interface LaunchContextResolutionFailure {
+  /** 生成失敗。 */
+  readonly ok: false;
+}
+
+/** LaunchContext生成結果。 */
+type LaunchContextResolution = LaunchContextResolutionFailure | LaunchContextResolutionSuccess;
+
+/** LaunchContext生成失敗結果。 */
+const launchContextResolutionFailure = { ok: false } satisfies LaunchContextResolutionFailure;
+
+/**
  * Dedicated extension pageのURLを作ります。
  * @returns {string} Dedicated extension pageのURLです。
  */
 const createCliPageUrl = (): string => browser.runtime.getURL(cliPagePath);
 
 /**
+ * TabからLaunchContextを作ります。
+ * @param {LaunchContextSourceTab | undefined} tab 起動元tabです。
+ * @returns {LaunchContextResolution} LaunchContext生成結果です。
+ */
+const createLaunchContext = (tab: LaunchContextSourceTab | undefined): LaunchContextResolution => {
+  if (typeof tab?.id !== "number" || typeof tab.title !== "string" || typeof tab.url !== "string") {
+    return launchContextResolutionFailure;
+  }
+
+  return {
+    ok: true,
+    value: {
+      tabId: tab.id,
+      title: tab.title,
+      url: tab.url,
+    },
+  };
+};
+
+/**
+ * 現在activeなtabをLaunchContextとして保存します。
+ * @returns {Promise<void>} 保存完了Promiseです。
+ */
+const saveActiveLaunchContext = async (): Promise<void> => {
+  const tabs = await browser.tabs.query({ active: true, currentWindow: true });
+  const launchContext = createLaunchContext(tabs[firstTabIndex]);
+
+  if (launchContext.ok) {
+    await launchContextStorage.writeLaunchContext(launchContext.value);
+  }
+};
+
+/**
  * Dedicated extension pageを新しいtabで開きます。
  * @returns {Promise<void>} Tab作成完了を表すPromiseです。
  */
 const openCliPage = async (): Promise<void> => {
+  await saveActiveLaunchContext();
   await browser.tabs.create({ url: createCliPageUrl() });
 };
 
