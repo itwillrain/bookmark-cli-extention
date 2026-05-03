@@ -37,7 +37,7 @@ migrationは拡張機能側の保存データだけを対象にし、Chrome Book
 
 Bookmark IDは端末間で同じとは限らず、`storage.sync` に同期すると仮想タグや利用統計が別端末のBookmarkへ誤って紐づく可能性があるためです。
 
-直前の結果一覧やpreview確認中の状態は、画面内メモリまたは `chrome.storage.session` に保持します。
+直前の結果一覧やpreview表示は、画面内メモリまたは `chrome.storage.session` に保持します。
 
 これらの一時データは、ブラウザ再起動、拡張のreload、Dedicated extension pageの再作成で失われてよいものとして扱います。
 
