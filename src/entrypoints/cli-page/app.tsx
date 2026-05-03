@@ -16,10 +16,10 @@ import {
 } from "../../application/storage/extension-state-use-cases";
 import { BookmarkCliAppScreen } from "./bookmark-cli-app-screen";
 import type { LaunchContext } from "../../application/bookmarks/mark-bookmark-use-case";
+import { createAppCommandRuntime } from "./app-command-runtime";
 import { createChromeExtensionStateStorage } from "../../infrastructure/chrome/extension-state-storage-adapter";
 import { createChromeLaunchContextStorage } from "../../infrastructure/chrome/launch-context-storage-adapter";
 import { createCommandExecutionErrorHandler } from "./app-command-handlers";
-import { createCurrentSubmitCommand } from "./current-command-submit-handler";
 import { createInitialExtensionState } from "../../domain/storage/extension-state";
 import { currentDirectoryRoot } from "../../domain/bookmarks/current-directory";
 import { useBookmarkCliAppKeyboard } from "./use-bookmark-cli-app-keyboard";
@@ -236,19 +236,13 @@ const restoreInitialStates = (
  * Dedicated extension pageのReact appです。
  * @returns {ReactElement} Dedicated extension pageのReact elementです。
  */
+// oxlint-disable-next-line max-lines-per-function -- App componentはhooksと画面接続の境界としてpropsを集約するため。
 export const App = (): ReactElement => {
   const [inputValue, setInputValue] = useState(initialInputValue);
   const [launchContext, setLaunchContext] = useState<LaunchContext>();
   const [commandState, setCommandState] = useState<BookmarkCliCommandState>(initialCommandState);
   const cursors = useBookmarkCliCursorState();
   const transcript = useBookmarkCliTranscript();
-  const keyboardState = useBookmarkCliAppKeyboard({
-    commandState,
-    cursors,
-    inputValue,
-    repository: bookmarkRepository,
-    setInputValue,
-  });
 
   const handleCommandExecutionError = createCommandExecutionErrorHandler(
     setCommandState,
@@ -259,9 +253,7 @@ export const App = (): ReactElement => {
     restoreInitialStates(setCommandState, setLaunchContext, handleCommandExecutionError);
   }, []);
 
-  const submitCommand = createCurrentSubmitCommand({
-    appendExecutedCommand: transcript.appendExecutedCommand,
-    clearExecutedCommands: transcript.clearExecutedCommands,
+  const commandRuntime = createAppCommandRuntime({
     commandState,
     createEntryId: nowIsoString,
     executeAndPersistCommand,
@@ -271,13 +263,24 @@ export const App = (): ReactElement => {
     setCommandState,
     setInputValue,
     setSelectedResultIndex: cursors.setSelectedResultIndex,
+    transcript,
   });
+  const keyboardState = useBookmarkCliAppKeyboard({
+    commandState,
+    cursors,
+    executeInputValue: commandRuntime.executeInputValue,
+    handleCommandExecutionError,
+    inputValue,
+    repository: bookmarkRepository,
+    setInputValue,
+  });
+
   return (
     <BookmarkCliAppScreen
       commandState={commandState}
       inputValue={inputValue}
       keyboard={keyboardState.keyboard}
-      onSubmit={submitCommand}
+      onSubmit={commandRuntime.submitCommand}
       selectedResultIndex={cursors.selectedResultIndex}
       selectedSuggestionIndex={cursors.selectedSuggestionIndex}
       setInputValue={setInputValue}

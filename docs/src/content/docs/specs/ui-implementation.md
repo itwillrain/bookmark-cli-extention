@@ -292,11 +292,17 @@ Command suggestionはfish shellの補完に近い操作感を目指します。
 
 空のpromptではcandidate listを表示せず、command名を入力し始めたタイミングでprefixに一致するcandidate listを表示します。
 
-現在のprompt直下にfloating候補を表示し、`Tab` で候補選択を進め、`Enter` で選択中候補を入力へ確定します。
+現在のprompt直下にfloating候補を表示し、`Tab` で候補選択を進め、`Enter` で選択中のfloating候補を入力へ確定します。
 
 `Tab` による候補選択中もkeyboard focusはcommand inputに残し、選択中候補を `scrollIntoView({ block: "nearest", inline: "nearest" })` で表示範囲へ追従させます。
 
 結果一覧をTab選択する場合も同じ方針で、DOM focusはcommand inputに残し、選択中result itemだけを表示範囲へ追従させます。
+
+空のpromptで結果一覧を選択している場合、`Enter` は選択行の既定アクションを実行します。
+
+folder行は `cd <result-number>`、Bookmark行は `go <result-number>` として扱います。
+
+入力中のpromptが残っている場合は、結果一覧の選択行を入力補完として扱います。
 
 `cd ./` のように移動先path入力へ入った場合は、現在ディレクトリ配下の存在するfolderを候補として表示します。
 

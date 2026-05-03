@@ -24,6 +24,12 @@ import { useCommandHistoryKeyboard } from "./use-command-history-keyboard";
 /** 入力値setter。 */
 type InputValueSetter = Dispatch<SetStateAction<string>>;
 
+/** Command入力値を実行する関数。 */
+type CommandInputExecutor = (inputValue: string) => Promise<void>;
+
+/** Command実行失敗handler。 */
+type CommandExecutionErrorHandler = () => void;
+
 /** Result cursor setter。 */
 type ResultCursorSetter = Dispatch<SetStateAction<ResultCursorIndex>>;
 
@@ -34,6 +40,10 @@ type SuggestionCursorSetter = Dispatch<SetStateAction<CompletionCursorIndex>>;
 export interface UseBookmarkCliKeyboardInput {
   /** 現在のcommand state。 */
   readonly commandState: BookmarkCliCommandState;
+  /** Command入力値を実行する関数。 */
+  readonly executeInputValue: CommandInputExecutor;
+  /** Command実行失敗handler。 */
+  readonly handleCommandExecutionError: CommandExecutionErrorHandler;
   /** 現在のCLI入力値。 */
   readonly inputValue: string;
   /** 選択中result index。 */

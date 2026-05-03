@@ -59,6 +59,14 @@ export interface CreateCurrentCommandExecutorInput {
   readonly setSelectedResultIndex: ResultCursorSetter;
 }
 
+/**
+ * 任意のcommand入力値を実行するexecutor作成入力。
+ */
+export type CreateCommandInputExecutorInput = Omit<CreateCurrentCommandExecutorInput, "inputValue">;
+
+/** Command入力値を実行する関数。 */
+export type CommandInputExecutor = (inputValue: string) => Promise<void>;
+
 /** 実行後の空入力値。 */
 const emptyInputValue = "";
 
@@ -71,19 +79,19 @@ const isTranscriptClearCommand = (inputValue: string): boolean =>
   parseBookmarkCommand(inputValue).kind === "clear";
 
 /**
- * 現在入力中のcommandを実行する関数を作成。
- * @param {CreateCurrentCommandExecutorInput} input Current command executor作成入力。
- * @returns {() => Promise<void>} Current command executor。
+ * 指定されたcommand入力を実行する関数を作成。
+ * @param {CreateCommandInputExecutorInput} input Command input executor作成入力。
+ * @returns {CommandInputExecutor} Command input executor。
  */
-export const createCurrentCommandExecutor = (
-  input: CreateCurrentCommandExecutorInput,
-): (() => Promise<void>) => {
+export const createCommandInputExecutor = (
+  input: CreateCommandInputExecutorInput,
+): CommandInputExecutor => {
   /**
-   * 現在入力中のcommandを実行。
+   * 指定されたcommand入力を実行。
+   * @param {string} submittedInputValue 実行するcommand入力値。
    * @returns {Promise<void>} 実行完了を表すPromise。
    */
-  const executeCurrentCommand = async (): Promise<void> => {
-    const submittedInputValue = input.inputValue;
+  const executeCommandInput = async (submittedInputValue: string): Promise<void> => {
     const nextState = await input.executeAndPersistCommand(
       submittedInputValue,
       input.commandState,
@@ -100,6 +108,27 @@ export const createCurrentCommandExecutor = (
 
     input.setInputValue(emptyInputValue);
     input.setSelectedResultIndex(resultCursorCleared);
+  };
+
+  return executeCommandInput;
+};
+
+/**
+ * 現在入力中のcommandを実行する関数を作成。
+ * @param {CreateCurrentCommandExecutorInput} input Current command executor作成入力。
+ * @returns {() => Promise<void>} Current command executor。
+ */
+export const createCurrentCommandExecutor = (
+  input: CreateCurrentCommandExecutorInput,
+): (() => Promise<void>) => {
+  const executeCommandInput = createCommandInputExecutor(input);
+
+  /**
+   * 現在入力中のcommandを実行。
+   * @returns {Promise<void>} 実行完了を表すPromise。
+   */
+  const executeCurrentCommand = async (): Promise<void> => {
+    await executeCommandInput(input.inputValue);
   };
 
   return executeCurrentCommand;

@@ -133,6 +133,7 @@ export const executeGoCommand = async (
   dependencies: BookmarkCliCommandDependencies,
 ): Promise<BookmarkCliCommandState> => {
   const result = await goBookmark({
+    lastResultEntries: dependencies.lastResultEntries,
     opener: dependencies.opener,
     query: command.query,
     repository: dependencies.repository,

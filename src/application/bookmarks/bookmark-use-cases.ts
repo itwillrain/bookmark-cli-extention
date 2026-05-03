@@ -1,3 +1,4 @@
+import type { BookmarkEntry, BookmarkTree } from "../../domain/bookmarks/bookmark-tree";
 import {
   type BookmarkSearchResult,
   createBookmarkSearchResultsFromEntries,
@@ -9,8 +10,9 @@ import {
   normalizeVirtualTagsByBookmarkId,
   parseVirtualTagSearchQuery,
 } from "../../domain/tags/virtual-tag";
-import type { BookmarkTree } from "../../domain/bookmarks/bookmark-tree";
 import type { VirtualTagsByBookmarkId } from "../../domain/storage/extension-state";
+import { isResultNumberInput } from "../../domain/bookmarks/result-selection";
+import { resolveBookmarkSearchResultByResultNumber } from "./go-bookmark-result-number";
 
 /**
  * Bookmark commandのエラー種別です。
@@ -114,6 +116,10 @@ export interface FindBookmarksValue {
  */
 export interface GoBookmarkInput {
   /**
+   * 直前結果一覧です。
+   */
+  readonly lastResultEntries?: readonly BookmarkEntry[];
+  /**
    * Bookmark URLを開くportです。
    */
   readonly opener: BookmarkOpenerPort;
@@ -151,10 +157,13 @@ type NonEmptyBookmarkSearchResults = readonly [BookmarkSearchResult, ...Bookmark
  */
 type BookmarkSearchResultList = readonly BookmarkSearchResult[];
 
-/**
- * 空文字です。
- */
+/** 空文字です。 */
 const emptyQuery = "";
+
+/**
+ * 直前結果一覧の初期値です。
+ */
+const emptyLastResultEntries: readonly BookmarkEntry[] = [];
 
 /**
  * 成功結果を作ります。
@@ -218,6 +227,28 @@ const searchBookmarksWithVirtualTags = (
 };
 
 /**
+ * 直前結果番号からBookmarkを開きます。
+ * @param {GoBookmarkInput} input Bookmarkを開く入力です。
+ * @returns {Promise<BookmarkCommandResult<BookmarkSearchResult>>} Bookmarkを開いた結果です。
+ */
+const goBookmarkByResultNumber = async (
+  input: GoBookmarkInput,
+): Promise<BookmarkCommandResult<BookmarkSearchResult>> => {
+  const result = resolveBookmarkSearchResultByResultNumber({
+    lastResultEntries: input.lastResultEntries ?? emptyLastResultEntries,
+    query: input.query,
+  });
+
+  if (result === false) {
+    return createNotFoundFailure(input.query);
+  }
+
+  await input.opener.openBookmarkUrl(result.entry.url);
+
+  return createSuccess(result);
+};
+
+/**
  * RepositoryからBookmark Treeを取得して検索します。
  * @param {FindBookmarksInput} input Bookmark候補検索の入力です。
  * @returns {Promise<BookmarkCommandResult<FindBookmarksValue>>} Bookmark候補検索の結果です。
@@ -243,6 +274,10 @@ export const findBookmarks = async (
 export const goBookmark = async (
   input: GoBookmarkInput,
 ): Promise<BookmarkCommandResult<BookmarkSearchResult>> => {
+  if (isResultNumberInput(input.query)) {
+    return goBookmarkByResultNumber(input);
+  }
+
   const bookmarkTree = await input.repository.getBookmarkTree();
   const results = searchBookmarksWithVirtualTags(
     bookmarkTree,

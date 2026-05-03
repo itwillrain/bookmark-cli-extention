@@ -52,6 +52,7 @@ Bookmarkをfuzzy検索し、もっとも一致したBookmarkを開きます。
 
 ```bash
 go <query>
+go <result-number>
 go [--debug] <query>
 ```
 
@@ -59,10 +60,13 @@ go [--debug] <query>
 go stripe bill
 go github pr
 go #prod admin
+go 3
 go --debug stripe
 ```
 
 候補が明確に1件へ絞れる場合は、そのBookmarkを開きます。
+
+直前結果一覧のBookmarkを開く場合は、`go 3` のように番号指定できます。
 
 候補が複数ある場合は、番号付き一覧を表示して選択を求めます。
 
