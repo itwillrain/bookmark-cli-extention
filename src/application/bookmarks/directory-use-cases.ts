@@ -4,7 +4,11 @@ import type {
   BookmarkCommandSuccess,
   BookmarkRepositoryPort,
 } from "./bookmark-use-cases";
-import { type CurrentDirectory, resolveFolderPath } from "../../domain/bookmarks/current-directory";
+import {
+  type CurrentDirectory,
+  currentDirectoryRoot,
+  resolveFolderPath,
+} from "../../domain/bookmarks/current-directory";
 import {
   doesFolderPathExist,
   listDirectoryEntries,
@@ -110,6 +114,11 @@ const folderNotFoundErrorCode = "folder_not_found";
 const notFoundErrorCode = "not_found";
 
 /**
+ * 空のpath入力です。
+ */
+const emptyPathInput = "";
+
+/**
  * 成功結果を作ります。
  * @param {TValue} value 成功値です。
  * @returns {BookmarkCommandSuccess<TValue>} 成功結果です。
@@ -169,6 +178,23 @@ const changeDirectoryByResultNumber = (
 };
 
 /**
+ * Cd commandのpath入力を移動先folder pathへ解決します。
+ * @param {CurrentDirectory} currentDirectory 現在ディレクトリです。
+ * @param {string} pathInput 移動先path入力です。
+ * @returns {CurrentDirectory} 解決済み移動先folder pathです。
+ */
+const resolveChangeDirectoryPath = (
+  currentDirectory: CurrentDirectory,
+  pathInput: string,
+): CurrentDirectory => {
+  if (pathInput.trim() === emptyPathInput) {
+    return currentDirectoryRoot;
+  }
+
+  return resolveFolderPath(currentDirectory, pathInput);
+};
+
+/**
  * Path入力から移動先directory pathを解決します。
  * @param {ChangeDirectoryInput} input Change directoryの入力です。
  * @returns {Promise<BookmarkCommandResult<ChangeDirectoryValue>>} Change directoryの実行結果です。
@@ -177,7 +203,7 @@ const changeDirectoryByPath = async (
   input: ChangeDirectoryInput,
 ): Promise<BookmarkCommandResult<ChangeDirectoryValue>> => {
   const bookmarkTree = await input.repository.getBookmarkTree();
-  const targetFolderPath = resolveFolderPath(input.currentDirectory, input.pathInput);
+  const targetFolderPath = resolveChangeDirectoryPath(input.currentDirectory, input.pathInput);
 
   if (!doesFolderPathExist(bookmarkTree, targetFolderPath)) {
     return createFolderNotFoundFailure(targetFolderPath);

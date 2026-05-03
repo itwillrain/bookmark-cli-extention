@@ -22,6 +22,11 @@ const listDirectoryCommandInput = "ls Work/Admin";
 const changeDirectoryCommandInput = "cd ../Research";
 
 /**
+ * Path省略Cd commandの入力です。
+ */
+const changeDirectoryToRootCommandInput = "cd";
+
+/**
  * Pwd commandの入力です。
  */
 const printWorkingDirectoryCommandInput = "pwd";
@@ -117,6 +122,16 @@ describe("parseBookmarkCommand directory commands", (): void => {
     expect(parseBookmarkCommand(changeDirectoryCommandInput)).toStrictEqual({
       kind: "cd",
       pathInput: "../Research",
+    });
+  });
+
+  /**
+   * Cd commandをpath省略で解析できることを検証します。
+   */
+  it("parses cd command without path", (): void => {
+    expect(parseBookmarkCommand(changeDirectoryToRootCommandInput)).toStrictEqual({
+      kind: "cd",
+      pathInput: "",
     });
   });
 

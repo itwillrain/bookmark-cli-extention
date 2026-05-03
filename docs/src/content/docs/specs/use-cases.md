@@ -95,6 +95,7 @@ go #prod admin
 
 ```bash
 ls
+cd
 cd Work/Admin
 pwd
 tree --depth 3
@@ -107,6 +108,8 @@ tree --depth 3
 3. `cd` でfolder pathまたは番号を指定する
 4. Application層が `CurrentDirectory` を更新する
 5. `pwd` や `tree` で現在地と階層を確認する
+
+pathを省略した `cd` は `/` へ戻ります。
 
 完了条件は、現在ディレクトリを基準に一覧、移動、階層表示ができることです。
 

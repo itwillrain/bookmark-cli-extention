@@ -1,6 +1,6 @@
 import type { BookmarkEntry, BookmarkTree } from "../../domain/bookmarks/bookmark-tree";
+import { changeDirectory, listDirectory, printWorkingDirectory } from "./directory-use-cases";
 import { describe, expect, it } from "vitest";
-import { listDirectory, printWorkingDirectory } from "./directory-use-cases";
 
 /**
  * Bookmark Tree取得port fixtureです。
@@ -79,6 +79,11 @@ const adminPathInput = "Admin";
 const missingPathInput = "Missing";
 
 /**
+ * 空のpath入力です。
+ */
+const emptyPathInput = "";
+
+/**
  * 先頭entryのindexです。
  */
 const firstEntryIndex = 0;
@@ -111,7 +116,7 @@ describe("listDirectory current directory", (): void => {
   it("lists entries under current directory", async (): Promise<void> => {
     const result = await listDirectory({
       currentDirectory: workCurrentDirectory,
-      pathInput: "",
+      pathInput: emptyPathInput,
       repository: createBookmarkRepository(),
     });
 
@@ -121,6 +126,30 @@ describe("listDirectory current directory", (): void => {
       expect(result.value.directoryPath).toBe("/Work");
       expect(result.value.entries[firstEntryIndex]?.id).toBe("11");
     }
+  });
+});
+
+/**
+ * Change directoryの空path入力テストスイートです。
+ */
+describe("changeDirectory empty path input", (): void => {
+  /**
+   * 空path入力ではroot current directoryへ移動することを検証します。
+   */
+  it("changes current directory to root", async (): Promise<void> => {
+    const result = await changeDirectory({
+      currentDirectory: workCurrentDirectory,
+      lastResultEntries: [],
+      pathInput: emptyPathInput,
+      repository: createBookmarkRepository(),
+    });
+
+    expect(result).toStrictEqual({
+      ok: true,
+      value: {
+        currentDirectory: rootCurrentDirectory,
+      },
+    });
   });
 });
 

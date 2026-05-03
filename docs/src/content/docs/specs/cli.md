@@ -178,9 +178,12 @@ pathはBookmark Barを起点にしたfolder pathとして扱います。
 先頭の `/` は省略できます。
 
 ```bash
+cd
 cd /Work/Admin
 cd Work/Admin
 ```
+
+pathを省略した `cd` はroot pathの `/` へ戻ります。
 
 `.` は現在ディレクトリを表します。
 
@@ -444,10 +447,13 @@ ls --format json
 現在のディレクトリを移動します。
 
 ```bash
+cd
 cd Work
 cd ../Research
 cd 2
 ```
+
+pathを省略した場合は `/` へ戻ります。
 
 ### pwd
 
