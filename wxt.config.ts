@@ -29,14 +29,26 @@ const outputDirectory = "dist";
 const openCliPageCommandName = "open-cli-page";
 
 /**
+ * Dedicated extension pageを開く標準hotkeyです。
+ */
+const openCliPageDefaultHotkey = "Ctrl+Shift+K";
+
+/**
+ * Dedicated extension pageを開くmacOS向けhotkeyです。
+ */
+const openCliPageMacHotkey = "Command+Shift+K";
+
+/**
  * WXT に登録する module 名です。
  */
 const enabledModules = ["@wxt-dev/module-react"];
 
 /**
  * Manifestへ追加する権限です。
+ * @see https://developer.chrome.com/docs/extensions/how-to/ui/favicons
+ * @see https://developer.chrome.com/docs/extensions/reference/permissions-list
  */
-const manifestPermissions = ["activeTab", "bookmarks", "storage"];
+const manifestPermissions = ["activeTab", "bookmarks", "favicon", "history", "storage"];
 
 /**
  * Vite に追加する plugin 設定を組み立てます。
@@ -60,6 +72,10 @@ export default defineConfig({
     commands: {
       [openCliPageCommandName]: {
         description: "Open Bookmark CLI",
+        suggested_key: {
+          default: openCliPageDefaultHotkey,
+          mac: openCliPageMacHotkey,
+        },
       },
     },
     description: extensionDescription,

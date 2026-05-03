@@ -6,7 +6,7 @@ import type { ResultViewStyle } from "../../../domain/storage/extension-state";
 /**
  * CLI resultの表示種別です。
  */
-export type BookmarkCliResultKind = "bookmark" | "folder" | "help" | "preview";
+export type BookmarkCliResultKind = "bookmark" | "folder" | "help" | "history" | "preview";
 
 /**
  * CLI resultとして表示するitemです。
@@ -32,6 +32,10 @@ export interface BookmarkCliResultItem {
    * 補足説明です。
    */
   readonly description?: string;
+  /**
+   * 詳細token一覧です。
+   */
+  readonly details?: readonly string[];
   /**
    * Bookmark URLです。
    */
@@ -233,6 +237,19 @@ const renderResultDescription = (item: BookmarkCliResultItem): ReactElement => {
 };
 
 /**
+ * Result itemの詳細tokenを描画します。
+ * @param {BookmarkCliResultItem} item 詳細tokenを描画するresult itemです。
+ * @returns {ReactElement} 詳細tokenのReact elementです。
+ */
+const renderResultDetails = (item: BookmarkCliResultItem): ReactElement => {
+  if (Array.isArray(item.details) && item.details.length > emptyResultItemCount) {
+    return <span className="block truncate text-zinc-500">{item.details.join(" ")}</span>;
+  }
+
+  return <></>;
+};
+
+/**
  * Bookmark CLIのresult itemを描画します。
  * @param {ResultItemRenderInput} input Result item描画入力です。
  * @returns {ReactElement} Result itemのReact elementです。
@@ -254,6 +271,7 @@ const renderResultItem = (input: ResultItemRenderInput): ReactElement => (
     <span className="min-w-0">
       <span className="block truncate text-zinc-100">{input.item.title}</span>
       {renderResultDescription(input.item)}
+      {renderResultDetails(input.item)}
       {renderResultUrl(input.item)}
     </span>
     <span className="text-xs text-zinc-600">{formatScoreToken(input.item.score)}</span>

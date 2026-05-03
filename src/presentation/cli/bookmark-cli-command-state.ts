@@ -5,9 +5,10 @@ import type {
 import type {
   BookmarkOpenerPort,
   BookmarkRepositoryPort,
+  BrowserHistoryRepositoryPort,
 } from "../../application/bookmarks/bookmark-use-cases";
+import type { BookmarkCliEntry } from "../../domain/cli/bookmark-cli-entry";
 import type { BookmarkCliResultItem } from "./components/bookmark-cli-screen";
-import type { BookmarkEntry } from "../../domain/bookmarks/bookmark-tree";
 import type { BookmarkOrganizerPort } from "../../application/bookmarks/organize-bookmark-use-case";
 import type { CurrentDirectory } from "../../domain/bookmarks/current-directory";
 import type { ExtensionState } from "../../domain/storage/extension-state";
@@ -27,7 +28,11 @@ export interface BookmarkCliCommandDependencies {
   /**
    * 直前結果一覧です。
    */
-  readonly lastResultEntries: readonly BookmarkEntry[];
+  readonly lastResultEntries: readonly BookmarkCliEntry[];
+  /**
+   * Chrome履歴取得port。
+   */
+  readonly historyRepository?: BrowserHistoryRepositoryPort;
   /**
    * CLI起動元タブcontext。
    */
@@ -69,7 +74,7 @@ export interface BookmarkCliCommandState {
   /**
    * 直前結果一覧です。
    */
-  readonly lastResultEntries: readonly BookmarkEntry[];
+  readonly lastResultEntries: readonly BookmarkCliEntry[];
   /**
    * Result listに表示するitem一覧です。
    */
@@ -95,7 +100,7 @@ export interface BookmarkCliCommandStateInput {
   /**
    * 直前結果一覧です。
    */
-  readonly lastResultEntries: readonly BookmarkEntry[];
+  readonly lastResultEntries: readonly BookmarkCliEntry[];
   /**
    * Result listに表示するitem一覧です。
    */

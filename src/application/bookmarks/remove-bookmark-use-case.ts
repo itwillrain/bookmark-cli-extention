@@ -9,6 +9,7 @@ import {
   requireConfirmation,
   resolveTargetBookmark,
 } from "./bookmark-organization-use-case-helpers";
+import type { BookmarkCliEntry } from "../../domain/cli/bookmark-cli-entry";
 import type { BookmarkEntry } from "../../domain/bookmarks/bookmark-tree";
 import { createBookmarkOrganizationPreview } from "../../domain/bookmarks/bookmark-organization-preview";
 
@@ -17,7 +18,7 @@ export interface RemoveBookmarkInput extends OrganizeBookmarkBaseInput {
   /** 対象の直前結果番号入力。 */
   readonly targetInput: string;
   /** 直前結果一覧。 */
-  readonly lastResultEntries: readonly BookmarkEntry[];
+  readonly lastResultEntries: readonly BookmarkCliEntry[];
 }
 
 /** 削除済みを表すpreview label。 */

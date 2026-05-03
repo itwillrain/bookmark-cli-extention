@@ -48,7 +48,7 @@ JSON出力は `--format json` で指定します。
 
 ## `go`
 
-Bookmarkをfuzzy検索し、もっとも一致したBookmarkを開きます。
+BookmarkとChrome履歴をfuzzy検索し、もっとも一致したURLを開きます。
 
 ```bash
 go <query>
@@ -60,15 +60,16 @@ go github pr
 go #prod admin
 ```
 
-候補が明確に1件へ絞れる場合は、そのBookmarkを開きます。
+候補が明確に1件へ絞れる場合は、そのURLを開きます。
 
+直前結果一覧のBookmarkまたはChrome履歴を開く場合は、`go 3` のように番号指定できます。
 候補が複数ある場合は、番号付き一覧を表示して選択を求めます。
 
 代表的なエラーは `not_found`、`chrome_bookmarks_failed`、`permission_denied` です。
 
 ## `find`
 
-Bookmarkをfuzzy検索し、候補一覧だけを表示します。
+BookmarkとChrome履歴をfuzzy検索し、候補一覧だけを表示します。
 
 ```bash
 find <query> [--format json]
@@ -81,10 +82,19 @@ find #finance stripe
 find "github.com" --format json
 ```
 
-検索対象はtitle、url、folder path、仮想タグです。
+検索対象はBookmarkのtitle、url、folder path、仮想タグと、Chrome履歴のtitle、urlです。
 
 `#` で始まるtokenは仮想タグとして扱います。
 
+Chrome履歴は仮想タグを持たないため、`#tag` 検索ではBookmarkだけを対象にします。
+
+BookmarkとChrome履歴に同じURLが存在する場合はBookmark resultとして表示し、Chrome履歴はscore補強にだけ使います。
+
+Bookmark化されていないChrome履歴は `HIST` resultとして表示します。
+
+通常の一覧では検索scoreを表示しません。
+
+検索scoreを確認したい場合は `--debug` を指定します。
 代表的なエラーは `not_found`、`chrome_bookmarks_failed` です。
 
 ## `mark`

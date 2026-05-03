@@ -17,6 +17,7 @@ import {
   isResultNumberInput,
   resolveEntryByResultNumber,
 } from "../../domain/bookmarks/result-selection";
+import type { BookmarkCliEntry } from "../../domain/cli/bookmark-cli-entry";
 import type { BookmarkEntry } from "../../domain/bookmarks/bookmark-tree";
 
 /**
@@ -72,7 +73,7 @@ export interface ChangeDirectoryInput {
   /**
    * 直前結果一覧です。
    */
-  readonly lastResultEntries: readonly BookmarkEntry[];
+  readonly lastResultEntries: readonly BookmarkCliEntry[];
   /**
    * 移動先pathまたは直前結果番号です。
    */
@@ -152,10 +153,10 @@ const createNotFoundFailure = (pathInput: string): BookmarkCommandFailure => ({
 
 /**
  * Entryがfolder entryかを判定します。
- * @param {BookmarkEntry} entry 判定対象のentryです。
+ * @param {BookmarkCliEntry} entry 判定対象のentryです。
  * @returns {boolean} folder entryならtrueです。
  */
-const isFolderEntry = (entry: BookmarkEntry): boolean => entry.kind === "folder";
+const isFolderEntry = (entry: BookmarkCliEntry): entry is BookmarkEntry => entry.kind === "folder";
 
 /**
  * 直前結果番号から移動先directory pathを解決します。

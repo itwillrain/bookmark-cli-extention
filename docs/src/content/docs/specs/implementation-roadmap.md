@@ -218,6 +218,29 @@ Chrome APIに依存する処理はPortの外側へ閉じ込めます。
 - 入力中のcommand suggestionを`Tab`で補完できる
 - 実行したpromptとoutputがtranscriptへ追加される
 
+## Slice 8: Chrome履歴を検索に統合する
+
+目的は、Bookmark化していないURLも疑似CLIから再訪できるようにすることです。
+
+実装対象は次のとおりです。
+
+- `history` manifest permission
+- Chrome History API adapter
+- Chrome履歴entryの正規化
+- Bookmark検索結果とChrome履歴候補のmerge
+- Bookmarkと同じURLの履歴によるscore補強
+- Bookmark化されていない履歴の `HIST` result表示
+- `go <result-number>` による履歴URL起動
+
+完了条件は次のとおりです。
+
+- `find <query>` がBookmark候補とChrome履歴候補を同じ番号付き一覧へ表示する
+- `go <query>` がBookmark候補またはChrome履歴候補の最上位URLを開く
+- `go <result-number>` が履歴resultを開ける
+- BookmarkとChrome履歴に同じURLがある場合はBookmark resultを表示し、重複表示しない
+- Chrome History APIの呼び出しがInfrastructure層に閉じている
+- Domain層のmergeロジックにテストがある
+
 ## 実装順まとめ
 
 1. Bookmark Tree取得と正規化
@@ -230,6 +253,7 @@ Chrome APIに依存する処理はPortの外側へ閉じ込めます。
 8. 仮想タグ
 9. `mkdir`、`mv`、`rm`、`rename`
 10. `recent`、`freq`、表示改善
+11. Chrome履歴統合
 
 ## v1完了条件
 
@@ -241,5 +265,6 @@ v1は、次の状態を満たしたら完了とします。
 - 仮想タグでBookmarkを分類できる
 - 移動、削除、名称変更がpreviewまたは確認付きで実行できる
 - 結果一覧を番号指定で再利用できる
+- Chrome履歴URLを検索して開ける
 - Domain層の主要な純粋関数にテストがある
-- Chrome履歴統合とOSターミナル連携を含めない
+- OSターミナル連携を含めない
