@@ -192,6 +192,10 @@ CLI起動元タブの情報は `launchContext` として一時的に保持しま
 
 `mark` はDedicated extension page自身ではなく、CLI起動元タブを保存対象にします。
 
+Dedicated extension pageは別windowで開きます。
+
+別windowで開く直前に `launchContext` を保存するため、`mark` は拡張ページ自身ではなく、ユーザーが見ていたtabを対象にできます。
+
 CLI起動元タブのURLまたはtitleを取得できない場合は `unsupported_tab` を返します。
 
 ## 必要な権限
@@ -209,6 +213,8 @@ v1の必須権限は `bookmarks`、`storage`、`activeTab` です。
 `storage` は拡張機能側の設定、コマンド履歴、仮想タグ、利用統計を保存するために使います。
 
 `activeTab` は、ユーザー操作で疑似CLIを開いたときに、CLI起動元タブのtitleとurlを取得するために使います。
+
+`chrome.windows.create` はDedicated extension pageを別windowで開くために使います。
 
 hot keyは `commands` manifest keyで定義します。
 
