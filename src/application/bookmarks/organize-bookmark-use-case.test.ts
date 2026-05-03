@@ -164,39 +164,37 @@ describe("moveBookmark", (): void => {
 /** Remove use caseのテストスイート。 */
 describe("removeBookmark", (): void => {
   /**
-   * Rmが確認なしではconfirmation_requiredを返すことを検証。
+   * Rmがforceなしでは確認待ち結果を返すことを検証。
    */
-  it("requires confirmation for remove", async (): Promise<void> => {
+  it("returns pending confirmation for remove without force", async (): Promise<void> => {
     const recordingOrganizer = createRecordingOrganizer();
 
     const result = await removeBookmark({
       currentDirectory,
+      force: false,
       lastResultEntries,
       organizer: recordingOrganizer.organizer,
-      preview: false,
       repository: createBookmarkRepository(),
       targetInput,
-      yes: false,
     });
 
-    expect(result).toMatchObject({ errorCode: "confirmation_required", ok: false });
+    expect(result).toMatchObject({ ok: true, value: { executed: false } });
     expect(recordingOrganizer.removedEntries).toStrictEqual([]);
   });
 
   /**
-   * Rmを確認済みoptionで実行できることを検証。
+   * Rmをforce optionで実行できることを検証。
    */
-  it("removes bookmark when confirmed", async (): Promise<void> => {
+  it("removes bookmark when forced", async (): Promise<void> => {
     const recordingOrganizer = createRecordingOrganizer();
 
     const result = await removeBookmark({
       currentDirectory,
+      force: true,
       lastResultEntries,
       organizer: recordingOrganizer.organizer,
-      preview: false,
       repository: createBookmarkRepository(),
       targetInput,
-      yes: true,
     });
 
     expect(result.ok).toBe(true);

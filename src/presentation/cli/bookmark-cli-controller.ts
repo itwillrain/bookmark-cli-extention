@@ -16,6 +16,7 @@ import {
   executeHelpCommand,
   executeListDirectoryCommand,
   executeMarkCommand,
+  executePendingConfirmationCommand,
   executePrintWorkingDirectoryCommand,
   executeShowDirectoryTreeCommand,
   executeTagCommand,
@@ -300,6 +301,10 @@ export const executeBookmarkCliCommand = async (
   input: string,
   dependencies: BookmarkCliCommandDependencies,
 ): Promise<BookmarkCliCommandState> => {
+  if (dependencies.pendingConfirmation) {
+    return executePendingConfirmationCommand(input, dependencies);
+  }
+
   const command = parseBookmarkCommand(input);
   const executor = getParsedBookmarkCommandExecutor(command);
   const state = await executor(command, dependencies);

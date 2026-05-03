@@ -8,7 +8,13 @@ const makeDirectoryCommandInput = "mkdir Tools --preview";
 const moveBookmarkCommandInput = "mv 3 Archive --preview";
 
 /** Rm commandの入力です。 */
-const removeBookmarkCommandInput = "rm 5 --yes";
+const removeBookmarkCommandInput = "rm 5";
+
+/** Force Rm commandの入力です。 */
+const forceRemoveBookmarkCommandInput = "rm -f 5";
+
+/** Long force Rm commandの入力です。 */
+const longForceRemoveBookmarkCommandInput = "rm --force 5";
 
 /** Rename commandの入力です。 */
 const renameBookmarkCommandInput = 'rename 3 "GitHub Pull Requests"';
@@ -48,18 +54,6 @@ describe("parseBookmarkCommand mutation organize commands", (): void => {
   });
 
   /**
-   * Rm commandを確認済みoption付きで解析できることを検証します。
-   */
-  it("parses rm command", (): void => {
-    expect(parseBookmarkCommand(removeBookmarkCommandInput)).toStrictEqual({
-      kind: "rm",
-      preview: false,
-      targetInput: "5",
-      yes: true,
-    });
-  });
-
-  /**
    * Rename commandをtitle付きで解析できることを検証します。
    */
   it("parses rename command", (): void => {
@@ -69,6 +63,44 @@ describe("parseBookmarkCommand mutation organize commands", (): void => {
       targetInput: "3",
       titleInput: "GitHub Pull Requests",
       yes: false,
+    });
+  });
+});
+
+/**
+ * Bookmark削除command parserの正常系テストスイートです。
+ */
+describe("parseBookmarkCommand remove command", (): void => {
+  /**
+   * Rm commandを解析できることを検証します。
+   */
+  it("parses rm command", (): void => {
+    expect(parseBookmarkCommand(removeBookmarkCommandInput)).toStrictEqual({
+      force: false,
+      kind: "rm",
+      targetInput: "5",
+    });
+  });
+
+  /**
+   * Rm commandをforce option付きで解析できることを検証します。
+   */
+  it("parses rm force command", (): void => {
+    expect(parseBookmarkCommand(forceRemoveBookmarkCommandInput)).toStrictEqual({
+      force: true,
+      kind: "rm",
+      targetInput: "5",
+    });
+  });
+
+  /**
+   * Rm commandをlong force option付きで解析できることを検証します。
+   */
+  it("parses rm long force command", (): void => {
+    expect(parseBookmarkCommand(longForceRemoveBookmarkCommandInput)).toStrictEqual({
+      force: true,
+      kind: "rm",
+      targetInput: "5",
     });
   });
 });

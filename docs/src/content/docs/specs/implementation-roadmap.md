@@ -164,15 +164,19 @@ Chrome APIに依存する処理はPortの外側へ閉じ込めます。
 - `rename`
 - `--preview`
 - `--yes`
+- `rm -f`
 - preview表示
 - `confirmation_required`
+- rm確認待ち
 
 完了条件は次のとおりです。
 
 - `mv 3 Archive --preview` で変更内容だけが表示される
 - `mv 3 Archive --yes` でBookmarkを移動できる
-- `rm 5` は確認不足として `confirmation_required` を返す
-- `rm 5 --yes` でBookmarkを削除できる
+- `rm 5` は削除せず確認待ちに入る
+- 確認待ちで `y` または `yes` を入力するとBookmarkを削除できる
+- `rm -f 5` で確認なしにBookmarkを削除できる
+- 確認待ちで `n`、`no`、空入力、またはそれ以外の入力をすると削除せず確認待ちを解除する
 - `rename 3 "GitHub Pull Requests"` は確認不足として `confirmation_required` を返す
 - `rename 3 "GitHub Pull Requests" --preview` は変更内容だけを表示する
 - preview生成にテストがある

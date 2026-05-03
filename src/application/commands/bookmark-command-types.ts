@@ -189,21 +189,17 @@ export interface MoveBookmarkCommand {
  */
 export interface RemoveBookmarkCommand {
   /**
+   * 確認なしで削除するかです。
+   */
+  readonly force: boolean;
+  /**
    * Command種別です。
    */
   readonly kind: "rm";
   /**
-   * Previewだけ表示するかです。
-   */
-  readonly preview: boolean;
-  /**
    * 対象の直前結果番号です。
    */
   readonly targetInput: string;
-  /**
-   * 確認済みとして実行するかです。
-   */
-  readonly yes: boolean;
 }
 
 /**

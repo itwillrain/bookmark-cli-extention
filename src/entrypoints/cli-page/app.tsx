@@ -1,3 +1,5 @@
+/* oxlint-disable max-lines -- App componentはChrome adapterとCLI state接続の境界として依存を集約するため。 */
+
 import {
   type BookmarkCliCommandDependencies,
   type BookmarkCliCommandState,
@@ -146,12 +148,28 @@ const createCommandDependencies = (
   } satisfies BookmarkCliCommandDependencies;
 
   if (!launchContext) {
-    return dependencies;
+    if (!commandState.pendingConfirmation) {
+      return dependencies;
+    }
+
+    return {
+      ...dependencies,
+      pendingConfirmation: commandState.pendingConfirmation,
+    };
+  }
+
+  const dependenciesWithLaunchContext = {
+    ...dependencies,
+    launchContext,
+  };
+
+  if (!commandState.pendingConfirmation) {
+    return dependenciesWithLaunchContext;
   }
 
   return {
-    ...dependencies,
-    launchContext,
+    ...dependenciesWithLaunchContext,
+    pendingConfirmation: commandState.pendingConfirmation,
   };
 };
 
