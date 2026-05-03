@@ -191,6 +191,10 @@ Chrome APIに依存する処理はPortの外側へ閉じ込めます。
 - plain text fallback
 - Nerd Font設定
 - React componentの細分化
+- 上キー
+- 下キー
+- `Ctrl+p`
+- `Ctrl+n`
 - `Ctrl+j`
 - `Ctrl+k`
 - `Tab` 補完
@@ -204,7 +208,8 @@ Chrome APIに依存する処理はPortの外側へ閉じ込めます。
 - 結果一覧がPowerline風segment UIで表示される
 - Fontがない場合もplain textで意味が読める
 - 主要UI componentがStorybookで確認できる
-- `Ctrl+j` と `Ctrl+k` で候補や履歴を移動できる
+- 上キー、下キー、`Ctrl+p`、`Ctrl+n` で履歴を移動できる
+- `Ctrl+j` と `Ctrl+k` で候補を移動できる
 
 ## 実装順まとめ
 

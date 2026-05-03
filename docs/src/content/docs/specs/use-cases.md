@@ -238,10 +238,11 @@ Chrome履歴はv1では参照しません。
 
 1. ユーザーがhot keyでDedicated extension pageを開く
 2. 入力欄へ自動フォーカスする
-3. `Ctrl+j` と `Ctrl+k` で候補や履歴を移動する
-4. `Tab` で補完する
-5. `Esc` で候補選択を解除する
-6. 結果一覧をPowerline風segment UIで読む
+3. 上キー、下キー、`Ctrl+p`、`Ctrl+n` で履歴を移動する
+4. `Ctrl+j` と `Ctrl+k` で候補を移動する
+5. `Tab` で補完する
+6. `Esc` で候補選択を解除する
+7. 結果一覧をPowerline風segment UIで読む
 
 完了条件は、マウス操作なしで主要な検索、移動、保存、整理ができることです。
 
