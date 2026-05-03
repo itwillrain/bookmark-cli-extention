@@ -3,6 +3,7 @@ import type {
   BookmarkCliResultListProps,
 } from "./bookmark-cli-result-list-types";
 import type { CSSProperties, ReactElement } from "react";
+import { BookmarkCliResultFavicon } from "./bookmark-cli-result-favicon";
 import { BookmarkCliResultSegments } from "./bookmark-cli-result-segments";
 import type { ResultCursorIndex } from "../../../domain/bookmarks/result-cursor";
 
@@ -55,6 +56,16 @@ const treeIndentStepRem = 1.25;
  * Indentなしの幅です。
  */
 const noIndentRem = 0;
+
+/**
+ * Result title行のclassNameです。
+ */
+const resultTitleClassName = "flex min-w-0 items-center gap-2";
+
+/**
+ * Result title文字列のclassNameです。
+ */
+const resultTitleTextClassName = "block min-w-0 truncate text-zinc-100";
 
 /**
  * Scoreを表示用文字列へ変換します。
@@ -220,6 +231,18 @@ const renderResultScore = (item: BookmarkCliResultItem): ReactElement => {
 };
 
 /**
+ * Result itemのtitle行を描画します。
+ * @param {BookmarkCliResultItem} item titleを描画するresult itemです。
+ * @returns {ReactElement} title行のReact elementです。
+ */
+const renderResultTitle = (item: BookmarkCliResultItem): ReactElement => (
+  <span className={resultTitleClassName}>
+    <BookmarkCliResultFavicon item={item} />
+    <span className={resultTitleTextClassName}>{item.title}</span>
+  </span>
+);
+
+/**
  * Bookmark CLIのresult itemを描画します。
  * @param {ResultItemRenderInput} input Result item描画入力です。
  * @returns {ReactElement} Result itemのReact elementです。
@@ -237,7 +260,7 @@ const renderResultItem = (input: ResultItemRenderInput): ReactElement => (
       resultNumber={formatResultNumber(input.itemIndex)}
     />
     <span className="min-w-0">
-      <span className="block truncate text-zinc-100">{input.item.title}</span>
+      {renderResultTitle(input.item)}
       {renderResultDescription(input.item)}
       {renderResultDetails(input.item)}
       {renderResultUrl(input.item)}

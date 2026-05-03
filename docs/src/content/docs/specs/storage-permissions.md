@@ -200,11 +200,11 @@ CLI起動元タブのURLまたはtitleを取得できない場合は `unsupporte
 
 ## 必要な権限
 
-v1の必須権限は `bookmarks`、`storage`、`activeTab` です。
+v1の必須権限は `bookmarks`、`storage`、`activeTab`、`favicon` です。
 
 ```json
 {
-  "permissions": ["bookmarks", "storage", "activeTab"]
+  "permissions": ["bookmarks", "storage", "activeTab", "favicon"]
 }
 ```
 
@@ -213,6 +213,12 @@ v1の必須権限は `bookmarks`、`storage`、`activeTab` です。
 `storage` は拡張機能側の設定、コマンド履歴、仮想タグ、利用統計を保存するために使います。
 
 `activeTab` は、ユーザー操作で疑似CLIを開いたときに、CLI起動元タブのtitleとurlを取得するために使います。
+
+`favicon` は、URL resultにChromeが保持するfaviconを表示するために使います。
+
+faviconは `chrome-extension://<extension-id>/_favicon/?pageUrl=<url>&size=<size>` のURLとして参照します。
+
+外部favicon serviceや `host_permissions` は使いません。
 
 `chrome.windows.create` はDedicated extension pageを別windowで開くために使います。
 
@@ -277,6 +283,7 @@ Chrome Bookmark Manager側のBookmarkやfolderは削除しません。
 - [Chrome Extensions Storage API](https://developer.chrome.com/docs/extensions/reference/api/storage)
 - [Chrome Extensions Bookmarks API](https://developer.chrome.com/docs/extensions/reference/api/bookmarks)
 - [Chrome Extensions activeTab](https://developer.chrome.com/docs/extensions/activeTab)
+- [Chrome Extensions Fetching favicons](https://developer.chrome.com/docs/extensions/how-to/ui/favicons)
 - [Chrome Extensions Permissions](https://developer.chrome.com/docs/extensions/reference/permissions-list)
 - [Chrome Extensions Declare permissions](https://developer.chrome.com/docs/extensions/develop/concepts/declare-permissions)
 - [Typia Setup](https://typia.io/docs/setup/)
