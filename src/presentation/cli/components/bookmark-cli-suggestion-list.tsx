@@ -1,7 +1,8 @@
 /* oxlint-disable typescript-eslint/prefer-readonly-parameter-types -- ReactのCSSProperties propsに合わせるため。 */
 
-import type { CSSProperties, ReactElement } from "react";
+import { type CSSProperties, type ReactElement, type RefObject, useEffect, useRef } from "react";
 import type { CompletionCursorIndex } from "../../../domain/cli/completion-cursor";
+import { scrollSelectedBookmarkCliSuggestionIntoView } from "../bookmark-cli-suggestion-scroll";
 
 /**
  * Bookmark CLI suggestion item。
@@ -45,6 +46,9 @@ const selectedSuggestionItemClassName =
 const suggestionItemClassName =
   "grid grid-cols-[minmax(0,8rem)_minmax(0,1fr)] items-center gap-3 px-2 py-1 text-xs text-zinc-300";
 
+/** 選択中suggestionをscroll対象として示す属性値。 */
+const selectedSuggestionScrollTarget = "selected-suggestion";
+
 /** Suggestion item描画入力。 */
 interface SuggestionItemRenderInput {
   /** Suggestion item。 */
@@ -53,6 +57,14 @@ interface SuggestionItemRenderInput {
   readonly suggestionItemIndex: number;
   /** 選択中suggestion index。 */
   readonly selectedSuggestionIndex: CompletionCursorIndex;
+  /** 選択中suggestion item ref。 */
+  readonly selectedSuggestionItemRef: RefObject<HTMLLIElement | null>;
+}
+
+/** 選択中suggestion itemにだけ付与するref props。 */
+interface SuggestionItemRefProps {
+  /** 選択中suggestion item ref。 */
+  readonly ref: RefObject<HTMLLIElement | null>;
 }
 
 /**
@@ -78,23 +90,57 @@ const createSuggestionItemClassName = (input: SuggestionItemRenderInput): string
 };
 
 /**
+ * 選択中suggestion itemのscroll target属性を返す。
+ * @param {SuggestionItemRenderInput} input Suggestion item描画入力。
+ * @returns {string | undefined} Scroll target属性値。
+ */
+const resolveSuggestionScrollTarget = (input: SuggestionItemRenderInput): string => {
+  if (isSelectedSuggestionItem(input)) {
+    return selectedSuggestionScrollTarget;
+  }
+
+  return "";
+};
+
+/**
+ * 選択中suggestion itemへだけref propsを作る。
+ * @param {SuggestionItemRenderInput} input Suggestion item描画入力。
+ * @returns {Partial<SuggestionItemRefProps>} 選択中item ref props。
+ */
+const createSuggestionItemRefProps = (
+  input: SuggestionItemRenderInput,
+): Partial<SuggestionItemRefProps> => {
+  if (isSelectedSuggestionItem(input)) {
+    return { ref: input.selectedSuggestionItemRef };
+  }
+
+  return {};
+};
+
+/**
  * Suggestion itemを描画。
  * @param {SuggestionItemRenderInput} input Suggestion item描画入力。
  * @returns {ReactElement} Suggestion item element。
  */
-const renderSuggestionItem = (input: SuggestionItemRenderInput): ReactElement => (
-  <li
-    aria-selected={isSelectedSuggestionItem(input)}
-    className={createSuggestionItemClassName(input)}
-    key={input.suggestionItem.commandName}
-    role="option"
-  >
-    <span className="truncate font-semibold text-emerald-300">
-      {input.suggestionItem.commandName}
-    </span>
-    <span className="truncate text-zinc-400">{input.suggestionItem.description}</span>
-  </li>
-);
+const renderSuggestionItem = (input: SuggestionItemRenderInput): ReactElement => {
+  const selected = isSelectedSuggestionItem(input);
+
+  return (
+    <li
+      aria-selected={selected}
+      className={createSuggestionItemClassName(input)}
+      data-scroll-target={resolveSuggestionScrollTarget(input)}
+      key={input.suggestionItem.commandName}
+      role="option"
+      {...createSuggestionItemRefProps(input)}
+    >
+      <span className="truncate font-semibold text-emerald-300">
+        {input.suggestionItem.commandName}
+      </span>
+      <span className="truncate text-zinc-400">{input.suggestionItem.description}</span>
+    </li>
+  );
+};
 
 /**
  * Prompt直下にfloating command suggestion listを描画。
@@ -104,6 +150,15 @@ const renderSuggestionItem = (input: SuggestionItemRenderInput): ReactElement =>
 export const BookmarkCliSuggestionList = (
   props: Readonly<BookmarkCliSuggestionListProps>,
 ): ReactElement | false => {
+  const selectedSuggestionItemRef = useRef<HTMLLIElement>(null);
+
+  useEffect((): void => {
+    scrollSelectedBookmarkCliSuggestionIntoView({
+      selectedSuggestionIndex: props.selectedSuggestionIndex,
+      target: selectedSuggestionItemRef.current,
+    });
+  }, [props.selectedSuggestionIndex, props.suggestionItems.length]);
+
   if (props.suggestionItems.length === emptyItemCount) {
     return false;
   }
@@ -119,6 +174,7 @@ export const BookmarkCliSuggestionList = (
         {props.suggestionItems.map((suggestionItem, suggestionItemIndex) =>
           renderSuggestionItem({
             selectedSuggestionIndex: props.selectedSuggestionIndex,
+            selectedSuggestionItemRef,
             suggestionItem,
             suggestionItemIndex,
           }),

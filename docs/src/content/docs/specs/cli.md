@@ -252,6 +252,10 @@ overlay位置は現在promptの位置を基準にし、scrollbackのスクロー
 
 Tabキーは候補を順に選択します。
 
+Tabキーで候補を選択しても、DOM focusはcommand inputに残します。
+
+選択中候補はfocus移動の代わりに表示範囲へscrollし、候補が多い場合でも選択位置を見失わないようにします。
+
 Enterキーは選択中の候補を入力へ反映します。
 
 補完対象は次の引数です。

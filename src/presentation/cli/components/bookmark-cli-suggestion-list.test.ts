@@ -9,6 +9,9 @@ import { renderToStaticMarkup } from "react-dom/server";
 /** 選択中aria属性。 */
 const selectedAriaAttribute = 'aria-selected="true"';
 
+/** 選択中suggestion scroll target属性。 */
+const selectedScrollTargetAttribute = 'data-scroll-target="selected-suggestion"';
+
 /** 選択中aria属性の出現回数。 */
 const selectedAriaAttributeCount = 1;
 
@@ -78,5 +81,6 @@ describe("BookmarkCliSuggestionList", (): void => {
     );
 
     expect(countOccurrences(html, selectedAriaAttribute)).toBe(selectedAriaAttributeCount);
+    expect(countOccurrences(html, selectedScrollTargetAttribute)).toBe(selectedAriaAttributeCount);
   });
 });
