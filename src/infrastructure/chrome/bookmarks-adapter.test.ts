@@ -104,6 +104,50 @@ const createBookmarkFixture = async (): Promise<RawBookmarkTreeNode> => {
 };
 
 /**
+ * Chrome Bookmark作成結果nodeを作ります。
+ * @param {ChromeBookmarkCreateProperties} createProperties Bookmark作成入力です。
+ * @returns {RawBookmarkTreeNode} 作成結果nodeです。
+ */
+const createCreatedBookmarkNode = (
+  createProperties: ChromeBookmarkCreateProperties,
+): RawBookmarkTreeNode => {
+  const nodeBase = {
+    id: "100",
+    title: createProperties.title,
+  };
+  const node = nodeBase satisfies RawBookmarkTreeNode;
+
+  if (typeof createProperties.url !== "string") {
+    return node;
+  }
+
+  return {
+    ...node,
+    url: createProperties.url,
+  };
+};
+
+/**
+ * Chrome Bookmark nodeへparent IDを追加します。
+ * @param {RawBookmarkTreeNode} node Chrome Bookmark nodeです。
+ * @param {ChromeBookmarkCreateProperties} createProperties Bookmark作成入力です。
+ * @returns {RawBookmarkTreeNode} parent ID付きBookmark nodeです。
+ */
+const addParentIdToNode = (
+  node: RawBookmarkTreeNode,
+  createProperties: ChromeBookmarkCreateProperties,
+): RawBookmarkTreeNode => {
+  if (typeof createProperties.parentId !== "string") {
+    return node;
+  }
+
+  return {
+    ...node,
+    parentId: createProperties.parentId,
+  };
+};
+
+/**
  * Chrome Bookmarks API fixtureを作ります。
  * @returns {ChromeBookmarksApi} Chrome Bookmarks API fixtureです。
  */
@@ -120,30 +164,6 @@ const createRecordingBookmarksApi = (): RecordingBookmarksApi => {
   const createdBookmarks: ChromeBookmarkCreateProperties[] = [];
 
   /**
-   * Chrome Bookmark作成結果nodeを作ります。
-   * @param {ChromeBookmarkCreateProperties} createProperties Bookmark作成入力です。
-   * @returns {RawBookmarkTreeNode} 作成結果nodeです。
-   */
-  const createBookmarkNode = (
-    createProperties: ChromeBookmarkCreateProperties,
-  ): RawBookmarkTreeNode => {
-    const node = {
-      id: "100",
-      title: createProperties.title,
-      url: createProperties.url,
-    } satisfies RawBookmarkTreeNode;
-
-    if (typeof createProperties.parentId !== "string") {
-      return node;
-    }
-
-    return {
-      ...node,
-      parentId: createProperties.parentId,
-    };
-  };
-
-  /**
    * Bookmark作成入力を記録します。
    * @param {ChromeBookmarkCreateProperties} createProperties Bookmark作成入力です。
    * @returns {Promise<RawBookmarkTreeNode>} 作成済みBookmark nodeです。
@@ -154,7 +174,7 @@ const createRecordingBookmarksApi = (): RecordingBookmarksApi => {
     createdBookmarks.push(createProperties);
     await Promise.resolve();
 
-    return createBookmarkNode(createProperties);
+    return addParentIdToNode(createCreatedBookmarkNode(createProperties), createProperties);
   };
 
   return {

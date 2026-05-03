@@ -3,7 +3,7 @@ import type { CSSProperties, ReactElement } from "react";
 /**
  * CLI resultの表示種別です。
  */
-export type BookmarkCliResultKind = "bookmark" | "folder";
+export type BookmarkCliResultKind = "bookmark" | "folder" | "preview";
 
 /**
  * CLI resultとして表示するitemです。
@@ -25,6 +25,10 @@ export interface BookmarkCliResultItem {
    * Folder pathです。
    */
   readonly folderPath: string;
+  /**
+   * 補足説明です。
+   */
+  readonly description?: string;
   /**
    * Bookmark URLです。
    */
@@ -66,6 +70,11 @@ const bookmarkKindLabel = "URL";
 const folderKindLabel = "DIR";
 
 /**
+ * Preview種別の表示labelです。
+ */
+const previewKindLabel = "PREV";
+
+/**
  * 空のresult item件数です。
  */
 const emptyResultItemCount = 0;
@@ -98,6 +107,10 @@ const noIndentRem = 0;
 const formatKindLabel = (kind: BookmarkCliResultKind): string => {
   if (kind === "bookmark") {
     return bookmarkKindLabel;
+  }
+
+  if (kind === "preview") {
+    return previewKindLabel;
   }
 
   return folderKindLabel;
@@ -189,6 +202,19 @@ const renderResultUrl = (item: BookmarkCliResultItem): ReactElement => {
 };
 
 /**
+ * Result itemの補足説明を描画します。
+ * @param {BookmarkCliResultItem} item 補足説明を描画するresult itemです。
+ * @returns {ReactElement} 補足説明のReact elementです。
+ */
+const renderResultDescription = (item: BookmarkCliResultItem): ReactElement => {
+  if (typeof item.description === "string") {
+    return <span className="block truncate text-amber-200">{item.description}</span>;
+  }
+
+  return <></>;
+};
+
+/**
  * Bookmark CLIのresult itemを描画します。
  * @param {BookmarkCliResultItem} item 描画するresult itemです。
  * @param {number} itemIndex Result itemの0-based indexです。
@@ -208,6 +234,7 @@ const renderResultItem = (item: BookmarkCliResultItem, itemIndex: number): React
     <span className="min-w-0">
       <span className="block truncate text-zinc-100">{item.folderPath}</span>
       <span className="block truncate text-zinc-400">{item.title}</span>
+      {renderResultDescription(item)}
       {renderResultUrl(item)}
     </span>
     <span className="text-xs text-zinc-600">{formatScoreToken(item.score)}</span>

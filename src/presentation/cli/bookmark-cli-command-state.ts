@@ -8,6 +8,7 @@ import type {
 } from "../../application/bookmarks/bookmark-use-cases";
 import type { BookmarkCliResultItem } from "./components/bookmark-cli-screen";
 import type { BookmarkEntry } from "../../domain/bookmarks/bookmark-tree";
+import type { BookmarkOrganizerPort } from "../../application/bookmarks/organize-bookmark-use-case";
 import type { CurrentDirectory } from "../../domain/bookmarks/current-directory";
 import type { ExtensionState } from "../../domain/storage/extension-state";
 
@@ -35,6 +36,10 @@ export interface BookmarkCliCommandDependencies {
    * Bookmark作成port。
    */
   readonly creator: BookmarkCreatorPort;
+  /**
+   * Bookmark整理port。
+   */
+  readonly organizer?: BookmarkOrganizerPort;
   /**
    * Bookmark Tree取得portです。
    */

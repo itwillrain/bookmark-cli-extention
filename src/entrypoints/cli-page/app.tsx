@@ -7,6 +7,7 @@ import { type Dispatch, type ReactElement, type SetStateAction, useEffect, useSt
 import {
   createChromeBookmarkCreator,
   createChromeBookmarkOpener,
+  createChromeBookmarkOrganizer,
   createChromeBookmarkRepository,
 } from "../../infrastructure/chrome/bookmarks-adapter";
 import {
@@ -55,6 +56,11 @@ const bookmarkRepository = createChromeBookmarkRepository(browser.bookmarks);
  * Chrome Bookmarks APIを使うcreatorです。
  */
 const bookmarkCreator = createChromeBookmarkCreator(browser.bookmarks);
+
+/**
+ * Chrome Bookmarks APIを使うorganizerです。
+ */
+const bookmarkOrganizer = createChromeBookmarkOrganizer(browser.bookmarks);
 
 /**
  * Chrome Tabs APIを使うopenerです。
@@ -127,6 +133,7 @@ const createCommandDependencies = (
     extensionState: commandState.extensionState,
     lastResultEntries: commandState.lastResultEntries,
     opener: bookmarkOpener,
+    organizer: bookmarkOrganizer,
     repository: bookmarkRepository,
   } satisfies BookmarkCliCommandDependencies;
 

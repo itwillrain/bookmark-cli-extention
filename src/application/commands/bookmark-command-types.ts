@@ -127,6 +127,102 @@ export interface TagBookmarkCommand {
 }
 
 /**
+ * Make directory commandです。
+ */
+export interface MakeDirectoryCommand {
+  /**
+   * Command種別です。
+   */
+  readonly kind: "mkdir";
+  /**
+   * 作成するfolder path入力です。
+   */
+  readonly pathInput: string;
+  /**
+   * Previewだけ表示するかです。
+   */
+  readonly preview: boolean;
+  /**
+   * 確認済みとして実行するかです。
+   */
+  readonly yes: boolean;
+}
+
+/**
+ * Move Bookmark commandです。
+ */
+export interface MoveBookmarkCommand {
+  /**
+   * Command種別です。
+   */
+  readonly kind: "mv";
+  /**
+   * Previewだけ表示するかです。
+   */
+  readonly preview: boolean;
+  /**
+   * 移動先folder path入力です。
+   */
+  readonly targetFolderPathInput: string;
+  /**
+   * 対象の直前結果番号です。
+   */
+  readonly targetInput: string;
+  /**
+   * 確認済みとして実行するかです。
+   */
+  readonly yes: boolean;
+}
+
+/**
+ * Remove Bookmark commandです。
+ */
+export interface RemoveBookmarkCommand {
+  /**
+   * Command種別です。
+   */
+  readonly kind: "rm";
+  /**
+   * Previewだけ表示するかです。
+   */
+  readonly preview: boolean;
+  /**
+   * 対象の直前結果番号です。
+   */
+  readonly targetInput: string;
+  /**
+   * 確認済みとして実行するかです。
+   */
+  readonly yes: boolean;
+}
+
+/**
+ * Rename Bookmark commandです。
+ */
+export interface RenameBookmarkCommand {
+  /**
+   * Command種別です。
+   */
+  readonly kind: "rename";
+  /**
+   * Previewだけ表示するかです。
+   */
+  readonly preview: boolean;
+  /**
+   * 対象の直前結果番号です。
+   */
+  readonly targetInput: string;
+  /**
+   * 変更後title入力です。
+   */
+  readonly titleInput: string;
+  /**
+   * 確認済みとして実行するかです。
+   */
+  readonly yes: boolean;
+}
+
+/**
  * 空入力commandです。
  */
 export interface EmptyBookmarkCommand {
@@ -163,8 +259,12 @@ export type ParsedBookmarkCommand =
   | FindBookmarkCommand
   | GoBookmarkCommand
   | ListDirectoryCommand
+  | MakeDirectoryCommand
   | MarkBookmarkCommand
+  | MoveBookmarkCommand
   | PrintWorkingDirectoryCommand
+  | RemoveBookmarkCommand
+  | RenameBookmarkCommand
   | ShowDirectoryTreeCommand
   | TagBookmarkCommand
   | UnknownBookmarkCommand;

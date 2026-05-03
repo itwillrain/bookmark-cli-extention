@@ -18,6 +18,7 @@ import {
   executeTagCommand,
   executeUnknownCommand,
 } from "./bookmark-cli-command-executors";
+import { executeParsedOrganizeCommand } from "./bookmark-cli-organize-command-router";
 
 export type {
   BookmarkCliCommandDependencies,
@@ -244,7 +245,11 @@ const parsedBookmarkCommandExecutors = {
   go: executeParsedGoCommand,
   ls: executeParsedListDirectoryCommand,
   mark: executeParsedMarkCommand,
+  mkdir: executeParsedOrganizeCommand,
+  mv: executeParsedOrganizeCommand,
   pwd: executeParsedPrintWorkingDirectoryCommand,
+  rename: executeParsedOrganizeCommand,
+  rm: executeParsedOrganizeCommand,
   tag: executeParsedTagCommand,
   tree: executeParsedShowDirectoryTreeCommand,
   unknown: executeParsedUnknownCommand,

@@ -1,3 +1,9 @@
+import {
+  parseMakeDirectoryCommand,
+  parseMoveBookmarkCommand,
+  parseRemoveBookmarkCommand,
+  parseRenameBookmarkCommand,
+} from "./bookmark-organize-command-parser";
 import type { ParsedBookmarkCommand } from "./bookmark-command-types";
 import { parseMarkBookmarkCommand } from "./bookmark-mark-command-parser";
 import { parseShowDirectoryTreeCommand } from "./bookmark-tree-command-parser";
@@ -9,67 +15,61 @@ export type {
   FindBookmarkCommand,
   GoBookmarkCommand,
   ListDirectoryCommand,
+  MakeDirectoryCommand,
   MarkBookmarkCommand,
+  MoveBookmarkCommand,
   ParsedBookmarkCommand,
   PrintWorkingDirectoryCommand,
+  RemoveBookmarkCommand,
+  RenameBookmarkCommand,
   ShowDirectoryTreeCommand,
   TagBookmarkCommand,
   UnknownBookmarkCommand,
 } from "./bookmark-command-types";
 
-/**
- * Find command名です。
- */
+/** Find command名です。 */
 const findCommandName = "find";
 
-/**
- * Go command名です。
- */
+/** Go command名です。 */
 const goCommandName = "go";
 
-/**
- * Ls command名です。
- */
+/** Ls command名です。 */
 const listDirectoryCommandName = "ls";
 
-/**
- * Cd command名です。
- */
+/** Cd command名です。 */
 const changeDirectoryCommandName = "cd";
 
-/**
- * Pwd command名です。
- */
+/** Pwd command名です。 */
 const printWorkingDirectoryCommandName = "pwd";
 
-/**
- * Tree command名です。
- */
+/** Tree command名です。 */
 const showDirectoryTreeCommandName = "tree";
 
-/**
- * Mark command名です。
- */
+/** Mark command名です。 */
 const markBookmarkCommandName = "mark";
 
-/**
- * Tag command名です。
- */
+/** Tag command名です。 */
 const tagBookmarkCommandName = "tag";
 
-/**
- * 空command名です。
- */
+/** Mkdir command名です。 */
+const makeDirectoryCommandName = "mkdir";
+
+/** Mv command名です。 */
+const moveBookmarkCommandName = "mv";
+
+/** Rm command名です。 */
+const removeBookmarkCommandName = "rm";
+
+/** Rename command名です。 */
+const renameBookmarkCommandName = "rename";
+
+/** 空command名です。 */
 const emptyCommandName = "";
 
-/**
- * Command tokenの区切り文字です。
- */
+/** Command tokenの区切り文字です。 */
 const commandTokenSeparator = " ";
 
-/**
- * 連続した空白文字に一致する正規表現です。
- */
+/** 連続した空白文字に一致する正規表現です。 */
 const whitespacePattern = /\s+/gu;
 
 /**
@@ -206,6 +206,38 @@ const createTagBookmarkCommand = (context: CommandParseContext): ParsedBookmarkC
   parseTagBookmarkCommand(context.queryParts);
 
 /**
+ * Mkdir commandを作ります。
+ * @param {CommandParseContext} context Command parse contextです。
+ * @returns {ParsedBookmarkCommand} Mkdir commandです。
+ */
+const createMakeDirectoryCommand = (context: CommandParseContext): ParsedBookmarkCommand =>
+  parseMakeDirectoryCommand(context.queryParts);
+
+/**
+ * Mv commandを作ります。
+ * @param {CommandParseContext} context Command parse contextです。
+ * @returns {ParsedBookmarkCommand} Mv commandです。
+ */
+const createMoveBookmarkCommand = (context: CommandParseContext): ParsedBookmarkCommand =>
+  parseMoveBookmarkCommand(context.queryParts);
+
+/**
+ * Rm commandを作ります。
+ * @param {CommandParseContext} context Command parse contextです。
+ * @returns {ParsedBookmarkCommand} Rm commandです。
+ */
+const createRemoveBookmarkCommand = (context: CommandParseContext): ParsedBookmarkCommand =>
+  parseRemoveBookmarkCommand(context.queryParts);
+
+/**
+ * Rename commandを作ります。
+ * @param {CommandParseContext} context Command parse contextです。
+ * @returns {ParsedBookmarkCommand} Rename commandです。
+ */
+const createRenameBookmarkCommand = (context: CommandParseContext): ParsedBookmarkCommand =>
+  parseRenameBookmarkCommand(context.queryParts);
+
+/**
  * Unknown commandを作ります。
  * @param {CommandParseContext} context Command parse contextです。
  * @returns {ParsedBookmarkCommand} Unknown commandです。
@@ -224,8 +256,12 @@ const bookmarkCommandFactories: Readonly<Record<string, BookmarkCommandFactory>>
   [findCommandName]: createFindBookmarkCommand,
   [goCommandName]: createGoBookmarkCommand,
   [listDirectoryCommandName]: createListDirectoryCommand,
+  [makeDirectoryCommandName]: createMakeDirectoryCommand,
   [markBookmarkCommandName]: createMarkBookmarkCommand,
+  [moveBookmarkCommandName]: createMoveBookmarkCommand,
   [printWorkingDirectoryCommandName]: createPrintWorkingDirectoryCommand,
+  [removeBookmarkCommandName]: createRemoveBookmarkCommand,
+  [renameBookmarkCommandName]: createRenameBookmarkCommand,
   [showDirectoryTreeCommandName]: createTreeCommand,
   [tagBookmarkCommandName]: createTagBookmarkCommand,
 };
