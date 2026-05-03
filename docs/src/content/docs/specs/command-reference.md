@@ -127,18 +127,32 @@ mark --allow-duplicate
 現在ディレクトリ、または指定したpathの中身を表示します。
 
 ```bash
-ls [path] [--format json]
+ls [-a] [-l] [path]
+ll [-a] [path]
 ```
 
 ```bash
 ls
+ls -a
+ls -l Work/Admin
+ls -la Work/Admin
+ll -a
 ls Work/Admin
-ls --format json
 ```
 
 folderを先に表示し、その後にBookmarkを表示します。
 
 各group内はtitle昇順で表示します。
+
+通常の `ls` は `.` で始まるtitleのentryを隠します。
+
+`-a` は `.` で始まるtitleのentryも表示します。
+
+`-l` はChrome Bookmark ID、parent ID、子node数を詳細行として表示します。
+
+`-la` と `-al` は `-l -a` と同じ意味です。
+
+`ll` は `ls -l` のaliasです。
 
 代表的なエラーは `folder_not_found`、`chrome_bookmarks_failed` です。
 

@@ -81,4 +81,17 @@ describe("suggestBookmarkDirectoryPaths", (): void => {
 
     expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual(["cd ./Admin"]);
   });
+
+  /**
+   * Ll aliasでもdirectory候補を返すことを検証。
+   */
+  it("suggests directory paths for ll alias", (): void => {
+    const suggestions = suggestBookmarkDirectoryPaths({
+      bookmarkTree,
+      currentDirectory: "/Work",
+      inputValue: "ll -a A",
+    });
+
+    expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual(["ll -a Admin"]);
+  });
 });

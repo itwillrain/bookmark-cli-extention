@@ -49,6 +49,10 @@ const bookmarkCommandCatalog = [
     description: "現在または指定folderを一覧表示",
   },
   {
+    commandName: "ll",
+    description: "詳細形式でfolderを一覧表示",
+  },
+  {
     commandName: "cd",
     description: "現在folderを移動",
   },

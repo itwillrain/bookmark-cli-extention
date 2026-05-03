@@ -21,6 +21,9 @@ const changeDirectoryCommandName = "cd";
 /** Ls command名。 */
 const listDirectoryCommandName = "ls";
 
+/** Ll command alias名。 */
+const longListDirectoryCommandName = "ll";
+
 /** Tree command名。 */
 const showDirectoryTreeCommandName = "tree";
 
@@ -52,6 +55,7 @@ const maxDirectorySuggestionCount = 8;
 const directoryCompletionCommandNames = new Set<string>([
   changeDirectoryCommandName,
   listDirectoryCommandName,
+  longListDirectoryCommandName,
   showDirectoryTreeCommandName,
 ]);
 

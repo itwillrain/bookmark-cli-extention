@@ -10,6 +10,7 @@ import {
   parseRenameBookmarkCommand,
 } from "./bookmark-organize-command-parser";
 import type { ParsedBookmarkCommand } from "./bookmark-command-types";
+import { parseListDirectoryCommand } from "./bookmark-list-command-parser";
 import { parseMarkBookmarkCommand } from "./bookmark-mark-command-parser";
 import { parseShowDirectoryTreeCommand } from "./bookmark-tree-command-parser";
 import { parseTagBookmarkCommand } from "./bookmark-tag-command-parser";
@@ -28,6 +29,9 @@ const frequentBookmarksCommandName = "freq";
 
 /** Ls command名です。 */
 const listDirectoryCommandName = "ls";
+
+/** Ll command alias名です。 */
+const longListDirectoryCommandName = "ll";
 
 /** Cd command名です。 */
 const changeDirectoryCommandName = "cd";
@@ -126,8 +130,7 @@ const createFrequentBookmarksCommand = (context: CommandParseContext): ParsedBoo
  * @returns {ParsedBookmarkCommand} Ls commandです。
  */
 const createListDirectoryCommand = (context: CommandParseContext): ParsedBookmarkCommand => ({
-  kind: "ls",
-  pathInput: context.query,
+  ...parseListDirectoryCommand(context.commandName, context.queryParts),
 });
 
 /**
@@ -233,6 +236,7 @@ const bookmarkCommandFactories: Readonly<Record<string, BookmarkCommandFactory>>
   [frequentBookmarksCommandName]: createFrequentBookmarksCommand,
   [goCommandName]: createGoBookmarkCommand,
   [listDirectoryCommandName]: createListDirectoryCommand,
+  [longListDirectoryCommandName]: createListDirectoryCommand,
   [makeDirectoryCommandName]: createMakeDirectoryCommand,
   [markBookmarkCommandName]: createMarkBookmarkCommand,
   [moveBookmarkCommandName]: createMoveBookmarkCommand,

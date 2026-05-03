@@ -39,6 +39,18 @@ const researchFolderEntry = {
 } satisfies BookmarkEntry;
 
 /**
+ * Hidden folderのentryです。
+ */
+const hiddenFolderEntry = {
+  childrenCount: 0,
+  folderPath: "/Work/.Secrets",
+  id: "13",
+  kind: "folder",
+  parentId: "10",
+  title: ".Secrets",
+} satisfies BookmarkEntry;
+
+/**
  * Stripe bookmarkのentryです。
  */
 const stripeBookmarkEntry = {
@@ -65,18 +77,33 @@ const githubBookmarkEntry = {
 } satisfies BookmarkEntry;
 
 /**
+ * Hidden bookmarkのentryです。
+ */
+const hiddenBookmarkEntry = {
+  childrenCount: 0,
+  folderPath: "/Work",
+  id: "44",
+  kind: "bookmark",
+  parentId: "10",
+  title: ".Env",
+  url: "https://example.com/env",
+} satisfies BookmarkEntry;
+
+/**
  * Directory表示に使うBookmark Treeです。
  */
 const bookmarkTree = {
-  bookmarks: [stripeBookmarkEntry, githubBookmarkEntry],
+  bookmarks: [stripeBookmarkEntry, githubBookmarkEntry, hiddenBookmarkEntry],
   entries: [
     workFolderEntry,
     stripeBookmarkEntry,
     researchFolderEntry,
     adminFolderEntry,
     githubBookmarkEntry,
+    hiddenFolderEntry,
+    hiddenBookmarkEntry,
   ],
-  folders: [workFolderEntry, researchFolderEntry, adminFolderEntry],
+  folders: [workFolderEntry, researchFolderEntry, adminFolderEntry, hiddenFolderEntry],
 } satisfies BookmarkTree;
 
 /**
@@ -113,6 +140,26 @@ describe("listDirectoryEntries", (): void => {
     expect(entries[secondEntryIndex]?.id).toBe("12");
     expect(entries[thirdEntryIndex]?.id).toBe("43");
     expect(entries[fourthEntryIndex]?.id).toBe("42");
+  });
+
+  /**
+   * 通常表示ではdot始まりのentryを隠すことを検証します。
+   */
+  it("hides dot entries by default", (): void => {
+    const entries = listDirectoryEntries(bookmarkTree, "/Work");
+
+    expect(entries).not.toContain(hiddenFolderEntry);
+    expect(entries).not.toContain(hiddenBookmarkEntry);
+  });
+
+  /**
+   * All optionではdot始まりのentryも返すことを検証します。
+   */
+  it("lists dot entries with all option", (): void => {
+    const entries = listDirectoryEntries(bookmarkTree, "/Work", { all: true });
+
+    expect(entries).toContain(hiddenFolderEntry);
+    expect(entries).toContain(hiddenBookmarkEntry);
   });
 
   /**

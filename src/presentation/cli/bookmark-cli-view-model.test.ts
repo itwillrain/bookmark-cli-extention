@@ -101,6 +101,22 @@ describe("createBookmarkCliResultItemsFromEntries", (): void => {
       },
     ]);
   });
+
+  /**
+   * Long表示ではentryの詳細tokenを含めることを検証します。
+   */
+  it("includes entry detail tokens for long display", (): void => {
+    expect(
+      createBookmarkCliResultItemsFromEntries([adminFolderEntry], { long: true }),
+    ).toStrictEqual([
+      {
+        details: ["id=11", "parent=10", "children=1"],
+        folderPath: "/Work/Admin",
+        kind: "folder",
+        title: "Admin",
+      },
+    ]);
+  });
 });
 
 /**

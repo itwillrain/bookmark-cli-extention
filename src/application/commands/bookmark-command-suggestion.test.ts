@@ -5,9 +5,9 @@ import { suggestBookmarkCommands } from "./bookmark-command-suggestion";
 const firstSuggestionIndex = 0;
 
 /**
- * Bookmark command suggestionのテストスイート。
+ * Bookmark command suggestionの空入力テストスイート。
  */
-describe("suggestBookmarkCommands", (): void => {
+describe("suggestBookmarkCommands empty input", (): void => {
   /**
    * 空入力ではcommand suggestionを返さないことを検証。
    */
@@ -21,7 +21,12 @@ describe("suggestBookmarkCommands", (): void => {
   it("returns no command suggestions for whitespace-only input", (): void => {
     expect(suggestBookmarkCommands("   ")).toStrictEqual([]);
   });
+});
 
+/**
+ * Bookmark command suggestionのprefixテストスイート。
+ */
+describe("suggestBookmarkCommands prefix", (): void => {
   /**
    * 入力prefixに一致するcommandだけ返すことを検証。
    */
@@ -29,6 +34,16 @@ describe("suggestBookmarkCommands", (): void => {
     expect(suggestBookmarkCommands("f").map((suggestion) => suggestion.commandName)).toStrictEqual([
       "find",
       "freq",
+    ]);
+  });
+
+  /**
+   * L prefixではlsとllを補完候補へ出すことを検証。
+   */
+  it("suggests ls and ll by l prefix", (): void => {
+    expect(suggestBookmarkCommands("l").map((suggestion) => suggestion.commandName)).toStrictEqual([
+      "ls",
+      "ll",
     ]);
   });
 

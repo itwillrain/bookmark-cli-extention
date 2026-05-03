@@ -478,9 +478,24 @@ mark --allow-duplicate
 
 ```bash
 ls
+ls -a
+ls -l Work/Admin
+ls -la Work/Admin
+ll -a
 ls Work/Admin
-ls --format json
 ```
+
+`ls` は現在ディレクトリ直下のentryを短い一覧で表示します。
+
+通常の `ls` は、titleが `.` で始まるentryを隠します。
+
+`ls -a` はtitleが `.` で始まるentryも表示します。
+
+`ls -l` はChrome Bookmark ID、parent ID、子node数を詳細行として表示します。
+
+`ls -la` と `ls -al` は `-l -a` と同じ意味です。
+
+`ll` は `ls -l` のaliasとして扱います。
 
 ### cd
 

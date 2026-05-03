@@ -12,6 +12,20 @@ export type {
 } from "./bookmark-usage-command-types";
 
 /**
+ * Directory list command optionです。
+ */
+export interface ListDirectoryOptions {
+  /**
+   * Dot始まりのentryも表示するかです。
+   */
+  readonly all: boolean;
+  /**
+   * 詳細情報を表示するかです。
+   */
+  readonly long: boolean;
+}
+
+/**
  * Directory list commandです。
  */
 export interface ListDirectoryCommand {
@@ -19,6 +33,10 @@ export interface ListDirectoryCommand {
    * Command種別です。
    */
   readonly kind: "ls";
+  /**
+   * 表示optionです。
+   */
+  readonly options: ListDirectoryOptions;
   /**
    * 対象path入力です。
    */

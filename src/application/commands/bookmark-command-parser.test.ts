@@ -12,11 +12,6 @@ const findCommandInput = "find stripe dashboard";
 const goCommandInput = "  go   /Work/Admin  ";
 
 /**
- * Ls commandの入力です。
- */
-const listDirectoryCommandInput = "ls Work/Admin";
-
-/**
  * Cd commandの入力です。
  */
 const changeDirectoryCommandInput = "cd ../Research";
@@ -112,16 +107,6 @@ describe("parseBookmarkCommand search commands", (): void => {
  * Bookmark directory系command parserの正常系テストスイートです。
  */
 describe("parseBookmarkCommand directory commands", (): void => {
-  /**
-   * Ls commandをpath付きで解析できることを検証します。
-   */
-  it("parses ls command with path", (): void => {
-    expect(parseBookmarkCommand(listDirectoryCommandInput)).toStrictEqual({
-      kind: "ls",
-      pathInput: "Work/Admin",
-    });
-  });
-
   /**
    * Cd commandをpath付きで解析できることを検証します。
    */

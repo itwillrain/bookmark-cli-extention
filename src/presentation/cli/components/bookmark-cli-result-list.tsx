@@ -1,63 +1,15 @@
+import type {
+  BookmarkCliResultItem,
+  BookmarkCliResultListProps,
+} from "./bookmark-cli-result-list-types";
 import type { CSSProperties, ReactElement } from "react";
 import { BookmarkCliResultSegments } from "./bookmark-cli-result-segments";
 import type { ResultCursorIndex } from "../../../domain/bookmarks/result-cursor";
 
-/**
- * CLI resultの表示種別です。
- */
-export type BookmarkCliResultKind = "bookmark" | "folder" | "preview";
-
-/**
- * CLI resultとして表示するitemです。
- */
-export interface BookmarkCliResultItem {
-  /**
-   * Tree表示時の階層です。
-   */
-  readonly depth?: number;
-  /**
-   * Bookmarkまたはfolderを表す種別です。
-   */
-  readonly kind: BookmarkCliResultKind;
-  /**
-   * 表示名です。
-   */
-  readonly title: string;
-  /**
-   * Folder pathです。
-   */
-  readonly folderPath: string;
-  /**
-   * 補足説明です。
-   */
-  readonly description?: string;
-  /**
-   * Bookmark URLです。
-   */
-  readonly url?: string;
-  /**
-   * 検索scoreです。
-   */
-  readonly score?: number;
-}
-
-/**
- * Bookmark CLI result listのpropsです。
- */
-export interface BookmarkCliResultListProps {
-  /**
-   * Nerd Font iconを優先するかです。v1の結果一覧はtofu防止のためASCII labelを使います。
-   */
-  readonly preferNerdFont: boolean;
-  /**
-   * CLI result一覧です。
-   */
-  readonly resultItems: readonly BookmarkCliResultItem[];
-  /**
-   * 選択中result indexです。
-   */
-  readonly selectedResultIndex: ResultCursorIndex;
-}
+export type {
+  BookmarkCliResultItem,
+  BookmarkCliResultKind,
+} from "./bookmark-cli-result-list-types";
 
 /**
  * 結果がない場合に表示するtextです。
@@ -68,6 +20,16 @@ const emptyResultText = "No output";
  * Score表示の小数桁です。
  */
 const scoreFractionDigits = 2;
+
+/**
+ * 詳細tokenの区切り文字です。
+ */
+const detailTokenSeparator = " ";
+
+/**
+ * 空の詳細token一覧です。
+ */
+const emptyDetailTokens = [] as const satisfies readonly string[];
 
 /**
  * 空のresult item件数です。
@@ -224,6 +186,25 @@ const renderResultDescription = (item: BookmarkCliResultItem): ReactElement => {
 };
 
 /**
+ * Result itemの詳細tokenを描画します。
+ * @param {BookmarkCliResultItem} item 詳細tokenを描画するresult itemです。
+ * @returns {ReactElement} 詳細token表示のReact elementです。
+ */
+const renderResultDetails = (item: BookmarkCliResultItem): ReactElement => {
+  const details = item.details ?? emptyDetailTokens;
+
+  if (details.length === emptyResultItemCount) {
+    return <></>;
+  }
+
+  return (
+    <span className="block truncate text-xs text-zinc-500">
+      {details.join(detailTokenSeparator)}
+    </span>
+  );
+};
+
+/**
  * Result itemのdebug scoreを描画します。
  * @param {BookmarkCliResultItem} item scoreを描画するresult itemです。
  * @returns {ReactElement} score表示のReact elementです。
@@ -258,6 +239,7 @@ const renderResultItem = (input: ResultItemRenderInput): ReactElement => (
     <span className="min-w-0">
       <span className="block truncate text-zinc-100">{input.item.title}</span>
       {renderResultDescription(input.item)}
+      {renderResultDetails(input.item)}
       {renderResultUrl(input.item)}
     </span>
     {renderResultScore(input.item)}
