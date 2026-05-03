@@ -205,6 +205,7 @@ describe("executeBookmarkCliCommand rm command", (): void => {
       entry: stripeDashboardEntry,
       kind: "rm",
     });
+    expect(state.resultItems).toStrictEqual([]);
     expect(state.statusText).toBe(removeConfirmationStatusText);
   });
 
@@ -218,6 +219,7 @@ describe("executeBookmarkCliCommand rm command", (): void => {
 
     expect(recordingOrganizer.removedIds).toStrictEqual(["42"]);
     expect(state.pendingConfirmation).toBeUndefined();
+    expect(state.resultItems).toStrictEqual([]);
     expect(state.statusText).toBe(removedStatusText);
   });
 });
@@ -234,6 +236,7 @@ describe("executeBookmarkCliCommand rm confirmation answer", (): void => {
 
     expect(recordingOrganizer.removedIds).toStrictEqual(["42"]);
     expect(state.pendingConfirmation).toBeUndefined();
+    expect(state.resultItems).toStrictEqual([]);
     expect(state.statusText).toBe(removedStatusText);
   });
 
@@ -247,6 +250,7 @@ describe("executeBookmarkCliCommand rm confirmation answer", (): void => {
 
     expect(recordingOrganizer.removedIds).toStrictEqual(["42"]);
     expect(state.pendingConfirmation).toBeUndefined();
+    expect(state.resultItems).toStrictEqual([]);
     expect(state.statusText).toBe(removedStatusText);
   });
 
@@ -260,6 +264,7 @@ describe("executeBookmarkCliCommand rm confirmation answer", (): void => {
 
     expect(recordingOrganizer.removedIds).toStrictEqual([]);
     expect(state.pendingConfirmation).toBeUndefined();
+    expect(state.resultItems).toStrictEqual([]);
     expect(state.statusText).toBe(cancelledStatusText);
   });
 });
