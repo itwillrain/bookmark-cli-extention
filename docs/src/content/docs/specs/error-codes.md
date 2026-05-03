@@ -48,7 +48,6 @@ JSON出力では `ok: false` と `error.code` を返します。
 | `unsupported_tab`         | CLI起動元タブをBookmarkとして保存できない | `mark`, `tag current`                           |
 | `invalid_argument`        | 引数の形や組み合わせが不正                | 全コマンド                                      |
 | `confirmation_required`   | 破壊的操作の確認が不足している            | `mv`, `rm`, `rename`                            |
-| `cancelled`               | ユーザーがpreview確認をキャンセルした     | `mv`, `rm`, `rename`                            |
 | `permission_denied`       | Chrome APIの権限が不足している            | 書き込み系                                      |
 | `chrome_bookmarks_failed` | Chrome Bookmarks APIの呼び出しに失敗した  | Bookmark操作全般                                |
 | `storage_failed`          | `chrome.storage` の読み書きに失敗した     | 状態保存、仮想タグ、利用統計                    |
@@ -150,14 +149,6 @@ rename 3 "GitHub Pull Requests"
 `--yes` は確認を省略して実行します。
 
 `rm` は `--yes` がない場合、削除せず `confirmation_required` を返します。
-
-## `cancelled`
-
-ユーザーがpreview確認をキャンセルした場合に返します。
-
-`Esc` やキャンセル操作で使います。
-
-キャンセル時はChrome Bookmark Managerを変更しません。
 
 ## `permission_denied`
 
