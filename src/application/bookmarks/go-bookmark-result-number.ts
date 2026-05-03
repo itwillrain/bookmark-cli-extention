@@ -1,12 +1,9 @@
-import type {
-  BookmarkSearchResult,
-  SearchableBookmarkEntry,
-} from "../../domain/search/bookmark-search";
+import type { BookmarkSearchResult, SearchableEntry } from "../../domain/search/bookmark-search";
 import {
   isResultNumberInput,
   resolveEntryByResultNumber,
 } from "../../domain/bookmarks/result-selection";
-import type { BookmarkEntry } from "../../domain/bookmarks/bookmark-tree";
+import type { BookmarkCliEntry } from "../../domain/cli/bookmark-cli-entry";
 
 /** 直前結果番号指定に使う空のmatch情報です。 */
 const emptyBookmarkSearchMatches: BookmarkSearchResult["matches"] = [];
@@ -21,7 +18,7 @@ export interface ResolveBookmarkSearchResultByResultNumberInput {
   /**
    * 直前結果一覧です。
    */
-  readonly lastResultEntries: readonly BookmarkEntry[];
+  readonly lastResultEntries: readonly BookmarkCliEntry[];
   /**
    * 検索queryです。
    */
@@ -36,21 +33,19 @@ export type BookmarkSearchResultByResultNumber =
   | typeof resultNumberBookmarkMissing;
 
 /**
- * EntryがURLを持つBookmarkかを判定します。
- * @param {BookmarkEntry} entry 判定対象entryです。
- * @returns {boolean} URLを持つBookmarkならtrueです。
+ * EntryがURLを開ける検索対象かを判定します。
+ * @param {BookmarkCliEntry} entry 判定対象entryです。
+ * @returns {boolean} URLを持つ検索対象ならtrueです。
  */
-const hasBookmarkUrl = (entry: BookmarkEntry): entry is SearchableBookmarkEntry =>
-  entry.kind === "bookmark" && typeof entry.url === "string";
+const hasOpenableUrl = (entry: BookmarkCliEntry): entry is SearchableEntry =>
+  (entry.kind === "bookmark" || entry.kind === "history") && typeof entry.url === "string";
 
 /**
  * EntryからBookmark検索結果互換の値を作ります。
- * @param {SearchableBookmarkEntry} entry Bookmark entryです。
+ * @param {SearchableEntry} entry 検索対象entryです。
  * @returns {BookmarkSearchResult} Bookmark検索結果です。
  */
-const createBookmarkSearchResultFromEntry = (
-  entry: SearchableBookmarkEntry,
-): BookmarkSearchResult => ({
+const createBookmarkSearchResultFromEntry = (entry: SearchableEntry): BookmarkSearchResult => ({
   entry,
   matches: emptyBookmarkSearchMatches,
   score: 0,
@@ -70,7 +65,7 @@ export const resolveBookmarkSearchResultByResultNumber = (
 
   const entryResolution = resolveEntryByResultNumber(input.lastResultEntries, input.query);
 
-  if (!entryResolution.ok || !hasBookmarkUrl(entryResolution.entry)) {
+  if (!entryResolution.ok || !hasOpenableUrl(entryResolution.entry)) {
     return resultNumberBookmarkMissing;
   }
 

@@ -48,7 +48,7 @@ JSON出力は `--format json` で指定します。
 
 ## `go`
 
-Bookmarkをfuzzy検索し、もっとも一致したBookmarkを開きます。
+BookmarkとChrome履歴をfuzzy検索し、もっとも一致したURLを開きます。
 
 ```bash
 go <query>
@@ -64,9 +64,9 @@ go 3
 go --debug stripe
 ```
 
-候補が明確に1件へ絞れる場合は、そのBookmarkを開きます。
+候補が明確に1件へ絞れる場合は、そのURLを開きます。
 
-直前結果一覧のBookmarkを開く場合は、`go 3` のように番号指定できます。
+直前結果一覧のBookmarkまたはChrome履歴を開く場合は、`go 3` のように番号指定できます。
 
 候補が複数ある場合は、番号付き一覧を表示して選択を求めます。
 
@@ -76,7 +76,7 @@ go --debug stripe
 
 ## `find`
 
-Bookmarkをfuzzy検索し、候補一覧だけを表示します。
+BookmarkとChrome履歴をfuzzy検索し、候補一覧だけを表示します。
 
 ```bash
 find <query> [--debug] [--format json]
@@ -90,9 +90,15 @@ find --debug stripe
 find "github.com" --format json
 ```
 
-検索対象はtitle、url、folder path、仮想タグです。
+検索対象はBookmarkのtitle、url、folder path、仮想タグと、Chrome履歴のtitle、urlです。
 
 `#` で始まるtokenは仮想タグとして扱います。
+
+Chrome履歴は仮想タグを持たないため、`#tag` 検索ではBookmarkだけを対象にします。
+
+BookmarkとChrome履歴に同じURLが存在する場合はBookmark resultとして表示し、Chrome履歴はscore補強にだけ使います。
+
+Bookmark化されていないChrome履歴は `HIST` resultとして表示します。
 
 通常の一覧では検索scoreを表示しません。
 

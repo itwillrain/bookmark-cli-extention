@@ -55,7 +55,7 @@ export const createBookmarkCliResultDefaultCommand = (
     return createResultNumberCommand(changeDirectoryCommandName, input.resultIndex);
   }
 
-  if (input.item.kind === "bookmark") {
+  if (input.item.kind === "bookmark" || input.item.kind === "history") {
     return createResultNumberCommand(goBookmarkCommandName, input.resultIndex);
   }
 

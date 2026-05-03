@@ -13,6 +13,9 @@ const folderKindLabel = "DIR";
 /** Help label。 */
 const helpKindLabel = "HELP";
 
+/** History label。 */
+const historyKindLabel = "HIST";
+
 /** Preview label。 */
 const previewKindLabel = "PREV";
 
@@ -42,6 +45,10 @@ const formatKindLabel = (kind: BookmarkCliResultKind): string => {
 
   if (kind === "help") {
     return helpKindLabel;
+  }
+
+  if (kind === "history") {
+    return historyKindLabel;
   }
 
   return folderKindLabel;

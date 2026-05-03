@@ -6,8 +6,14 @@ import type {
   FindBookmarkCommand,
   GoBookmarkCommand,
 } from "../../application/commands/bookmark-command-parser";
+import {
+  type FindBookmarksInput,
+  type GoBookmarkInput,
+  findBookmarks,
+  goBookmark,
+} from "../../application/bookmarks/bookmark-use-cases";
 import { createCommandState, createEmptyResultState } from "./bookmark-cli-state-builders";
-import { findBookmarks, goBookmark } from "../../application/bookmarks/bookmark-use-cases";
+import type { BookmarkCliEntry } from "../../domain/cli/bookmark-cli-entry";
 import type { BookmarkEntry } from "../../domain/bookmarks/bookmark-tree";
 import type { BookmarkSearchResult } from "../../domain/search/bookmark-search";
 import { createBookmarkCliResultItems } from "./bookmark-cli-view-model";
@@ -85,13 +91,78 @@ const recordOpenedBookmarkState = (
 });
 
 /**
+ * EntryがBookmark利用統計を記録できるかを判定します。
+ * @param {BookmarkCliEntry} entry 判定対象entryです。
+ * @returns {boolean} Bookmarkならtrueです。
+ */
+const canRecordBookmarkUsage = (entry: BookmarkCliEntry): entry is BookmarkEntry =>
+  entry.kind === "bookmark";
+
+/**
+ * Bookmarkならopen利用統計を拡張状態へ反映します。
+ * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存です。
+ * @param {BookmarkCliEntry} entry 開いたentryです。
+ * @returns {BookmarkCliCommandDependencies["extensionState"]} 更新後の拡張状態です。
+ */
+const recordOpenedEntryState = (
+  dependencies: BookmarkCliCommandDependencies,
+  entry: BookmarkCliEntry,
+): BookmarkCliCommandDependencies["extensionState"] => {
+  if (!canRecordBookmarkUsage(entry)) {
+    return dependencies.extensionState;
+  }
+
+  return recordOpenedBookmarkState(dependencies, entry);
+};
+
+/**
  * Bookmark検索結果から直前結果entry一覧を作ります。
  * @param {readonly BookmarkSearchResult[]} results Bookmark検索結果一覧です。
- * @returns {readonly BookmarkEntry[]} 直前結果entry一覧です。
+ * @returns {readonly BookmarkCliEntry[]} 直前結果entry一覧です。
  */
 const createLastResultEntriesFromSearchResults = (
   results: readonly BookmarkSearchResult[],
-): readonly BookmarkEntry[] => results.map((result) => result.entry);
+): readonly BookmarkCliEntry[] => results.map((result) => result.entry);
+
+/**
+ * Find use case入力へ履歴repositoryを必要な場合だけ追加します。
+ * @param {FindBookmarksInput} input Find use case入力です。
+ * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存です。
+ * @returns {FindBookmarksInput} 履歴repository反映後のFind use case入力です。
+ */
+const addHistoryRepositoryToFindInput = (
+  input: FindBookmarksInput,
+  dependencies: BookmarkCliCommandDependencies,
+): FindBookmarksInput => {
+  if (!dependencies.historyRepository) {
+    return input;
+  }
+
+  return {
+    ...input,
+    historyRepository: dependencies.historyRepository,
+  };
+};
+
+/**
+ * Go use case入力へ履歴repositoryを必要な場合だけ追加します。
+ * @param {GoBookmarkInput} input Go use case入力です。
+ * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存です。
+ * @returns {GoBookmarkInput} 履歴repository反映後のGo use case入力です。
+ */
+const addHistoryRepositoryToGoInput = (
+  input: GoBookmarkInput,
+  dependencies: BookmarkCliCommandDependencies,
+): GoBookmarkInput => {
+  if (!dependencies.historyRepository) {
+    return input;
+  }
+
+  return {
+    ...input,
+    historyRepository: dependencies.historyRepository,
+  };
+};
 
 /**
  * Find commandを実行します。
@@ -103,11 +174,16 @@ export const executeFindCommand = async (
   command: FindBookmarkCommand,
   dependencies: BookmarkCliCommandDependencies,
 ): Promise<BookmarkCliCommandState> => {
-  const result = await findBookmarks({
-    query: command.query,
-    repository: dependencies.repository,
-    virtualTagsByBookmarkId: dependencies.extensionState.virtualTagsByBookmarkId,
-  });
+  const result = await findBookmarks(
+    addHistoryRepositoryToFindInput(
+      {
+        query: command.query,
+        repository: dependencies.repository,
+        virtualTagsByBookmarkId: dependencies.extensionState.virtualTagsByBookmarkId,
+      },
+      dependencies,
+    ),
+  );
 
   if (!result.ok) {
     return createEmptyResultState(dependencies, result.message);
@@ -132,13 +208,18 @@ export const executeGoCommand = async (
   command: GoBookmarkCommand,
   dependencies: BookmarkCliCommandDependencies,
 ): Promise<BookmarkCliCommandState> => {
-  const result = await goBookmark({
-    lastResultEntries: dependencies.lastResultEntries,
-    opener: dependencies.opener,
-    query: command.query,
-    repository: dependencies.repository,
-    virtualTagsByBookmarkId: dependencies.extensionState.virtualTagsByBookmarkId,
-  });
+  const result = await goBookmark(
+    addHistoryRepositoryToGoInput(
+      {
+        lastResultEntries: dependencies.lastResultEntries,
+        opener: dependencies.opener,
+        query: command.query,
+        repository: dependencies.repository,
+        virtualTagsByBookmarkId: dependencies.extensionState.virtualTagsByBookmarkId,
+      },
+      dependencies,
+    ),
+  );
 
   if (!result.ok) {
     return createEmptyResultState(dependencies, result.message);
@@ -146,7 +227,7 @@ export const executeGoCommand = async (
 
   return createCommandState({
     currentDirectory: dependencies.currentDirectory,
-    extensionState: recordOpenedBookmarkState(dependencies, result.value.entry),
+    extensionState: recordOpenedEntryState(dependencies, result.value.entry),
     lastResultEntries: [result.value.entry],
     resultItems: createBookmarkCliResultItems([result.value], { debug: command.debug }),
     statusText: createOpenedStatusText(result.value.entry.title),

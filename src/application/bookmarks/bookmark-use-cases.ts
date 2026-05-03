@@ -1,7 +1,9 @@
-import type { BookmarkEntry, BookmarkTree } from "../../domain/bookmarks/bookmark-tree";
+/* oxlint-disable max-lines -- Bookmark検索とChrome履歴検索のApplication境界を同じuse caseに集約するため。 */
+
 import {
   type BookmarkSearchResult,
   createBookmarkSearchResultsFromEntries,
+  mergeBookmarkSearchResultsWithHistory,
   searchBookmarks,
 } from "../../domain/search/bookmark-search";
 import {
@@ -10,6 +12,9 @@ import {
   normalizeVirtualTagsByBookmarkId,
   parseVirtualTagSearchQuery,
 } from "../../domain/tags/virtual-tag";
+import type { BookmarkCliEntry } from "../../domain/cli/bookmark-cli-entry";
+import type { BookmarkTree } from "../../domain/bookmarks/bookmark-tree";
+import type { BrowserHistoryEntry } from "../../domain/history/browser-history";
 import type { VirtualTagsByBookmarkId } from "../../domain/storage/extension-state";
 import { isResultNumberInput } from "../../domain/bookmarks/result-selection";
 import { resolveBookmarkSearchResultByResultNumber } from "./go-bookmark-result-number";
@@ -74,6 +79,32 @@ export interface BookmarkRepositoryPort {
 }
 
 /**
+ * Chrome履歴検索の入力です。
+ */
+export interface BrowserHistorySearchInput {
+  /**
+   * 検索件数上限です。
+   */
+  readonly limit?: number;
+  /**
+   * 検索queryです。
+   */
+  readonly query: string;
+}
+
+/**
+ * Chrome履歴を取得するportです。
+ */
+export interface BrowserHistoryRepositoryPort {
+  /**
+   * Chrome履歴を検索します。
+   */
+  readonly searchHistory: (
+    input: BrowserHistorySearchInput,
+  ) => Promise<readonly BrowserHistoryEntry[]>;
+}
+
+/**
  * Bookmark URLを開くportです。
  */
 export interface BookmarkOpenerPort {
@@ -87,6 +118,10 @@ export interface BookmarkOpenerPort {
  * Bookmark候補検索の入力です。
  */
 export interface FindBookmarksInput {
+  /**
+   * Chrome履歴取得portです。
+   */
+  readonly historyRepository?: BrowserHistoryRepositoryPort;
   /**
    * 検索queryです。
    */
@@ -116,9 +151,13 @@ export interface FindBookmarksValue {
  */
 export interface GoBookmarkInput {
   /**
+   * Chrome履歴取得portです。
+   */
+  readonly historyRepository?: BrowserHistoryRepositoryPort;
+  /**
    * 直前結果一覧です。
    */
-  readonly lastResultEntries?: readonly BookmarkEntry[];
+  readonly lastResultEntries?: readonly BookmarkCliEntry[];
   /**
    * Bookmark URLを開くportです。
    */
@@ -157,13 +196,31 @@ type NonEmptyBookmarkSearchResults = readonly [BookmarkSearchResult, ...Bookmark
  */
 type BookmarkSearchResultList = readonly BookmarkSearchResult[];
 
+/** 仮想タグ対応検索入力です。 */
+interface SearchBookmarksWithVirtualTagsInput {
+  /** Bookmark Treeです。 */
+  readonly bookmarkTree: BookmarkTree;
+  /** Chrome履歴entry一覧です。 */
+  readonly historyEntries: readonly BrowserHistoryEntry[];
+  /** 検索queryです。 */
+  readonly query: string;
+  /** Bookmark ID別仮想タグです。 */
+  readonly virtualTagsByBookmarkId: VirtualTagsByBookmarkId | undefined;
+}
+
 /** 空文字です。 */
 const emptyQuery = "";
 
 /**
  * 直前結果一覧の初期値です。
  */
-const emptyLastResultEntries: readonly BookmarkEntry[] = [];
+const emptyLastResultEntries: readonly BookmarkCliEntry[] = [];
+
+/** Chrome履歴検索の初期件数上限です。 */
+const defaultHistorySearchLimit = 25;
+
+/** 空のChrome履歴候補一覧です。 */
+const emptyHistoryEntries = [] as const satisfies readonly BrowserHistoryEntry[];
 
 /**
  * 成功結果を作ります。
@@ -197,25 +254,24 @@ const hasSearchResults = (
 
 /**
  * 仮想タグ条件を含む検索を実行します。
- * @param {BookmarkTree} bookmarkTree Bookmark Treeです。
- * @param {string} query 検索queryです。
- * @param {VirtualTagsByBookmarkId | undefined} virtualTagsByBookmarkId Bookmark ID別仮想タグです。
+ * @param {SearchBookmarksWithVirtualTagsInput} input 仮想タグ対応検索入力です。
  * @returns {readonly BookmarkSearchResult[]} 検索結果一覧です。
  */
 const searchBookmarksWithVirtualTags = (
-  bookmarkTree: BookmarkTree,
-  query: string,
-  virtualTagsByBookmarkId?: VirtualTagsByBookmarkId,
+  input: SearchBookmarksWithVirtualTagsInput,
 ): readonly BookmarkSearchResult[] => {
-  const tagSearchQuery = parseVirtualTagSearchQuery(query);
+  const tagSearchQuery = parseVirtualTagSearchQuery(input.query);
 
   if (!hasVirtualTagFilters(tagSearchQuery)) {
-    return searchBookmarks(bookmarkTree.entries, query);
+    return mergeBookmarkSearchResultsWithHistory({
+      bookmarkResults: searchBookmarks(input.bookmarkTree.entries, input.query),
+      historyEntries: input.historyEntries,
+    });
   }
 
   const taggedEntries = filterEntriesByVirtualTags(
-    bookmarkTree.entries,
-    normalizeVirtualTagsByBookmarkId(virtualTagsByBookmarkId),
+    input.bookmarkTree.entries,
+    normalizeVirtualTagsByBookmarkId(input.virtualTagsByBookmarkId),
     tagSearchQuery.tags,
   );
 
@@ -224,6 +280,32 @@ const searchBookmarksWithVirtualTags = (
   }
 
   return searchBookmarks(taggedEntries, tagSearchQuery.textQuery);
+};
+
+/**
+ * Chrome履歴を検索します。
+ * @param {FindBookmarksInput | GoBookmarkInput} input 検索入力です。
+ * @returns {Promise<readonly BrowserHistoryEntry[]>} Chrome履歴候補一覧です。
+ */
+const searchBrowserHistory = async (
+  input: FindBookmarksInput | GoBookmarkInput,
+): Promise<readonly BrowserHistoryEntry[]> => {
+  if (!input.historyRepository) {
+    return emptyHistoryEntries;
+  }
+
+  const tagSearchQuery = parseVirtualTagSearchQuery(input.query);
+
+  if (hasVirtualTagFilters(tagSearchQuery) || tagSearchQuery.textQuery === emptyQuery) {
+    return emptyHistoryEntries;
+  }
+
+  const historyEntries = await input.historyRepository.searchHistory({
+    limit: defaultHistorySearchLimit,
+    query: tagSearchQuery.textQuery,
+  });
+
+  return historyEntries;
 };
 
 /**
@@ -257,11 +339,13 @@ export const findBookmarks = async (
   input: FindBookmarksInput,
 ): Promise<BookmarkCommandResult<FindBookmarksValue>> => {
   const bookmarkTree = await input.repository.getBookmarkTree();
-  const results = searchBookmarksWithVirtualTags(
+  const historyEntries = await searchBrowserHistory(input);
+  const results = searchBookmarksWithVirtualTags({
     bookmarkTree,
-    input.query,
-    input.virtualTagsByBookmarkId,
-  );
+    historyEntries,
+    query: input.query,
+    virtualTagsByBookmarkId: input.virtualTagsByBookmarkId,
+  });
 
   return createSuccess({ results });
 };
@@ -279,11 +363,13 @@ export const goBookmark = async (
   }
 
   const bookmarkTree = await input.repository.getBookmarkTree();
-  const results = searchBookmarksWithVirtualTags(
+  const historyEntries = await searchBrowserHistory(input);
+  const results = searchBookmarksWithVirtualTags({
     bookmarkTree,
-    input.query,
-    input.virtualTagsByBookmarkId,
-  );
+    historyEntries,
+    query: input.query,
+    virtualTagsByBookmarkId: input.virtualTagsByBookmarkId,
+  });
 
   if (!hasSearchResults(results)) {
     return createNotFoundFailure(input.query);

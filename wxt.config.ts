@@ -48,7 +48,7 @@ const enabledModules = ["@wxt-dev/module-react"];
  * @see https://developer.chrome.com/docs/extensions/how-to/ui/favicons
  * @see https://developer.chrome.com/docs/extensions/reference/permissions-list
  */
-const manifestPermissions = ["activeTab", "bookmarks", "favicon", "storage"];
+const manifestPermissions = ["activeTab", "bookmarks", "favicon", "history", "storage"];
 
 /**
  * Vite に追加する plugin 設定を組み立てます。

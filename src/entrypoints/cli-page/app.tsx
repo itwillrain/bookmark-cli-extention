@@ -18,6 +18,7 @@ import { BookmarkCliAppScreen } from "./bookmark-cli-app-screen";
 import type { LaunchContext } from "../../application/bookmarks/mark-bookmark-use-case";
 import { createAppCommandRuntime } from "./app-command-runtime";
 import { createChromeExtensionStateStorage } from "../../infrastructure/chrome/extension-state-storage-adapter";
+import { createChromeHistoryRepository } from "../../infrastructure/chrome/history-adapter";
 import { createChromeLaunchContextStorage } from "../../infrastructure/chrome/launch-context-storage-adapter";
 import { createCommandExecutionErrorHandler } from "./app-command-handlers";
 import { createInitialExtensionState } from "../../domain/storage/extension-state";
@@ -65,6 +66,11 @@ const bookmarkOrganizer = createChromeBookmarkOrganizer(browser.bookmarks);
  * Chrome Tabs APIを使うopenerです。
  */
 const bookmarkOpener = createChromeBookmarkOpener(browser.tabs);
+
+/**
+ * Chrome History APIを使うhistory repositoryです。
+ */
+const historyRepository = createChromeHistoryRepository(browser.history);
 
 /**
  * Chrome Storage APIを使う拡張状態storage。
@@ -130,6 +136,7 @@ const createCommandDependencies = (
     creator: bookmarkCreator,
     currentDirectory: commandState.currentDirectory,
     extensionState: commandState.extensionState,
+    historyRepository,
     lastResultEntries: commandState.lastResultEntries,
     now: nowIsoString,
     opener: bookmarkOpener,

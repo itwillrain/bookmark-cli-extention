@@ -1,11 +1,15 @@
+/* oxlint-disable max-lines-per-function -- Fuse検索fixtureを共有してChrome履歴mergeを検証するため。 */
+
 import {
   bookmarkSearchFuseOptions,
   convertFuseScoreToCommandScore,
   createBookmarkSearchDocuments,
+  mergeBookmarkSearchResultsWithHistory,
   searchBookmarks,
 } from "./bookmark-search";
 import { describe, expect, it } from "vitest";
 import type { BookmarkEntry } from "../bookmarks/bookmark-tree";
+import type { BrowserHistoryEntry } from "../history/browser-history";
 
 /**
  * Work folderのBookmark Entryです。
@@ -44,6 +48,38 @@ const githubPullRequestsEntry = {
   title: "GitHub Pull Requests",
   url: "https://github.com/pulls",
 } satisfies BookmarkEntry;
+
+/**
+ * GitHub DocsのChrome履歴Entryです。
+ */
+const githubDocsHistoryEntry = {
+  childrenCount: 0,
+  folderPath: "/History",
+  id: "history-101",
+  kind: "history",
+  lastVisitTime: 1_700_000_000_000,
+  parentId: "history",
+  title: "GitHub Docs",
+  typedCount: 1,
+  url: "https://docs.github.com/",
+  visitCount: 10,
+} satisfies BrowserHistoryEntry;
+
+/**
+ * Stripe Dashboardと同じURLのChrome履歴Entryです。
+ */
+const stripeDashboardHistoryEntry = {
+  childrenCount: 0,
+  folderPath: "/History",
+  id: "history-102",
+  kind: "history",
+  lastVisitTime: 1_700_000_010_000,
+  parentId: "history",
+  title: "Stripe Dashboard",
+  typedCount: 3,
+  url: "https://dashboard.stripe.com/",
+  visitCount: 20,
+} satisfies BrowserHistoryEntry;
 
 /**
  * 検索テストで使うBookmark Entry一覧です。
@@ -167,5 +203,34 @@ describe("bookmark search", (): void => {
 
     expect(results).toHaveLength(expectedAdminSearchResultCount);
     expect(results[firstSearchResultIndex]?.entry.id).toBe("42");
+  });
+
+  /**
+   * BookmarkとChrome履歴を重複除去してmergeできることを検証します。
+   */
+  it("merges bookmark search results with history results", (): void => {
+    const bookmarkResults = searchBookmarks(bookmarkEntries, "github");
+    const results = mergeBookmarkSearchResultsWithHistory({
+      bookmarkResults,
+      historyEntries: [githubDocsHistoryEntry],
+    });
+
+    expect(results.map((result) => result.entry.kind)).toContain("history");
+    expect(results.map((result) => result.entry.url)).toContain("https://docs.github.com/");
+  });
+
+  /**
+   * 同じURLのChrome履歴でBookmark resultを補強し、重複表示しないことを検証します。
+   */
+  it("boosts duplicated bookmark results without adding duplicated history result", (): void => {
+    const bookmarkResults = searchBookmarks(bookmarkEntries, "stripe");
+    const results = mergeBookmarkSearchResultsWithHistory({
+      bookmarkResults,
+      historyEntries: [stripeDashboardHistoryEntry],
+    });
+
+    expect(results).toHaveLength(expectedAdminSearchResultCount);
+    expect(results[firstSearchResultIndex]?.entry.kind).toBe("bookmark");
+    expect(results[firstSearchResultIndex]?.score).toBe(bestCommandScore);
   });
 });

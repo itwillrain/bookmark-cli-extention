@@ -1,5 +1,3 @@
-import type { BookmarkEntry } from "./bookmark-tree";
-
 /**
  * Result numberをarray indexへ変換するoffsetです。
  */
@@ -50,9 +48,14 @@ interface ResultNumberIndexMissing {
 type ResultNumberIndexResult = ResultNumberIndexFound | ResultNumberIndexMissing;
 
 /**
+ * Result entryが見つからない場合の値です。
+ */
+const resultEntryMissing = false;
+
+/**
  * Result entry解決成功です。
  */
-export interface ResultEntryFound {
+export interface ResultEntryFound<TEntry> {
   /**
    * 解決成功を表します。
    */
@@ -60,7 +63,7 @@ export interface ResultEntryFound {
   /**
    * 解決されたentryです。
    */
-  readonly entry: BookmarkEntry;
+  readonly entry: TEntry;
 }
 
 /**
@@ -76,7 +79,7 @@ export interface ResultEntryMissing {
 /**
  * Result entry解決結果です。
  */
-export type ResultEntryResolution = ResultEntryFound | ResultEntryMissing;
+export type ResultEntryResolution<TEntry> = ResultEntryFound<TEntry> | ResultEntryMissing;
 
 /**
  * 入力が直前結果の番号指定かを判定します。
@@ -108,24 +111,45 @@ const resolveResultNumberIndex = (resultNumberInput: string): ResultNumberIndexR
 };
 
 /**
- * 直前結果一覧から番号指定されたentryを解決します。
- * @param {readonly BookmarkEntry[]} resultEntries 直前結果のentry一覧です。
- * @param {string} resultNumberInput CLIに入力された1-based result numberです。
- * @returns {ResultEntryResolution} entry解決結果です。
+ * 指定indexのresult entryを取得します。
+ * @template TEntry entry型です。
+ * @param {readonly TEntry[]} resultEntries 直前結果のentry一覧です。
+ * @param {number} targetIndex 取得するindexです。
+ * @returns {TEntry | false} entry。見つからない場合はfalseです。
  */
-export const resolveEntryByResultNumber = (
-  resultEntries: readonly BookmarkEntry[],
+const getResultEntryAtIndex = <TEntry>(
+  resultEntries: readonly TEntry[],
+  targetIndex: number,
+): TEntry | typeof resultEntryMissing => {
+  for (const [entryIndex, entry] of resultEntries.entries()) {
+    if (entryIndex === targetIndex) {
+      return entry;
+    }
+  }
+
+  return resultEntryMissing;
+};
+
+/**
+ * 直前結果一覧から番号指定されたentryを解決します。
+ * @template TEntry entry型です。
+ * @param {readonly TEntry[]} resultEntries 直前結果のentry一覧です。
+ * @param {string} resultNumberInput CLIに入力された1-based result numberです。
+ * @returns {ResultEntryResolution<TEntry>} entry解決結果です。
+ */
+export const resolveEntryByResultNumber = <TEntry>(
+  resultEntries: readonly TEntry[],
   resultNumberInput: string,
-): ResultEntryResolution => {
+): ResultEntryResolution<TEntry> => {
   const indexResult = resolveResultNumberIndex(resultNumberInput);
 
   if (!indexResult.ok) {
     return { ok: false };
   }
 
-  const entry = resultEntries[indexResult.index];
+  const entry = getResultEntryAtIndex(resultEntries, indexResult.index);
 
-  if (!entry) {
+  if (entry === resultEntryMissing) {
     return { ok: false };
   }
 

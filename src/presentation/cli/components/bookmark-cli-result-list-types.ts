@@ -3,7 +3,7 @@ import type { ResultCursorIndex } from "../../../domain/bookmarks/result-cursor"
 /**
  * CLI resultの表示種別です。
  */
-export type BookmarkCliResultKind = "bookmark" | "folder" | "help" | "preview";
+export type BookmarkCliResultKind = "bookmark" | "folder" | "help" | "history" | "preview";
 
 /**
  * CLI resultとして表示するitemです。

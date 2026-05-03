@@ -1,3 +1,4 @@
+import type { BookmarkCliEntry } from "../../domain/cli/bookmark-cli-entry";
 import type { BookmarkCliResultItem } from "./components/bookmark-cli-screen";
 import type { BookmarkEntry } from "../../domain/bookmarks/bookmark-tree";
 import type { BookmarkOrganizationPreview } from "../../domain/bookmarks/bookmark-organization-preview";
@@ -21,7 +22,7 @@ export interface CreateBookmarkCliResultItemsFromEntriesOptions {
 /**
  * URLを持つBookmark entryです。
  */
-type BookmarkEntryWithUrl = BookmarkEntry & {
+type BookmarkEntryWithUrl = BookmarkCliEntry & {
   /**
    * Bookmark URLです。
    */
@@ -59,7 +60,7 @@ const createEntryDetailToken = (key: string, value: string | number): string =>
  * @param {BookmarkEntry} entry Bookmark entryです。
  * @returns {readonly string[]} 詳細token一覧です。
  */
-const createEntryDetailTokens = (entry: BookmarkEntry): readonly string[] => [
+const createEntryDetailTokens = (entry: BookmarkCliEntry): readonly string[] => [
   createEntryDetailToken(idDetailKey, entry.id),
   createEntryDetailToken(parentDetailKey, entry.parentId),
   createEntryDetailToken(childrenDetailKey, entry.childrenCount),
@@ -74,7 +75,7 @@ const createEntryDetailTokens = (entry: BookmarkEntry): readonly string[] => [
  */
 const applyEntryDetails = (
   item: BookmarkCliResultItem,
-  entry: BookmarkEntry,
+  entry: BookmarkCliEntry,
   options: CreateBookmarkCliResultItemsFromEntriesOptions,
 ): BookmarkCliResultItem => {
   if (!options.long) {
@@ -94,7 +95,7 @@ const applyEntryDetails = (
  * @returns {BookmarkCliResultItem} CLI表示itemです。
  */
 const createBookmarkCliResultItemFromEntry = (
-  entry: BookmarkEntry,
+  entry: BookmarkCliEntry,
   options: CreateBookmarkCliResultItemsFromEntriesOptions,
 ): BookmarkCliResultItem =>
   applyEntryDetails(
@@ -126,7 +127,7 @@ const createBookmarkCliResultItemWithUrl = (
  * @param {BookmarkEntry} entry Bookmark entryです。
  * @returns {boolean} URLを持つBookmark entryならtrueです。
  */
-const hasBookmarkEntryUrl = (entry: BookmarkEntry): entry is BookmarkEntryWithUrl =>
+const hasBookmarkEntryUrl = (entry: BookmarkCliEntry): entry is BookmarkEntryWithUrl =>
   typeof entry.url === "string";
 
 /**
@@ -136,7 +137,7 @@ const hasBookmarkEntryUrl = (entry: BookmarkEntry): entry is BookmarkEntryWithUr
  * @returns {BookmarkCliResultItem} CLI表示itemです。
  */
 const createBookmarkCliResultItemFromBookmarkEntry = (
-  entry: BookmarkEntry,
+  entry: BookmarkCliEntry,
   options: CreateBookmarkCliResultItemsFromEntriesOptions = defaultEntryResultItemsOptions,
 ): BookmarkCliResultItem => {
   if (hasBookmarkEntryUrl(entry)) {

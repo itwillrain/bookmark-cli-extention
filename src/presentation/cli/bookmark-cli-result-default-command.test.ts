@@ -25,6 +25,14 @@ const previewResultItem = {
   title: "Stripe Dashboard",
 } satisfies BookmarkCliResultItem;
 
+/** History result item fixtureです。 */
+const historyResultItem = {
+  folderPath: "/History",
+  kind: "history",
+  title: "GitHub Docs",
+  url: "https://docs.github.com/",
+} satisfies BookmarkCliResultItem;
+
 /** 先頭result indexです。 */
 const firstResultIndex = 0;
 
@@ -63,13 +71,25 @@ describe("createBookmarkCliResultDefaultCommand", (): void => {
   });
 
   /**
+   * History resultはgo番号として実行することを検証します。
+   */
+  it("creates go result-number command for history result", (): void => {
+    expect(
+      createBookmarkCliResultDefaultCommand({
+        item: historyResultItem,
+        resultIndex: thirdResultIndex,
+      }),
+    ).toBe("go 3");
+  });
+
+  /**
    * Preview resultには既定commandを持たせないことを検証します。
    */
   it("returns false for preview result", (): void => {
     expect(
       createBookmarkCliResultDefaultCommand({
         item: previewResultItem,
-        resultIndex: thirdResultIndex,
+        resultIndex: firstResultIndex,
       }),
     ).toBe(false);
   });
