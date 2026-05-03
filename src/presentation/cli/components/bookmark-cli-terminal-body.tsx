@@ -66,6 +66,15 @@ const latestTranscriptEntryOffset = 1;
 /** Scroll対象が未mountであることを表す値です。 */
 const missingScrollElement = false;
 
+/** 空のsuggestion item件数です。 */
+const emptySuggestionItemCount = 0;
+
+/** Command dockのbase classNameです。 */
+const commandDockClassName = "relative shrink-0 pt-2";
+
+/** Suggestion表示時のcommand dock classNameです。 */
+const commandDockWithSuggestionsClassName = `${commandDockClassName} pb-40`;
+
 /**
  * 最新transcript entry idを取得します。
  * @param {readonly BookmarkCliTranscriptEntry[]} transcriptEntries transcript entry一覧です。
@@ -74,6 +83,21 @@ const missingScrollElement = false;
 const getLatestTranscriptEntryId = (
   transcriptEntries: readonly BookmarkCliTranscriptEntry[],
 ): string => transcriptEntries.at(-latestTranscriptEntryOffset)?.id ?? emptyTranscriptEntryId;
+
+/**
+ * Command dockのclassNameを作ります。
+ * @param {readonly BookmarkCliSuggestionItem[]} suggestionItems Suggestion item一覧です。
+ * @returns {string} Command dock classNameです。
+ */
+const createCommandDockClassName = (
+  suggestionItems: readonly BookmarkCliSuggestionItem[],
+): string => {
+  if (suggestionItems.length === emptySuggestionItemCount) {
+    return commandDockClassName;
+  }
+
+  return commandDockWithSuggestionsClassName;
+};
 
 /**
  * Terminal bodyを最新promptが見える位置へ追従させます。
@@ -106,13 +130,7 @@ const useTerminalAutoScroll = (props: BookmarkCliTerminalBodyProps): RefCallback
     }
 
     scrollElement.scrollTop = bottomScrollTop;
-  }, [
-    latestTranscriptEntryId,
-    props.inputValue,
-    props.suggestionItems.length,
-    props.transcriptEntries.length,
-    scrollElement,
-  ]);
+  }, [latestTranscriptEntryId, props.transcriptEntries.length, scrollElement]);
 
   return handleScrollElementRef;
 };
@@ -124,16 +142,19 @@ const useTerminalAutoScroll = (props: BookmarkCliTerminalBodyProps): RefCallback
  */
 export const BookmarkCliTerminalBody = (props: BookmarkCliTerminalBodyProps): ReactElement => {
   const handleScrollElementRef = useTerminalAutoScroll(props);
+  const commandDockClassNameValue = createCommandDockClassName(props.suggestionItems);
 
   return (
     <section className="flex min-h-0 flex-1 flex-col px-4 py-4 font-mono text-sm leading-6 sm:px-5">
-      <section ref={handleScrollElementRef} className="min-h-0 flex-1 overflow-auto">
+      <section ref={handleScrollElementRef} className="min-h-0 flex-1 overflow-auto pb-2">
         <BookmarkCliTranscriptList
           preferNerdFont={props.preferNerdFont}
           promptStyle={props.promptStyle}
           selectedResultIndex={props.selectedResultIndex}
           transcriptEntries={props.transcriptEntries}
         />
+      </section>
+      <section className={commandDockClassNameValue}>
         <CommandForm
           inputValue={props.inputValue}
           onInputChange={props.onInputChange}

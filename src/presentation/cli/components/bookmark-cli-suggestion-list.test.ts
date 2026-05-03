@@ -12,8 +12,8 @@ const selectedAriaAttribute = 'aria-selected="true"';
 /** 選択中aria属性の出現回数。 */
 const selectedAriaAttributeCount = 1;
 
-/** Terminal output layout属性。 */
-const terminalOutputLayoutAttribute = 'data-layout="terminal-output"';
+/** Prompt直下floating layout属性。 */
+const floatingBelowPromptLayoutAttribute = 'data-layout="floating-below-prompt"';
 
 /** Listbox role属性。 */
 const listboxRoleAttribute = 'role="listbox"';
@@ -52,9 +52,9 @@ const countOccurrences = (text: string, token: string): number =>
  */
 describe("BookmarkCliSuggestionList", (): void => {
   /**
-   * Suggestionをterminal outputとして描画できることを検証。
+   * Suggestionをprompt直下のfloatingとして描画できることを検証。
    */
-  it("renders suggestions as terminal output", (): void => {
+  it("renders suggestions as a floating layer below the prompt", (): void => {
     const html = renderToStaticMarkup(
       createElement(BookmarkCliSuggestionList, {
         selectedSuggestionIndex,
@@ -62,7 +62,7 @@ describe("BookmarkCliSuggestionList", (): void => {
       }),
     );
 
-    expect(html).toContain(terminalOutputLayoutAttribute);
+    expect(html).toContain(floatingBelowPromptLayoutAttribute);
     expect(html).toContain(listboxRoleAttribute);
   });
 

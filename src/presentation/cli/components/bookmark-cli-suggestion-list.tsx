@@ -26,11 +26,12 @@ export interface BookmarkCliSuggestionListProps {
 /** 空のitem count。 */
 const emptyItemCount = 0;
 
-/** Terminal outputとして表示するsuggestion wrapperのclassName。 */
-const suggestionListWrapperClassName = "mt-2 min-h-20 pb-3";
+/** Prompt直下にfloating表示するsuggestion wrapperのclassName。 */
+const suggestionListWrapperClassName = "pointer-events-none absolute inset-x-0 top-full z-20 mt-2";
 
-/** Terminal outputとして表示するsuggestion listのclassName。 */
-const suggestionListClassName = "space-y-1 border-l border-zinc-800 pl-3";
+/** Floatingだがterminal outputとして見せるsuggestion listのclassName。 */
+const suggestionListClassName =
+  "max-h-40 space-y-1 overflow-auto border-l border-zinc-800 bg-zinc-950/95 py-1 pl-3 shadow-2xl shadow-black/40";
 
 /** 選択中suggestion itemのclassName。 */
 const selectedSuggestionItemClassName =
@@ -92,7 +93,7 @@ const renderSuggestionItem = (input: SuggestionItemRenderInput): ReactElement =>
 );
 
 /**
- * Terminal outputとしてcommand suggestion listを描画。
+ * Prompt直下にfloating command suggestion listを描画。
  * @param {BookmarkCliSuggestionListProps} props Suggestion list props。
  * @returns {ReactElement | null} Suggestion list element。
  */
@@ -107,7 +108,7 @@ export const BookmarkCliSuggestionList = (
     <aside
       aria-label="Command suggestions"
       className={suggestionListWrapperClassName}
-      data-layout="terminal-output"
+      data-layout="floating-below-prompt"
     >
       <ol className={suggestionListClassName} role="listbox">
         {props.suggestionItems.map((suggestionItem, suggestionItemIndex) =>

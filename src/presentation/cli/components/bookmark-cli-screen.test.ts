@@ -11,11 +11,20 @@ const legacyPowerlineSeparatorGlyph = "\uE0B0";
 /** Prompt aria-label属性。 */
 const promptAriaLabelAttribute = 'aria-label="bookmark-cli $"';
 
+/** Command input aria-label属性。 */
+const commandInputAriaLabelAttribute = 'aria-label="Bookmark CLI command"';
+
+/** Command suggestions aria-label属性。 */
+const commandSuggestionsAriaLabelAttribute = 'aria-label="Command suggestions"';
+
 /** Powerline prompt数。 */
 const expectedPowerlinePromptCount = 2;
 
 /** 出現回数計算でsplit結果から引くoffset。 */
 const occurrenceSplitOffset = 1;
+
+/** 文字列が見つからないindex。 */
+const missingIndex = -1;
 
 /** 入力値fixture。 */
 const inputValue = "find stripe";
@@ -33,6 +42,15 @@ const resultItems = [
     url: "https://dashboard.stripe.com/",
   },
 ] satisfies BookmarkCliScreenProps["transcriptEntries"][number]["resultItems"];
+
+/** Suggestion fixture一覧。 */
+const suggestionItems = [
+  {
+    commandName: "ls",
+    completion: "ls ",
+    description: "現在ディレクトリを表示",
+  },
+] satisfies BookmarkCliScreenProps["suggestionItems"];
 
 /**
  * Test用の入力変更callback。
@@ -113,5 +131,19 @@ describe("BookmarkCliScreen prompt", (): void => {
     );
 
     expect(html).not.toContain(promptAriaLabelAttribute);
+  });
+
+  /**
+   * Suggestionを現在promptの後に描画することを検証。
+   */
+  it("renders suggestions after the active command prompt", (): void => {
+    const html = renderToStaticMarkup(
+      createElement(BookmarkCliScreen, { ...baseProps, suggestionItems }),
+    );
+    const commandInputIndex = html.indexOf(commandInputAriaLabelAttribute);
+    const suggestionsIndex = html.indexOf(commandSuggestionsAriaLabelAttribute);
+
+    expect(commandInputIndex).toBeGreaterThan(missingIndex);
+    expect(suggestionsIndex).toBeGreaterThan(commandInputIndex);
   });
 });
