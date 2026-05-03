@@ -1,0 +1,43 @@
+import { describe, expect, it } from "vitest";
+import { findBookmarkCliHelpTopic, listBookmarkCliHelpTopics } from "./bookmark-help";
+
+/** Go help topic名です。 */
+const goHelpTopicName = "go";
+
+/** Unknown help topic名です。 */
+const unknownHelpTopicName = "missing";
+
+/**
+ * Bookmark CLI help catalogのテストスイートです。
+ */
+describe("bookmark CLI help catalog", (): void => {
+  /**
+   * Help topic一覧に主要commandを含むことを検証します。
+   */
+  it("lists command help topics", (): void => {
+    expect(listBookmarkCliHelpTopics().map((topic) => topic.commandName)).toContain(
+      goHelpTopicName,
+    );
+  });
+
+  /**
+   * Command名からhelp topicを取得できることを検証します。
+   */
+  it("finds a help topic by command name", (): void => {
+    const topic = findBookmarkCliHelpTopic(goHelpTopicName);
+
+    expect(topic).not.toBe(false);
+
+    if (topic !== false) {
+      expect(topic.usage).toContain("go <query>");
+      expect(topic.examples).toContain("go 3");
+    }
+  });
+
+  /**
+   * 未登録command名ではhelp topicを返さないことを検証します。
+   */
+  it("returns false for unknown help topic", (): void => {
+    expect(findBookmarkCliHelpTopic(unknownHelpTopicName)).toBe(false);
+  });
+});

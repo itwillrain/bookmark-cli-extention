@@ -243,6 +243,20 @@ export interface EmptyBookmarkCommand {
 }
 
 /**
+ * Help表示commandです。
+ */
+export interface HelpBookmarkCommand {
+  /**
+   * Command種別です。
+   */
+  readonly kind: "help";
+  /**
+   * Help対象command名です。空文字の場合はtopic一覧を表示します。
+   */
+  readonly topicInput: string;
+}
+
+/**
  * 未対応commandです。
  */
 export interface UnknownBookmarkCommand {
@@ -268,6 +282,7 @@ export type ParsedBookmarkCommand =
   | EmptyBookmarkCommand
   | FindBookmarkCommand
   | GoBookmarkCommand
+  | HelpBookmarkCommand
   | ListDirectoryCommand
   | MakeDirectoryCommand
   | MarkBookmarkCommand

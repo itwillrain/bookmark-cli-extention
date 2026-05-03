@@ -6,7 +6,7 @@ import type { ResultViewStyle } from "../../../domain/storage/extension-state";
 /**
  * CLI resultの表示種別です。
  */
-export type BookmarkCliResultKind = "bookmark" | "folder" | "preview";
+export type BookmarkCliResultKind = "bookmark" | "folder" | "help" | "preview";
 
 /**
  * CLI resultとして表示するitemです。
