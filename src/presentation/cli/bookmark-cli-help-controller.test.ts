@@ -22,6 +22,11 @@ const helpInput = "help";
 const helpGoInput = "help go";
 
 /**
+ * History topic付きhelp commandの入力。
+ */
+const helpHistoryInput = "help history";
+
+/**
  * Root current directory。
  */
 const rootCurrentDirectory = "/";
@@ -45,6 +50,11 @@ const helpResultKind = "help";
  * Help topic title。
  */
 const goHelpTopicTitle = "go";
+
+/**
+ * History help topicのtitle。
+ */
+const historyHelpTopicTitle = "history";
 
 /**
  * 空のBookmark Tree fixture。
@@ -151,6 +161,33 @@ describe("executeBookmarkCliCommand help commands", (): void => {
         folderPath: "/",
         kind: "help",
         title: "go",
+      },
+    ]);
+  });
+});
+
+/**
+ * Bookmark history help CLI controllerのテストスイート。
+ */
+describe("executeBookmarkCliCommand history help command", (): void => {
+  /**
+   * History topic付きHelp commandでChrome履歴説明を表示状態へ変換できることを検証。
+   */
+  it("returns history help for history topic", async (): Promise<void> => {
+    const state = await executeBookmarkCliCommand(helpHistoryInput, createCommandDependencies());
+
+    expect(state.statusText).toBe("Help history");
+    expect(state.resultItems).toStrictEqual([
+      {
+        description: "Chrome履歴をfind/goの検索候補として扱う",
+        details: [
+          "usage: find <query> includes HIST results",
+          "usage: go <query> can open a history URL",
+          "usage: #tag queries search bookmarks only",
+        ],
+        folderPath: "/",
+        kind: "help",
+        title: historyHelpTopicTitle,
       },
     ]);
   });

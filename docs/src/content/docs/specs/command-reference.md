@@ -229,7 +229,7 @@ tree Work --depth 3
 
 ## `help`
 
-コマンド一覧、または指定したコマンドの説明を表示します。
+コマンド一覧、または指定したコマンドや概念topicの説明を表示します。
 
 ```bash
 help [command]
@@ -241,10 +241,13 @@ man <command>
 ```bash
 help
 help go
+help history
 man ls
 go --help
 ls -h
 ```
+
+`history` topicでは、Chrome履歴が `find` / `go` の検索候補として扱われること、`HIST` result、`#tag` 検索では履歴を含めないことを確認できます。
 
 代表的なエラーは `not_found` です。
 
