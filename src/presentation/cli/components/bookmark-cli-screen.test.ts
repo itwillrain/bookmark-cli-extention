@@ -14,6 +14,9 @@ const promptAriaLabelAttribute = 'aria-label="bookmark-cli $"';
 /** Command input aria-label属性。 */
 const commandInputAriaLabelAttribute = 'aria-label="Bookmark CLI command"';
 
+/** Active command anchor layout属性。 */
+const activeCommandAnchorLayoutAttribute = 'data-layout="active-command-anchor"';
+
 /** Command suggestions aria-label属性。 */
 const commandSuggestionsAriaLabelAttribute = 'aria-label="Command suggestions"';
 
@@ -140,10 +143,13 @@ describe("BookmarkCliScreen prompt", (): void => {
     const html = renderToStaticMarkup(
       createElement(BookmarkCliScreen, { ...baseProps, suggestionItems }),
     );
+    const activeCommandAnchorIndex = html.indexOf(activeCommandAnchorLayoutAttribute);
     const commandInputIndex = html.indexOf(commandInputAriaLabelAttribute);
     const suggestionsIndex = html.indexOf(commandSuggestionsAriaLabelAttribute);
 
+    expect(activeCommandAnchorIndex).toBeGreaterThan(missingIndex);
     expect(commandInputIndex).toBeGreaterThan(missingIndex);
+    expect(commandInputIndex).toBeGreaterThan(activeCommandAnchorIndex);
     expect(suggestionsIndex).toBeGreaterThan(commandInputIndex);
   });
 });

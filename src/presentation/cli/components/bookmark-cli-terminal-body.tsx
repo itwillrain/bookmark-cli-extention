@@ -66,8 +66,11 @@ const latestTranscriptEntryOffset = 1;
 /** Scroll対象が未mountであることを表す値です。 */
 const missingScrollElement = false;
 
-/** 入力中command lineのclassNameです。 */
-const commandLineClassName = "relative pb-40 pt-2";
+/** 入力中command lineの余白を確保するclassNameです。 */
+const commandLineReserveClassName = "pb-40 pt-2";
+
+/** 入力中command lineをfloating suggestionの基準にするclassNameです。 */
+const commandLineAnchorClassName = "relative";
 
 /**
  * 最新transcript entry idを取得します。
@@ -131,19 +134,21 @@ export const BookmarkCliTerminalBody = (props: BookmarkCliTerminalBodyProps): Re
           selectedResultIndex={props.selectedResultIndex}
           transcriptEntries={props.transcriptEntries}
         />
-        <section className={commandLineClassName}>
-          <CommandForm
-            inputValue={props.inputValue}
-            onInputChange={props.onInputChange}
-            onInputKeyDown={props.onInputKeyDown}
-            onSubmit={props.onSubmit}
-            preferNerdFont={props.preferNerdFont}
-            promptStyle={props.promptStyle}
-          />
-          <BookmarkCliSuggestionList
-            selectedSuggestionIndex={props.selectedSuggestionIndex}
-            suggestionItems={props.suggestionItems}
-          />
+        <section className={commandLineReserveClassName}>
+          <section className={commandLineAnchorClassName} data-layout="active-command-anchor">
+            <CommandForm
+              inputValue={props.inputValue}
+              onInputChange={props.onInputChange}
+              onInputKeyDown={props.onInputKeyDown}
+              onSubmit={props.onSubmit}
+              preferNerdFont={props.preferNerdFont}
+              promptStyle={props.promptStyle}
+            />
+            <BookmarkCliSuggestionList
+              selectedSuggestionIndex={props.selectedSuggestionIndex}
+              suggestionItems={props.suggestionItems}
+            />
+          </section>
         </section>
       </section>
     </section>
