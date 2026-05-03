@@ -31,7 +31,7 @@ export interface BookmarkCliSuggestionListProps {
 const emptyItemCount = 0;
 
 /** Prompt直下にfloating表示するsuggestion wrapperのclassName。 */
-const suggestionListWrapperClassName = "pointer-events-none absolute inset-x-0 top-full z-20 mt-2";
+const suggestionListWrapperClassName = "pointer-events-none absolute z-20 mt-2";
 
 /** Floatingだがterminal outputとして見せるsuggestion listのclassName。 */
 const suggestionListClassName =

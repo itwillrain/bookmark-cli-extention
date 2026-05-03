@@ -41,6 +41,12 @@ const suggestionsVisibleAttribute = 'data-suggestions="visible"';
 /** Command suggestions aria-label属性。 */
 const commandSuggestionsAriaLabelAttribute = 'aria-label="Command suggestions"';
 
+/** Result icon/text layout属性。 */
+const resultFaviconAndTextLayoutAttribute = 'data-layout="result-favicon-and-text"';
+
+/** Result title/url stack layout属性。 */
+const resultTitleUrlStackLayoutAttribute = 'data-layout="result-title-url-stack"';
+
 /** Status output属性。 */
 const statusOutputAttribute = 'data-output="status"';
 
@@ -246,6 +252,22 @@ describe("BookmarkCliScreen prompt", (): void => {
  * Bookmark CLI screenのtranscript output表示テストスイート。
  */
 describe("BookmarkCliScreen transcript output", (): void => {
+  /**
+   * Result faviconをtitle/url stackの左に縦中央配置するlayoutを検証。
+   */
+  it("renders favicon beside the result title and url stack", (): void => {
+    const html = renderToStaticMarkup(createElement(BookmarkCliScreen, baseProps));
+    const faviconAndTextIndex = html.indexOf(resultFaviconAndTextLayoutAttribute);
+    const titleUrlStackIndex = html.indexOf(resultTitleUrlStackLayoutAttribute);
+    const titleIndex = html.indexOf("Stripe Dashboard");
+    const urlIndex = html.indexOf("https://dashboard.stripe.com/");
+
+    expect(faviconAndTextIndex).toBeGreaterThan(missingIndex);
+    expect(titleUrlStackIndex).toBeGreaterThan(faviconAndTextIndex);
+    expect(titleIndex).toBeGreaterThan(titleUrlStackIndex);
+    expect(urlIndex).toBeGreaterThan(titleIndex);
+  });
+
   /**
    * Resultがないstatus textをcommand行の次のoutput行へ描画することを検証。
    */

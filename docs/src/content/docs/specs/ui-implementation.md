@@ -207,6 +207,8 @@ faviconは実拡張ページ上でだけChrome拡張の `/_favicon/` endpointか
 
 Storybookやlocal previewのように `chrome-extension:` originではない環境では、faviconを表示せずplain text labelだけで読める状態を保ちます。
 
+faviconはtitle行の左ではなく、titleとurlを積んだtext stackの左に置き、text stack全体の縦中央に揃えます。
+
 番号指定やResult Listの意味はDomain層で扱い、componentは表示だけを担当します。
 
 ## Popupのcomponent候補
