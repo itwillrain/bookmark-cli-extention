@@ -261,6 +261,7 @@ Enterキーは選択中の候補を入力へ反映します。
 補完対象は次の引数です。
 
 - `cd <path>`
+- `go <path-prefix>`
 - `ls [path]`
 - `tree [path]`
 - `mark --to <path>`
@@ -268,6 +269,7 @@ Enterキーは選択中の候補を入力へ反映します。
 
 ```bash
 cd ./
+go ./
 mark --to Work/
 ```
 

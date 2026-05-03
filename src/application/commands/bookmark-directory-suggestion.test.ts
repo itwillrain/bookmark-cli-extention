@@ -95,3 +95,24 @@ describe("suggestBookmarkDirectoryPaths", (): void => {
     expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual(["ll -a Admin"]);
   });
 });
+
+/**
+ * Go command向けdirectory path suggestionのテストスイート。
+ */
+describe("suggestBookmarkDirectoryPaths for go", (): void => {
+  /**
+   * Go commandでもdirectory候補を返すことを検証。
+   */
+  it("suggests directory paths for go query prefix", (): void => {
+    const suggestions = suggestBookmarkDirectoryPaths({
+      bookmarkTree,
+      currentDirectory: "/Work",
+      inputValue: "go ./",
+    });
+
+    expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual([
+      "go ./Admin",
+      "go ./Research",
+    ]);
+  });
+});

@@ -18,6 +18,9 @@ export interface BookmarkDirectorySuggestion {
 /** Cd command名。 */
 const changeDirectoryCommandName = "cd";
 
+/** Go command名。 */
+const goBookmarkCommandName = "go";
+
 /** Ls command名。 */
 const listDirectoryCommandName = "ls";
 
@@ -54,6 +57,7 @@ const maxDirectorySuggestionCount = 8;
 /** 補完対象directory command名一覧。 */
 const directoryCompletionCommandNames = new Set<string>([
   changeDirectoryCommandName,
+  goBookmarkCommandName,
   listDirectoryCommandName,
   longListDirectoryCommandName,
   showDirectoryTreeCommandName,
