@@ -17,6 +17,9 @@ const commandInputAriaLabelAttribute = 'aria-label="Bookmark CLI command"';
 /** Active command anchor layout属性。 */
 const activeCommandAnchorLayoutAttribute = 'data-layout="active-command-anchor"';
 
+/** Terminal scrollback layout属性。 */
+const terminalScrollbackLayoutAttribute = 'data-layout="terminal-scrollback"';
+
 /** Fake window traffic lightのclass token。 */
 const fakeWindowTrafficLightClassToken = "bg-red-500";
 
@@ -172,6 +175,7 @@ describe("BookmarkCliScreen layout", (): void => {
   it("marks the scrollback as a scrollbarless terminal viewport", (): void => {
     const html = renderToStaticMarkup(createElement(BookmarkCliScreen, baseProps));
 
+    expect(html).toContain(terminalScrollbackLayoutAttribute);
     expect(html).toContain(scrollbarlessScrollbackClassToken);
   });
 

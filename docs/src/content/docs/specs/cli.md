@@ -242,6 +242,10 @@ cd 2
 
 候補の表示領域は現在promptの下へ置き、入力中の補完結果が下方向へ流れる感覚を優先します。
 
+候補はscrollback内の通常outputとして描画せず、terminal body直下のoverlayとして描画します。
+
+overlay位置は現在promptの位置を基準にし、scrollbackのスクロールやoverflowに巻き込まれないようにします。
+
 `ls` や `cd ./` のような入力中補完候補は、現在promptより上に出しません。
 
 候補表示や入力編集中の変化だけではterminal viewportを自動scrollしません。

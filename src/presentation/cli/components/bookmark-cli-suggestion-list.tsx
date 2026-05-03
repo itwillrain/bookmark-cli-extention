@@ -1,5 +1,7 @@
+/* oxlint-disable typescript-eslint/prefer-readonly-parameter-types -- ReactのCSSProperties propsに合わせるため。 */
+
+import type { CSSProperties, ReactElement } from "react";
 import type { CompletionCursorIndex } from "../../../domain/cli/completion-cursor";
-import type { ReactElement } from "react";
 
 /**
  * Bookmark CLI suggestion item。
@@ -21,6 +23,8 @@ export interface BookmarkCliSuggestionListProps {
   readonly selectedSuggestionIndex: CompletionCursorIndex;
   /** 表示するsuggestion一覧。 */
   readonly suggestionItems: readonly BookmarkCliSuggestionItem[];
+  /** Terminal body直下のoverlay位置。 */
+  readonly style?: Readonly<CSSProperties>;
 }
 
 /** 空のitem count。 */
@@ -98,7 +102,7 @@ const renderSuggestionItem = (input: SuggestionItemRenderInput): ReactElement =>
  * @returns {ReactElement | null} Suggestion list element。
  */
 export const BookmarkCliSuggestionList = (
-  props: BookmarkCliSuggestionListProps,
+  props: Readonly<BookmarkCliSuggestionListProps>,
 ): ReactElement | false => {
   if (props.suggestionItems.length === emptyItemCount) {
     return false;
@@ -109,6 +113,7 @@ export const BookmarkCliSuggestionList = (
       aria-label="Command suggestions"
       className={suggestionListWrapperClassName}
       data-layout="floating-below-prompt"
+      style={props.style}
     >
       <ol className={suggestionListClassName} role="listbox">
         {props.suggestionItems.map((suggestionItem, suggestionItemIndex) =>
