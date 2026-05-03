@@ -1,154 +1,263 @@
+import type {
+  BookmarkCliCommandDependencies,
+  BookmarkCliCommandState,
+} from "./bookmark-cli-command-state";
 import {
-  type BookmarkOpenerPort,
-  type BookmarkRepositoryPort,
-  findBookmarks,
-  goBookmark,
-} from "../../application/bookmarks/bookmark-use-cases";
-import {
-  type FindBookmarkCommand,
-  type GoBookmarkCommand,
-  type UnknownBookmarkCommand,
+  type ParsedBookmarkCommand,
   parseBookmarkCommand,
 } from "../../application/commands/bookmark-command-parser";
-import type { BookmarkCliResultItem } from "./components/bookmark-cli-screen";
-import { createBookmarkCliResultItems } from "./bookmark-cli-view-model";
+import {
+  executeChangeDirectoryCommand,
+  executeEmptyCommand,
+  executeFindCommand,
+  executeGoCommand,
+  executeListDirectoryCommand,
+  executeMarkCommand,
+  executePrintWorkingDirectoryCommand,
+  executeShowDirectoryTreeCommand,
+  executeTagCommand,
+  executeUnknownCommand,
+} from "./bookmark-cli-command-executors";
+
+export type {
+  BookmarkCliCommandDependencies,
+  BookmarkCliCommandState,
+} from "./bookmark-cli-command-state";
 
 /**
- * Bookmark CLI command実行に必要な依存です。
+ * Parsed commandを実行する関数です。
  */
-export interface BookmarkCliCommandDependencies {
-  /**
-   * Bookmark Tree取得portです。
-   */
-  readonly repository: BookmarkRepositoryPort;
-  /**
-   * Bookmark URLを開くportです。
-   */
-  readonly opener: BookmarkOpenerPort;
-}
+type ParsedBookmarkCommandExecutor = (
+  command: ParsedBookmarkCommand,
+  dependencies: BookmarkCliCommandDependencies,
+) => Promise<BookmarkCliCommandState>;
 
 /**
- * Bookmark CLI画面に反映する状態です。
- */
-export interface BookmarkCliCommandState {
-  /**
-   * Result listに表示するitem一覧です。
-   */
-  readonly resultItems: readonly BookmarkCliResultItem[];
-  /**
-   * Status lineに表示するtextです。
-   */
-  readonly statusText: string;
-}
-
-/**
- * 空のresult item一覧です。
- */
-const emptyResultItems = [] as const satisfies readonly BookmarkCliResultItem[];
-
-/**
- * 初期状態のstatus textです。
- */
-const readyStatusText = "Ready";
-
-/**
- * 候補件数statusのsuffixです。
- */
-const candidateStatusSuffix = "candidates";
-
-/**
- * 未対応commandのstatus prefixです。
- */
-const unknownCommandStatusPrefix = "Unknown command";
-
-/**
- * Bookmarkを開いたstatus prefixです。
- */
-const openedStatusPrefix = "Opened";
-
-/**
- * Result itemなしの状態を作ります。
- * @param {string} statusText Status lineに表示するtextです。
- * @returns {BookmarkCliCommandState} Result itemなしの状態です。
- */
-const createEmptyResultState = (statusText: string): BookmarkCliCommandState => ({
-  resultItems: emptyResultItems,
-  statusText,
-});
-
-/**
- * 候補件数のstatus textを作ります。
- * @param {number} candidateCount 候補件数です。
- * @returns {string} 候補件数のstatus textです。
- */
-const createCandidateStatusText = (candidateCount: number): string =>
-  `${String(candidateCount)} ${candidateStatusSuffix}`;
-
-/**
- * 未対応commandのstatus textを作ります。
- * @param {UnknownBookmarkCommand} command 未対応commandです。
- * @returns {string} 未対応commandのstatus textです。
- */
-const createUnknownCommandStatusText = (command: UnknownBookmarkCommand): string =>
-  `${unknownCommandStatusPrefix}: ${command.commandName}`;
-
-/**
- * Bookmarkを開いたstatus textを作ります。
- * @param {string} title 開いたBookmark titleです。
- * @returns {string} Bookmarkを開いたstatus textです。
- */
-const createOpenedStatusText = (title: string): string => `${openedStatusPrefix} ${title}`;
-
-/**
- * Find commandを実行します。
- * @param {FindBookmarkCommand} command Find commandです。
+ * Empty command executor adapterです。
+ * @param {ParsedBookmarkCommand} command Parsed commandです。
  * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存です。
  * @returns {Promise<BookmarkCliCommandState>} 画面に反映する状態です。
  */
-const executeFindCommand = async (
-  command: FindBookmarkCommand,
+const executeParsedEmptyCommand = async (
+  command: ParsedBookmarkCommand,
   dependencies: BookmarkCliCommandDependencies,
 ): Promise<BookmarkCliCommandState> => {
-  const result = await findBookmarks({
-    query: command.query,
-    repository: dependencies.repository,
-  });
+  await Promise.resolve();
 
-  if (!result.ok) {
-    return createEmptyResultState(result.message);
+  if (command.kind !== "empty") {
+    return executeEmptyCommand(dependencies);
   }
 
-  return {
-    resultItems: createBookmarkCliResultItems(result.value.results),
-    statusText: createCandidateStatusText(result.value.results.length),
-  };
+  return executeEmptyCommand(dependencies);
 };
 
 /**
- * Go commandを実行します。
- * @param {GoBookmarkCommand} command Go commandです。
+ * Unknown command executor adapterです。
+ * @param {ParsedBookmarkCommand} command Parsed commandです。
  * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存です。
  * @returns {Promise<BookmarkCliCommandState>} 画面に反映する状態です。
  */
-const executeGoCommand = async (
-  command: GoBookmarkCommand,
+const executeParsedUnknownCommand = async (
+  command: ParsedBookmarkCommand,
   dependencies: BookmarkCliCommandDependencies,
 ): Promise<BookmarkCliCommandState> => {
-  const result = await goBookmark({
-    opener: dependencies.opener,
-    query: command.query,
-    repository: dependencies.repository,
-  });
+  await Promise.resolve();
 
-  if (!result.ok) {
-    return createEmptyResultState(result.message);
+  if (command.kind === "unknown") {
+    return executeUnknownCommand(command, dependencies);
   }
 
-  return {
-    resultItems: createBookmarkCliResultItems([result.value]),
-    statusText: createOpenedStatusText(result.value.entry.title),
-  };
+  return executeEmptyCommand(dependencies);
 };
+
+/**
+ * Find command executor adapterです。
+ * @param {ParsedBookmarkCommand} command Parsed commandです。
+ * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存です。
+ * @returns {Promise<BookmarkCliCommandState>} 画面に反映する状態です。
+ */
+const executeParsedFindCommand = async (
+  command: ParsedBookmarkCommand,
+  dependencies: BookmarkCliCommandDependencies,
+): Promise<BookmarkCliCommandState> => {
+  if (command.kind === "find") {
+    const state = await executeFindCommand(command, dependencies);
+
+    return state;
+  }
+
+  await Promise.resolve();
+
+  return executeEmptyCommand(dependencies);
+};
+
+/**
+ * Go command executor adapterです。
+ * @param {ParsedBookmarkCommand} command Parsed commandです。
+ * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存です。
+ * @returns {Promise<BookmarkCliCommandState>} 画面に反映する状態です。
+ */
+const executeParsedGoCommand = async (
+  command: ParsedBookmarkCommand,
+  dependencies: BookmarkCliCommandDependencies,
+): Promise<BookmarkCliCommandState> => {
+  if (command.kind === "go") {
+    const state = await executeGoCommand(command, dependencies);
+
+    return state;
+  }
+
+  await Promise.resolve();
+
+  return executeEmptyCommand(dependencies);
+};
+
+/**
+ * Ls command executor adapterです。
+ * @param {ParsedBookmarkCommand} command Parsed commandです。
+ * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存です。
+ * @returns {Promise<BookmarkCliCommandState>} 画面に反映する状態です。
+ */
+const executeParsedListDirectoryCommand = async (
+  command: ParsedBookmarkCommand,
+  dependencies: BookmarkCliCommandDependencies,
+): Promise<BookmarkCliCommandState> => {
+  if (command.kind === "ls") {
+    const state = await executeListDirectoryCommand(command, dependencies);
+
+    return state;
+  }
+
+  await Promise.resolve();
+
+  return executeEmptyCommand(dependencies);
+};
+
+/**
+ * Cd command executor adapterです。
+ * @param {ParsedBookmarkCommand} command Parsed commandです。
+ * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存です。
+ * @returns {Promise<BookmarkCliCommandState>} 画面に反映する状態です。
+ */
+const executeParsedChangeDirectoryCommand = async (
+  command: ParsedBookmarkCommand,
+  dependencies: BookmarkCliCommandDependencies,
+): Promise<BookmarkCliCommandState> => {
+  if (command.kind === "cd") {
+    const state = await executeChangeDirectoryCommand(command, dependencies);
+
+    return state;
+  }
+
+  await Promise.resolve();
+
+  return executeEmptyCommand(dependencies);
+};
+
+/**
+ * Pwd command executor adapterです。
+ * @param {ParsedBookmarkCommand} command Parsed commandです。
+ * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存です。
+ * @returns {Promise<BookmarkCliCommandState>} 画面に反映する状態です。
+ */
+const executeParsedPrintWorkingDirectoryCommand = async (
+  command: ParsedBookmarkCommand,
+  dependencies: BookmarkCliCommandDependencies,
+): Promise<BookmarkCliCommandState> => {
+  await Promise.resolve();
+
+  if (command.kind !== "pwd") {
+    return executeEmptyCommand(dependencies);
+  }
+
+  return executePrintWorkingDirectoryCommand(dependencies);
+};
+
+/**
+ * Tree command executor adapterです。
+ * @param {ParsedBookmarkCommand} command Parsed commandです。
+ * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存です。
+ * @returns {Promise<BookmarkCliCommandState>} 画面に反映する状態です。
+ */
+const executeParsedShowDirectoryTreeCommand = async (
+  command: ParsedBookmarkCommand,
+  dependencies: BookmarkCliCommandDependencies,
+): Promise<BookmarkCliCommandState> => {
+  if (command.kind === "tree") {
+    const state = await executeShowDirectoryTreeCommand(command, dependencies);
+
+    return state;
+  }
+
+  await Promise.resolve();
+
+  return executeEmptyCommand(dependencies);
+};
+
+/**
+ * Mark command executor adapterです。
+ * @param {ParsedBookmarkCommand} command Parsed commandです。
+ * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存です。
+ * @returns {Promise<BookmarkCliCommandState>} 画面に反映する状態です。
+ */
+const executeParsedMarkCommand = async (
+  command: ParsedBookmarkCommand,
+  dependencies: BookmarkCliCommandDependencies,
+): Promise<BookmarkCliCommandState> => {
+  if (command.kind === "mark") {
+    const state = await executeMarkCommand(command, dependencies);
+
+    return state;
+  }
+
+  await Promise.resolve();
+
+  return executeEmptyCommand(dependencies);
+};
+
+/**
+ * Tag command executor adapterです。
+ * @param {ParsedBookmarkCommand} command Parsed commandです。
+ * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存です。
+ * @returns {Promise<BookmarkCliCommandState>} 画面に反映する状態です。
+ */
+const executeParsedTagCommand = async (
+  command: ParsedBookmarkCommand,
+  dependencies: BookmarkCliCommandDependencies,
+): Promise<BookmarkCliCommandState> => {
+  await Promise.resolve();
+
+  if (command.kind === "tag") {
+    return executeTagCommand(command, dependencies);
+  }
+
+  return executeEmptyCommand(dependencies);
+};
+
+/**
+ * Command kindごとのexecutorです。
+ */
+const parsedBookmarkCommandExecutors = {
+  cd: executeParsedChangeDirectoryCommand,
+  empty: executeParsedEmptyCommand,
+  find: executeParsedFindCommand,
+  go: executeParsedGoCommand,
+  ls: executeParsedListDirectoryCommand,
+  mark: executeParsedMarkCommand,
+  pwd: executeParsedPrintWorkingDirectoryCommand,
+  tag: executeParsedTagCommand,
+  tree: executeParsedShowDirectoryTreeCommand,
+  unknown: executeParsedUnknownCommand,
+} satisfies Readonly<Record<ParsedBookmarkCommand["kind"], ParsedBookmarkCommandExecutor>>;
+
+/**
+ * Parsed commandに対応するexecutorを取得します。
+ * @param {ParsedBookmarkCommand} command Parsed commandです。
+ * @returns {ParsedBookmarkCommandExecutor} Parsed command executorです。
+ */
+const getParsedBookmarkCommandExecutor = (
+  command: ParsedBookmarkCommand,
+): ParsedBookmarkCommandExecutor => parsedBookmarkCommandExecutors[command.kind];
 
 /**
  * CLI入力を解析してBookmark commandを実行します。
@@ -161,22 +270,8 @@ export const executeBookmarkCliCommand = async (
   dependencies: BookmarkCliCommandDependencies,
 ): Promise<BookmarkCliCommandState> => {
   const command = parseBookmarkCommand(input);
-
-  if (command.kind === "empty") {
-    return createEmptyResultState(readyStatusText);
-  }
-
-  if (command.kind === "unknown") {
-    return createEmptyResultState(createUnknownCommandStatusText(command));
-  }
-
-  if (command.kind === "find") {
-    const state = await executeFindCommand(command, dependencies);
-
-    return state;
-  }
-
-  const state = await executeGoCommand(command, dependencies);
+  const executor = getParsedBookmarkCommandExecutor(command);
+  const state = await executor(command, dependencies);
 
   return state;
 };

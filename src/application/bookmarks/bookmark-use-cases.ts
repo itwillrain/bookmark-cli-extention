@@ -1,10 +1,27 @@
-import { type BookmarkSearchResult, searchBookmarks } from "../../domain/search/bookmark-search";
+import {
+  type BookmarkSearchResult,
+  createBookmarkSearchResultsFromEntries,
+  searchBookmarks,
+} from "../../domain/search/bookmark-search";
+import {
+  filterEntriesByVirtualTags,
+  hasVirtualTagFilters,
+  normalizeVirtualTagsByBookmarkId,
+  parseVirtualTagSearchQuery,
+} from "../../domain/tags/virtual-tag";
 import type { BookmarkTree } from "../../domain/bookmarks/bookmark-tree";
+import type { VirtualTagsByBookmarkId } from "../../domain/storage/extension-state";
 
 /**
  * Bookmark commandのエラー種別です。
  */
-export type BookmarkCommandErrorCode = "folder_not_found" | "not_found";
+export type BookmarkCommandErrorCode =
+  | "already_marked"
+  | "folder_not_found"
+  | "invalid_tag"
+  | "not_found"
+  | "storage_failed"
+  | "unsupported_tab";
 
 /**
  * Bookmark commandの成功結果です。
@@ -75,6 +92,10 @@ export interface FindBookmarksInput {
    * Bookmark Tree取得portです。
    */
   readonly repository: BookmarkRepositoryPort;
+  /**
+   * Bookmark IDごとの仮想タグ一覧です。
+   */
+  readonly virtualTagsByBookmarkId?: VirtualTagsByBookmarkId;
 }
 
 /**
@@ -103,6 +124,10 @@ export interface GoBookmarkInput {
    * Bookmark Tree取得portです。
    */
   readonly repository: BookmarkRepositoryPort;
+  /**
+   * Bookmark IDごとの仮想タグ一覧です。
+   */
+  readonly virtualTagsByBookmarkId?: VirtualTagsByBookmarkId;
 }
 
 /**
@@ -124,6 +149,11 @@ type NonEmptyBookmarkSearchResults = readonly [BookmarkSearchResult, ...Bookmark
  * Bookmark検索結果のreadonly listです。
  */
 type BookmarkSearchResultList = readonly BookmarkSearchResult[];
+
+/**
+ * 空文字です。
+ */
+const emptyQuery = "";
 
 /**
  * 成功結果を作ります。
@@ -156,6 +186,37 @@ const hasSearchResults = (
 ): results is NonEmptyBookmarkSearchResults => results.length > emptySearchResultCount;
 
 /**
+ * 仮想タグ条件を含む検索を実行します。
+ * @param {BookmarkTree} bookmarkTree Bookmark Treeです。
+ * @param {string} query 検索queryです。
+ * @param {VirtualTagsByBookmarkId | undefined} virtualTagsByBookmarkId Bookmark ID別仮想タグです。
+ * @returns {readonly BookmarkSearchResult[]} 検索結果一覧です。
+ */
+const searchBookmarksWithVirtualTags = (
+  bookmarkTree: BookmarkTree,
+  query: string,
+  virtualTagsByBookmarkId?: VirtualTagsByBookmarkId,
+): readonly BookmarkSearchResult[] => {
+  const tagSearchQuery = parseVirtualTagSearchQuery(query);
+
+  if (!hasVirtualTagFilters(tagSearchQuery)) {
+    return searchBookmarks(bookmarkTree.entries, query);
+  }
+
+  const taggedEntries = filterEntriesByVirtualTags(
+    bookmarkTree.entries,
+    normalizeVirtualTagsByBookmarkId(virtualTagsByBookmarkId),
+    tagSearchQuery.tags,
+  );
+
+  if (tagSearchQuery.textQuery === emptyQuery) {
+    return createBookmarkSearchResultsFromEntries(taggedEntries);
+  }
+
+  return searchBookmarks(taggedEntries, tagSearchQuery.textQuery);
+};
+
+/**
  * RepositoryからBookmark Treeを取得して検索します。
  * @param {FindBookmarksInput} input Bookmark候補検索の入力です。
  * @returns {Promise<BookmarkCommandResult<FindBookmarksValue>>} Bookmark候補検索の結果です。
@@ -164,7 +225,11 @@ export const findBookmarks = async (
   input: FindBookmarksInput,
 ): Promise<BookmarkCommandResult<FindBookmarksValue>> => {
   const bookmarkTree = await input.repository.getBookmarkTree();
-  const results = searchBookmarks(bookmarkTree.entries, input.query);
+  const results = searchBookmarksWithVirtualTags(
+    bookmarkTree,
+    input.query,
+    input.virtualTagsByBookmarkId,
+  );
 
   return createSuccess({ results });
 };
@@ -178,7 +243,11 @@ export const goBookmark = async (
   input: GoBookmarkInput,
 ): Promise<BookmarkCommandResult<BookmarkSearchResult>> => {
   const bookmarkTree = await input.repository.getBookmarkTree();
-  const results = searchBookmarks(bookmarkTree.entries, input.query);
+  const results = searchBookmarksWithVirtualTags(
+    bookmarkTree,
+    input.query,
+    input.virtualTagsByBookmarkId,
+  );
 
   if (!hasSearchResults(results)) {
     return createNotFoundFailure(input.query);

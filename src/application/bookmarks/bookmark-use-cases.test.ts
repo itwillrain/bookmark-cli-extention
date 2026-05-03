@@ -65,6 +65,14 @@ const firstSearchResultIndex = 0;
 const expectedSearchResultCount = 1;
 
 /**
+ * Bookmark ID別仮想タグfixtureです。
+ */
+const virtualTagsByBookmarkId = {
+  "42": ["prod", "finance"],
+  "43": ["dev"],
+};
+
+/**
  * URLを記録するBookmark Openerのfixtureです。
  */
 interface RecordingBookmarkOpener {
@@ -139,6 +147,24 @@ describe("findBookmarks", (): void => {
       expect(result.value.results[firstSearchResultIndex]?.entry.id).toBe("42");
     }
   });
+
+  /**
+   * #tagに一致するBookmarkだけを返すことを検証します。
+   */
+  it("finds bookmark candidates by virtual tag", async (): Promise<void> => {
+    const result = await findBookmarks({
+      query: "#prod",
+      repository: createBookmarkRepository(),
+      virtualTagsByBookmarkId,
+    });
+
+    expect(result.ok).toBe(true);
+
+    if (result.ok) {
+      expect(result.value.results).toHaveLength(expectedSearchResultCount);
+      expect(result.value.results[firstSearchResultIndex]?.entry.id).toBe("42");
+    }
+  });
 });
 
 /**
@@ -154,6 +180,26 @@ describe("goBookmark with candidate", (): void => {
       opener: recordingOpener.opener,
       query: "Stripe",
       repository: createBookmarkRepository(),
+    });
+
+    expect(result.ok).toBe(true);
+    expect(recordingOpener.openedUrls).toStrictEqual(["https://dashboard.stripe.com/"]);
+
+    if (result.ok) {
+      expect(result.value.entry.id).toBe("42");
+    }
+  });
+
+  /**
+   * #tagとqueryに一致する最上位候補を開くことを検証します。
+   */
+  it("opens the top bookmark candidate by virtual tag and query", async (): Promise<void> => {
+    const recordingOpener = createRecordingBookmarkOpener();
+    const result = await goBookmark({
+      opener: recordingOpener.opener,
+      query: "#prod stripe",
+      repository: createBookmarkRepository(),
+      virtualTagsByBookmarkId,
     });
 
     expect(result.ok).toBe(true);

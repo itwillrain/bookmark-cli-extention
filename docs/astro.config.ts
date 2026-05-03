@@ -34,7 +34,22 @@ const storybookCatalogPath = "/storybook/";
 const footerText = "Designed for Bookmark CLI Extension.";
 
 /** TypeDoc が API リファレンスとして読み込む entrypoint です。 */
-const typeDocEntryPoints = ["../src/entrypoints/background.ts"];
+const typeDocEntryPoints = [
+  "../src/application",
+  "../src/domain",
+  "../src/infrastructure",
+  "../src/presentation",
+  "../src/entrypoints",
+];
+
+/** TypeDoc が API リファレンスから除外するfile globです。 */
+const typeDocExcludePatterns = ["../src/**/*.test.ts", "../src/**/*.stories.ts", "../src/**/*.stories.tsx"];
+
+/** TypeDoc がdirectory entrypointを展開する設定値です。
+ *
+ * @see https://typedoc.org/documents/Options.Input.html#entrypointstrategy
+ */
+const typeDocEntryPointStrategy = "expand";
 
 /** TypeDoc が参照する TypeScript 設定ファイルです。 */
 const typeDocTsconfig = "../tsconfig.json";
@@ -64,12 +79,15 @@ export default defineConfig({
       plugins: [
         starlightTypeDoc({
           entryPoints: typeDocEntryPoints,
-          errorOnEmptyDocumentation: false,
           output: typeDocOutputDirectory,
           sidebar: {
             label: "APIリファレンス",
           },
           tsconfig: typeDocTsconfig,
+          typeDoc: {
+            entryPointStrategy: typeDocEntryPointStrategy,
+            exclude: typeDocExcludePatterns,
+          },
         }),
         starlightThemeSix({
           footerText,

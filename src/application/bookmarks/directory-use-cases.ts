@@ -9,6 +9,10 @@ import {
   doesFolderPathExist,
   listDirectoryEntries,
 } from "../../domain/bookmarks/bookmark-directory";
+import {
+  isResultNumberInput,
+  resolveEntryByResultNumber,
+} from "../../domain/bookmarks/result-selection";
 import type { BookmarkEntry } from "../../domain/bookmarks/bookmark-tree";
 
 /**
@@ -54,6 +58,38 @@ export interface PrintWorkingDirectoryInput {
 }
 
 /**
+ * Change directoryの入力です。
+ */
+export interface ChangeDirectoryInput {
+  /**
+   * 現在ディレクトリです。
+   */
+  readonly currentDirectory: CurrentDirectory;
+  /**
+   * 直前結果一覧です。
+   */
+  readonly lastResultEntries: readonly BookmarkEntry[];
+  /**
+   * 移動先pathまたは直前結果番号です。
+   */
+  readonly pathInput: string;
+  /**
+   * Bookmark Tree取得portです。
+   */
+  readonly repository: BookmarkRepositoryPort;
+}
+
+/**
+ * Change directoryの成功値です。
+ */
+export interface ChangeDirectoryValue {
+  /**
+   * 移動後の現在ディレクトリです。
+   */
+  readonly currentDirectory: CurrentDirectory;
+}
+
+/**
  * Pwdの成功値です。
  */
 export interface PrintWorkingDirectoryValue {
@@ -67,6 +103,11 @@ export interface PrintWorkingDirectoryValue {
  * Folder未検出のエラーcodeです。
  */
 const folderNotFoundErrorCode = "folder_not_found";
+
+/**
+ * 候補未検出のエラーcodeです。
+ */
+const notFoundErrorCode = "not_found";
 
 /**
  * 成功結果を作ります。
@@ -88,6 +129,62 @@ const createFolderNotFoundFailure = (folderPath: CurrentDirectory): BookmarkComm
   message: `Folder was not found: ${folderPath}`,
   ok: false,
 });
+
+/**
+ * 候補未検出の失敗結果を作ります。
+ * @param {string} pathInput 解決できなかったpathまたは番号入力です。
+ * @returns {BookmarkCommandFailure} 候補未検出の失敗結果です。
+ */
+const createNotFoundFailure = (pathInput: string): BookmarkCommandFailure => ({
+  errorCode: notFoundErrorCode,
+  message: `Directory target was not found: ${pathInput}`,
+  ok: false,
+});
+
+/**
+ * Entryがfolder entryかを判定します。
+ * @param {BookmarkEntry} entry 判定対象のentryです。
+ * @returns {boolean} folder entryならtrueです。
+ */
+const isFolderEntry = (entry: BookmarkEntry): boolean => entry.kind === "folder";
+
+/**
+ * 直前結果番号から移動先directory pathを解決します。
+ * @param {ChangeDirectoryInput} input Change directoryの入力です。
+ * @returns {BookmarkCommandResult<ChangeDirectoryValue>} Change directoryの実行結果です。
+ */
+const changeDirectoryByResultNumber = (
+  input: ChangeDirectoryInput,
+): BookmarkCommandResult<ChangeDirectoryValue> => {
+  const targetEntryResolution = resolveEntryByResultNumber(
+    input.lastResultEntries,
+    input.pathInput,
+  );
+
+  if (!targetEntryResolution.ok || !isFolderEntry(targetEntryResolution.entry)) {
+    return createNotFoundFailure(input.pathInput);
+  }
+
+  return createSuccess({ currentDirectory: targetEntryResolution.entry.folderPath });
+};
+
+/**
+ * Path入力から移動先directory pathを解決します。
+ * @param {ChangeDirectoryInput} input Change directoryの入力です。
+ * @returns {Promise<BookmarkCommandResult<ChangeDirectoryValue>>} Change directoryの実行結果です。
+ */
+const changeDirectoryByPath = async (
+  input: ChangeDirectoryInput,
+): Promise<BookmarkCommandResult<ChangeDirectoryValue>> => {
+  const bookmarkTree = await input.repository.getBookmarkTree();
+  const targetFolderPath = resolveFolderPath(input.currentDirectory, input.pathInput);
+
+  if (!doesFolderPathExist(bookmarkTree, targetFolderPath)) {
+    return createFolderNotFoundFailure(targetFolderPath);
+  }
+
+  return createSuccess({ currentDirectory: targetFolderPath });
+};
 
 /**
  * 現在ディレクトリまたは指定pathのentry一覧を返します。
@@ -119,3 +216,20 @@ export const printWorkingDirectory = (
   input: PrintWorkingDirectoryInput,
 ): BookmarkCommandResult<PrintWorkingDirectoryValue> =>
   createSuccess({ currentDirectory: input.currentDirectory });
+
+/**
+ * 現在ディレクトリを移動します。
+ * @param {ChangeDirectoryInput} input Change directoryの入力です。
+ * @returns {Promise<BookmarkCommandResult<ChangeDirectoryValue>>} Change directoryの実行結果です。
+ */
+export const changeDirectory = async (
+  input: ChangeDirectoryInput,
+): Promise<BookmarkCommandResult<ChangeDirectoryValue>> => {
+  if (isResultNumberInput(input.pathInput)) {
+    return changeDirectoryByResultNumber(input);
+  }
+
+  const result = await changeDirectoryByPath(input);
+
+  return result;
+};
