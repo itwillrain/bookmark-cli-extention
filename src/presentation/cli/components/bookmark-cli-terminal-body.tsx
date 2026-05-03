@@ -78,6 +78,9 @@ const commandLineReserveWithSuggestionsClassName = `${commandLineReserveClassNam
 /** 入力中command lineをfloating suggestionの基準にするclassNameです。 */
 const commandLineAnchorClassName = "relative";
 
+/** Scrollbarを隠すscrollback classNameです。 */
+const scrollbackClassName = "bookmark-cli-scrollback min-h-0 flex-1 overflow-auto";
+
 /** Suggestion非表示状態です。 */
 const suggestionHiddenState = "hidden";
 
@@ -177,7 +180,7 @@ export const BookmarkCliTerminalBody = (props: BookmarkCliTerminalBodyProps): Re
 
   return (
     <section className="flex min-h-0 flex-1 flex-col px-4 py-4 font-mono text-sm leading-6 sm:px-5">
-      <section ref={handleScrollElementRef} className="min-h-0 flex-1 overflow-auto">
+      <section ref={handleScrollElementRef} className={scrollbackClassName}>
         <BookmarkCliTranscriptList
           preferNerdFont={props.preferNerdFont}
           promptStyle={props.promptStyle}

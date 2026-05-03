@@ -19,9 +19,11 @@ Popupは疑似CLI本体ではなく、設定画面として扱います。
 
 - 入力欄は1行のcommand promptとして扱う
 - Dedicated extension pageを開いたら入力欄へ自動フォーカスする
+- Dedicated extension pageは別windowで開くため、画面内にはwindow風headerやtraffic light装飾を描画しない
 - 実行済みcommandと実行結果はscrollback transcriptとして上から下へ積む
 - 実行後は入力欄を空に戻し、次のpromptをtranscript末尾に表示する
 - transcriptが画面高を超えた場合は、terminal viewportを最下部へ追従させる
+- terminal viewportはscroll可能にするが、CLI感を保つため視覚上のscrollbarは表示しない
 - terminal viewportの最下部追従は、command実行でtranscriptが増えたときだけ行う
 - 入力中promptは下部固定せず、scrollback transcriptの末尾行として扱う
 - コマンド履歴を上キー、下キー、`Ctrl+p`、`Ctrl+n` で再利用できるようにする

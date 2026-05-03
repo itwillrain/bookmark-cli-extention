@@ -96,9 +96,13 @@ Componentは小さく分けます。
 
 疑似CLI本体は単なる入力formとして見せず、実行済みpromptとoutputを下方向へ積むtranscript viewとして表示します。
 
+Dedicated extension pageは実際の別windowとして開くため、Presentation層では内側のwindow風header、traffic light、card frameを描画しません。
+
 現在入力中のpromptはtranscript末尾に置き、実行後はその入力と結果をtranscript entryへ固定します。
 
-Terminal panelはviewport高に収め、scrollback transcriptだけを内側でscrollさせます。
+Terminal surfaceはviewport高に収め、scrollback transcriptだけを内側でscrollさせます。
+
+Scrollback transcriptは操作上scroll可能にしますが、CLI感を保つため視覚上のscrollbarは隠します。
 
 command実行でtranscriptが増えた場合だけterminal viewportを最下部へ追従させ、通常のterminalと同じように最新promptを見える位置に保ちます。
 

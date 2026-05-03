@@ -17,6 +17,15 @@ const commandInputAriaLabelAttribute = 'aria-label="Bookmark CLI command"';
 /** Active command anchor layout属性。 */
 const activeCommandAnchorLayoutAttribute = 'data-layout="active-command-anchor"';
 
+/** Fake window traffic lightのclass token。 */
+const fakeWindowTrafficLightClassToken = "bg-red-500";
+
+/** Inner window frameのshadow class token。 */
+const innerWindowFrameShadowClassToken = "shadow-2xl";
+
+/** Scrollbarを隠すscrollback class token。 */
+const scrollbarlessScrollbackClassToken = "bookmark-cli-scrollback";
+
 /** Suggestion非表示状態属性。 */
 const suggestionsHiddenAttribute = 'data-suggestions="hidden"';
 
@@ -116,6 +125,30 @@ const baseProps = {
  */
 const countOccurrences = (text: string, token: string): number =>
   text.split(token).length - occurrenceSplitOffset;
+
+/**
+ * Bookmark CLI screenのlayout表示テストスイート。
+ */
+describe("BookmarkCliScreen layout", (): void => {
+  /**
+   * 別window前提のため内側のwindow chromeを描画しないことを検証。
+   */
+  it("renders the CLI surface without nested window chrome", (): void => {
+    const html = renderToStaticMarkup(createElement(BookmarkCliScreen, baseProps));
+
+    expect(html).not.toContain(fakeWindowTrafficLightClassToken);
+    expect(html).not.toContain(innerWindowFrameShadowClassToken);
+  });
+
+  /**
+   * Scrollbackをscrollbar非表示viewportとして描画することを検証。
+   */
+  it("marks the scrollback as a scrollbarless terminal viewport", (): void => {
+    const html = renderToStaticMarkup(createElement(BookmarkCliScreen, baseProps));
+
+    expect(html).toContain(scrollbarlessScrollbackClassToken);
+  });
+});
 
 /**
  * Bookmark CLI screenのprompt表示テストスイート。
