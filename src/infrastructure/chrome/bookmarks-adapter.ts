@@ -243,9 +243,7 @@ export const createChromeBookmarkOrganizer = (
    * @param {MoveEntryInput} input Bookmark移動入力です。
    * @returns {Promise<BookmarkTree["bookmarks"][number]>} 移動済みBookmark entryです。
    */
-  const moveEntry = async (
-    input: MoveEntryInput,
-  ): Promise<BookmarkTree["bookmarks"][number]> =>
+  const moveEntry = async (input: MoveEntryInput): Promise<BookmarkTree["bookmarks"][number]> =>
     createBookmarkEntryFromRawNode(
       await bookmarksApi.move(input.id, createChromeBookmarkMoveDestination(input)),
       "",
@@ -265,9 +263,7 @@ export const createChromeBookmarkOrganizer = (
    * @param {RenameEntryInput} input Bookmark名称変更入力です。
    * @returns {Promise<BookmarkTree["bookmarks"][number]>} 更新済みBookmark entryです。
    */
-  const renameEntry = async (
-    input: RenameEntryInput,
-  ): Promise<BookmarkTree["bookmarks"][number]> =>
+  const renameEntry = async (input: RenameEntryInput): Promise<BookmarkTree["bookmarks"][number]> =>
     createBookmarkEntryFromRawNode(await bookmarksApi.update(input.id, { title: input.title }), "");
 
   return { createFolder, moveEntry, removeEntry, renameEntry };

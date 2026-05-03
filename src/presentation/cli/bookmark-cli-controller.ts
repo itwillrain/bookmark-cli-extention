@@ -19,6 +19,7 @@ import {
   executeUnknownCommand,
 } from "./bookmark-cli-command-executors";
 import { executeParsedOrganizeCommand } from "./bookmark-cli-organize-command-router";
+import { executeParsedUsageCommand } from "./bookmark-cli-usage-command-router";
 
 export type {
   BookmarkCliCommandDependencies,
@@ -242,12 +243,14 @@ const parsedBookmarkCommandExecutors = {
   cd: executeParsedChangeDirectoryCommand,
   empty: executeParsedEmptyCommand,
   find: executeParsedFindCommand,
+  freq: executeParsedUsageCommand,
   go: executeParsedGoCommand,
   ls: executeParsedListDirectoryCommand,
   mark: executeParsedMarkCommand,
   mkdir: executeParsedOrganizeCommand,
   mv: executeParsedOrganizeCommand,
   pwd: executeParsedPrintWorkingDirectoryCommand,
+  recent: executeParsedUsageCommand,
   rename: executeParsedOrganizeCommand,
   rm: executeParsedOrganizeCommand,
   tag: executeParsedTagCommand,

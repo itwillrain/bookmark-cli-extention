@@ -60,9 +60,7 @@ export const createFailure = (
  * @param {CurrentDirectory} folderPath 見つからなかったfolder path。
  * @returns {BookmarkCommandFailure} Folder未検出の失敗結果。
  */
-export const createFolderNotFoundFailure = (
-  folderPath: CurrentDirectory,
-): BookmarkCommandFailure =>
+export const createFolderNotFoundFailure = (folderPath: CurrentDirectory): BookmarkCommandFailure =>
   createFailure(folderNotFoundErrorCode, `Folder was not found: ${folderPath}`);
 
 /**
@@ -99,7 +97,8 @@ const isBookmarkEntry = (entry: BookmarkEntry): boolean => entry.kind === "bookm
 const findFolderId = (
   bookmarkTree: BookmarkTree,
   folderPath: CurrentDirectory,
-): string | undefined => bookmarkTree.folders.find((folder) => folder.folderPath === folderPath)?.id;
+): string | undefined =>
+  bookmarkTree.folders.find((folder) => folder.folderPath === folderPath)?.id;
 
 /**
  * Chrome mutationへ渡すparentIdを作成。
@@ -107,10 +106,8 @@ const findFolderId = (
  * @param {CurrentDirectory} folderPath folder path。
  * @returns {string | undefined} parent ID。
  */
-export const createParentId = (
-  bookmarkTree: BookmarkTree,
-  folderPath: CurrentDirectory,
-): string => findFolderId(bookmarkTree, folderPath) ?? rootParentId;
+export const createParentId = (bookmarkTree: BookmarkTree, folderPath: CurrentDirectory): string =>
+  findFolderId(bookmarkTree, folderPath) ?? rootParentId;
 
 /**
  * Folder pathから最後のsegmentを取得。
@@ -118,7 +115,9 @@ export const createParentId = (
  * @returns {string} 最後のpath segment。
  */
 export const getFolderName = (folderPath: CurrentDirectory): string => {
-  const segments = folderPath.split(folderPathSeparator).filter((segment) => segment !== emptyString);
+  const segments = folderPath
+    .split(folderPathSeparator)
+    .filter((segment) => segment !== emptyString);
 
   return segments[segments.length - lastItemOffset] ?? emptyString;
 };

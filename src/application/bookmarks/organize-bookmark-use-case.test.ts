@@ -1,17 +1,13 @@
 import type { BookmarkEntry, BookmarkTree } from "../../domain/bookmarks/bookmark-tree";
+import { describe, expect, it } from "vitest";
 import {
-  type BookmarkOrganizerPort,
-  type CreateFolderInput,
-  type MoveEntryInput,
-  type RemoveEntryInput,
-  type RenameEntryInput,
   makeDirectory,
   moveBookmark,
   removeBookmark,
   renameBookmark,
 } from "./organize-bookmark-use-case";
-import { describe, expect, it } from "vitest";
 import type { BookmarkRepositoryPort } from "./bookmark-use-cases";
+import { createRecordingOrganizer as createRecordingOrganizerFixture } from "./organize-bookmark-use-case-test-helper";
 
 /** Work folder entry fixture。 */
 const workFolderEntry = {
@@ -69,20 +65,6 @@ const renamedTitleInput = "GitHub Pull Requests";
 /** 現在ディレクトリfixture。 */
 const currentDirectory = "/Work";
 
-/** 書き込み記録fixture。 */
-interface RecordingOrganizer {
-  /** 作成要求一覧。 */
-  readonly createdFolders: readonly CreateFolderInput[];
-  /** 移動要求一覧。 */
-  readonly movedEntries: readonly MoveEntryInput[];
-  /** 削除要求一覧。 */
-  readonly removedEntries: readonly RemoveEntryInput[];
-  /** 名称変更要求一覧。 */
-  readonly renamedEntries: readonly RenameEntryInput[];
-  /** Bookmark整理port。 */
-  readonly organizer: BookmarkOrganizerPort;
-}
-
 /**
  * Bookmark Tree repository fixtureを作成。
  * @returns {BookmarkRepositoryPort} Bookmark repository port。
@@ -101,45 +83,10 @@ const createBookmarkRepository = (): BookmarkRepositoryPort => ({
 
 /**
  * 書き込みを記録するorganizer fixtureを作成。
- * @returns {RecordingOrganizer} organizer fixture。
+ * @returns {ReturnType<typeof createRecordingOrganizerFixture>} organizer fixture。
  */
-const createRecordingOrganizer = (): RecordingOrganizer => {
-  const createdFolders: CreateFolderInput[] = [];
-  const movedEntries: MoveEntryInput[] = [];
-  const removedEntries: RemoveEntryInput[] = [];
-  const renamedEntries: RenameEntryInput[] = [];
-
-  return {
-    createdFolders,
-    movedEntries,
-    organizer: {
-      createFolder: async (input: CreateFolderInput): Promise<BookmarkEntry> => {
-        createdFolders.push(input);
-        await Promise.resolve();
-
-        return { ...archiveFolderEntry, id: "100", title: input.title };
-      },
-      moveEntry: async (input: MoveEntryInput): Promise<BookmarkEntry> => {
-        movedEntries.push(input);
-        await Promise.resolve();
-
-        return { ...stripeBookmarkEntry, folderPath: "/Work/Archive", parentId: "11" };
-      },
-      removeEntry: async (input: RemoveEntryInput): Promise<void> => {
-        removedEntries.push(input);
-        await Promise.resolve();
-      },
-      renameEntry: async (input: RenameEntryInput): Promise<BookmarkEntry> => {
-        renamedEntries.push(input);
-        await Promise.resolve();
-
-        return { ...stripeBookmarkEntry, title: input.title };
-      },
-    },
-    removedEntries,
-    renamedEntries,
-  };
-};
+const createRecordingOrganizer = (): ReturnType<typeof createRecordingOrganizerFixture> =>
+  createRecordingOrganizerFixture({ archiveFolderEntry, stripeBookmarkEntry });
 
 /** Mkdir use caseのテストスイート。 */
 describe("makeDirectory", (): void => {

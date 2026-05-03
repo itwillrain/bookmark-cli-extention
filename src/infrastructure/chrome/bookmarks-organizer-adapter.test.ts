@@ -94,18 +94,30 @@ const getEmptyTree = async (): Promise<readonly RawBookmarkTreeNode[]> => {
  * Chrome Bookmarks mutation API fixtureを作ります。
  * @returns {RecordingMutationApi} Chrome Bookmarks mutation API fixtureです。
  */
+// oxlint-disable-next-line max-lines-per-function
 const createRecordingMutationApi = (): RecordingMutationApi => {
   const createdFolders: ChromeBookmarkCreateProperties[] = [];
   const movedEntries: MoveCall[] = [];
   const removedEntries: string[] = [];
   const updatedEntries: UpdateCall[] = [];
 
+  /**
+   * Chrome Bookmark作成入力を記録します。
+   * @param {ChromeBookmarkCreateProperties} input 作成入力です。
+   * @returns {Promise<RawBookmarkTreeNode>} 作成済みnodeです。
+   */
   const create = async (input: ChromeBookmarkCreateProperties): Promise<RawBookmarkTreeNode> => {
     createdFolders.push(input);
     await Promise.resolve();
 
     return createFolderNode(input);
   };
+  /**
+   * Chrome Bookmark移動入力を記録します。
+   * @param {string} id 移動対象IDです。
+   * @param {ChromeBookmarkMoveDestination} destination 移動先指定です。
+   * @returns {Promise<RawBookmarkTreeNode>} 移動済みnodeです。
+   */
   const move = async (
     id: string,
     destination: ChromeBookmarkMoveDestination,
@@ -115,10 +127,21 @@ const createRecordingMutationApi = (): RecordingMutationApi => {
 
     return createBookmarkNode(destination.parentId ?? "", bookmarkTitle);
   };
+  /**
+   * Chrome Bookmark削除入力を記録します。
+   * @param {string} id 削除対象IDです。
+   * @returns {Promise<void>} 完了Promiseです。
+   */
   const remove = async (id: string): Promise<void> => {
     removedEntries.push(id);
     await Promise.resolve();
   };
+  /**
+   * Chrome Bookmark更新入力を記録します。
+   * @param {string} id 更新対象IDです。
+   * @param {ChromeBookmarkUpdateProperties} changes 更新内容です。
+   * @returns {Promise<RawBookmarkTreeNode>} 更新済みnodeです。
+   */
   const update = async (
     id: string,
     changes: ChromeBookmarkUpdateProperties,
@@ -156,7 +179,6 @@ describe("createChromeBookmarkOrganizer create", (): void => {
     ]);
     expect(entry).toMatchObject({ id: "200", parentId: targetParentId, title: folderTitle });
   });
-
 });
 
 /**

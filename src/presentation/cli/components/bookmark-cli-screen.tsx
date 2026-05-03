@@ -1,5 +1,7 @@
 import { type BookmarkCliResultItem, BookmarkCliResultList } from "./bookmark-cli-result-list";
 import type { ReactElement } from "react";
+import type { ResultCursorIndex } from "../../../domain/bookmarks/result-cursor";
+import type { ResultViewStyle } from "../../../domain/storage/extension-state";
 
 export type { BookmarkCliResultItem, BookmarkCliResultKind } from "./bookmark-cli-result-list";
 
@@ -16,13 +18,29 @@ export interface BookmarkCliScreenProps {
    */
   readonly onInputChange: (value: string) => void;
   /**
+   * 入力欄のkey操作callbackです。
+   */
+  readonly onInputKeyDown: (event: CommandInputKeyEvent) => void;
+  /**
    * Commandを実行するcallbackです。
    */
   readonly onSubmit: () => void;
   /**
+   * Nerd Font iconを優先するかです。
+   */
+  readonly preferNerdFont: boolean;
+  /**
    * CLI result一覧です。
    */
   readonly resultItems: readonly BookmarkCliResultItem[];
+  /**
+   * Result表示styleです。
+   */
+  readonly resultViewStyle: ResultViewStyle;
+  /**
+   * 選択中result indexです。
+   */
+  readonly selectedResultIndex: ResultCursorIndex;
   /**
    * Status lineに表示するtextです。
    */
@@ -55,6 +73,24 @@ interface FormSubmitEvent {
 }
 
 /**
+ * 入力欄key eventとして扱う最小shapeです。
+ */
+export interface CommandInputKeyEvent {
+  /**
+   * Control keyが押されているかです。
+   */
+  readonly ctrlKey: boolean;
+  /**
+   * 押されたkey名です。
+   */
+  readonly key: string;
+  /**
+   * Browser標準のkey動作を止めます。
+   */
+  readonly preventDefault: () => void;
+}
+
+/**
  * 入力欄のplaceholderです。
  */
 const commandInputPlaceholder = "find stripe dashboard";
@@ -81,6 +117,10 @@ interface CommandFormProps {
    * 入力値を更新するcallbackです。
    */
   readonly onInputChange: (value: string) => void;
+  /**
+   * 入力欄のkey操作callbackです。
+   */
+  readonly onInputKeyDown: (event: CommandInputKeyEvent) => void;
   /**
    * Commandを実行するcallbackです。
    */
@@ -155,6 +195,7 @@ const CommandForm = (props: CommandFormProps): ReactElement => {
         className="min-w-0 bg-transparent text-zinc-100 caret-emerald-300 outline-none placeholder:text-zinc-600"
         id="bookmark-cli-command"
         onChange={handleInputChange}
+        onKeyDown={props.onInputKeyDown}
         placeholder={commandInputPlaceholder}
         spellCheck={false}
         value={props.inputValue}
@@ -177,10 +218,16 @@ export const BookmarkCliScreen = (props: BookmarkCliScreenProps): ReactElement =
           <CommandForm
             inputValue={props.inputValue}
             onInputChange={props.onInputChange}
+            onInputKeyDown={props.onInputKeyDown}
             onSubmit={props.onSubmit}
           />
           <section className="min-h-0 flex-1 overflow-auto pt-4">
-            <BookmarkCliResultList resultItems={props.resultItems} />
+            <BookmarkCliResultList
+              preferNerdFont={props.preferNerdFont}
+              resultItems={props.resultItems}
+              resultViewStyle={props.resultViewStyle}
+              selectedResultIndex={props.selectedResultIndex}
+            />
           </section>
         </section>
       </section>

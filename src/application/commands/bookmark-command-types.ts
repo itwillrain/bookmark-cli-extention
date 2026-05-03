@@ -1,3 +1,13 @@
+import type {
+  FrequentBookmarksCommand,
+  RecentBookmarksCommand,
+} from "./bookmark-usage-command-types";
+
+export type {
+  FrequentBookmarksCommand,
+  RecentBookmarksCommand,
+} from "./bookmark-usage-command-types";
+
 /**
  * Find commandです。
  */
@@ -263,6 +273,8 @@ export type ParsedBookmarkCommand =
   | MarkBookmarkCommand
   | MoveBookmarkCommand
   | PrintWorkingDirectoryCommand
+  | FrequentBookmarksCommand
+  | RecentBookmarksCommand
   | RemoveBookmarkCommand
   | RenameBookmarkCommand
   | ShowDirectoryTreeCommand

@@ -116,6 +116,19 @@ export const createBookmarkCliResultItemFromOrganizationPreview = (
 });
 
 /**
+ * Result itemからTab補完入力を作成します。
+ * @param {BookmarkCliResultItem} item 補完対象result itemです。
+ * @returns {string} 補完入力です。
+ */
+export const createBookmarkCliCompletionInput = (item: BookmarkCliResultItem): string => {
+  if (item.kind === "folder") {
+    return item.folderPath;
+  }
+
+  return item.title;
+};
+
+/**
  * Bookmark tree view entry一覧をCLI表示item一覧へ変換します。
  * @param {readonly BookmarkTreeViewEntry[]} treeEntries Bookmark tree view entry一覧です。
  * @returns {readonly BookmarkCliResultItem[]} CLI表示item一覧です。

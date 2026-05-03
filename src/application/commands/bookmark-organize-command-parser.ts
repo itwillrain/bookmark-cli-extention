@@ -72,9 +72,7 @@ const hasYesOption = (queryParts: readonly string[]): boolean => queryParts.incl
  * @param {readonly string[]} queryParts command名を除いたtoken一覧。
  * @returns {MakeDirectoryCommand} Mkdir command。
  */
-export const parseMakeDirectoryCommand = (
-  queryParts: readonly string[],
-): MakeDirectoryCommand => ({
+export const parseMakeDirectoryCommand = (queryParts: readonly string[]): MakeDirectoryCommand => ({
   kind: "mkdir",
   pathInput: joinValueTokens(createOrganizeValueTokens(queryParts)),
   preview: hasPreviewOption(queryParts),
@@ -86,9 +84,7 @@ export const parseMakeDirectoryCommand = (
  * @param {readonly string[]} queryParts command名を除いたtoken一覧。
  * @returns {MoveBookmarkCommand} Mv command。
  */
-export const parseMoveBookmarkCommand = (
-  queryParts: readonly string[],
-): MoveBookmarkCommand => {
+export const parseMoveBookmarkCommand = (queryParts: readonly string[]): MoveBookmarkCommand => {
   const [targetInput = emptyString, ...targetFolderPathTokens] =
     createOrganizeValueTokens(queryParts);
 

@@ -28,7 +28,9 @@ const deletedPreviewLabel = "deleted";
  * @param {BookmarkEntry} entry 削除対象entry。
  * @returns {ReturnType<typeof createBookmarkOrganizationPreview>} Remove preview。
  */
-const createRemovePreview = (entry: BookmarkEntry): ReturnType<typeof createBookmarkOrganizationPreview> =>
+const createRemovePreview = (
+  entry: BookmarkEntry,
+): ReturnType<typeof createBookmarkOrganizationPreview> =>
   createBookmarkOrganizationPreview({
     action: "remove",
     after: deletedPreviewLabel,

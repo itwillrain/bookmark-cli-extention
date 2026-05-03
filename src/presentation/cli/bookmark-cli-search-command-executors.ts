@@ -11,6 +11,7 @@ import { findBookmarks, goBookmark } from "../../application/bookmarks/bookmark-
 import type { BookmarkEntry } from "../../domain/bookmarks/bookmark-tree";
 import type { BookmarkSearchResult } from "../../domain/search/bookmark-search";
 import { createBookmarkCliResultItems } from "./bookmark-cli-view-model";
+import { recordBookmarkOpened } from "../../domain/storage/bookmark-usage";
 
 /**
  * 候補件数statusのsuffixです。
@@ -21,6 +22,12 @@ const candidateStatusSuffix = "candidates";
  * Bookmarkを開いたstatus prefixです。
  */
 const openedStatusPrefix = "Opened";
+
+/**
+ * 現在日時ISO文字列を返します。
+ * @returns {string} 現在日時ISO文字列です。
+ */
+const defaultNow = (): string => new Date().toISOString();
 
 /**
  * 件数status textを作ります。
@@ -45,6 +52,37 @@ const createCandidateStatusText = (candidateCount: number): string =>
  * @returns {string} Bookmarkを開いたstatus textです。
  */
 const createOpenedStatusText = (title: string): string => `${openedStatusPrefix} ${title}`;
+
+/**
+ * Command依存から現在日時を取得します。
+ * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存です。
+ * @returns {string} 現在日時ISO文字列です。
+ */
+const getExecutedAt = (dependencies: BookmarkCliCommandDependencies): string => {
+  if (typeof dependencies.now === "function") {
+    return dependencies.now();
+  }
+
+  return defaultNow();
+};
+
+/**
+ * Bookmark open利用統計を拡張状態へ反映します。
+ * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存です。
+ * @param {BookmarkEntry} entry 開いたBookmark entryです。
+ * @returns {BookmarkCliCommandDependencies["extensionState"]} 更新後の拡張状態です。
+ */
+const recordOpenedBookmarkState = (
+  dependencies: BookmarkCliCommandDependencies,
+  entry: BookmarkEntry,
+): BookmarkCliCommandDependencies["extensionState"] => ({
+  ...dependencies.extensionState,
+  usageByBookmarkId: recordBookmarkOpened({
+    bookmarkId: entry.id,
+    openedAt: getExecutedAt(dependencies),
+    usageByBookmarkId: dependencies.extensionState.usageByBookmarkId,
+  }),
+});
 
 /**
  * Bookmark検索結果から直前結果entry一覧を作ります。
@@ -107,7 +145,7 @@ export const executeGoCommand = async (
 
   return createCommandState({
     currentDirectory: dependencies.currentDirectory,
-    extensionState: dependencies.extensionState,
+    extensionState: recordOpenedBookmarkState(dependencies, result.value.entry),
     lastResultEntries: [result.value.entry],
     resultItems: createBookmarkCliResultItems([result.value]),
     statusText: createOpenedStatusText(result.value.entry.title),

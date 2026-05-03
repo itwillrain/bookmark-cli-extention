@@ -28,7 +28,6 @@ describe("parseBookmarkCommand create organize commands", (): void => {
       yes: false,
     });
   });
-
 });
 
 /**

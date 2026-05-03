@@ -1,7 +1,4 @@
-import type {
-  BookmarkCommandResult,
-  BookmarkRepositoryPort,
-} from "./bookmark-use-cases";
+import type { BookmarkCommandResult, BookmarkRepositoryPort } from "./bookmark-use-cases";
 import type { BookmarkEntry } from "../../domain/bookmarks/bookmark-tree";
 import type { BookmarkOrganizationPreview } from "../../domain/bookmarks/bookmark-organization-preview";
 import type { CurrentDirectory } from "../../domain/bookmarks/current-directory";

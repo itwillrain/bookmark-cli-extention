@@ -33,6 +33,10 @@ export interface BookmarkCliCommandDependencies {
    */
   readonly launchContext?: LaunchContext;
   /**
+   * 現在日時を返すport。
+   */
+  readonly now?: () => string;
+  /**
    * Bookmark作成port。
    */
   readonly creator: BookmarkCreatorPort;
