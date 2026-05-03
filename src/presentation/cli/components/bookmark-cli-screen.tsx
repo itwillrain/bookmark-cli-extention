@@ -1,35 +1,9 @@
+import { type BookmarkCliResultItem, BookmarkCliResultList } from "./bookmark-cli-result-list";
 import type { ReactElement } from "react";
+import type { ResultCursorIndex } from "../../../domain/bookmarks/result-cursor";
+import type { ResultViewStyle } from "../../../domain/storage/extension-state";
 
-/**
- * CLI resultの表示種別です。
- */
-export type BookmarkCliResultKind = "bookmark" | "folder";
-
-/**
- * CLI resultとして表示するitemです。
- */
-export interface BookmarkCliResultItem {
-  /**
-   * Bookmarkまたはfolderを表す種別です。
-   */
-  readonly kind: BookmarkCliResultKind;
-  /**
-   * 表示名です。
-   */
-  readonly title: string;
-  /**
-   * Folder pathです。
-   */
-  readonly folderPath: string;
-  /**
-   * Bookmark URLです。
-   */
-  readonly url?: string;
-  /**
-   * 検索scoreです。
-   */
-  readonly score?: number;
-}
+export type { BookmarkCliResultItem, BookmarkCliResultKind } from "./bookmark-cli-result-list";
 
 /**
  * Bookmark CLI画面のpropsです。
@@ -44,13 +18,29 @@ export interface BookmarkCliScreenProps {
    */
   readonly onInputChange: (value: string) => void;
   /**
+   * 入力欄のkey操作callbackです。
+   */
+  readonly onInputKeyDown: (event: CommandInputKeyEvent) => void;
+  /**
    * Commandを実行するcallbackです。
    */
   readonly onSubmit: () => void;
   /**
+   * Nerd Font iconを優先するかです。
+   */
+  readonly preferNerdFont: boolean;
+  /**
    * CLI result一覧です。
    */
   readonly resultItems: readonly BookmarkCliResultItem[];
+  /**
+   * Result表示styleです。
+   */
+  readonly resultViewStyle: ResultViewStyle;
+  /**
+   * 選択中result indexです。
+   */
+  readonly selectedResultIndex: ResultCursorIndex;
   /**
    * Status lineに表示するtextです。
    */
@@ -83,9 +73,22 @@ interface FormSubmitEvent {
 }
 
 /**
- * 結果がない場合に表示するtextです。
+ * 入力欄key eventとして扱う最小shapeです。
  */
-const emptyResultText = "No candidates";
+export interface CommandInputKeyEvent {
+  /**
+   * Control keyが押されているかです。
+   */
+  readonly ctrlKey: boolean;
+  /**
+   * 押されたkey名です。
+   */
+  readonly key: string;
+  /**
+   * Browser標準のkey動作を止めます。
+   */
+  readonly preventDefault: () => void;
+}
 
 /**
  * 入力欄のplaceholderです。
@@ -93,105 +96,72 @@ const emptyResultText = "No candidates";
 const commandInputPlaceholder = "find stripe dashboard";
 
 /**
- * Score表示の小数桁です。
+ * CLI promptの表示textです。
  */
-const scoreFractionDigits = 2;
+const commandPromptText = "bookmark-cli $";
 
 /**
- * Bookmark種別の表示labelです。
+ * Terminal windowのtitleです。
  */
-const bookmarkKindLabel = "url";
+const terminalWindowTitle = "bookmark-cli";
 
 /**
- * Folder種別の表示labelです。
+ * Command formのpropsです。
  */
-const folderKindLabel = "dir";
+interface CommandFormProps {
+  /**
+   * CLI入力値です。
+   */
+  readonly inputValue: string;
+  /**
+   * 入力値を更新するcallbackです。
+   */
+  readonly onInputChange: (value: string) => void;
+  /**
+   * 入力欄のkey操作callbackです。
+   */
+  readonly onInputKeyDown: (event: CommandInputKeyEvent) => void;
+  /**
+   * Commandを実行するcallbackです。
+   */
+  readonly onSubmit: () => void;
+}
 
 /**
- * 空のresult item件数です。
+ * Terminal headerのpropsです。
  */
-const emptyResultItemCount = 0;
+interface TerminalHeaderProps {
+  /**
+   * Status lineに表示するtextです。
+   */
+  readonly statusText: string;
+}
 
 /**
- * Result itemのkind labelを作ります。
- * @param {BookmarkCliResultKind} kind Result itemのkindです。
- * @returns {string} 表示用kind labelです。
+ * Terminal windowのheaderを描画します。
+ * @param {TerminalHeaderProps} props Terminal headerのpropsです。
+ * @returns {ReactElement} Terminal headerのReact elementです。
  */
-const formatKindLabel = (kind: BookmarkCliResultKind): string => {
-  if (kind === "bookmark") {
-    return bookmarkKindLabel;
-  }
-
-  return folderKindLabel;
-};
-
-/**
- * Scoreを表示用文字列へ変換します。
- * @param {number | undefined} score 検索scoreです。
- * @returns {string} 表示用scoreです。
- */
-const formatScore = (score: number | undefined): string => {
-  if (typeof score === "number") {
-    return score.toFixed(scoreFractionDigits);
-  }
-
-  return "";
-};
-
-/**
- * Bookmark URLを描画します。
- * @param {BookmarkCliResultItem} item URLを描画するresult itemです。
- * @returns {ReactElement} URL表示のReact elementです。
- */
-const renderResultUrl = (item: BookmarkCliResultItem): ReactElement => {
-  if (typeof item.url === "string") {
-    return <span className="block truncate text-xs text-cyan-300">{item.url}</span>;
-  }
-
-  return <></>;
-};
-
-/**
- * Bookmark CLIのresult itemを描画します。
- * @param {BookmarkCliResultItem} item 描画するresult itemです。
- * @returns {ReactElement} Result itemのReact elementです。
- */
-const renderResultItem = (item: BookmarkCliResultItem): ReactElement => (
-  <li
-    className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border-b border-zinc-800 px-4 py-3 last:border-b-0"
-    key={`${item.kind}:${item.folderPath}:${item.title}`}
-  >
-    <span className="rounded bg-emerald-400 px-2 py-1 font-mono text-[11px] font-semibold uppercase text-zinc-950">
-      {formatKindLabel(item.kind)}
+const TerminalHeader = (props: TerminalHeaderProps): ReactElement => (
+  <header className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border-b border-zinc-800 bg-zinc-950 px-4 py-3">
+    <span className="flex gap-1.5" aria-hidden="true">
+      <span className="h-3 w-3 rounded-full bg-red-500" />
+      <span className="h-3 w-3 rounded-full bg-amber-400" />
+      <span className="h-3 w-3 rounded-full bg-emerald-500" />
     </span>
-    <span className="min-w-0">
-      <span className="block truncate font-medium text-zinc-100">{item.folderPath}</span>
-      <span className="block truncate text-sm text-zinc-400">{item.title}</span>
-      {renderResultUrl(item)}
-    </span>
-    <span className="font-mono text-xs text-zinc-500">{formatScore(item.score)}</span>
-  </li>
+    <h1 className="truncate text-center font-mono text-xs font-medium text-zinc-400">
+      {terminalWindowTitle}
+    </h1>
+    <p className="font-mono text-xs text-zinc-500">{props.statusText}</p>
+  </header>
 );
 
 /**
- * Bookmark CLIのresult listを描画します。
- * @param {readonly BookmarkCliResultItem[]} resultItems 描画するresult item一覧です。
- * @returns {ReactElement} Result listのReact elementです。
+ * CLI commandのprompt formを描画します。
+ * @param {CommandFormProps} props Command formのpropsです。
+ * @returns {ReactElement} Prompt formのReact elementです。
  */
-const renderResultList = (resultItems: readonly BookmarkCliResultItem[]): ReactElement => {
-  if (resultItems.length === emptyResultItemCount) {
-    return <p className="px-4 py-6 text-sm text-zinc-500">{emptyResultText}</p>;
-  }
-
-  return <ul>{resultItems.map((item) => renderResultItem(item))}</ul>;
-};
-
-/**
- * Dedicated extension page向けBookmark CLI画面を描画します。
- * @param {BookmarkCliScreenProps} props Bookmark CLI画面のpropsです。
- * @returns {ReactElement} Bookmark CLI画面のReact elementです。
- */
-export const BookmarkCliScreen = (props: BookmarkCliScreenProps): ReactElement => {
+const CommandForm = (props: CommandFormProps): ReactElement => {
   /**
    * 入力変更を親componentへ通知します。
    * @param {InputChangeEvent} event 入力変更eventです。
@@ -212,32 +182,55 @@ export const BookmarkCliScreen = (props: BookmarkCliScreenProps): ReactElement =
   };
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-100">
-      <section className="mx-auto flex min-h-screen w-full max-w-5xl flex-col px-4 py-6 sm:px-6">
-        <header className="flex items-center justify-between border-b border-zinc-800 pb-4">
-          <h1 className="font-mono text-lg font-semibold">Bookmark CLI</h1>
-          <p className="font-mono text-xs text-zinc-500">{props.statusText}</p>
-        </header>
-        <form className="mt-5 flex gap-2" onSubmit={handleSubmit}>
-          <input
-            autoFocus
-            className="min-w-0 flex-1 rounded border border-zinc-700 bg-zinc-900 px-4 py-3 font-mono text-sm text-zinc-100 outline-none transition focus:border-emerald-400"
-            onChange={handleInputChange}
-            placeholder={commandInputPlaceholder}
-            spellCheck={false}
-            value={props.inputValue}
-          />
-          <button
-            className="rounded bg-emerald-400 px-4 py-3 font-mono text-sm font-semibold text-zinc-950 transition hover:bg-emerald-300"
-            type="submit"
-          >
-            Run
-          </button>
-        </form>
-        <section className="mt-5 overflow-hidden rounded border border-zinc-800 bg-zinc-900/70">
-          {renderResultList(props.resultItems)}
-        </section>
-      </section>
-    </main>
+    <form
+      className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-2 border-b border-zinc-900 pb-3"
+      onSubmit={handleSubmit}
+    >
+      <label className="whitespace-nowrap text-emerald-300" htmlFor="bookmark-cli-command">
+        {commandPromptText}
+      </label>
+      <input
+        aria-label="Bookmark CLI command"
+        autoFocus
+        className="min-w-0 bg-transparent text-zinc-100 caret-emerald-300 outline-none placeholder:text-zinc-600"
+        id="bookmark-cli-command"
+        onChange={handleInputChange}
+        onKeyDown={props.onInputKeyDown}
+        placeholder={commandInputPlaceholder}
+        spellCheck={false}
+        value={props.inputValue}
+      />
+    </form>
   );
 };
+
+/**
+ * Dedicated extension page向けBookmark CLI画面を描画します。
+ * @param {BookmarkCliScreenProps} props Bookmark CLI画面のpropsです。
+ * @returns {ReactElement} Bookmark CLI画面のReact elementです。
+ */
+export const BookmarkCliScreen = (props: BookmarkCliScreenProps): ReactElement => (
+  <main className="min-h-screen bg-[#050607] text-zinc-100">
+    <section className="mx-auto flex min-h-screen w-full max-w-6xl flex-col px-3 py-4 sm:px-6 sm:py-7">
+      <section className="flex min-h-[calc(100vh-2rem)] flex-col overflow-hidden rounded-md border border-zinc-800 bg-[#090b0c] shadow-2xl shadow-black/40 sm:min-h-[calc(100vh-3.5rem)]">
+        <TerminalHeader statusText={props.statusText} />
+        <section className="flex flex-1 flex-col px-4 py-4 font-mono text-sm leading-6 sm:px-5">
+          <CommandForm
+            inputValue={props.inputValue}
+            onInputChange={props.onInputChange}
+            onInputKeyDown={props.onInputKeyDown}
+            onSubmit={props.onSubmit}
+          />
+          <section className="min-h-0 flex-1 overflow-auto pt-4">
+            <BookmarkCliResultList
+              preferNerdFont={props.preferNerdFont}
+              resultItems={props.resultItems}
+              resultViewStyle={props.resultViewStyle}
+              selectedResultIndex={props.selectedResultIndex}
+            />
+          </section>
+        </section>
+      </section>
+    </section>
+  </main>
+);

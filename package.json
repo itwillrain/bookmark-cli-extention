@@ -15,6 +15,7 @@
     "format:check": "prettier --check .",
     "lint": "pnpm run lint:oxlint && pnpm run lint:docs",
     "lint:docs": "eslint \"**/*.{ts,tsx}\"",
+    "lint:jsdoc-style": "eslint \"**/*.{ts,tsx}\" --rule \"bookmark-jsdoc-style/no-desu-ending:error\"",
     "lint:fix": "oxlint --fix . && eslint \"**/*.{ts,tsx}\" --fix",
     "lint:oxlint": "oxlint .",
     "postinstall": "wxt prepare",
