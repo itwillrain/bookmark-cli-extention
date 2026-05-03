@@ -9,17 +9,17 @@ const firstSuggestionIndex = 0;
  */
 describe("suggestBookmarkCommands", (): void => {
   /**
-   * 空入力では主要commandを返すことを検証。
+   * 空入力ではcommand suggestionを返さないことを検証。
    */
-  it("returns initial command suggestions", (): void => {
-    expect(suggestBookmarkCommands("").map((suggestion) => suggestion.commandName)).toStrictEqual([
-      "find",
-      "go",
-      "ls",
-      "cd",
-      "pwd",
-      "tree",
-    ]);
+  it("returns no command suggestions before typing starts", (): void => {
+    expect(suggestBookmarkCommands("")).toStrictEqual([]);
+  });
+
+  /**
+   * 空白だけの入力ではcommand suggestionを返さないことを検証。
+   */
+  it("returns no command suggestions for whitespace-only input", (): void => {
+    expect(suggestBookmarkCommands("   ")).toStrictEqual([]);
   });
 
   /**

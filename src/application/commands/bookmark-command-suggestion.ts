@@ -138,6 +138,13 @@ const commandSuggestionMatchesPrefix = (
 ): boolean => suggestion.commandName.startsWith(commandPrefix.toLowerCase());
 
 /**
+ * Command suggestionを開始できる入力かを判定。
+ * @param {string} commandPrefix Command prefix。
+ * @returns {boolean} Suggestion開始可能ならtrue。
+ */
+const canStartCommandSuggestion = (commandPrefix: string): boolean => commandPrefix !== emptyString;
+
+/**
  * Bookmark CLI command suggestionを返す。
  * @param {string} inputValue CLI入力値。
  * @returns {readonly BookmarkCommandSuggestion[]} Command suggestion一覧。
@@ -150,6 +157,10 @@ export const suggestBookmarkCommands = (
   }
 
   const commandPrefix = extractCommandPrefix(inputValue);
+
+  if (!canStartCommandSuggestion(commandPrefix)) {
+    return [];
+  }
 
   return bookmarkCommandCatalog
     .map((item) => createBookmarkCommandSuggestion(item))

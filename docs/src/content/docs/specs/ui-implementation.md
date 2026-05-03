@@ -268,6 +268,8 @@ view modelはcomponentが直接使いやすい形にします。
 
 Command suggestionはfish shellの補完に近い操作感を目指します。
 
+空のpromptではcandidate listを表示せず、command名を入力し始めたタイミングでprefixに一致するcandidate listを表示します。
+
 現在のprompt直下にfloating候補を表示し、`Tab` で候補選択を進め、`Enter` で選択中候補を入力へ確定します。
 
 `cd ./` のようにpath引数へ入った場合は、現在ディレクトリ配下の存在するfolderを候補として表示します。
