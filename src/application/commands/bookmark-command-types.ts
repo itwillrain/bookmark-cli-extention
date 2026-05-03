@@ -1,3 +1,5 @@
+/* oxlint-disable max-lines -- Command AST型の集約地点としてunionを同じfileに保つため。 */
+
 import type {
   FrequentBookmarksCommand,
   RecentBookmarksCommand,
@@ -13,6 +15,10 @@ export type {
  */
 export interface FindBookmarkCommand {
   /**
+   * Debug情報を表示するかです。
+   */
+  readonly debug: boolean;
+  /**
    * Command種別です。
    */
   readonly kind: "find";
@@ -26,6 +32,10 @@ export interface FindBookmarkCommand {
  * Go commandです。
  */
 export interface GoBookmarkCommand {
+  /**
+   * Debug情報を表示するかです。
+   */
+  readonly debug: boolean;
   /**
    * Command種別です。
    */

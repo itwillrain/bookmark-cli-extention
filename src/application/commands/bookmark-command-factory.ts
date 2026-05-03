@@ -1,3 +1,5 @@
+/* oxlint-disable max-lines -- Command factoryの分岐表と小さなparser補助を同じfileに保つため。 */
+
 import {
   parseFrequentBookmarksCommand,
   parseRecentBookmarksCommand,
@@ -66,6 +68,12 @@ const longHelpOption = "--help";
 /** Short help option名です。 */
 const shortHelpOption = "-h";
 
+/** Debug option名です。 */
+const debugOptionName = "--debug";
+
+/** Command tokenの区切り文字です。 */
+const commandTokenSeparator = " ";
+
 /**
  * Command parse contextです。
  */
@@ -94,13 +102,45 @@ export interface CommandParseContext {
 export type BookmarkCommandFactory = (context: CommandParseContext) => ParsedBookmarkCommand;
 
 /**
+ * Debug option tokenかを判定します。
+ * @param {string} token 判定対象tokenです。
+ * @returns {boolean} Debug optionならtrueです。
+ */
+const isDebugOptionToken = (token: string): boolean => token === debugOptionName;
+
+/**
+ * 検索query用の値tokenだけを抽出します。
+ * @param {readonly string[]} queryParts command名を除いたtoken一覧です。
+ * @returns {readonly string[]} optionを除いた検索値token一覧です。
+ */
+const createSearchValueTokens = (queryParts: readonly string[]): readonly string[] =>
+  queryParts.filter((token) => !isDebugOptionToken(token));
+
+/**
+ * 検索query文字列を作ります。
+ * @param {readonly string[]} queryParts command名を除いたtoken一覧です。
+ * @returns {string} 検索query文字列です。
+ */
+const createSearchQuery = (queryParts: readonly string[]): string =>
+  createSearchValueTokens(queryParts).join(commandTokenSeparator);
+
+/**
+ * Debug optionを含むかを判定します。
+ * @param {readonly string[]} queryParts command名を除いたtoken一覧です。
+ * @returns {boolean} Debug optionを含むならtrueです。
+ */
+const hasDebugOption = (queryParts: readonly string[]): boolean =>
+  queryParts.includes(debugOptionName);
+
+/**
  * Find commandを作ります。
  * @param {CommandParseContext} context Command parse contextです。
  * @returns {ParsedBookmarkCommand} Find commandです。
  */
 const createFindBookmarkCommand = (context: CommandParseContext): ParsedBookmarkCommand => ({
+  debug: hasDebugOption(context.queryParts),
   kind: "find",
-  query: context.query,
+  query: createSearchQuery(context.queryParts),
 });
 
 /**
@@ -109,8 +149,9 @@ const createFindBookmarkCommand = (context: CommandParseContext): ParsedBookmark
  * @returns {ParsedBookmarkCommand} Go commandです。
  */
 const createGoBookmarkCommand = (context: CommandParseContext): ParsedBookmarkCommand => ({
+  debug: hasDebugOption(context.queryParts),
   kind: "go",
-  query: context.query,
+  query: createSearchQuery(context.queryParts),
 });
 
 /**

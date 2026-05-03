@@ -306,6 +306,7 @@ describe("goBookmark with candidate", (): void => {
   });
 });
 
+/**
  * 直前結果番号でBookmarkを開くuse caseのテストスイートです。
  */
 describe("goBookmark by result number", (): void => {

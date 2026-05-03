@@ -1,3 +1,5 @@
+/* oxlint-disable max-lines -- Result list componentと表示型を同じfileに保つため。 */
+
 import type { CSSProperties, ReactElement } from "react";
 import { BookmarkCliResultSegments } from "./bookmark-cli-result-segments";
 import type { ResultCursorIndex } from "../../../domain/bookmarks/result-cursor";
