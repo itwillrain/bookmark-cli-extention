@@ -1,3 +1,5 @@
+/* oxlint-disable max-lines -- Chrome windows APIの境界型と単一window制御を同じadapterに閉じるため。 */
+
 /**
  * Chrome windows APIで指定できるwindow種別です。
  * @see https://developer.chrome.com/docs/extensions/reference/api/windows#type-CreateType
@@ -31,12 +33,33 @@ export interface ChromeWindowUpdateProperties {
 }
 
 /**
+ * Chrome windows.getAllに渡す入力です。
+ * @see https://developer.chrome.com/docs/extensions/reference/api/windows#method-getAll
+ */
+export interface ChromeWindowGetAllQuery {
+  /** Window内tab情報を含めるかです。 */
+  readonly populate: boolean;
+  /** 取得対象window種別です。 */
+  readonly windowTypes: ChromeWindowCreateType[];
+}
+
+/**
+ * Chrome windows APIが返すtabの最小shapeです。
+ */
+export interface ChromeWindowTab {
+  /** Tab URLです。 */
+  readonly url?: string | undefined;
+}
+
+/**
  * Chrome windows APIが返すwindowの最小shapeです。
  * @see https://developer.chrome.com/docs/extensions/reference/api/windows#type-Window
  */
 export interface ChromeWindow {
   /** Window IDです。 */
   readonly id?: number | undefined;
+  /** Window内tab一覧です。 */
+  readonly tabs?: readonly ChromeWindowTab[] | undefined;
 }
 
 /**
@@ -48,6 +71,11 @@ export interface ChromeWindowsApi {
   readonly create: (
     createProperties: ChromeWindowCreateProperties,
   ) => Promise<ChromeWindow | undefined>;
+  /** Window一覧を取得します。 */
+  // oxlint-disable-next-line typescript-eslint/prefer-readonly-parameter-types -- Chrome APIはmutableなwindowTypes配列を要求するため。
+  readonly getAll: (queryInfo: ChromeWindowGetAllQuery) => Promise<readonly ChromeWindow[]>;
+  /** 既存windowを閉じます。 */
+  readonly remove: (windowId: number) => Promise<void>;
   /** 既存windowを更新します。 */
   readonly update: (
     windowId: number,
@@ -69,6 +97,12 @@ const cliPageWindowIdMissing = false;
 
 /** 保存済みCLI page window IDです。 */
 type StoredCliPageWindowId = number | typeof cliPageWindowIdMissing;
+
+/** 実行中のCLI page window open taskがない状態です。 */
+const openCliPageWindowTaskMissing = false;
+
+/** CLI page window open taskです。 */
+type OpenCliPageWindowTask = Promise<void> | typeof openCliPageWindowTaskMissing;
 
 /**
  * CLI page用popup window作成入力を作ります。
@@ -92,6 +126,15 @@ export const createCliPageWindowFocusProperties = (): ChromeWindowUpdateProperti
 });
 
 /**
+ * CLI page window探索用queryを作ります。
+ * @returns {ChromeWindowGetAllQuery} Window一覧取得queryです。
+ */
+export const createCliPageWindowGetAllQuery = (): ChromeWindowGetAllQuery => ({
+  populate: true,
+  windowTypes: [cliPopupWindowType],
+});
+
+/**
  * Chrome windowから保存可能なwindow IDを取り出します。
  * @param {ChromeWindow | undefined} window Chrome windows APIが返したwindowです。
  * @returns {StoredCliPageWindowId} 保存可能なwindow IDです。
@@ -102,6 +145,47 @@ const resolveStoredCliPageWindowId = (window: ChromeWindow | undefined): StoredC
   }
 
   return cliPageWindowIdMissing;
+};
+
+/**
+ * Chrome windowがCLI pageを含むか判定します。
+ * @param {ChromeWindow} window 判定対象windowです。
+ * @param {string} url CLI page URLです。
+ * @returns {boolean} CLI page windowならtrueです。
+ */
+const isCliPageWindow = (window: ChromeWindow, url: string): boolean =>
+  window.tabs?.some((tab) => tab.url === url) === true;
+
+/**
+ * CLI page windowを一覧から抽出します。
+ * @param {readonly ChromeWindow[]} windows Chrome window一覧です。
+ * @param {string} url CLI page URLです。
+ * @returns {readonly ChromeWindow[]} CLI page window一覧です。
+ */
+const filterCliPageWindows = (
+  windows: readonly ChromeWindow[],
+  url: string,
+): readonly ChromeWindow[] => windows.filter((window) => isCliPageWindow(window, url));
+
+/**
+ * 重複CLI page windowを閉じます。
+ * @param {ChromeWindowsApi} windowsApi Chrome windows APIです。
+ * @param {readonly ChromeWindow[]} duplicateWindows 重複window一覧です。
+ * @returns {Promise<void>} 削除完了Promiseです。
+ */
+const removeDuplicateCliPageWindows = async (
+  windowsApi: ChromeWindowsApi,
+  duplicateWindows: readonly ChromeWindow[],
+): Promise<void> => {
+  await Promise.all(
+    duplicateWindows.map(async (window): Promise<void> => {
+      const windowId = resolveStoredCliPageWindowId(window);
+
+      if (windowId !== cliPageWindowIdMissing) {
+        await windowsApi.remove(windowId);
+      }
+    }),
+  );
 };
 
 /**
@@ -135,6 +219,35 @@ const focusCliPageWindow = async (
   }
 };
 
+/**
+ * 実在するCLI page windowを探して前面へ戻します。
+ * @param {ChromeWindowsApi} windowsApi Chrome windows APIです。
+ * @param {string} url CLI page URLです。
+ * @returns {Promise<StoredCliPageWindowId>} 前面復帰したwindow IDです。
+ */
+const focusDiscoveredCliPageWindow = async (
+  windowsApi: ChromeWindowsApi,
+  url: string,
+): Promise<StoredCliPageWindowId> => {
+  const [primaryWindow, ...duplicateWindows] = filterCliPageWindows(
+    await windowsApi.getAll(createCliPageWindowGetAllQuery()),
+    url,
+  );
+  const primaryWindowId = resolveStoredCliPageWindowId(primaryWindow);
+
+  await removeDuplicateCliPageWindows(windowsApi, duplicateWindows);
+
+  if (primaryWindowId === cliPageWindowIdMissing) {
+    return cliPageWindowIdMissing;
+  }
+
+  if (!(await focusCliPageWindow(windowsApi, primaryWindowId))) {
+    return cliPageWindowIdMissing;
+  }
+
+  return primaryWindowId;
+};
+
 /** CLI page window launcherです。 */
 export interface ChromeCliPageWindowLauncher {
   /** CLI pageを別windowで開きます。 */
@@ -146,10 +259,23 @@ export interface ChromeCliPageWindowLauncher {
  * @param {ChromeWindowsApi} windowsApi Chrome windows APIです。
  * @returns {ChromeCliPageWindowLauncher} CLI page launcherです。
  */
+// oxlint-disable-next-line max-lines-per-function -- mutableなwindow IDとsingle-flight taskを同じclosureで保持するため。
 export const createChromeCliPageWindowLauncher = (
   windowsApi: ChromeWindowsApi,
 ): ChromeCliPageWindowLauncher => {
   let cliPageWindowId: StoredCliPageWindowId = cliPageWindowIdMissing;
+  let openCliPageWindowTask: OpenCliPageWindowTask = openCliPageWindowTaskMissing;
+
+  /**
+   * 実在するCLI page windowを前面へ戻します。
+   * @param {string} url CLI page URLです。
+   * @returns {Promise<boolean>} 前面復帰できた場合はtrueです。
+   */
+  const focusDiscoveredCliPageWindowIfExists = async (url: string): Promise<boolean> => {
+    cliPageWindowId = await focusDiscoveredCliPageWindow(windowsApi, url);
+
+    return cliPageWindowId !== cliPageWindowIdMissing;
+  };
 
   /**
    * 保存済みCLI page windowを前面へ戻します。
@@ -170,16 +296,39 @@ export const createChromeCliPageWindowLauncher = (
   };
 
   /**
-   * CLI pageを別windowで開きます。
+   * CLI pageを1つだけ開く処理を実行します。
    * @param {string} url CLI page URLです。
-   * @returns {Promise<void>} Window作成完了Promiseです。
+   * @returns {Promise<void>} Window作成または前面復帰完了Promiseです。
    */
-  const openCliPageWindow = async (url: string): Promise<void> => {
+  const openSingleCliPageWindow = async (url: string): Promise<void> => {
+    if (await focusDiscoveredCliPageWindowIfExists(url)) {
+      return;
+    }
+
     if (await focusExistingCliPageWindow()) {
       return;
     }
 
     cliPageWindowId = await createCliPageWindow(windowsApi, url);
+  };
+
+  /**
+   * CLI pageを別windowで開きます。
+   * @param {string} url CLI page URLです。
+   * @returns {Promise<void>} Window作成完了Promiseです。
+   */
+  const openCliPageWindow = async (url: string): Promise<void> => {
+    if (openCliPageWindowTask !== openCliPageWindowTaskMissing) {
+      await openCliPageWindowTask;
+
+      return;
+    }
+
+    openCliPageWindowTask = openSingleCliPageWindow(url).finally(() => {
+      openCliPageWindowTask = openCliPageWindowTaskMissing;
+    });
+
+    await openCliPageWindowTask;
   };
 
   return { openCliPageWindow };

@@ -102,6 +102,8 @@ Dedicated extension pageのwindowはhot keyで再呼び出しできます。
 
 既存windowがある場合はwindowを増やさず、既存windowへfocusします。
 
+誤ってCLI windowが複数存在する場合は、hot keyまたは拡張actionの再実行時に1つへ集約します。
+
 Chrome Extensions APIの制約により、OSの常時最前面固定はv1では扱いません。
 
 現在入力中のpromptはtranscript末尾に置き、実行後はその入力と結果をtranscript entryへ固定します。

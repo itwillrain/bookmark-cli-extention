@@ -200,7 +200,13 @@ CLI起動元タブのURLまたはtitleを取得できない場合は `unsupporte
 
 Dedicated extension pageは単一のpopup windowとして扱います。
 
-hot keyまたは拡張actionで再度起動した場合、既存のCLI windowが残っていれば新規作成せず `chrome.windows.update(windowId, { focused: true })` で前面へ戻します。
+hot keyまたは拡張actionで起動するたびに `chrome.windows.getAll({ populate: true })` で既存のCLI windowを探します。
+
+既存のCLI windowが残っていれば新規作成せず `chrome.windows.update(windowId, { focused: true })` で前面へ戻します。
+
+CLI windowが複数見つかった場合は、先頭の1つだけを残して重複windowを閉じます。
+
+同時に複数の起動要求が来た場合も、background側で実行中のopen taskへ合流し、window作成は1回だけにします。
 
 既存windowが閉じられている場合は新しいpopup windowを作ります。
 
