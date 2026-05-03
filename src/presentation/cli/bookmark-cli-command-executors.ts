@@ -12,8 +12,18 @@ export {
   executeShowDirectoryTreeCommand,
 } from "./bookmark-cli-directory-command-executors";
 export { executeMarkCommand } from "./bookmark-cli-mark-command-executors";
+export {
+  executeMakeDirectoryCommand,
+  executeMoveBookmarkCommand,
+  executeRemoveBookmarkCommand,
+  executeRenameBookmarkCommand,
+} from "./bookmark-cli-organize-command-executors";
 export { executeTagCommand } from "./bookmark-cli-tag-command-executors";
 export { executeFindCommand, executeGoCommand } from "./bookmark-cli-search-command-executors";
+export {
+  executeFrequentBookmarksCommand,
+  executeRecentBookmarksCommand,
+} from "./bookmark-cli-usage-command-executors";
 
 /**
  * 初期状態のstatus textです。

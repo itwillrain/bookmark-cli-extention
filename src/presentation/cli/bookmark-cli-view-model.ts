@@ -1,5 +1,6 @@
 import type { BookmarkCliResultItem } from "./components/bookmark-cli-screen";
 import type { BookmarkEntry } from "../../domain/bookmarks/bookmark-tree";
+import type { BookmarkOrganizationPreview } from "../../domain/bookmarks/bookmark-organization-preview";
 import type { BookmarkSearchResult } from "../../domain/search/bookmark-search";
 import type { BookmarkTreeViewEntry } from "../../domain/bookmarks/bookmark-tree-view";
 
@@ -99,6 +100,33 @@ export const createBookmarkCliResultItemsFromEntries = (
   entries: readonly BookmarkEntry[],
 ): readonly BookmarkCliResultItem[] =>
   entries.map((entry) => createBookmarkCliResultItemFromBookmarkEntry(entry));
+
+/**
+ * Bookmark整理previewをCLI表示itemへ変換します。
+ * @param {BookmarkOrganizationPreview} preview Bookmark整理previewです。
+ * @returns {BookmarkCliResultItem} CLI表示itemです。
+ */
+export const createBookmarkCliResultItemFromOrganizationPreview = (
+  preview: BookmarkOrganizationPreview,
+): BookmarkCliResultItem => ({
+  description: preview.description,
+  folderPath: preview.before,
+  kind: "preview",
+  title: preview.title,
+});
+
+/**
+ * Result itemからTab補完入力を作成します。
+ * @param {BookmarkCliResultItem} item 補完対象result itemです。
+ * @returns {string} 補完入力です。
+ */
+export const createBookmarkCliCompletionInput = (item: BookmarkCliResultItem): string => {
+  if (item.kind === "folder") {
+    return item.folderPath;
+  }
+
+  return item.title;
+};
 
 /**
  * Bookmark tree view entry一覧をCLI表示item一覧へ変換します。

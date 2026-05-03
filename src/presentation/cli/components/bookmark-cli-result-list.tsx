@@ -1,9 +1,12 @@
 import type { CSSProperties, ReactElement } from "react";
+import { BookmarkCliResultSegments } from "./bookmark-cli-result-segments";
+import type { ResultCursorIndex } from "../../../domain/bookmarks/result-cursor";
+import type { ResultViewStyle } from "../../../domain/storage/extension-state";
 
 /**
  * CLI resultの表示種別です。
  */
-export type BookmarkCliResultKind = "bookmark" | "folder";
+export type BookmarkCliResultKind = "bookmark" | "folder" | "preview";
 
 /**
  * CLI resultとして表示するitemです。
@@ -26,6 +29,10 @@ export interface BookmarkCliResultItem {
    */
   readonly folderPath: string;
   /**
+   * 補足説明です。
+   */
+  readonly description?: string;
+  /**
    * Bookmark URLです。
    */
   readonly url?: string;
@@ -40,9 +47,21 @@ export interface BookmarkCliResultItem {
  */
 export interface BookmarkCliResultListProps {
   /**
+   * Nerd Font iconを優先するかです。
+   */
+  readonly preferNerdFont: boolean;
+  /**
    * CLI result一覧です。
    */
   readonly resultItems: readonly BookmarkCliResultItem[];
+  /**
+   * Result表示styleです。
+   */
+  readonly resultViewStyle: ResultViewStyle;
+  /**
+   * 選択中result indexです。
+   */
+  readonly selectedResultIndex: ResultCursorIndex;
 }
 
 /**
@@ -54,16 +73,6 @@ const emptyResultText = "No output";
  * Score表示の小数桁です。
  */
 const scoreFractionDigits = 2;
-
-/**
- * Bookmark種別の表示labelです。
- */
-const bookmarkKindLabel = "URL";
-
-/**
- * Folder種別の表示labelです。
- */
-const folderKindLabel = "DIR";
 
 /**
  * 空のresult item件数です。
@@ -89,19 +98,6 @@ const treeIndentStepRem = 1.25;
  * Indentなしの幅です。
  */
 const noIndentRem = 0;
-
-/**
- * Result itemのkind labelを作ります。
- * @param {BookmarkCliResultKind} kind Result itemのkindです。
- * @returns {string} 表示用kind labelです。
- */
-const formatKindLabel = (kind: BookmarkCliResultKind): string => {
-  if (kind === "bookmark") {
-    return bookmarkKindLabel;
-  }
-
-  return folderKindLabel;
-};
 
 /**
  * Scoreを表示用文字列へ変換します。
@@ -175,6 +171,41 @@ const createResultItemStyle = (item: BookmarkCliResultItem): CSSProperties => ({
   paddingLeft: `${String(getResultItemIndentRem(item))}rem`,
 });
 
+/** Result item描画入力です。 */
+interface ResultItemRenderInput {
+  /** 描画するresult itemです。 */
+  readonly item: BookmarkCliResultItem;
+  /** Result itemの0-based indexです。 */
+  readonly itemIndex: number;
+  /** Nerd Font iconを優先するかです。 */
+  readonly preferNerdFont: boolean;
+  /** Result表示styleです。 */
+  readonly resultViewStyle: ResultViewStyle;
+  /** 選択中result indexです。 */
+  readonly selectedResultIndex: ResultCursorIndex;
+}
+
+/**
+ * Result itemが選択中かを判定します。
+ * @param {ResultItemRenderInput} input Result item描画入力です。
+ * @returns {boolean} 選択中ならtrueです。
+ */
+const isSelectedResultItem = (input: ResultItemRenderInput): boolean =>
+  input.selectedResultIndex !== false && input.selectedResultIndex === input.itemIndex;
+
+/**
+ * Result itemのclassNameを作ります。
+ * @param {ResultItemRenderInput} input Result item描画入力です。
+ * @returns {string} Result item classNameです。
+ */
+const createResultItemClassName = (input: ResultItemRenderInput): string => {
+  if (isSelectedResultItem(input)) {
+    return "grid grid-cols-[minmax(0,16rem)_minmax(0,1fr)_auto] items-start gap-3 rounded-sm bg-emerald-950/50 py-1.5 pr-2 text-sm ring-1 ring-emerald-700/60";
+  }
+
+  return "grid grid-cols-[minmax(0,16rem)_minmax(0,1fr)_auto] items-start gap-3 py-1.5 pr-2 text-sm";
+};
+
 /**
  * Bookmark URLを描画します。
  * @param {BookmarkCliResultItem} item URLを描画するresult itemです。
@@ -189,28 +220,43 @@ const renderResultUrl = (item: BookmarkCliResultItem): ReactElement => {
 };
 
 /**
+ * Result itemの補足説明を描画します。
+ * @param {BookmarkCliResultItem} item 補足説明を描画するresult itemです。
+ * @returns {ReactElement} 補足説明のReact elementです。
+ */
+const renderResultDescription = (item: BookmarkCliResultItem): ReactElement => {
+  if (typeof item.description === "string") {
+    return <span className="block truncate text-amber-200">{item.description}</span>;
+  }
+
+  return <></>;
+};
+
+/**
  * Bookmark CLIのresult itemを描画します。
- * @param {BookmarkCliResultItem} item 描画するresult itemです。
- * @param {number} itemIndex Result itemの0-based indexです。
+ * @param {ResultItemRenderInput} input Result item描画入力です。
  * @returns {ReactElement} Result itemのReact elementです。
  */
-const renderResultItem = (item: BookmarkCliResultItem, itemIndex: number): ReactElement => (
+const renderResultItem = (input: ResultItemRenderInput): ReactElement => (
   <li
-    className="grid grid-cols-[3ch_4ch_minmax(0,1fr)_auto] items-start gap-3 py-1.5 pr-2 text-sm"
-    key={`${formatResultNumber(itemIndex)}:${item.kind}:${item.folderPath}:${item.title}`}
-    style={createResultItemStyle(item)}
+    aria-selected={isSelectedResultItem(input)}
+    className={createResultItemClassName(input)}
+    key={`${formatResultNumber(input.itemIndex)}:${input.item.kind}:${input.item.folderPath}:${input.item.title}`}
+    style={createResultItemStyle(input.item)}
   >
-    <span className="text-right text-zinc-600">
-      {formatResultNumber(itemIndex)}
-      <span className="text-zinc-700">:</span>
-    </span>
-    <span className="text-amber-300">{formatKindLabel(item.kind)}</span>
+    <BookmarkCliResultSegments
+      folderPath={input.item.folderPath}
+      kind={input.item.kind}
+      preferNerdFont={input.preferNerdFont}
+      resultNumber={formatResultNumber(input.itemIndex)}
+      resultViewStyle={input.resultViewStyle}
+    />
     <span className="min-w-0">
-      <span className="block truncate text-zinc-100">{item.folderPath}</span>
-      <span className="block truncate text-zinc-400">{item.title}</span>
-      {renderResultUrl(item)}
+      <span className="block truncate text-zinc-100">{input.item.title}</span>
+      {renderResultDescription(input.item)}
+      {renderResultUrl(input.item)}
     </span>
-    <span className="text-xs text-zinc-600">{formatScoreToken(item.score)}</span>
+    <span className="text-xs text-zinc-600">{formatScoreToken(input.item.score)}</span>
   </li>
 );
 
@@ -224,5 +270,17 @@ export const BookmarkCliResultList = (props: BookmarkCliResultListProps): ReactE
     return <p className="py-1.5 text-sm text-zinc-600">{emptyResultText}</p>;
   }
 
-  return <ul>{props.resultItems.map((item, itemIndex) => renderResultItem(item, itemIndex))}</ul>;
+  return (
+    <ul>
+      {props.resultItems.map((item, itemIndex) =>
+        renderResultItem({
+          item,
+          itemIndex,
+          preferNerdFont: props.preferNerdFont,
+          resultViewStyle: props.resultViewStyle,
+          selectedResultIndex: props.selectedResultIndex,
+        }),
+      )}
+    </ul>
+  );
 };

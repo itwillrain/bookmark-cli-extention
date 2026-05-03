@@ -4,6 +4,7 @@ import {
   type BookmarkCliScreenProps,
 } from "./bookmark-cli-screen";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { resultCursorCleared } from "../../../domain/bookmarks/result-cursor";
 
 /**
  * Storyで表示する入力値です。
@@ -14,6 +15,11 @@ const storyInputValue = "find stripe";
  * Storyで表示するstatus textです。
  */
 const storyStatusText = "3 candidates";
+
+/**
+ * Storyで選択するresult indexです。
+ */
+const selectedStoryResultIndex = 1;
 
 /**
  * Storyで表示する検索結果です。
@@ -58,14 +64,26 @@ const handleStorySubmit = (): void => {
 };
 
 /**
+ * Story用のkey操作callbackです。
+ * @returns {void} 返り値はありません。
+ */
+const handleStoryInputKeyDown = (): void => {
+  globalThis.dispatchEvent(new Event("bookmark-cli-story-keydown"));
+};
+
+/**
  * Bookmark CLI画面 Story のmetadataです。
  */
 const meta = {
   args: {
     inputValue: storyInputValue,
     onInputChange: handleStoryInputChange,
+    onInputKeyDown: handleStoryInputKeyDown,
     onSubmit: handleStorySubmit,
+    preferNerdFont: true,
     resultItems: storyResultItems,
+    resultViewStyle: "powerline",
+    selectedResultIndex: resultCursorCleared,
     statusText: storyStatusText,
   },
   component: BookmarkCliScreen,
@@ -87,5 +105,16 @@ export const Empty: StoryObj<BookmarkCliScreenProps> = {
     inputValue: "find unknown",
     resultItems: [],
     statusText: "0 candidates",
+  },
+};
+
+/**
+ * Plain fallback表示のStoryです。
+ */
+export const PlainFallback: StoryObj<BookmarkCliScreenProps> = {
+  args: {
+    preferNerdFont: false,
+    resultViewStyle: "plain",
+    selectedResultIndex: selectedStoryResultIndex,
   },
 };

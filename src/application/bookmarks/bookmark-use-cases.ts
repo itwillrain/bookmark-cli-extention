@@ -17,6 +17,7 @@ import type { VirtualTagsByBookmarkId } from "../../domain/storage/extension-sta
  */
 export type BookmarkCommandErrorCode =
   | "already_marked"
+  | "confirmation_required"
   | "folder_not_found"
   | "invalid_tag"
   | "not_found"

@@ -4,21 +4,25 @@ import {
   executeBookmarkCliCommand,
 } from "../../presentation/cli/bookmark-cli-controller";
 import { type Dispatch, type ReactElement, type SetStateAction, useEffect, useState } from "react";
+import { type ResultCursorIndex, resultCursorCleared } from "../../domain/bookmarks/result-cursor";
 import {
   createChromeBookmarkCreator,
   createChromeBookmarkOpener,
+  createChromeBookmarkOrganizer,
   createChromeBookmarkRepository,
 } from "../../infrastructure/chrome/bookmarks-adapter";
+import { createCommandExecutionErrorHandler, createSubmitHandler } from "./app-command-handlers";
 import {
   loadExtensionState,
   persistCommandExecutionState,
 } from "../../application/storage/extension-state-use-cases";
-import { BookmarkCliScreen } from "../../presentation/cli/components/bookmark-cli-screen";
+import { BookmarkCliAppScreen } from "./bookmark-cli-app-screen";
 import type { LaunchContext } from "../../application/bookmarks/mark-bookmark-use-case";
 import { createChromeExtensionStateStorage } from "../../infrastructure/chrome/extension-state-storage-adapter";
 import { createChromeLaunchContextStorage } from "../../infrastructure/chrome/launch-context-storage-adapter";
 import { createInitialExtensionState } from "../../domain/storage/extension-state";
 import { currentDirectoryRoot } from "../../domain/bookmarks/current-directory";
+import { useBookmarkCliKeyboard } from "./use-bookmark-cli-keyboard";
 
 /**
  * 初期入力値です。
@@ -55,6 +59,11 @@ const bookmarkRepository = createChromeBookmarkRepository(browser.bookmarks);
  * Chrome Bookmarks APIを使うcreatorです。
  */
 const bookmarkCreator = createChromeBookmarkCreator(browser.bookmarks);
+
+/**
+ * Chrome Bookmarks APIを使うorganizerです。
+ */
+const bookmarkOrganizer = createChromeBookmarkOrganizer(browser.bookmarks);
 
 /**
  * Chrome Tabs APIを使うopenerです。
@@ -126,7 +135,9 @@ const createCommandDependencies = (
     currentDirectory: commandState.currentDirectory,
     extensionState: commandState.extensionState,
     lastResultEntries: commandState.lastResultEntries,
+    now: nowIsoString,
     opener: bookmarkOpener,
+    organizer: bookmarkOrganizer,
     repository: bookmarkRepository,
   } satisfies BookmarkCliCommandDependencies;
 
@@ -233,14 +244,19 @@ export const App = (): ReactElement => {
   const [inputValue, setInputValue] = useState(initialInputValue);
   const [launchContext, setLaunchContext] = useState<LaunchContext>();
   const [commandState, setCommandState] = useState<BookmarkCliCommandState>(initialCommandState);
+  const [selectedResultIndex, setSelectedResultIndex] =
+    useState<ResultCursorIndex>(resultCursorCleared);
+  const keyboard = useBookmarkCliKeyboard({
+    commandState,
+    selectedResultIndex,
+    setInputValue,
+    setSelectedResultIndex,
+  });
 
-  /**
-   * Command実行失敗をstatusへ反映します。
-   * @returns {void} 返り値はありません。
-   */
-  const handleCommandExecutionError = (): void => {
-    setCommandState(createFailedCommandState);
-  };
+  const handleCommandExecutionError = createCommandExecutionErrorHandler(
+    setCommandState,
+    createFailedCommandState,
+  );
 
   useEffect((): void => {
     restoreInitialStates(setCommandState, setLaunchContext, handleCommandExecutionError);
@@ -254,23 +270,19 @@ export const App = (): ReactElement => {
     const nextState = await executeAndPersistCommand(inputValue, commandState, launchContext);
 
     setCommandState(nextState);
+    setSelectedResultIndex(resultCursorCleared);
   };
 
-  /**
-   * Submit操作を非同期command実行へ接続します。
-   * @returns {void} 返り値はありません。
-   */
-  const handleSubmit = (): void => {
-    executeCurrentCommand().catch(handleCommandExecutionError);
-  };
+  const handleSubmit = createSubmitHandler(executeCurrentCommand, handleCommandExecutionError);
 
   return (
-    <BookmarkCliScreen
+    <BookmarkCliAppScreen
+      commandState={commandState}
       inputValue={inputValue}
-      onInputChange={setInputValue}
+      keyboard={keyboard}
       onSubmit={handleSubmit}
-      resultItems={commandState.resultItems}
-      statusText={commandState.statusText}
+      selectedResultIndex={selectedResultIndex}
+      setInputValue={setInputValue}
     />
   );
 };
