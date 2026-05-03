@@ -243,7 +243,8 @@ Chrome履歴はv1では参照しません。
 5. 入力中にcommand suggestionを確認する
 6. `Tab` で補完する
 7. `Esc` で候補選択を解除する
-8. 結果一覧をPowerline風segment UIで読む
+8. 実行したpromptと結果がtranscriptに追加される
+9. 結果一覧をPowerline風segment UIで読む
 
 完了条件は、マウス操作なしで主要な検索、移動、保存、整理ができることです。
 

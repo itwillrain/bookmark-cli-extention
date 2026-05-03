@@ -1,14 +1,16 @@
-import { type BookmarkCliResultItem, BookmarkCliResultList } from "./bookmark-cli-result-list";
 import {
   type BookmarkCliSuggestionItem,
   BookmarkCliSuggestionList,
 } from "./bookmark-cli-suggestion-list";
+import type { BookmarkCliTranscriptEntry } from "../bookmark-cli-transcript";
+import { BookmarkCliTranscriptList } from "./bookmark-cli-transcript-list";
 import type { ReactElement } from "react";
 import type { ResultCursorIndex } from "../../../domain/bookmarks/result-cursor";
 import type { ResultViewStyle } from "../../../domain/storage/extension-state";
 
 export type { BookmarkCliResultItem, BookmarkCliResultKind } from "./bookmark-cli-result-list";
 export type { BookmarkCliSuggestionItem } from "./bookmark-cli-suggestion-list";
+export type { BookmarkCliTranscriptEntry } from "../bookmark-cli-transcript";
 
 /**
  * Bookmark CLI画面のpropsです。
@@ -35,10 +37,6 @@ export interface BookmarkCliScreenProps {
    */
   readonly preferNerdFont: boolean;
   /**
-   * CLI result一覧です。
-   */
-  readonly resultItems: readonly BookmarkCliResultItem[];
-  /**
    * Result表示styleです。
    */
   readonly resultViewStyle: ResultViewStyle;
@@ -54,6 +52,10 @@ export interface BookmarkCliScreenProps {
    * 入力中commandのsuggestion一覧です。
    */
   readonly suggestionItems: readonly BookmarkCliSuggestionItem[];
+  /**
+   * 実行済みcommand transcriptです。
+   */
+  readonly transcriptEntries: readonly BookmarkCliTranscriptEntry[];
 }
 
 /**
@@ -218,7 +220,7 @@ const CommandForm = (props: CommandFormProps): ReactElement => {
 
   return (
     <form
-      className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-2 border-b border-zinc-900 pb-3"
+      className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-2 py-1"
       onSubmit={handleSubmit}
     >
       <label className="whitespace-nowrap text-emerald-300" htmlFor="bookmark-cli-command">
@@ -250,20 +252,20 @@ export const BookmarkCliScreen = (props: BookmarkCliScreenProps): ReactElement =
       <section className="flex min-h-[calc(100vh-2rem)] flex-col overflow-hidden rounded-md border border-zinc-800 bg-[#090b0c] shadow-2xl shadow-black/40 sm:min-h-[calc(100vh-3.5rem)]">
         <TerminalHeader statusText={props.statusText} />
         <section className="flex flex-1 flex-col px-4 py-4 font-mono text-sm leading-6 sm:px-5">
-          <CommandForm
-            inputValue={props.inputValue}
-            onInputChange={props.onInputChange}
-            onInputKeyDown={props.onInputKeyDown}
-            onSubmit={props.onSubmit}
-          />
-          <BookmarkCliSuggestionList suggestionItems={props.suggestionItems} />
-          <section className="min-h-0 flex-1 overflow-auto pt-4">
-            <BookmarkCliResultList
+          <section className="min-h-0 flex-1 overflow-auto">
+            <BookmarkCliTranscriptList
               preferNerdFont={props.preferNerdFont}
-              resultItems={props.resultItems}
               resultViewStyle={props.resultViewStyle}
               selectedResultIndex={props.selectedResultIndex}
+              transcriptEntries={props.transcriptEntries}
             />
+            <CommandForm
+              inputValue={props.inputValue}
+              onInputChange={props.onInputChange}
+              onInputKeyDown={props.onInputKeyDown}
+              onSubmit={props.onSubmit}
+            />
+            <BookmarkCliSuggestionList suggestionItems={props.suggestionItems} />
           </section>
         </section>
       </section>

@@ -7,7 +7,7 @@ description: Bookmark CLI Extension が拡張機能内で提供する疑似 CLI 
 
 疑似CLIはChrome Bookmark Managerの操作を、拡張機能内のコマンド入力UIとして表現します。
 
-初期段階ではOSのターミナルと連携せず、Dedicated extension page上にコマンド入力欄と実行結果を表示します。
+初期段階ではOSのターミナルと連携せず、Dedicated extension page上にcommand promptと実行結果のtranscriptを表示します。
 
 Popupは疑似CLI本体ではなく、設定画面として扱います。
 
@@ -19,7 +19,8 @@ Popupは疑似CLI本体ではなく、設定画面として扱います。
 
 - 入力欄は1行のcommand promptとして扱う
 - Dedicated extension pageを開いたら入力欄へ自動フォーカスする
-- 実行結果は入力履歴の下に表示する
+- 実行済みcommandと実行結果はscrollback transcriptとして上から下へ積む
+- 実行後は入力欄を空に戻し、次のpromptをtranscript末尾に表示する
 - コマンド履歴を上キー、下キー、`Ctrl+p`、`Ctrl+n` で再利用できるようにする
 - 入力中はFigのように補完候補やエラーを入力欄直下へ表示する
 - 破壊的操作は結果表示エリアで確認してから実行する

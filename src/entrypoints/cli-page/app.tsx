@@ -4,7 +4,6 @@ import {
   executeBookmarkCliCommand,
 } from "../../presentation/cli/bookmark-cli-controller";
 import { type Dispatch, type ReactElement, type SetStateAction, useEffect, useState } from "react";
-import { type ResultCursorIndex, resultCursorCleared } from "../../domain/bookmarks/result-cursor";
 import {
   createChromeBookmarkCreator,
   createChromeBookmarkOpener,
@@ -20,24 +19,21 @@ import { BookmarkCliAppScreen } from "./bookmark-cli-app-screen";
 import type { LaunchContext } from "../../application/bookmarks/mark-bookmark-use-case";
 import { createChromeExtensionStateStorage } from "../../infrastructure/chrome/extension-state-storage-adapter";
 import { createChromeLaunchContextStorage } from "../../infrastructure/chrome/launch-context-storage-adapter";
+import { createCurrentCommandExecutor } from "./current-command-executor";
 import { createInitialExtensionState } from "../../domain/storage/extension-state";
 import { currentDirectoryRoot } from "../../domain/bookmarks/current-directory";
 import { suggestBookmarkCommands } from "../../application/commands/bookmark-command-suggestion";
 import { useBookmarkCliKeyboard } from "./use-bookmark-cli-keyboard";
+import { useBookmarkCliTranscript } from "./use-bookmark-cli-transcript";
+import { useResultCursorState } from "./use-result-cursor-state";
 
-/**
- * 初期入力値です。
- */
+/** 初期入力値。 */
 const initialInputValue = "";
 
-/**
- * 初期status textです。
- */
+/** 初期status text。 */
 const initialStatusText = "Ready";
 
-/**
- * Command実行失敗時のstatus textです。
- */
+/** Command実行失敗時のstatus text。 */
 const commandFailedStatusText = "Command failed";
 
 /**
@@ -245,8 +241,8 @@ export const App = (): ReactElement => {
   const [inputValue, setInputValue] = useState(initialInputValue);
   const [launchContext, setLaunchContext] = useState<LaunchContext>();
   const [commandState, setCommandState] = useState<BookmarkCliCommandState>(initialCommandState);
-  const [selectedResultIndex, setSelectedResultIndex] =
-    useState<ResultCursorIndex>(resultCursorCleared);
+  const [selectedResultIndex, setSelectedResultIndex] = useResultCursorState();
+  const transcript = useBookmarkCliTranscript();
   const keyboard = useBookmarkCliKeyboard({
     commandState,
     inputValue,
@@ -265,28 +261,29 @@ export const App = (): ReactElement => {
     restoreInitialStates(setCommandState, setLaunchContext, handleCommandExecutionError);
   }, []);
 
-  /**
-   * 現在の入力値をBookmark CLI commandとして実行します。
-   * @returns {Promise<void>} 実行完了を表すPromiseです。
-   */
-  const executeCurrentCommand = async (): Promise<void> => {
-    const nextState = await executeAndPersistCommand(inputValue, commandState, launchContext);
-
-    setCommandState(nextState);
-    setSelectedResultIndex(resultCursorCleared);
-  };
-
-  const handleSubmit = createSubmitHandler(executeCurrentCommand, handleCommandExecutionError);
-
   return (
     <BookmarkCliAppScreen
       commandState={commandState}
       inputValue={inputValue}
       keyboard={keyboard}
-      onSubmit={handleSubmit}
+      onSubmit={createSubmitHandler(
+        createCurrentCommandExecutor({
+          appendExecutedCommand: transcript.appendExecutedCommand,
+          commandState,
+          createEntryId: nowIsoString,
+          executeAndPersistCommand,
+          inputValue,
+          launchContext,
+          setCommandState,
+          setInputValue,
+          setSelectedResultIndex,
+        }),
+        handleCommandExecutionError,
+      )}
       selectedResultIndex={selectedResultIndex}
       setInputValue={setInputValue}
       suggestionItems={suggestBookmarkCommands(inputValue)}
+      transcriptEntries={transcript.transcriptEntries}
     />
   );
 };

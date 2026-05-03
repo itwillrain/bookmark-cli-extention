@@ -94,6 +94,10 @@ Componentは小さく分けます。
 
 巨大な `App.tsx` に状態、layout、結果表示、候補表示、入力処理を詰め込みません。
 
+疑似CLI本体は単なる入力formとして見せず、実行済みpromptとoutputを下方向へ積むtranscript viewとして表示します。
+
+現在入力中のpromptはtranscript末尾に置き、実行後はその入力と結果をtranscript entryへ固定します。
+
 Container componentは状態とuse case呼び出しを扱います。
 
 Presentational componentはpropsから表示を作ります。
@@ -149,6 +153,8 @@ Dedicated extension pageは、次のcomponentへ分ける想定です。
 
 - `CliPage`
 - `CommandPrompt`
+- `TranscriptList`
+- `TranscriptEntry`
 - `CommandHistory`
 - `SuggestionList`
 - `ResultPanel`
