@@ -1,7 +1,7 @@
 /** Bookmark CLI keyboard action。 */
 export type BookmarkCliKeyboardAction =
   | "clear"
-  | "complete"
+  | "confirmCompletion"
   | "deletePreviousWord"
   | "historyNext"
   | "historyPrevious"
@@ -9,7 +9,8 @@ export type BookmarkCliKeyboardAction =
   | "killBeforeCursor"
   | "lineEnd"
   | "lineStart"
-  | "none";
+  | "none"
+  | "selectNextCompletion";
 
 /** Bookmark CLI keyboard eventの最小shape。 */
 export interface BookmarkCliKeyboardEvent {
@@ -47,7 +48,10 @@ const historyNextArrowKey = "ArrowDown";
 const historyPreviousArrowKey = "ArrowUp";
 
 /** Tab key。 */
-const completeKey = "Tab";
+const selectNextCompletionKey = "Tab";
+
+/** Enter key。 */
+const confirmCompletionKey = "Enter";
 
 /** Escape key。 */
 const clearKey = "Escape";
@@ -70,9 +74,10 @@ const controlKeyActions = {
  */
 const keyActions = {
   [clearKey]: "clear",
-  [completeKey]: "complete",
+  [confirmCompletionKey]: "confirmCompletion",
   [historyNextArrowKey]: "historyNext",
   [historyPreviousArrowKey]: "historyPrevious",
+  [selectNextCompletionKey]: "selectNextCompletion",
 } satisfies Readonly<Record<string, BookmarkCliKeyboardAction>>;
 
 /**

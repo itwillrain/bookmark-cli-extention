@@ -21,8 +21,8 @@ const firstArrayIndex = 0;
 /** 1件を表す数値。 */
 const singleItemCount = 1;
 
-/** Powerline形式の結果表示style。 */
-const powerlineResultViewStyle = "powerline";
+/** Powerline形式のprompt style。 */
+const powerlinePromptStyle = "powerline";
 
 /** 拡張機能の保存済み現在ディレクトリ。 */
 export interface PersistedCurrentDirectory {
@@ -56,15 +56,15 @@ export interface BookmarkUsage {
   readonly lastOpenedAt: string;
 }
 
-/** 結果表示style。 */
-export type ResultViewStyle = "plain" | "powerline";
+/** Prompt表示style。 */
+export type PromptStyle = "plain" | "powerline";
 
 /** 拡張機能の保存済み設定。 */
 export interface ExtensionSettings {
   /** Nerd Font互換iconを優先するか。 */
   readonly preferNerdFont: boolean;
-  /** 結果一覧の表示style。 */
-  readonly resultViewStyle: ResultViewStyle;
+  /** CLI promptの表示style。 */
+  readonly promptStyle: PromptStyle;
 }
 
 /** 拡張機能がchrome.storage.localへ保存する状態。 */
@@ -113,8 +113,8 @@ export const createInitialExtensionState = (): ExtensionState => ({
   ),
   schemaVersion: currentExtensionStateSchemaVersion,
   settings: {
-    preferNerdFont: true,
-    resultViewStyle: powerlineResultViewStyle,
+    preferNerdFont: false,
+    promptStyle: powerlinePromptStyle,
   },
   usageByBookmarkId: {},
   virtualTagsByBookmarkId: {},

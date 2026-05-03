@@ -115,6 +115,7 @@ describe("listDirectory current directory", (): void => {
    */
   it("lists entries under current directory", async (): Promise<void> => {
     const result = await listDirectory({
+      all: false,
       currentDirectory: workCurrentDirectory,
       pathInput: emptyPathInput,
       repository: createBookmarkRepository(),
@@ -162,6 +163,7 @@ describe("listDirectory path input", (): void => {
    */
   it("lists entries under resolved path", async (): Promise<void> => {
     const result = await listDirectory({
+      all: false,
       currentDirectory: workCurrentDirectory,
       pathInput: adminPathInput,
       repository: createBookmarkRepository(),
@@ -185,6 +187,7 @@ describe("listDirectory missing folder", (): void => {
    */
   it("returns folder_not_found for missing folder", async (): Promise<void> => {
     const result = await listDirectory({
+      all: false,
       currentDirectory: rootCurrentDirectory,
       pathInput: missingPathInput,
       repository: createBookmarkRepository(),

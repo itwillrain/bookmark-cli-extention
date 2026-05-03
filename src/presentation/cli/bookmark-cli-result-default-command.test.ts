@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { BookmarkCliResultItem } from "./components/bookmark-cli-result-list";
+import type { BookmarkCliResultItem } from "./components/bookmark-cli-result-list-types";
 import { createBookmarkCliResultDefaultCommand } from "./bookmark-cli-result-default-command";
 
 /** Folder result item fixtureです。 */

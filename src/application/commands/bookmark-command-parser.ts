@@ -3,6 +3,7 @@ import type { ParsedBookmarkCommand } from "./bookmark-command-types";
 
 export type {
   ChangeDirectoryCommand,
+  ClearBookmarkCommand,
   EmptyBookmarkCommand,
   FindBookmarkCommand,
   FrequentBookmarksCommand,

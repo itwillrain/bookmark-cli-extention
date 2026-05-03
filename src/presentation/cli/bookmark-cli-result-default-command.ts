@@ -1,4 +1,4 @@
-import type { BookmarkCliResultItem } from "./components/bookmark-cli-result-list";
+import type { BookmarkCliResultItem } from "./components/bookmark-cli-result-list-types";
 
 /** Result numberの表示offsetです。 */
 const resultNumberOffset = 1;

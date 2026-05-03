@@ -2,10 +2,11 @@ import {
   type ResultCursorIndex,
   resultCursorCleared,
 } from "../../../domain/bookmarks/result-cursor";
+import { BookmarkCliPrompt } from "./bookmark-cli-prompt";
 import { BookmarkCliResultList } from "./bookmark-cli-result-list";
 import type { BookmarkCliTranscriptEntry } from "../bookmark-cli-transcript";
+import type { PromptStyle } from "../../../domain/storage/extension-state";
 import type { ReactElement } from "react";
-import type { ResultViewStyle } from "../../../domain/storage/extension-state";
 
 /**
  * Bookmark CLI transcript list props。
@@ -13,22 +14,25 @@ import type { ResultViewStyle } from "../../../domain/storage/extension-state";
 export interface BookmarkCliTranscriptListProps {
   /** Nerd Font iconを優先するか。 */
   readonly preferNerdFont: boolean;
-  /** Result表示style。 */
-  readonly resultViewStyle: ResultViewStyle;
+  /** Prompt表示style。 */
+  readonly promptStyle: PromptStyle;
   /** 選択中result index。 */
   readonly selectedResultIndex: ResultCursorIndex;
   /** Transcript entry一覧。 */
   readonly transcriptEntries: readonly BookmarkCliTranscriptEntry[];
 }
 
-/** CLI promptの表示text。 */
-const commandPromptText = "bookmark-cli $";
-
 /** 空のresult item件数。 */
 const emptyResultItemCount = 0;
 
 /** 空のtranscript item件数。 */
 const emptyTranscriptEntryCount = 0;
+
+/** 空のstatus text。 */
+const emptyStatusText = "";
+
+/** Promptだけのcommandで出すstatus text。 */
+const readyStatusText = "Ready";
 
 /** 最後のentryを求めるoffset。 */
 const lastEntryOffset = 1;
@@ -60,6 +64,54 @@ const resolveTranscriptResultCursor = (
 };
 
 /**
+ * Transcript entryがresult itemを持つか判定。
+ * @param {BookmarkCliTranscriptEntry} entry Transcript entry。
+ * @returns {boolean} result itemがあればtrue。
+ */
+const hasTranscriptResultItems = (entry: BookmarkCliTranscriptEntry): boolean =>
+  entry.resultItems.length !== emptyResultItemCount;
+
+/**
+ * Status textをoutput lineとして表示できるか判定。
+ * @param {BookmarkCliTranscriptEntry} entry Transcript entry。
+ * @returns {boolean} output lineとして表示するならtrue。
+ */
+const canRenderTranscriptStatusOutput = (entry: BookmarkCliTranscriptEntry): boolean =>
+  !hasTranscriptResultItems(entry) &&
+  entry.statusText !== emptyStatusText &&
+  entry.statusText !== readyStatusText;
+
+/**
+ * Transcript entryのinline status textを描画。
+ * @param {BookmarkCliTranscriptEntry} entry Transcript entry。
+ * @returns {ReactElement | false} Inline status text element。
+ */
+const renderTranscriptInlineStatus = (entry: BookmarkCliTranscriptEntry): ReactElement | false => {
+  if (!hasTranscriptResultItems(entry)) {
+    return false;
+  }
+
+  return <span className="text-xs text-zinc-600">{entry.statusText}</span>;
+};
+
+/**
+ * Transcript entryのstatus output lineを描画。
+ * @param {BookmarkCliTranscriptEntry} entry Transcript entry。
+ * @returns {ReactElement | false} Status output line element。
+ */
+const renderTranscriptStatusOutput = (entry: BookmarkCliTranscriptEntry): ReactElement | false => {
+  if (!canRenderTranscriptStatusOutput(entry)) {
+    return false;
+  }
+
+  return (
+    <p className="mt-1 whitespace-pre-wrap text-sm text-zinc-400" data-output="status">
+      {entry.statusText}
+    </p>
+  );
+};
+
+/**
  * Transcript entryのresult listを描画。
  * @param {BookmarkCliTranscriptListProps} props Transcript list props。
  * @param {BookmarkCliTranscriptEntry} entry Transcript entry。
@@ -71,7 +123,7 @@ const renderTranscriptResultList = (
   entry: BookmarkCliTranscriptEntry,
   isLatestEntry: boolean,
 ): ReactElement | false => {
-  if (entry.resultItems.length === emptyResultItemCount) {
+  if (!hasTranscriptResultItems(entry)) {
     return false;
   }
 
@@ -80,7 +132,6 @@ const renderTranscriptResultList = (
       <BookmarkCliResultList
         preferNerdFont={props.preferNerdFont}
         resultItems={entry.resultItems}
-        resultViewStyle={props.resultViewStyle}
         selectedResultIndex={resolveTranscriptResultCursor(
           isLatestEntry,
           props.selectedResultIndex,
@@ -107,10 +158,11 @@ const renderTranscriptEntry = (
   return (
     <article className="pb-5" key={entry.id}>
       <p className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-baseline gap-2">
-        <span className="whitespace-nowrap text-emerald-300">{commandPromptText}</span>
+        <BookmarkCliPrompt preferNerdFont={props.preferNerdFont} promptStyle={props.promptStyle} />
         <span className="min-w-0 truncate text-zinc-100">{entry.inputValue}</span>
-        <span className="text-xs text-zinc-600">{entry.statusText}</span>
+        {renderTranscriptInlineStatus(entry)}
       </p>
+      {renderTranscriptStatusOutput(entry)}
       {renderTranscriptResultList(props, entry, isLatestEntry)}
     </article>
   );

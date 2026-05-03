@@ -1,5 +1,6 @@
-/* oxlint-disable max-lines -- Command factoryの分岐表と小さなparser補助を同じfileに保つため。 */
+/* oxlint-disable max-lines -- Command名からASTを作る集約地点としてfactory mapを同じfileに保つため。 */
 
+import { parseFindBookmarkCommand, parseGoBookmarkCommand } from "./bookmark-search-command-parser";
 import {
   parseFrequentBookmarksCommand,
   parseRecentBookmarksCommand,
@@ -11,6 +12,7 @@ import {
   parseRenameBookmarkCommand,
 } from "./bookmark-organize-command-parser";
 import type { ParsedBookmarkCommand } from "./bookmark-command-types";
+import { parseListDirectoryCommand } from "./bookmark-list-command-parser";
 import { parseMarkBookmarkCommand } from "./bookmark-mark-command-parser";
 import { parseShowDirectoryTreeCommand } from "./bookmark-tree-command-parser";
 import { parseTagBookmarkCommand } from "./bookmark-tag-command-parser";
@@ -30,14 +32,21 @@ const frequentBookmarksCommandName = "freq";
 /** Ls command名です。 */
 const listDirectoryCommandName = "ls";
 
+/** Ll command alias名です。 */
+const longListDirectoryCommandName = "ll";
+
 /** Cd command名です。 */
 const changeDirectoryCommandName = "cd";
+
+/** Clear command名です。 */
+const clearCommandName = "clear";
 
 /** Help command名です。 */
 const helpCommandName = "help";
 
 /** Man command alias名です。 */
 const manualCommandName = "man";
+
 /** Pwd command名です。 */
 const printWorkingDirectoryCommandName = "pwd";
 
@@ -68,12 +77,6 @@ const longHelpOption = "--help";
 /** Short help option名です。 */
 const shortHelpOption = "-h";
 
-/** Debug option名です。 */
-const debugOptionName = "--debug";
-
-/** Command tokenの区切り文字です。 */
-const commandTokenSeparator = " ";
-
 /**
  * Command parse contextです。
  */
@@ -102,45 +105,12 @@ export interface CommandParseContext {
 export type BookmarkCommandFactory = (context: CommandParseContext) => ParsedBookmarkCommand;
 
 /**
- * Debug option tokenかを判定します。
- * @param {string} token 判定対象tokenです。
- * @returns {boolean} Debug optionならtrueです。
- */
-const isDebugOptionToken = (token: string): boolean => token === debugOptionName;
-
-/**
- * 検索query用の値tokenだけを抽出します。
- * @param {readonly string[]} queryParts command名を除いたtoken一覧です。
- * @returns {readonly string[]} optionを除いた検索値token一覧です。
- */
-const createSearchValueTokens = (queryParts: readonly string[]): readonly string[] =>
-  queryParts.filter((token) => !isDebugOptionToken(token));
-
-/**
- * 検索query文字列を作ります。
- * @param {readonly string[]} queryParts command名を除いたtoken一覧です。
- * @returns {string} 検索query文字列です。
- */
-const createSearchQuery = (queryParts: readonly string[]): string =>
-  createSearchValueTokens(queryParts).join(commandTokenSeparator);
-
-/**
- * Debug optionを含むかを判定します。
- * @param {readonly string[]} queryParts command名を除いたtoken一覧です。
- * @returns {boolean} Debug optionを含むならtrueです。
- */
-const hasDebugOption = (queryParts: readonly string[]): boolean =>
-  queryParts.includes(debugOptionName);
-
-/**
  * Find commandを作ります。
  * @param {CommandParseContext} context Command parse contextです。
  * @returns {ParsedBookmarkCommand} Find commandです。
  */
 const createFindBookmarkCommand = (context: CommandParseContext): ParsedBookmarkCommand => ({
-  debug: hasDebugOption(context.queryParts),
-  kind: "find",
-  query: createSearchQuery(context.queryParts),
+  ...parseFindBookmarkCommand(context.queryParts),
 });
 
 /**
@@ -149,9 +119,7 @@ const createFindBookmarkCommand = (context: CommandParseContext): ParsedBookmark
  * @returns {ParsedBookmarkCommand} Go commandです。
  */
 const createGoBookmarkCommand = (context: CommandParseContext): ParsedBookmarkCommand => ({
-  debug: hasDebugOption(context.queryParts),
-  kind: "go",
-  query: createSearchQuery(context.queryParts),
+  ...parseGoBookmarkCommand(context.queryParts),
 });
 
 /**
@@ -176,8 +144,7 @@ const createFrequentBookmarksCommand = (context: CommandParseContext): ParsedBoo
  * @returns {ParsedBookmarkCommand} Ls commandです。
  */
 const createListDirectoryCommand = (context: CommandParseContext): ParsedBookmarkCommand => ({
-  kind: "ls",
-  pathInput: context.query,
+  ...parseListDirectoryCommand(context.commandName, context.queryParts),
 });
 
 /**
@@ -188,6 +155,14 @@ const createListDirectoryCommand = (context: CommandParseContext): ParsedBookmar
 const createChangeDirectoryCommand = (context: CommandParseContext): ParsedBookmarkCommand => ({
   kind: "cd",
   pathInput: context.query,
+});
+
+/**
+ * Clear commandを作ります。
+ * @returns {ParsedBookmarkCommand} Clear commandです。
+ */
+const createClearCommand = (): ParsedBookmarkCommand => ({
+  kind: "clear",
 });
 
 /**
@@ -290,11 +265,13 @@ const createUnknownCommand = (context: CommandParseContext): ParsedBookmarkComma
  */
 const bookmarkCommandFactories: Readonly<Record<string, BookmarkCommandFactory>> = {
   [changeDirectoryCommandName]: createChangeDirectoryCommand,
+  [clearCommandName]: createClearCommand,
   [findCommandName]: createFindBookmarkCommand,
   [frequentBookmarksCommandName]: createFrequentBookmarksCommand,
   [goCommandName]: createGoBookmarkCommand,
   [helpCommandName]: createHelpCommand,
   [listDirectoryCommandName]: createListDirectoryCommand,
+  [longListDirectoryCommandName]: createListDirectoryCommand,
   [makeDirectoryCommandName]: createMakeDirectoryCommand,
   [manualCommandName]: createHelpCommand,
   [markBookmarkCommandName]: createMarkBookmarkCommand,

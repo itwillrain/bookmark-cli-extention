@@ -1,9 +1,12 @@
 /* oxlint-disable max-lines -- Command AST型の集約地点としてunionを同じfileに保つため。 */
 
+import type { FindBookmarkCommand, GoBookmarkCommand } from "./bookmark-search-command-types";
 import type {
   FrequentBookmarksCommand,
   RecentBookmarksCommand,
 } from "./bookmark-usage-command-types";
+
+export type { FindBookmarkCommand, GoBookmarkCommand } from "./bookmark-search-command-types";
 
 export type {
   FrequentBookmarksCommand,
@@ -11,39 +14,17 @@ export type {
 } from "./bookmark-usage-command-types";
 
 /**
- * Find commandです。
+ * Directory list command optionです。
  */
-export interface FindBookmarkCommand {
+export interface ListDirectoryOptions {
   /**
-   * Debug情報を表示するかです。
+   * Dot始まりのentryも表示するかです。
    */
-  readonly debug: boolean;
+  readonly all: boolean;
   /**
-   * Command種別です。
+   * 詳細情報を表示するかです。
    */
-  readonly kind: "find";
-  /**
-   * 検索queryです。
-   */
-  readonly query: string;
-}
-
-/**
- * Go commandです。
- */
-export interface GoBookmarkCommand {
-  /**
-   * Debug情報を表示するかです。
-   */
-  readonly debug: boolean;
-  /**
-   * Command種別です。
-   */
-  readonly kind: "go";
-  /**
-   * 検索queryです。
-   */
-  readonly query: string;
+  readonly long: boolean;
 }
 
 /**
@@ -54,6 +35,10 @@ export interface ListDirectoryCommand {
    * Command種別です。
    */
   readonly kind: "ls";
+  /**
+   * 表示optionです。
+   */
+  readonly options: ListDirectoryOptions;
   /**
    * 対象path入力です。
    */
@@ -249,6 +234,16 @@ export interface EmptyBookmarkCommand {
 }
 
 /**
+ * 画面表示削除commandです。
+ */
+export interface ClearBookmarkCommand {
+  /**
+   * Command種別です。
+   */
+  readonly kind: "clear";
+}
+
+/**
  * Help表示commandです。
  */
 export interface HelpBookmarkCommand {
@@ -285,6 +280,7 @@ export interface UnknownBookmarkCommand {
  */
 export type ParsedBookmarkCommand =
   | ChangeDirectoryCommand
+  | ClearBookmarkCommand
   | EmptyBookmarkCommand
   | FindBookmarkCommand
   | GoBookmarkCommand

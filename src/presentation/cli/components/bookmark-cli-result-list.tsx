@@ -1,74 +1,19 @@
-/* oxlint-disable max-lines -- Result list componentと表示型を同じfileに保つため。 */
+/* oxlint-disable typescript-eslint/prefer-readonly-parameter-types -- Reactのref propsに合わせるため。 */
 
-import type { CSSProperties, ReactElement } from "react";
+import type {
+  BookmarkCliResultItem,
+  BookmarkCliResultListProps,
+} from "./bookmark-cli-result-list-types";
+import { type CSSProperties, type ReactElement, type RefObject, useEffect, useRef } from "react";
+import { BookmarkCliResultContent } from "./bookmark-cli-result-content";
 import { BookmarkCliResultSegments } from "./bookmark-cli-result-segments";
 import type { ResultCursorIndex } from "../../../domain/bookmarks/result-cursor";
-import type { ResultViewStyle } from "../../../domain/storage/extension-state";
+import { scrollSelectedBookmarkCliResultIntoView } from "../bookmark-cli-result-scroll";
 
-/**
- * CLI resultの表示種別です。
- */
-export type BookmarkCliResultKind = "bookmark" | "folder" | "help" | "history" | "preview";
-
-/**
- * CLI resultとして表示するitemです。
- */
-export interface BookmarkCliResultItem {
-  /**
-   * Tree表示時の階層です。
-   */
-  readonly depth?: number;
-  /**
-   * Bookmarkまたはfolderを表す種別です。
-   */
-  readonly kind: BookmarkCliResultKind;
-  /**
-   * 表示名です。
-   */
-  readonly title: string;
-  /**
-   * Folder pathです。
-   */
-  readonly folderPath: string;
-  /**
-   * 補足説明です。
-   */
-  readonly description?: string;
-  /**
-   * 詳細token一覧です。
-   */
-  readonly details?: readonly string[];
-  /**
-   * Bookmark URLです。
-   */
-  readonly url?: string;
-  /**
-   * 検索scoreです。
-   */
-  readonly score?: number;
-}
-
-/**
- * Bookmark CLI result listのpropsです。
- */
-export interface BookmarkCliResultListProps {
-  /**
-   * Nerd Font iconを優先するかです。
-   */
-  readonly preferNerdFont: boolean;
-  /**
-   * CLI result一覧です。
-   */
-  readonly resultItems: readonly BookmarkCliResultItem[];
-  /**
-   * Result表示styleです。
-   */
-  readonly resultViewStyle: ResultViewStyle;
-  /**
-   * 選択中result indexです。
-   */
-  readonly selectedResultIndex: ResultCursorIndex;
-}
+export type {
+  BookmarkCliResultItem,
+  BookmarkCliResultKind,
+} from "./bookmark-cli-result-list-types";
 
 /**
  * 結果がない場合に表示するtextです。
@@ -99,6 +44,9 @@ const defaultResultItemDepth = 1;
  * Tree depthごとのindent幅です。
  */
 const treeIndentStepRem = 1.25;
+
+/** 選択中resultをscroll対象として示す属性値です。 */
+const selectedResultScrollTarget = "selected-result";
 
 /**
  * Indentなしの幅です。
@@ -183,12 +131,16 @@ interface ResultItemRenderInput {
   readonly item: BookmarkCliResultItem;
   /** Result itemの0-based indexです。 */
   readonly itemIndex: number;
-  /** Nerd Font iconを優先するかです。 */
-  readonly preferNerdFont: boolean;
-  /** Result表示styleです。 */
-  readonly resultViewStyle: ResultViewStyle;
   /** 選択中result indexです。 */
   readonly selectedResultIndex: ResultCursorIndex;
+  /** 選択中result item refです。 */
+  readonly selectedResultItemRef: RefObject<HTMLLIElement | null>;
+}
+
+/** 選択中result itemにだけ付与するref propsです。 */
+interface ResultItemRefProps {
+  /** 選択中result item refです。 */
+  readonly ref: RefObject<HTMLLIElement | null>;
 }
 
 /**
@@ -213,42 +165,44 @@ const createResultItemClassName = (input: ResultItemRenderInput): string => {
 };
 
 /**
- * Bookmark URLを描画します。
- * @param {BookmarkCliResultItem} item URLを描画するresult itemです。
- * @returns {ReactElement} URL表示のReact elementです。
+ * 選択中result itemのscroll target属性を返します。
+ * @param {ResultItemRenderInput} input Result item描画入力です。
+ * @returns {string} Scroll target属性値です。
  */
-const renderResultUrl = (item: BookmarkCliResultItem): ReactElement => {
-  if (typeof item.url === "string") {
-    return <span className="block truncate text-cyan-300">{item.url}</span>;
+const resolveResultScrollTarget = (input: ResultItemRenderInput): string => {
+  if (isSelectedResultItem(input)) {
+    return selectedResultScrollTarget;
   }
 
-  return <></>;
+  return "";
 };
 
 /**
- * Result itemの補足説明を描画します。
- * @param {BookmarkCliResultItem} item 補足説明を描画するresult itemです。
- * @returns {ReactElement} 補足説明のReact elementです。
+ * 選択中result itemへだけref propsを作ります。
+ * @param {ResultItemRenderInput} input Result item描画入力です。
+ * @returns {Partial<ResultItemRefProps>} 選択中item ref propsです。
  */
-const renderResultDescription = (item: BookmarkCliResultItem): ReactElement => {
-  if (typeof item.description === "string") {
-    return <span className="block truncate text-amber-200">{item.description}</span>;
+const createResultItemRefProps = (input: ResultItemRenderInput): Partial<ResultItemRefProps> => {
+  if (isSelectedResultItem(input)) {
+    return { ref: input.selectedResultItemRef };
   }
 
-  return <></>;
+  return {};
 };
 
 /**
- * Result itemの詳細tokenを描画します。
- * @param {BookmarkCliResultItem} item 詳細tokenを描画するresult itemです。
- * @returns {ReactElement} 詳細tokenのReact elementです。
+ * Result itemのdebug scoreを描画します。
+ * @param {BookmarkCliResultItem} item scoreを描画するresult itemです。
+ * @returns {ReactElement} score表示のReact elementです。
  */
-const renderResultDetails = (item: BookmarkCliResultItem): ReactElement => {
-  if (Array.isArray(item.details) && item.details.length > emptyResultItemCount) {
-    return <span className="block truncate text-zinc-500">{item.details.join(" ")}</span>;
+const renderResultScore = (item: BookmarkCliResultItem): ReactElement => {
+  const scoreToken = formatScoreToken(item.score);
+
+  if (scoreToken === "") {
+    return <></>;
   }
 
-  return <></>;
+  return <span className="text-xs text-zinc-600">{scoreToken}</span>;
 };
 
 /**
@@ -260,23 +214,20 @@ const renderResultItem = (input: ResultItemRenderInput): ReactElement => (
   <li
     aria-selected={isSelectedResultItem(input)}
     className={createResultItemClassName(input)}
+    data-scroll-target={resolveResultScrollTarget(input)}
     key={`${formatResultNumber(input.itemIndex)}:${input.item.kind}:${input.item.folderPath}:${input.item.title}`}
     style={createResultItemStyle(input.item)}
+    {...createResultItemRefProps(input)}
   >
     <BookmarkCliResultSegments
       folderPath={input.item.folderPath}
       kind={input.item.kind}
-      preferNerdFont={input.preferNerdFont}
       resultNumber={formatResultNumber(input.itemIndex)}
-      resultViewStyle={input.resultViewStyle}
     />
     <span className="min-w-0">
-      <span className="block truncate text-zinc-100">{input.item.title}</span>
-      {renderResultDescription(input.item)}
-      {renderResultDetails(input.item)}
-      {renderResultUrl(input.item)}
+      <BookmarkCliResultContent item={input.item} />
     </span>
-    <span className="text-xs text-zinc-600">{formatScoreToken(input.item.score)}</span>
+    {renderResultScore(input.item)}
   </li>
 );
 
@@ -286,6 +237,15 @@ const renderResultItem = (input: ResultItemRenderInput): ReactElement => (
  * @returns {ReactElement} Result listのReact elementです。
  */
 export const BookmarkCliResultList = (props: BookmarkCliResultListProps): ReactElement => {
+  const selectedResultItemRef = useRef<HTMLLIElement>(null);
+
+  useEffect((): void => {
+    scrollSelectedBookmarkCliResultIntoView({
+      selectedResultIndex: props.selectedResultIndex,
+      target: selectedResultItemRef.current,
+    });
+  }, [props.resultItems.length, props.selectedResultIndex]);
+
   if (props.resultItems.length === emptyResultItemCount) {
     return <p className="py-1.5 text-sm text-zinc-600">{emptyResultText}</p>;
   }
@@ -296,9 +256,8 @@ export const BookmarkCliResultList = (props: BookmarkCliResultListProps): ReactE
         renderResultItem({
           item,
           itemIndex,
-          preferNerdFont: props.preferNerdFont,
-          resultViewStyle: props.resultViewStyle,
           selectedResultIndex: props.selectedResultIndex,
+          selectedResultItemRef,
         }),
       )}
     </ul>

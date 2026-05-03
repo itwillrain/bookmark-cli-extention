@@ -13,7 +13,7 @@ const invalidStoragePayload = {
   schemaVersion: 1,
   settings: {
     preferNerdFont: "yes",
-    resultViewStyle: "powerline",
+    promptStyle: "powerline",
   },
 };
 

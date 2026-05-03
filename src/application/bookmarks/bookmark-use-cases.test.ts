@@ -373,4 +373,24 @@ describe("goBookmark without candidate", (): void => {
       expect(result.errorCode).toBe("not_found");
     }
   });
+
+  /**
+   * 直前結果番号がfolderを指す場合はURLを開かずnot_foundを返すことを検証します。
+   */
+  it("returns not_found when result number points to folder", async (): Promise<void> => {
+    const recordingOpener = createRecordingBookmarkOpener();
+    const result = await goBookmark({
+      lastResultEntries,
+      opener: recordingOpener.opener,
+      query: "1",
+      repository: createBookmarkRepository(),
+    });
+
+    expect(result.ok).toBe(false);
+    expect(recordingOpener.openedUrls).toStrictEqual([]);
+
+    if (!result.ok) {
+      expect(result.errorCode).toBe("not_found");
+    }
+  });
 });

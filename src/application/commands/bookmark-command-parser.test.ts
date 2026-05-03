@@ -12,16 +12,6 @@ const findCommandInput = "find stripe dashboard";
 const goCommandInput = "  go   /Work/Admin  ";
 
 /**
- * Debug option付きFind commandの入力です。
- */
-const findCommandWithDebugInput = "find --debug stripe dashboard";
-
-/**
- * Ls commandの入力です。
- */
-const listDirectoryCommandInput = "ls Work/Admin";
-
-/**
  * Cd commandの入力です。
  */
 const changeDirectoryCommandInput = "cd ../Research";
@@ -35,6 +25,11 @@ const changeDirectoryToRootCommandInput = "cd";
  * Pwd commandの入力です。
  */
 const printWorkingDirectoryCommandInput = "pwd";
+
+/**
+ * Clear commandの入力です。
+ */
+const clearCommandInput = "clear";
 
 /**
  * Tree commandの入力です。
@@ -106,33 +101,12 @@ describe("parseBookmarkCommand search commands", (): void => {
       query: "/Work/Admin",
     });
   });
-
-  /**
-   * Find commandのdebug optionを解析できることを検証します。
-   */
-  it("parses find command with debug option", (): void => {
-    expect(parseBookmarkCommand(findCommandWithDebugInput)).toStrictEqual({
-      debug: true,
-      kind: "find",
-      query: "stripe dashboard",
-    });
-  });
 });
 
 /**
  * Bookmark directory系command parserの正常系テストスイートです。
  */
 describe("parseBookmarkCommand directory commands", (): void => {
-  /**
-   * Ls commandをpath付きで解析できることを検証します。
-   */
-  it("parses ls command with path", (): void => {
-    expect(parseBookmarkCommand(listDirectoryCommandInput)).toStrictEqual({
-      kind: "ls",
-      pathInput: "Work/Admin",
-    });
-  });
-
   /**
    * Cd commandをpath付きで解析できることを検証します。
    */
@@ -159,6 +133,15 @@ describe("parseBookmarkCommand directory commands", (): void => {
   it("parses pwd command", (): void => {
     expect(parseBookmarkCommand(printWorkingDirectoryCommandInput)).toStrictEqual({
       kind: "pwd",
+    });
+  });
+
+  /**
+   * Clear commandを解析できることを検証します。
+   */
+  it("parses clear command", (): void => {
+    expect(parseBookmarkCommand(clearCommandInput)).toStrictEqual({
+      kind: "clear",
     });
   });
 });

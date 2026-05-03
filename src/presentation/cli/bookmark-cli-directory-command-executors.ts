@@ -61,6 +61,7 @@ export const executeListDirectoryCommand = async (
   dependencies: BookmarkCliCommandDependencies,
 ): Promise<BookmarkCliCommandState> => {
   const result = await listDirectory({
+    all: command.options.all,
     currentDirectory: dependencies.currentDirectory,
     pathInput: command.pathInput,
     repository: dependencies.repository,
@@ -74,7 +75,9 @@ export const executeListDirectoryCommand = async (
     currentDirectory: dependencies.currentDirectory,
     extensionState: dependencies.extensionState,
     lastResultEntries: result.value.entries,
-    resultItems: createBookmarkCliResultItemsFromEntries(result.value.entries),
+    resultItems: createBookmarkCliResultItemsFromEntries(result.value.entries, {
+      long: command.options.long,
+    }),
     statusText: createEntryStatusText(result.value.entries.length),
   });
 };
