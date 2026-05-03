@@ -41,6 +41,16 @@ const bookmarkCliHelpTopics = [
     usage: ["find <query>", "find [--debug] <query>"],
   },
   {
+    commandName: "history",
+    description: "Chrome履歴をfind/goの検索候補として扱う",
+    examples: ["find docs", "go docs", "go 3"],
+    usage: [
+      "find <query> includes HIST results",
+      "go <query> can open a history URL",
+      "#tag queries search bookmarks only",
+    ],
+  },
+  {
     commandName: "ls",
     description: "現在ディレクトリの中身を表示する",
     examples: ["ls", "ls -a", "ls -la Work/Admin", "ll -a"],
