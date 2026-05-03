@@ -164,9 +164,8 @@ Chrome APIに依存する処理はPortの外側へ閉じ込めます。
 - `rename`
 - `--preview`
 - `--yes`
-- preview確認UI
+- preview表示
 - `confirmation_required`
-- `cancelled`
 
 完了条件は次のとおりです。
 
@@ -174,7 +173,8 @@ Chrome APIに依存する処理はPortの外側へ閉じ込めます。
 - `mv 3 Archive --yes` でBookmarkを移動できる
 - `rm 5` は確認不足として `confirmation_required` を返す
 - `rm 5 --yes` でBookmarkを削除できる
-- `rename 3 "GitHub Pull Requests"` はpreview確認を挟む
+- `rename 3 "GitHub Pull Requests"` は確認不足として `confirmation_required` を返す
+- `rename 3 "GitHub Pull Requests" --preview` は変更内容だけを表示する
 - preview生成にテストがある
 
 ## Slice 7: 利用統計と表示体験を磨く

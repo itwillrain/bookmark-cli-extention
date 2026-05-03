@@ -10,6 +10,7 @@ import type { BookmarkCliCommandState } from "../../presentation/cli/bookmark-cl
 import type { CommandInputKeyEvent } from "../../presentation/cli/components/bookmark-cli-screen";
 import { createBookmarkCliCompletionInput } from "../../presentation/cli/bookmark-cli-view-model";
 import { resolveBookmarkCliKeyboardAction } from "../../presentation/cli/bookmark-cli-keyboard";
+import { useCommandHistoryKeyboard } from "./use-command-history-keyboard";
 
 /** 入力値setter。 */
 type InputValueSetter = Dispatch<SetStateAction<string>>;
@@ -17,10 +18,15 @@ type InputValueSetter = Dispatch<SetStateAction<string>>;
 /** Result cursor setter。 */
 type ResultCursorSetter = Dispatch<SetStateAction<ResultCursorIndex>>;
 
+/** 空のitem count。 */
+const emptyItemCount = 0;
+
 /** Bookmark CLI keyboard hook入力。 */
 export interface UseBookmarkCliKeyboardInput {
   /** 現在のcommand state。 */
   readonly commandState: BookmarkCliCommandState;
+  /** 現在のCLI入力値。 */
+  readonly inputValue: string;
   /** 選択中result index。 */
   readonly selectedResultIndex: ResultCursorIndex;
   /** 入力値setter。 */
@@ -34,6 +40,14 @@ export interface UseBookmarkCliKeyboardValue {
   /** 入力欄key操作handler。 */
   readonly handleInputKeyDown: (event: CommandInputKeyEvent) => void;
 }
+
+/**
+ * Result itemが表示されているかを判定。
+ * @param {BookmarkCliCommandState} commandState 現在のcommand state。
+ * @returns {boolean} 表示中ならtrue。
+ */
+const hasResultItems = (commandState: BookmarkCliCommandState): boolean =>
+  commandState.resultItems.length > emptyItemCount;
 
 /**
  * Result cursorを移動。
@@ -71,62 +85,131 @@ const completeSelectedResult = (input: UseBookmarkCliKeyboardInput): void => {
   input.setInputValue(createBookmarkCliCompletionInput(selectedItem));
 };
 
+/** 移動系keyboard action実行入力。 */
+interface ExecuteMoveKeyboardActionInput {
+  /** Bookmark CLI keyboard hook入力。 */
+  readonly input: UseBookmarkCliKeyboardInput;
+  /** Command historyを入力欄へ反映する関数。 */
+  readonly moveCommandHistoryInput: (direction: ResultCursorDirection) => boolean;
+}
+
 /**
- * 移動系keyboard actionを実行。
- * @param {UseBookmarkCliKeyboardInput} input Bookmark CLI keyboard hook入力。
- * @param {ReturnType<typeof resolveBookmarkCliKeyboardAction>} action keyboard action。
+ * 次方向のkeyboard actionを実行。
+ * @param {ExecuteMoveKeyboardActionInput} input 移動系keyboard action実行入力。
  * @returns {boolean} 処理済みならtrue。
  */
-const executeMoveKeyboardAction = (
-  input: UseBookmarkCliKeyboardInput,
-  action: ReturnType<typeof resolveBookmarkCliKeyboardAction>,
-): boolean => {
-  if (action === "moveNext") {
-    moveSelectedResultIndex(
-      input.setSelectedResultIndex,
-      "next",
-      input.commandState.resultItems.length,
-    );
-    return true;
+const executeMoveNextKeyboardAction = (input: ExecuteMoveKeyboardActionInput): boolean => {
+  if (!hasResultItems(input.input.commandState)) {
+    return input.moveCommandHistoryInput("next");
   }
 
-  if (action === "movePrevious") {
-    moveSelectedResultIndex(
-      input.setSelectedResultIndex,
-      "previous",
-      input.commandState.resultItems.length,
-    );
-    return true;
-  }
+  moveSelectedResultIndex(
+    input.input.setSelectedResultIndex,
+    "next",
+    input.input.commandState.resultItems.length,
+  );
 
-  return false;
+  return true;
 };
 
 /**
+ * 前方向のkeyboard actionを実行。
+ * @param {ExecuteMoveKeyboardActionInput} input 移動系keyboard action実行入力。
+ * @returns {boolean} 処理済みならtrue。
+ */
+const executeMovePreviousKeyboardAction = (input: ExecuteMoveKeyboardActionInput): boolean => {
+  if (!hasResultItems(input.input.commandState)) {
+    return input.moveCommandHistoryInput("previous");
+  }
+
+  moveSelectedResultIndex(
+    input.input.setSelectedResultIndex,
+    "previous",
+    input.input.commandState.resultItems.length,
+  );
+
+  return true;
+};
+
+/** Keyboard action実行入力。 */
+interface ExecuteKeyboardActionInput {
+  /** Bookmark CLI keyboard hook入力。 */
+  readonly input: UseBookmarkCliKeyboardInput;
+  /** Command history cursorを解除する関数。 */
+  readonly clearHistoryCursor: () => void;
+  /** Command historyを入力欄へ反映する関数。 */
+  readonly moveCommandHistoryInput: (direction: ResultCursorDirection) => boolean;
+}
+
+/**
+ * 補完keyboard actionを実行。
+ * @param {ExecuteKeyboardActionInput} input Keyboard action実行入力。
+ * @returns {boolean} 処理済みならtrue。
+ */
+const executeCompleteKeyboardAction = (input: ExecuteKeyboardActionInput): boolean => {
+  completeSelectedResult(input.input);
+
+  return true;
+};
+
+/**
+ * 解除keyboard actionを実行。
+ * @param {ExecuteKeyboardActionInput} input Keyboard action実行入力。
+ * @returns {boolean} 処理済みならtrue。
+ */
+const executeClearKeyboardAction = (input: ExecuteKeyboardActionInput): boolean => {
+  input.clearHistoryCursor();
+  input.input.setSelectedResultIndex(resultCursorCleared);
+
+  return true;
+};
+
+/**
+ * 未処理keyboard actionを実行。
+ * @returns {boolean} 処理しないためfalse。
+ */
+const executeNoneKeyboardAction = (): boolean => false;
+
+/**
+ * Keyboard action executorです。
+ */
+type KeyboardActionExecutor = (input: ExecuteKeyboardActionInput) => boolean;
+
+/**
+ * Keyboard actionごとのexecutorです。
+ */
+const keyboardActionExecutors = {
+  clear: executeClearKeyboardAction,
+  complete: executeCompleteKeyboardAction,
+  moveNext: executeMoveNextKeyboardAction,
+  movePrevious: executeMovePreviousKeyboardAction,
+  none: executeNoneKeyboardAction,
+} satisfies Readonly<
+  Record<ReturnType<typeof resolveBookmarkCliKeyboardAction>, KeyboardActionExecutor>
+>;
+
+/**
  * Keyboard actionを実行。
- * @param {UseBookmarkCliKeyboardInput} input Bookmark CLI keyboard hook入力。
+ * @param {ExecuteKeyboardActionInput} input Keyboard action実行入力。
  * @param {ReturnType<typeof resolveBookmarkCliKeyboardAction>} action keyboard action。
  * @returns {boolean} 処理済みならtrue。
  */
 const executeKeyboardAction = (
-  input: UseBookmarkCliKeyboardInput,
+  input: ExecuteKeyboardActionInput,
   action: ReturnType<typeof resolveBookmarkCliKeyboardAction>,
-): boolean => {
-  if (executeMoveKeyboardAction(input, action)) {
-    return true;
-  }
+): boolean => keyboardActionExecutors[action](input);
 
-  if (action === "complete") {
-    completeSelectedResult(input);
-    return true;
-  }
-
-  if (action === "clear") {
-    input.setSelectedResultIndex(resultCursorCleared);
-    return true;
-  }
-
-  return false;
+/**
+ * Result cursorを現在の件数へ正規化。
+ * @param {UseBookmarkCliKeyboardInput} input Bookmark CLI keyboard hook入力。
+ * @returns {void} 返り値なし。
+ */
+const useNormalizedResultCursor = (input: UseBookmarkCliKeyboardInput): void => {
+  useEffect((): void => {
+    input.setSelectedResultIndex((currentIndex) =>
+      normalizeResultCursor(currentIndex, input.commandState.resultItems.length),
+    );
+  }, [input.commandState.resultItems.length, input.setSelectedResultIndex]);
 };
 
 /**
@@ -137,11 +220,13 @@ const executeKeyboardAction = (
 export const useBookmarkCliKeyboard = (
   input: UseBookmarkCliKeyboardInput,
 ): UseBookmarkCliKeyboardValue => {
-  useEffect((): void => {
-    input.setSelectedResultIndex((currentIndex) =>
-      normalizeResultCursor(currentIndex, input.commandState.resultItems.length),
-    );
-  }, [input.commandState.resultItems.length, input.setSelectedResultIndex]);
+  const commandHistoryKeyboard = useCommandHistoryKeyboard({
+    commandHistory: input.commandState.extensionState.commandHistory,
+    inputValue: input.inputValue,
+    setInputValue: input.setInputValue,
+  });
+
+  useNormalizedResultCursor(input);
 
   /**
    * 入力欄key操作をCLI keyboard actionへ変換。
@@ -150,7 +235,14 @@ export const useBookmarkCliKeyboard = (
    */
   const handleInputKeyDown = (event: CommandInputKeyEvent): void => {
     const action = resolveBookmarkCliKeyboardAction(event);
-    const handled = executeKeyboardAction(input, action);
+    const handled = executeKeyboardAction(
+      {
+        clearHistoryCursor: commandHistoryKeyboard.clearHistoryCursor,
+        input,
+        moveCommandHistoryInput: commandHistoryKeyboard.moveCommandHistoryInput,
+      },
+      action,
+    );
 
     if (!handled) {
       return;

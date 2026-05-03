@@ -248,6 +248,7 @@ export const App = (): ReactElement => {
     useState<ResultCursorIndex>(resultCursorCleared);
   const keyboard = useBookmarkCliKeyboard({
     commandState,
+    inputValue,
     selectedResultIndex,
     setInputValue,
     setSelectedResultIndex,

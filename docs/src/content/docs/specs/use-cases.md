@@ -200,13 +200,11 @@ rename 3 "GitHub Pull Requests"
 3. Domain層がpreviewを生成する
 4. `--preview` の場合は書き込みを行わない
 5. `--yes` の場合はChrome Bookmarks APIへ書き込む
-6. 確認が必要な場合はpreview確認UIを表示する
+6. 確認が必要な場合は `confirmation_required` とpreview内容を返す
 
 完了条件は、破壊的操作がpreviewまたは確認付きで実行されることです。
 
 確認が不足している場合は `confirmation_required` を返します。
-
-ユーザーがキャンセルした場合は `cancelled` を返します。
 
 ## UC-08: 利用頻度から再訪する
 
@@ -242,7 +240,7 @@ Chrome履歴はv1では参照しません。
 2. 入力欄へ自動フォーカスする
 3. `Ctrl+j` と `Ctrl+k` で候補や履歴を移動する
 4. `Tab` で補完する
-5. `Esc` で候補やpreview確認を閉じる
+5. `Esc` で候補選択を解除する
 6. 結果一覧をPowerline風segment UIで読む
 
 完了条件は、マウス操作なしで主要な検索、移動、保存、整理ができることです。

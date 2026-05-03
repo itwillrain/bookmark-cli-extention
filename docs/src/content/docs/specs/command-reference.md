@@ -290,9 +290,9 @@ mv "GitHub" Work/DevTools
 
 `--yes` は確認を省略して移動します。
 
-`--preview` と `--yes` がない場合はpreview確認UIを表示します。
+`--preview` と `--yes` がない場合は書き込みを行わず、`confirmation_required` を返します。
 
-代表的なエラーは `not_found`、`folder_not_found`、`confirmation_required`、`cancelled` です。
+代表的なエラーは `not_found`、`folder_not_found`、`confirmation_required` です。
 
 ## `rm`
 
@@ -331,9 +331,9 @@ rename 3 "GitHub Pull Requests" --yes
 
 `--yes` は確認を省略して変更します。
 
-`--preview` と `--yes` がない場合はpreview確認UIを表示します。
+`--preview` と `--yes` がない場合は書き込みを行わず、`confirmation_required` を返します。
 
-代表的なエラーは `not_found`、`confirmation_required`、`cancelled` です。
+代表的なエラーは `not_found`、`confirmation_required` です。
 
 ## `tag`
 
