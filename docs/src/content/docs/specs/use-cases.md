@@ -159,6 +159,10 @@ mark "Production Admin" --to Work/Admin
 
 CLI起動元タブのURLまたはtitleを取得できない場合は `unsupported_tab` を返します。
 
+Dedicated extension pageがすでに開いている場合、hot keyや拡張actionは既存windowを前面へ戻します。
+
+Chrome Extensions APIではOSの常時最前面固定を指定できないため、v1では再呼び出し時の前面復帰を完了条件に含めます。
+
 保存先に同じURLが存在する場合は `already_marked` を返します。
 
 ## UC-06: 仮想タグで分類する

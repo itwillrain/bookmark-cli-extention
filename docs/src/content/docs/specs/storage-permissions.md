@@ -198,6 +198,14 @@ Dedicated extension pageは別windowで開きます。
 
 CLI起動元タブのURLまたはtitleを取得できない場合は `unsupported_tab` を返します。
 
+Dedicated extension pageは単一のpopup windowとして扱います。
+
+hot keyまたは拡張actionで再度起動した場合、既存のCLI windowが残っていれば新規作成せず `chrome.windows.update(windowId, { focused: true })` で前面へ戻します。
+
+既存windowが閉じられている場合は新しいpopup windowを作ります。
+
+Chrome Extensionsの `windows` APIにはalways-on-topとしてOS上へ固定する指定がないため、v1の「最前面」はhot key再押下時の前面復帰として扱います。
+
 ## 必要な権限
 
 v1の必須権限は `bookmarks`、`storage`、`activeTab`、`favicon` です。
@@ -229,7 +237,7 @@ hot keyは `commands` manifest keyで定義します。
 ```json
 {
   "commands": {
-    "open-cli": {
+    "open-cli-page": {
       "suggested_key": {
         "default": "Ctrl+Shift+K",
         "mac": "Command+Shift+K"
@@ -239,6 +247,8 @@ hot keyは `commands` manifest keyで定義します。
   }
 }
 ```
+
+ユーザーは `chrome://extensions/shortcuts` からhot keyを変更できます。
 
 ## v1で要求しない権限
 
@@ -283,6 +293,8 @@ Chrome Bookmark Manager側のBookmarkやfolderは削除しません。
 - [Chrome Extensions Storage API](https://developer.chrome.com/docs/extensions/reference/api/storage)
 - [Chrome Extensions Bookmarks API](https://developer.chrome.com/docs/extensions/reference/api/bookmarks)
 - [Chrome Extensions activeTab](https://developer.chrome.com/docs/extensions/activeTab)
+- [Chrome Extensions commands API](https://developer.chrome.com/docs/extensions/reference/api/commands)
+- [Chrome Extensions windows API](https://developer.chrome.com/docs/extensions/reference/api/windows)
 - [Chrome Extensions Fetching favicons](https://developer.chrome.com/docs/extensions/how-to/ui/favicons)
 - [Chrome Extensions Permissions](https://developer.chrome.com/docs/extensions/reference/permissions-list)
 - [Chrome Extensions Declare permissions](https://developer.chrome.com/docs/extensions/develop/concepts/declare-permissions)

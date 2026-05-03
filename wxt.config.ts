@@ -29,6 +29,16 @@ const outputDirectory = "dist";
 const openCliPageCommandName = "open-cli-page";
 
 /**
+ * Dedicated extension pageを開く標準hotkeyです。
+ */
+const openCliPageDefaultHotkey = "Ctrl+Shift+K";
+
+/**
+ * Dedicated extension pageを開くmacOS向けhotkeyです。
+ */
+const openCliPageMacHotkey = "Command+Shift+K";
+
+/**
  * WXT に登録する module 名です。
  */
 const enabledModules = ["@wxt-dev/module-react"];
@@ -62,6 +72,10 @@ export default defineConfig({
     commands: {
       [openCliPageCommandName]: {
         description: "Open Bookmark CLI",
+        suggested_key: {
+          default: openCliPageDefaultHotkey,
+          mac: openCliPageMacHotkey,
+        },
       },
     },
     description: extensionDescription,

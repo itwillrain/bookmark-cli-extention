@@ -98,6 +98,12 @@ Componentは小さく分けます。
 
 Dedicated extension pageは実際の別windowとして開くため、Presentation層では内側のwindow風header、traffic light、card frameを描画しません。
 
+Dedicated extension pageのwindowはhot keyで再呼び出しできます。
+
+既存windowがある場合はwindowを増やさず、既存windowへfocusします。
+
+Chrome Extensions APIの制約により、OSの常時最前面固定はv1では扱いません。
+
 現在入力中のpromptはtranscript末尾に置き、実行後はその入力と結果をtranscript entryへ固定します。
 
 結果一覧を持たないstatusやerrorは、実行済みcommand行の次のoutput行として描画します。
