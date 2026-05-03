@@ -26,20 +26,19 @@ export interface BookmarkCliSuggestionListProps {
 /** 空のitem count。 */
 const emptyItemCount = 0;
 
-/** Floating suggestion popoverのclassName。 */
-const suggestionListPopoverClassName = "pointer-events-none absolute inset-x-4 bottom-14 z-20";
+/** Terminal outputとして表示するsuggestion wrapperのclassName。 */
+const suggestionListWrapperClassName = "mt-2 min-h-20 pb-3";
 
-/** Floating suggestion listのclassName。 */
-const suggestionListClassName =
-  "max-h-56 overflow-hidden rounded-md border border-zinc-800 bg-zinc-950/95 p-1 shadow-2xl shadow-black/50 backdrop-blur";
+/** Terminal outputとして表示するsuggestion listのclassName。 */
+const suggestionListClassName = "space-y-1 border-l border-zinc-800 pl-3";
 
 /** 選択中suggestion itemのclassName。 */
 const selectedSuggestionItemClassName =
-  "grid grid-cols-[minmax(0,8rem)_minmax(0,1fr)_auto] items-center gap-3 rounded-sm bg-zinc-800/80 px-2 py-1 text-xs text-zinc-100 ring-1 ring-emerald-700/50";
+  "grid grid-cols-[minmax(0,8rem)_minmax(0,1fr)] items-center gap-3 bg-zinc-900/90 px-2 py-1 text-xs text-zinc-100";
 
 /** 通常suggestion itemのclassName。 */
 const suggestionItemClassName =
-  "grid grid-cols-[minmax(0,8rem)_minmax(0,1fr)_auto] items-center gap-3 rounded-sm px-2 py-1 text-xs text-zinc-300";
+  "grid grid-cols-[minmax(0,8rem)_minmax(0,1fr)] items-center gap-3 px-2 py-1 text-xs text-zinc-300";
 
 /** Suggestion item描画入力。 */
 interface SuggestionItemRenderInput {
@@ -89,14 +88,11 @@ const renderSuggestionItem = (input: SuggestionItemRenderInput): ReactElement =>
       {input.suggestionItem.commandName}
     </span>
     <span className="truncate text-zinc-400">{input.suggestionItem.description}</span>
-    <kbd className="rounded border border-zinc-700 px-1.5 py-0.5 text-[0.6875rem] text-zinc-500">
-      Tab
-    </kbd>
   </li>
 );
 
 /**
- * Floating command suggestion listを描画。
+ * Terminal outputとしてcommand suggestion listを描画。
  * @param {BookmarkCliSuggestionListProps} props Suggestion list props。
  * @returns {ReactElement | null} Suggestion list element。
  */
@@ -110,8 +106,8 @@ export const BookmarkCliSuggestionList = (
   return (
     <aside
       aria-label="Command suggestions"
-      className={suggestionListPopoverClassName}
-      data-layout="floating"
+      className={suggestionListWrapperClassName}
+      data-layout="terminal-output"
     >
       <ol className={suggestionListClassName} role="listbox">
         {props.suggestionItems.map((suggestionItem, suggestionItemIndex) =>

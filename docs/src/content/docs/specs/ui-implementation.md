@@ -102,9 +102,9 @@ Terminal panelはviewport高に収め、scrollback transcriptだけを内側でs
 
 transcript、入力値、補完候補、選択状態が変わった場合はterminal viewportを最下部へ追従させ、通常のterminalと同じように最新promptを見える位置に保ちます。
 
-補完候補はscrollback内の通常フローへ置かず、terminal body内のfloating popoverとして表示します。
+補完候補は現在promptの直下にterminal outputとして表示します。
 
-候補の表示、非表示、選択移動はterminal viewportのscroll位置を変えません。
+候補はpopoverやcardではなく、terminalの補完出力として見えるようにします。
 
 Container componentは状態とuse case呼び出しを扱います。
 
@@ -260,7 +260,7 @@ view modelはcomponentが直接使いやすい形にします。
 
 Command suggestionはfish shellの補完に近い操作感を目指します。
 
-現在のprompt付近にfloating候補を表示し、`Tab` で候補選択を進め、`Enter` で選択中候補を入力へ確定します。
+現在のprompt直下に候補を表示し、`Tab` で候補選択を進め、`Enter` で選択中候補を入力へ確定します。
 
 `cd ./` のようにpath引数へ入った場合は、現在ディレクトリ配下の存在するfolderを候補として表示します。
 

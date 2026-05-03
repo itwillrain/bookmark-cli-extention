@@ -106,7 +106,13 @@ const useTerminalAutoScroll = (props: BookmarkCliTerminalBodyProps): RefCallback
     }
 
     scrollElement.scrollTop = bottomScrollTop;
-  }, [latestTranscriptEntryId, props.inputValue, props.transcriptEntries.length, scrollElement]);
+  }, [
+    latestTranscriptEntryId,
+    props.inputValue,
+    props.suggestionItems.length,
+    props.transcriptEntries.length,
+    scrollElement,
+  ]);
 
   return handleScrollElementRef;
 };
@@ -120,7 +126,7 @@ export const BookmarkCliTerminalBody = (props: BookmarkCliTerminalBodyProps): Re
   const handleScrollElementRef = useTerminalAutoScroll(props);
 
   return (
-    <section className="relative flex min-h-0 flex-1 flex-col px-4 py-4 font-mono text-sm leading-6 sm:px-5">
+    <section className="flex min-h-0 flex-1 flex-col px-4 py-4 font-mono text-sm leading-6 sm:px-5">
       <section ref={handleScrollElementRef} className="min-h-0 flex-1 overflow-auto">
         <BookmarkCliTranscriptList
           preferNerdFont={props.preferNerdFont}
@@ -136,11 +142,11 @@ export const BookmarkCliTerminalBody = (props: BookmarkCliTerminalBodyProps): Re
           preferNerdFont={props.preferNerdFont}
           promptStyle={props.promptStyle}
         />
+        <BookmarkCliSuggestionList
+          selectedSuggestionIndex={props.selectedSuggestionIndex}
+          suggestionItems={props.suggestionItems}
+        />
       </section>
-      <BookmarkCliSuggestionList
-        selectedSuggestionIndex={props.selectedSuggestionIndex}
-        suggestionItems={props.suggestionItems}
-      />
     </section>
   );
 };
