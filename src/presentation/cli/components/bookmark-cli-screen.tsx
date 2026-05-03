@@ -1,9 +1,14 @@
 import { type BookmarkCliResultItem, BookmarkCliResultList } from "./bookmark-cli-result-list";
+import {
+  type BookmarkCliSuggestionItem,
+  BookmarkCliSuggestionList,
+} from "./bookmark-cli-suggestion-list";
 import type { ReactElement } from "react";
 import type { ResultCursorIndex } from "../../../domain/bookmarks/result-cursor";
 import type { ResultViewStyle } from "../../../domain/storage/extension-state";
 
 export type { BookmarkCliResultItem, BookmarkCliResultKind } from "./bookmark-cli-result-list";
+export type { BookmarkCliSuggestionItem } from "./bookmark-cli-suggestion-list";
 
 /**
  * Bookmark CLI画面のpropsです。
@@ -45,6 +50,10 @@ export interface BookmarkCliScreenProps {
    * Status lineに表示するtextです。
    */
   readonly statusText: string;
+  /**
+   * 入力中commandのsuggestion一覧です。
+   */
+  readonly suggestionItems: readonly BookmarkCliSuggestionItem[];
 }
 
 /**
@@ -81,6 +90,10 @@ export interface CommandInputKeyEvent {
    */
   readonly ctrlKey: boolean;
   /**
+   * 入力要素です。
+   */
+  readonly currentTarget: CommandInputElement;
+  /**
    * 押されたkey名です。
    */
   readonly key: string;
@@ -88,6 +101,28 @@ export interface CommandInputKeyEvent {
    * Browser標準のkey動作を止めます。
    */
   readonly preventDefault: () => void;
+}
+
+/**
+ * 入力欄DOM elementとして使う最小shapeです。
+ */
+export interface CommandInputElement {
+  /**
+   * 選択範囲の終端indexです。
+   */
+  readonly selectionEnd: number | null;
+  /**
+   * 選択範囲の開始indexです。
+   */
+  readonly selectionStart: number | null;
+  /**
+   * 選択範囲を更新します。
+   */
+  readonly setSelectionRange: (selectionStart: number, selectionEnd: number) => void;
+  /**
+   * 入力値です。
+   */
+  readonly value: string;
 }
 
 /**
@@ -221,6 +256,7 @@ export const BookmarkCliScreen = (props: BookmarkCliScreenProps): ReactElement =
             onInputKeyDown={props.onInputKeyDown}
             onSubmit={props.onSubmit}
           />
+          <BookmarkCliSuggestionList suggestionItems={props.suggestionItems} />
           <section className="min-h-0 flex-1 overflow-auto pt-4">
             <BookmarkCliResultList
               preferNerdFont={props.preferNerdFont}

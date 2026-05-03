@@ -1,6 +1,7 @@
 import type { Dispatch, ReactElement, SetStateAction } from "react";
 import type { BookmarkCliCommandState } from "../../presentation/cli/bookmark-cli-controller";
 import { BookmarkCliScreen } from "../../presentation/cli/components/bookmark-cli-screen";
+import type { BookmarkCliSuggestionItem } from "../../presentation/cli/components/bookmark-cli-suggestion-list";
 import type { ResultCursorIndex } from "../../domain/bookmarks/result-cursor";
 import type { UseBookmarkCliKeyboardValue } from "./use-bookmark-cli-keyboard";
 
@@ -19,6 +20,8 @@ export interface BookmarkCliAppScreenProps {
   readonly setInputValue: InputValueSetter;
   /** 選択中result index。 */
   readonly selectedResultIndex: ResultCursorIndex;
+  /** 入力中commandのsuggestion一覧。 */
+  readonly suggestionItems: readonly BookmarkCliSuggestionItem[];
   /** Submit callback。 */
   readonly onSubmit: () => void;
 }
@@ -39,5 +42,6 @@ export const BookmarkCliAppScreen = (props: BookmarkCliAppScreenProps): ReactEle
     resultViewStyle={props.commandState.extensionState.settings.resultViewStyle}
     selectedResultIndex={props.selectedResultIndex}
     statusText={props.commandState.statusText}
+    suggestionItems={props.suggestionItems}
   />
 );

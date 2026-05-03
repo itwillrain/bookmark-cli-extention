@@ -22,6 +22,7 @@ import { createChromeExtensionStateStorage } from "../../infrastructure/chrome/e
 import { createChromeLaunchContextStorage } from "../../infrastructure/chrome/launch-context-storage-adapter";
 import { createInitialExtensionState } from "../../domain/storage/extension-state";
 import { currentDirectoryRoot } from "../../domain/bookmarks/current-directory";
+import { suggestBookmarkCommands } from "../../application/commands/bookmark-command-suggestion";
 import { useBookmarkCliKeyboard } from "./use-bookmark-cli-keyboard";
 
 /**
@@ -252,6 +253,7 @@ export const App = (): ReactElement => {
     selectedResultIndex,
     setInputValue,
     setSelectedResultIndex,
+    suggestionItems: suggestBookmarkCommands(inputValue),
   });
 
   const handleCommandExecutionError = createCommandExecutionErrorHandler(
@@ -284,6 +286,7 @@ export const App = (): ReactElement => {
       onSubmit={handleSubmit}
       selectedResultIndex={selectedResultIndex}
       setInputValue={setInputValue}
+      suggestionItems={suggestBookmarkCommands(inputValue)}
     />
   );
 };

@@ -2,25 +2,6 @@ import { describe, expect, it } from "vitest";
 import { resolveBookmarkCliKeyboardAction } from "./bookmark-cli-keyboard";
 
 /**
- * Bookmark CLI result keyboard action解決のテストスイート。
- */
-describe("resolveBookmarkCliKeyboardAction result", (): void => {
-  /**
-   * Ctrl+jを次候補移動へ変換することを検証。
-   */
-  it("resolves control j as result next", (): void => {
-    expect(resolveBookmarkCliKeyboardAction({ ctrlKey: true, key: "j" })).toBe("resultNext");
-  });
-
-  /**
-   * Ctrl+kを前候補移動へ変換することを検証。
-   */
-  it("resolves control k as result previous", (): void => {
-    expect(resolveBookmarkCliKeyboardAction({ ctrlKey: true, key: "k" })).toBe("resultPrevious");
-  });
-});
-
-/**
  * Bookmark CLI history keyboard action解決のテストスイート。
  */
 describe("resolveBookmarkCliKeyboardAction history", (): void => {
@@ -53,6 +34,48 @@ describe("resolveBookmarkCliKeyboardAction history", (): void => {
   it("resolves arrow up as history previous", (): void => {
     expect(resolveBookmarkCliKeyboardAction({ ctrlKey: false, key: "ArrowUp" })).toBe(
       "historyPrevious",
+    );
+  });
+});
+
+/**
+ * Bookmark CLI readline keyboard action解決のテストスイート。
+ */
+describe("resolveBookmarkCliKeyboardAction readline", (): void => {
+  /**
+   * Ctrl+aを行頭移動へ変換することを検証。
+   */
+  it("resolves control a as line start", (): void => {
+    expect(resolveBookmarkCliKeyboardAction({ ctrlKey: true, key: "a" })).toBe("lineStart");
+  });
+
+  /**
+   * Ctrl+eを行末移動へ変換することを検証。
+   */
+  it("resolves control e as line end", (): void => {
+    expect(resolveBookmarkCliKeyboardAction({ ctrlKey: true, key: "e" })).toBe("lineEnd");
+  });
+
+  /**
+   * Ctrl+uをcursor以前削除へ変換することを検証。
+   */
+  it("resolves control u as kill before cursor", (): void => {
+    expect(resolveBookmarkCliKeyboardAction({ ctrlKey: true, key: "u" })).toBe("killBeforeCursor");
+  });
+
+  /**
+   * Ctrl+kをcursor以後削除へ変換することを検証。
+   */
+  it("resolves control k as kill after cursor", (): void => {
+    expect(resolveBookmarkCliKeyboardAction({ ctrlKey: true, key: "k" })).toBe("killAfterCursor");
+  });
+
+  /**
+   * Ctrl+wを前方単語削除へ変換することを検証。
+   */
+  it("resolves control w as delete previous word", (): void => {
+    expect(resolveBookmarkCliKeyboardAction({ ctrlKey: true, key: "w" })).toBe(
+      "deletePreviousWord",
     );
   });
 });

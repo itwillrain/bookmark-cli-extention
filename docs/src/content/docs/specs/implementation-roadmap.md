@@ -195,10 +195,14 @@ Chrome APIに依存する処理はPortの外側へ閉じ込めます。
 - 下キー
 - `Ctrl+p`
 - `Ctrl+n`
-- `Ctrl+j`
+- `Ctrl+a`
+- `Ctrl+e`
 - `Ctrl+k`
+- `Ctrl+u`
+- `Ctrl+w`
 - `Tab` 補完
 - `Esc`
+- command suggestion表示
 
 完了条件は次のとおりです。
 
@@ -209,7 +213,8 @@ Chrome APIに依存する処理はPortの外側へ閉じ込めます。
 - Fontがない場合もplain textで意味が読める
 - 主要UI componentがStorybookで確認できる
 - 上キー、下キー、`Ctrl+p`、`Ctrl+n` で履歴を移動できる
-- `Ctrl+j` と `Ctrl+k` で候補を移動できる
+- `Ctrl+a`、`Ctrl+e`、`Ctrl+u`、`Ctrl+k`、`Ctrl+w` で入力を編集できる
+- 入力中のcommand suggestionを`Tab`で補完できる
 
 ## 実装順まとめ
 

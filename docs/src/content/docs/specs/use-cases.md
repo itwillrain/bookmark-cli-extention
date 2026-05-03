@@ -232,17 +232,18 @@ Chrome履歴はv1では参照しません。
 
 ユーザーはキーボード中心で疑似CLIを操作します。
 
-対象はhot key、コマンド履歴、候補移動、結果表示です。
+対象はhot key、コマンド履歴、readline風入力編集、候補補完、結果表示です。
 
 基本フローは次のとおりです。
 
 1. ユーザーがhot keyでDedicated extension pageを開く
 2. 入力欄へ自動フォーカスする
 3. 上キー、下キー、`Ctrl+p`、`Ctrl+n` で履歴を移動する
-4. `Ctrl+j` と `Ctrl+k` で候補を移動する
-5. `Tab` で補完する
-6. `Esc` で候補選択を解除する
-7. 結果一覧をPowerline風segment UIで読む
+4. `Ctrl+a`、`Ctrl+e`、`Ctrl+u`、`Ctrl+k`、`Ctrl+w` で入力を編集する
+5. 入力中にcommand suggestionを確認する
+6. `Tab` で補完する
+7. `Esc` で候補選択を解除する
+8. 結果一覧をPowerline風segment UIで読む
 
 完了条件は、マウス操作なしで主要な検索、移動、保存、整理ができることです。
 

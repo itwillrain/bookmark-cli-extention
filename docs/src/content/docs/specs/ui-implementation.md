@@ -230,7 +230,9 @@ view modelはcomponentが直接使いやすい形にします。
 
 入力欄、候補リスト、preview表示はキーボード操作を前提にします。
 
-上キー、下キー、`Ctrl+p`、`Ctrl+n`、`Ctrl+j`、`Ctrl+k`、`Tab`、`Enter`、`Esc` の操作をcomponent設計に含めます。
+上キー、下キー、`Ctrl+p`、`Ctrl+n`、`Ctrl+a`、`Ctrl+e`、`Ctrl+u`、`Ctrl+k`、`Ctrl+w`、`Tab`、`Enter`、`Esc` の操作をcomponent設計に含めます。
+
+Command suggestionはFigのように入力欄直下へ表示し、先頭候補を`Tab`で補完できるようにします。
 
 選択中の候補やpreview表示中の状態は、視覚的に分かるようにします。
 

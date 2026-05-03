@@ -2,11 +2,14 @@
 export type BookmarkCliKeyboardAction =
   | "clear"
   | "complete"
+  | "deletePreviousWord"
   | "historyNext"
   | "historyPrevious"
-  | "none"
-  | "resultNext"
-  | "resultPrevious";
+  | "killAfterCursor"
+  | "killBeforeCursor"
+  | "lineEnd"
+  | "lineStart"
+  | "none";
 
 /** Bookmark CLI keyboard eventの最小shape。 */
 export interface BookmarkCliKeyboardEvent {
@@ -16,17 +19,26 @@ export interface BookmarkCliKeyboardEvent {
   readonly key: string;
 }
 
-/** Ctrl+j key。 */
-const resultNextKey = "j";
-
-/** Ctrl+k key。 */
-const resultPreviousKey = "k";
-
 /** Ctrl+n key。 */
 const historyNextControlKey = "n";
 
 /** Ctrl+p key。 */
 const historyPreviousControlKey = "p";
+
+/** Ctrl+a key。 */
+const lineStartControlKey = "a";
+
+/** Ctrl+e key。 */
+const lineEndControlKey = "e";
+
+/** Ctrl+u key。 */
+const killBeforeCursorControlKey = "u";
+
+/** Ctrl+k key。 */
+const killAfterCursorControlKey = "k";
+
+/** Ctrl+w key。 */
+const deletePreviousWordControlKey = "w";
 
 /** 履歴を新しい方向へ移動するkey。 */
 const historyNextArrowKey = "ArrowDown";
@@ -44,10 +56,13 @@ const clearKey = "Escape";
  * Ctrl付きkeyごとのkeyboard actionです。
  */
 const controlKeyActions = {
+  [deletePreviousWordControlKey]: "deletePreviousWord",
   [historyNextControlKey]: "historyNext",
   [historyPreviousControlKey]: "historyPrevious",
-  [resultNextKey]: "resultNext",
-  [resultPreviousKey]: "resultPrevious",
+  [killAfterCursorControlKey]: "killAfterCursor",
+  [killBeforeCursorControlKey]: "killBeforeCursor",
+  [lineEndControlKey]: "lineEnd",
+  [lineStartControlKey]: "lineStart",
 } satisfies Readonly<Record<string, BookmarkCliKeyboardAction>>;
 
 /**
