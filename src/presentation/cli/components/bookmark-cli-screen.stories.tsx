@@ -2,6 +2,8 @@ import {
   type BookmarkCliResultItem,
   BookmarkCliScreen,
   type BookmarkCliScreenProps,
+  type BookmarkCliSuggestionItem,
+  type BookmarkCliTranscriptEntry,
 } from "./bookmark-cli-screen";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { resultCursorCleared } from "../../../domain/bookmarks/result-cursor";
@@ -47,6 +49,34 @@ const storyResultItems = [
 ] satisfies readonly BookmarkCliResultItem[];
 
 /**
+ * Storyで表示するcommand suggestionです。
+ */
+const storySuggestionItems = [
+  {
+    commandName: "find",
+    completion: "find ",
+    description: "Bookmarkを検索",
+  },
+  {
+    commandName: "freq",
+    completion: "freq ",
+    description: "よく開くBookmarkを表示",
+  },
+] satisfies readonly BookmarkCliSuggestionItem[];
+
+/**
+ * Storyで表示するtranscript entryです。
+ */
+const storyTranscriptEntries = [
+  {
+    id: "story-entry-1",
+    inputValue: storyInputValue,
+    resultItems: storyResultItems,
+    statusText: storyStatusText,
+  },
+] satisfies readonly BookmarkCliTranscriptEntry[];
+
+/**
  * Story用の入力変更callbackです。
  * @param {string} value Story上の入力値です。
  * @returns {void} 返り値はありません。
@@ -76,15 +106,16 @@ const handleStoryInputKeyDown = (): void => {
  */
 const meta = {
   args: {
-    inputValue: storyInputValue,
+    inputValue: "",
     onInputChange: handleStoryInputChange,
     onInputKeyDown: handleStoryInputKeyDown,
     onSubmit: handleStorySubmit,
     preferNerdFont: true,
-    resultItems: storyResultItems,
     resultViewStyle: "powerline",
     selectedResultIndex: resultCursorCleared,
     statusText: storyStatusText,
+    suggestionItems: [],
+    transcriptEntries: storyTranscriptEntries,
   },
   component: BookmarkCliScreen,
   title: "CLI/BookmarkCliScreen",
@@ -98,13 +129,33 @@ export default meta;
 export const WithCandidates: StoryObj<BookmarkCliScreenProps> = {};
 
 /**
+ * Command suggestionがある状態のStoryです。
+ */
+export const WithSuggestions: StoryObj<BookmarkCliScreenProps> = {
+  args: {
+    inputValue: "f",
+    statusText: "Ready",
+    suggestionItems: storySuggestionItems,
+    transcriptEntries: [],
+  },
+};
+
+/**
  * 検索結果がない状態のStoryです。
  */
 export const Empty: StoryObj<BookmarkCliScreenProps> = {
   args: {
     inputValue: "find unknown",
-    resultItems: [],
     statusText: "0 candidates",
+    suggestionItems: [],
+    transcriptEntries: [
+      {
+        id: "story-entry-empty",
+        inputValue: "find unknown",
+        resultItems: [],
+        statusText: "0 candidates",
+      },
+    ],
   },
 };
 

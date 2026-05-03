@@ -1,5 +1,15 @@
 /** Bookmark CLI keyboard action。 */
-export type BookmarkCliKeyboardAction = "clear" | "complete" | "moveNext" | "movePrevious" | "none";
+export type BookmarkCliKeyboardAction =
+  | "clear"
+  | "complete"
+  | "deletePreviousWord"
+  | "historyNext"
+  | "historyPrevious"
+  | "killAfterCursor"
+  | "killBeforeCursor"
+  | "lineEnd"
+  | "lineStart"
+  | "none";
 
 /** Bookmark CLI keyboard eventの最小shape。 */
 export interface BookmarkCliKeyboardEvent {
@@ -9,17 +19,72 @@ export interface BookmarkCliKeyboardEvent {
   readonly key: string;
 }
 
-/** Ctrl+j key。 */
-const moveNextKey = "j";
+/** Ctrl+n key。 */
+const historyNextControlKey = "n";
+
+/** Ctrl+p key。 */
+const historyPreviousControlKey = "p";
+
+/** Ctrl+a key。 */
+const lineStartControlKey = "a";
+
+/** Ctrl+e key。 */
+const lineEndControlKey = "e";
+
+/** Ctrl+u key。 */
+const killBeforeCursorControlKey = "u";
 
 /** Ctrl+k key。 */
-const movePreviousKey = "k";
+const killAfterCursorControlKey = "k";
+
+/** Ctrl+w key。 */
+const deletePreviousWordControlKey = "w";
+
+/** 履歴を新しい方向へ移動するkey。 */
+const historyNextArrowKey = "ArrowDown";
+
+/** 履歴を古い方向へ移動するkey。 */
+const historyPreviousArrowKey = "ArrowUp";
 
 /** Tab key。 */
 const completeKey = "Tab";
 
 /** Escape key。 */
 const clearKey = "Escape";
+
+/**
+ * Ctrl付きkeyごとのkeyboard actionです。
+ */
+const controlKeyActions = {
+  [deletePreviousWordControlKey]: "deletePreviousWord",
+  [historyNextControlKey]: "historyNext",
+  [historyPreviousControlKey]: "historyPrevious",
+  [killAfterCursorControlKey]: "killAfterCursor",
+  [killBeforeCursorControlKey]: "killBeforeCursor",
+  [lineEndControlKey]: "lineEnd",
+  [lineStartControlKey]: "lineStart",
+} satisfies Readonly<Record<string, BookmarkCliKeyboardAction>>;
+
+/**
+ * 単独keyごとのkeyboard actionです。
+ */
+const keyActions = {
+  [clearKey]: "clear",
+  [completeKey]: "complete",
+  [historyNextArrowKey]: "historyNext",
+  [historyPreviousArrowKey]: "historyPrevious",
+} satisfies Readonly<Record<string, BookmarkCliKeyboardAction>>;
+
+/**
+ * Key action mapからactionを取得します。
+ * @param {Readonly<Record<string, BookmarkCliKeyboardAction>>} actions keyboard action mapです。
+ * @param {string} key 押されたkey名です。
+ * @returns {BookmarkCliKeyboardAction | undefined} 対応するactionです。
+ */
+const getKeyboardAction = (
+  actions: Readonly<Record<string, BookmarkCliKeyboardAction>>,
+  key: string,
+): BookmarkCliKeyboardAction | undefined => actions[key];
 
 /**
  * Bookmark CLI keyboard actionを解決。
@@ -29,21 +94,9 @@ const clearKey = "Escape";
 export const resolveBookmarkCliKeyboardAction = (
   event: BookmarkCliKeyboardEvent,
 ): BookmarkCliKeyboardAction => {
-  if (event.ctrlKey && event.key === moveNextKey) {
-    return "moveNext";
+  if (event.ctrlKey) {
+    return getKeyboardAction(controlKeyActions, event.key) ?? "none";
   }
 
-  if (event.ctrlKey && event.key === movePreviousKey) {
-    return "movePrevious";
-  }
-
-  if (event.key === completeKey) {
-    return "complete";
-  }
-
-  if (event.key === clearKey) {
-    return "clear";
-  }
-
-  return "none";
+  return getKeyboardAction(keyActions, event.key) ?? "none";
 };

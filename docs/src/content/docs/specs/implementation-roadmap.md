@@ -43,7 +43,7 @@ Chrome APIに依存する処理はPortの外側へ閉じ込めます。
 - Storybookで確認する最小UI component
 - Reactで実装するDedicated extension pageの最小UI
 - Tailwind CSSで実装する基本layout
-- コマンド入力欄と結果一覧
+- command promptとtranscript形式の結果一覧
 - `go` 実行時のBookmark URL open
 
 完了条件は次のとおりです。
@@ -191,10 +191,19 @@ Chrome APIに依存する処理はPortの外側へ閉じ込めます。
 - plain text fallback
 - Nerd Font設定
 - React componentの細分化
-- `Ctrl+j`
+- 上キー
+- 下キー
+- `Ctrl+p`
+- `Ctrl+n`
+- `Ctrl+a`
+- `Ctrl+e`
 - `Ctrl+k`
+- `Ctrl+u`
+- `Ctrl+w`
 - `Tab` 補完
 - `Esc`
+- command suggestion表示
+- command transcript表示
 
 完了条件は次のとおりです。
 
@@ -204,7 +213,10 @@ Chrome APIに依存する処理はPortの外側へ閉じ込めます。
 - 結果一覧がPowerline風segment UIで表示される
 - Fontがない場合もplain textで意味が読める
 - 主要UI componentがStorybookで確認できる
-- `Ctrl+j` と `Ctrl+k` で候補や履歴を移動できる
+- 上キー、下キー、`Ctrl+p`、`Ctrl+n` で履歴を移動できる
+- `Ctrl+a`、`Ctrl+e`、`Ctrl+u`、`Ctrl+k`、`Ctrl+w` で入力を編集できる
+- 入力中のcommand suggestionを`Tab`で補完できる
+- 実行したpromptとoutputがtranscriptへ追加される
 
 ## 実装順まとめ
 

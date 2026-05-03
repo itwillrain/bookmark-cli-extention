@@ -94,6 +94,10 @@ Componentは小さく分けます。
 
 巨大な `App.tsx` に状態、layout、結果表示、候補表示、入力処理を詰め込みません。
 
+疑似CLI本体は単なる入力formとして見せず、実行済みpromptとoutputを下方向へ積むtranscript viewとして表示します。
+
+現在入力中のpromptはtranscript末尾に置き、実行後はその入力と結果をtranscript entryへ固定します。
+
 Container componentは状態とuse case呼び出しを扱います。
 
 Presentational componentはpropsから表示を作ります。
@@ -149,6 +153,8 @@ Dedicated extension pageは、次のcomponentへ分ける想定です。
 
 - `CliPage`
 - `CommandPrompt`
+- `TranscriptList`
+- `TranscriptEntry`
 - `CommandHistory`
 - `SuggestionList`
 - `ResultPanel`
@@ -230,7 +236,9 @@ view modelはcomponentが直接使いやすい形にします。
 
 入力欄、候補リスト、preview表示はキーボード操作を前提にします。
 
-`Ctrl+j`、`Ctrl+k`、上下キー、`Tab`、`Enter`、`Esc` の操作をcomponent設計に含めます。
+上キー、下キー、`Ctrl+p`、`Ctrl+n`、`Ctrl+a`、`Ctrl+e`、`Ctrl+u`、`Ctrl+k`、`Ctrl+w`、`Tab`、`Enter`、`Esc` の操作をcomponent設計に含めます。
+
+Command suggestionはFigのように入力欄直下へ表示し、先頭候補を`Tab`で補完できるようにします。
 
 選択中の候補やpreview表示中の状態は、視覚的に分かるようにします。
 

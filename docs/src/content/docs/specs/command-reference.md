@@ -138,15 +138,18 @@ folderを先に表示し、その後にBookmarkを表示します。
 現在ディレクトリを移動します。
 
 ```bash
-cd <path-or-index>
+cd [path-or-index]
 ```
 
 ```bash
+cd
 cd Work
 cd ../Research
 cd ~
 cd 2
 ```
+
+pathを省略した `cd` はroot pathの `/` へ戻ります。
 
 `~` は `/` のaliasです。
 

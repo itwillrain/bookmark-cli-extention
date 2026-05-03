@@ -7,7 +7,7 @@ description: Bookmark CLI Extension が拡張機能内で提供する疑似 CLI 
 
 疑似CLIはChrome Bookmark Managerの操作を、拡張機能内のコマンド入力UIとして表現します。
 
-初期段階ではOSのターミナルと連携せず、Dedicated extension page上にコマンド入力欄と実行結果を表示します。
+初期段階ではOSのターミナルと連携せず、Dedicated extension page上にcommand promptと実行結果のtranscriptを表示します。
 
 Popupは疑似CLI本体ではなく、設定画面として扱います。
 
@@ -19,20 +19,31 @@ Popupは疑似CLI本体ではなく、設定画面として扱います。
 
 - 入力欄は1行のcommand promptとして扱う
 - Dedicated extension pageを開いたら入力欄へ自動フォーカスする
-- 実行結果は入力履歴の下に表示する
-- コマンド履歴を `Ctrl+k`、`Ctrl+j`、上下キーで再利用できるようにする
-- 入力中に候補やエラーを表示できる余地を残す
+- 実行済みcommandと実行結果はscrollback transcriptとして上から下へ積む
+- 実行後は入力欄を空に戻し、次のpromptをtranscript末尾に表示する
+- コマンド履歴を上キー、下キー、`Ctrl+p`、`Ctrl+n` で再利用できるようにする
+- 入力中はFigのように補完候補やエラーを入力欄直下へ表示する
 - 破壊的操作は結果表示エリアで確認してから実行する
 - 結果一覧はPowerline風のsegment UIとして表示する
 - 結果一覧のplain text表現はcopy、debug、fallback用に保持する
 
 ## キーバインド
 
-vimmer friendlyな操作を優先します。
+Terminalに近い操作を基本にし、入力編集はUnix readline互換を優先します。
 
-`Ctrl+j` と `Ctrl+k` は、候補リストまたは入力履歴の選択を上下に移動します。
+上キーまたは `Ctrl+p` は古いコマンド履歴へ移動します。
 
-上下キーも同じ挙動として扱います。
+下キーまたは `Ctrl+n` は新しいコマンド履歴へ移動します。
+
+`Ctrl+a` はcursorを行頭へ移動します。
+
+`Ctrl+e` はcursorを行末へ移動します。
+
+`Ctrl+u` はcursor以前の入力を削除します。
+
+`Ctrl+k` はcursor以後の入力を削除します。
+
+`Ctrl+w` はcursor前方の単語を削除します。
 
 `Enter` は選択中の候補を確定します。
 
@@ -40,7 +51,7 @@ vimmer friendlyな操作を優先します。
 
 `Esc` は候補の選択状態を解除します。
 
-`Tab` は選択中の補完候補を入力へ反映します。
+`Tab` は選択中または先頭の補完候補を入力へ反映します。
 
 `Ctrl+r` は将来の履歴検索用に予約します。
 
@@ -50,9 +61,9 @@ vimmer friendlyな操作を優先します。
 
 重複するコマンドを連続で実行した場合は、同じ入力を履歴へ重複追加しません。
 
-`Ctrl+k` または上キーで古い履歴へ移動します。
+上キーまたは `Ctrl+p` で古い履歴へ移動します。
 
-`Ctrl+j` または下キーで新しい履歴へ移動します。
+下キーまたは `Ctrl+n` で新しい履歴へ移動します。
 
 `clear` は画面表示だけを消します。
 
@@ -167,9 +178,12 @@ pathはBookmark Barを起点にしたfolder pathとして扱います。
 先頭の `/` は省略できます。
 
 ```bash
+cd
 cd /Work/Admin
 cd Work/Admin
 ```
+
+pathを省略した `cd` はroot pathの `/` へ戻ります。
 
 `.` は現在ディレクトリを表します。
 
@@ -200,9 +214,9 @@ cd 2
 
 存在しないfolderを補完候補として作成しません。
 
-候補は入力欄の下に表示し、矢印キーで選択できます。
+候補は入力欄の下に表示します。
 
-Tabキーは選択中の候補を入力へ反映します。
+Tabキーは選択中または先頭の候補を入力へ反映します。
 
 補完対象は次の引数です。
 
@@ -395,7 +409,7 @@ go github pr
 go notion spec
 ```
 
-複数候補がある場合は番号付き一覧を表示し、数字や矢印キーで選択します。
+複数候補がある場合は番号付き一覧を表示し、数字指定で選択します。
 
 ### find
 
@@ -433,10 +447,13 @@ ls --format json
 現在のディレクトリを移動します。
 
 ```bash
+cd
 cd Work
 cd ../Research
 cd 2
 ```
+
+pathを省略した場合は `/` へ戻ります。
 
 ### pwd
 

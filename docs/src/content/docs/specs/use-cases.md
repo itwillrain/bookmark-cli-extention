@@ -95,6 +95,7 @@ go #prod admin
 
 ```bash
 ls
+cd
 cd Work/Admin
 pwd
 tree --depth 3
@@ -107,6 +108,8 @@ tree --depth 3
 3. `cd` でfolder pathまたは番号を指定する
 4. Application層が `CurrentDirectory` を更新する
 5. `pwd` や `tree` で現在地と階層を確認する
+
+pathを省略した `cd` は `/` へ戻ります。
 
 完了条件は、現在ディレクトリを基準に一覧、移動、階層表示ができることです。
 
@@ -232,16 +235,19 @@ Chrome履歴はv1では参照しません。
 
 ユーザーはキーボード中心で疑似CLIを操作します。
 
-対象はhot key、コマンド履歴、候補移動、結果表示です。
+対象はhot key、コマンド履歴、readline風入力編集、候補補完、結果表示です。
 
 基本フローは次のとおりです。
 
 1. ユーザーがhot keyでDedicated extension pageを開く
 2. 入力欄へ自動フォーカスする
-3. `Ctrl+j` と `Ctrl+k` で候補や履歴を移動する
-4. `Tab` で補完する
-5. `Esc` で候補選択を解除する
-6. 結果一覧をPowerline風segment UIで読む
+3. 上キー、下キー、`Ctrl+p`、`Ctrl+n` で履歴を移動する
+4. `Ctrl+a`、`Ctrl+e`、`Ctrl+u`、`Ctrl+k`、`Ctrl+w` で入力を編集する
+5. 入力中にcommand suggestionを確認する
+6. `Tab` で補完する
+7. `Esc` で候補選択を解除する
+8. 実行したpromptと結果がtranscriptに追加される
+9. 結果一覧をPowerline風segment UIで読む
 
 完了条件は、マウス操作なしで主要な検索、移動、保存、整理ができることです。
 
