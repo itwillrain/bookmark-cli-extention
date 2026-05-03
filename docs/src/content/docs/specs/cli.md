@@ -18,7 +18,9 @@ Popupは疑似CLI本体ではなく、設定画面として扱います。
 ## UI 方針
 
 - 入力欄は1行のcommand promptとして扱う
+- HTML実装上はsubmit可能な `form` と `input` を使う
 - Dedicated extension pageを開いたら入力欄へ自動フォーカスする
+- terminal surfaceをクリックした場合はcommand inputへfocusを戻し、CLI操作中にfocusが外れたままにならないようにする
 - Dedicated extension pageは別windowで開くため、画面内にはwindow風headerやtraffic light装飾を描画しない
 - 実行済みcommandと実行結果はscrollback transcriptとして上から下へ積む
 - 実行後は入力欄を空に戻し、次のpromptをtranscript末尾に表示する

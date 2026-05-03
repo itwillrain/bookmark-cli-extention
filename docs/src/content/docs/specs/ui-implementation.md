@@ -183,6 +183,10 @@ Dedicated extension pageは、次のcomponentへ分ける想定です。
 
 `CommandPrompt` は `bookmark-cli $` のpromptを組み立てます。
 
+Command入力はHTML上は `form` と `input` で実装し、Enter submitとaccessibilityを保ちます。
+
+ただし操作感はterminalへ寄せるため、terminal surfaceをクリックした場合はcommand inputへfocusを戻します。
+
 Powerline風表示は `CommandPrompt` の装飾として扱います。
 
 `ResultSegment` は番号、種別、folder path、title、仮想タグなどのsegmentを表示します。
@@ -263,6 +267,8 @@ view modelはcomponentが直接使いやすい形にします。
 ## アクセシビリティ方針
 
 入力欄、候補リスト、preview表示はキーボード操作を前提にします。
+
+Dedicated extension pageを開いた直後、command実行後、terminal surfaceのpointer操作後はcommand inputへfocusを戻します。
 
 上キー、下キー、`Ctrl+p`、`Ctrl+n`、`Ctrl+a`、`Ctrl+e`、`Ctrl+u`、`Ctrl+k`、`Ctrl+w`、`Tab`、`Enter`、`Esc` の操作をcomponent設計に含めます。
 

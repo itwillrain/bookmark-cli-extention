@@ -26,6 +26,9 @@ const innerWindowFrameShadowClassToken = "shadow-2xl";
 /** Scrollbarを隠すscrollback class token。 */
 const scrollbarlessScrollbackClassToken = "bookmark-cli-scrollback";
 
+/** Command input focus保持属性。 */
+const commandInputFocusBehaviorAttribute = 'data-focus-behavior="retain-command-input"';
+
 /** Suggestion非表示状態属性。 */
 const suggestionsHiddenAttribute = 'data-suggestions="hidden"';
 
@@ -147,6 +150,15 @@ describe("BookmarkCliScreen layout", (): void => {
     const html = renderToStaticMarkup(createElement(BookmarkCliScreen, baseProps));
 
     expect(html).toContain(scrollbarlessScrollbackClassToken);
+  });
+
+  /**
+   * Terminal面がcommand input focus保持対象であることを検証。
+   */
+  it("marks the terminal surface as retaining command input focus", (): void => {
+    const html = renderToStaticMarkup(createElement(BookmarkCliScreen, baseProps));
+
+    expect(html).toContain(commandInputFocusBehaviorAttribute);
   });
 });
 

@@ -3,7 +3,16 @@ import {
   BookmarkCliSuggestionList,
 } from "./bookmark-cli-suggestion-list";
 import { CommandForm, type CommandInputKeyEvent } from "./bookmark-cli-command-form";
-import { type ReactElement, type RefCallback, useCallback, useEffect, useState } from "react";
+import {
+  type MouseEventHandler,
+  type ReactElement,
+  type RefCallback,
+  type RefObject,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import type { BookmarkCliTranscriptEntry } from "../bookmark-cli-transcript";
 import { BookmarkCliTranscriptList } from "./bookmark-cli-transcript-list";
 import type { CompletionCursorIndex } from "../../../domain/cli/completion-cursor";
@@ -81,6 +90,12 @@ const commandLineAnchorClassName = "relative";
 /** Scrollbarを隠すscrollback classNameです。 */
 const scrollbackClassName = "bookmark-cli-scrollback min-h-0 flex-1 overflow-auto";
 
+/** Terminal focus保持のdata属性値です。 */
+const terminalFocusBehavior = "retain-command-input";
+
+/** Focus時にscroll位置を変えない値です。 */
+const preventFocusScroll = true;
+
 /** Suggestion非表示状態です。 */
 const suggestionHiddenState = "hidden";
 
@@ -133,6 +148,61 @@ const createSuggestionState = (suggestionItems: readonly BookmarkCliSuggestionIt
 };
 
 /**
+ * Command input focus hookの戻り値です。
+ */
+interface CommandInputFocusValue {
+  /**
+   * Command input refです。
+   */
+  readonly commandInputRef: RefObject<HTMLInputElement | null>;
+  /**
+   * Terminal面のmouse down handlerです。
+   */
+  readonly handleTerminalMouseDown: MouseEventHandler<HTMLElement>;
+}
+
+/**
+ * Pointer操作対象がcommand input自身か判定します。
+ * @param {Readonly<EventTarget> | null} target Pointer操作対象です。
+ * @returns {boolean} command input自身ならtrueです。
+ */
+const isCommandInputTarget = (target: Readonly<EventTarget> | null): boolean =>
+  target instanceof HTMLInputElement;
+
+/**
+ * Command input focus保持のための値を作ります。
+ * @param {readonly BookmarkCliTranscriptEntry[]} transcriptEntries transcript entry一覧です。
+ * @returns {CommandInputFocusValue} command input focus hookの戻り値です。
+ */
+const useCommandInputFocus = (
+  transcriptEntries: readonly BookmarkCliTranscriptEntry[],
+): CommandInputFocusValue => {
+  const commandInputRef = useRef<HTMLInputElement>(null);
+  const transcriptEntryCount = transcriptEntries.length;
+
+  /**
+   * Terminal面のpointer操作でcommand inputへfocusを戻します。
+   * @param {React.MouseEvent<HTMLElement>} event Mouse down eventです。
+   * @returns {void} 返り値なし。
+   */
+  // oxlint-disable-next-line typescript-eslint/prefer-readonly-parameter-types -- React mouse eventはmutable synthetic eventです。
+  const handleTerminalMouseDown = useCallback<MouseEventHandler<HTMLElement>>((event): void => {
+    if (isCommandInputTarget(event.target)) {
+      return;
+    }
+
+    event.preventDefault();
+    commandInputRef.current?.focus({ preventScroll: preventFocusScroll });
+  }, []);
+
+  useEffect((): void => {
+    commandInputRef.current?.focus({ preventScroll: preventFocusScroll });
+  }, [transcriptEntryCount]);
+
+  return { commandInputRef, handleTerminalMouseDown };
+};
+
+/**
  * Terminal bodyを最新promptが見える位置へ追従させます。
  * @param {BookmarkCliTerminalBodyProps} props Terminal body propsです。
  * @returns {RefCallback<HTMLElement>} Scroll対象ref callbackです。
@@ -175,11 +245,16 @@ const useTerminalAutoScroll = (props: BookmarkCliTerminalBodyProps): RefCallback
  */
 export const BookmarkCliTerminalBody = (props: BookmarkCliTerminalBodyProps): ReactElement => {
   const handleScrollElementRef = useTerminalAutoScroll(props);
+  const commandInputFocus = useCommandInputFocus(props.transcriptEntries);
   const commandLineReserveClassNameValue = createCommandLineReserveClassName(props.suggestionItems);
   const suggestionState = createSuggestionState(props.suggestionItems);
 
   return (
-    <section className="flex min-h-0 flex-1 flex-col px-4 py-4 font-mono text-sm leading-6 sm:px-5">
+    <section
+      className="flex min-h-0 flex-1 flex-col px-4 py-4 font-mono text-sm leading-6 sm:px-5"
+      data-focus-behavior={terminalFocusBehavior}
+      onMouseDown={commandInputFocus.handleTerminalMouseDown}
+    >
       <section ref={handleScrollElementRef} className={scrollbackClassName}>
         <BookmarkCliTranscriptList
           preferNerdFont={props.preferNerdFont}
@@ -190,6 +265,7 @@ export const BookmarkCliTerminalBody = (props: BookmarkCliTerminalBodyProps): Re
         <section className={commandLineReserveClassNameValue} data-suggestions={suggestionState}>
           <section className={commandLineAnchorClassName} data-layout="active-command-anchor">
             <CommandForm
+              commandInputRef={commandInputFocus.commandInputRef}
               inputValue={props.inputValue}
               onInputChange={props.onInputChange}
               onInputKeyDown={props.onInputKeyDown}

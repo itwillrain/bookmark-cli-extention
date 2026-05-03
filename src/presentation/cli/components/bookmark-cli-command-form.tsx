@@ -1,6 +1,6 @@
+import type { ReactElement, RefObject } from "react";
 import { BookmarkCliPrompt } from "./bookmark-cli-prompt";
 import type { PromptStyle } from "../../../domain/storage/extension-state";
-import type { ReactElement } from "react";
 
 /**
  * 入力変更eventとして扱う最小shapeです。
@@ -76,6 +76,10 @@ export interface CommandInputElement {
  */
 interface CommandFormProps {
   /**
+   * CLI入力欄のrefです。
+   */
+  readonly commandInputRef: Readonly<RefObject<HTMLInputElement | null>>;
+  /**
    * CLI入力値です。
    */
   readonly inputValue: string;
@@ -111,6 +115,7 @@ const commandInputPlaceholder = "find stripe dashboard";
  * @param {CommandFormProps} props Command formのpropsです。
  * @returns {ReactElement} Prompt formのReact elementです。
  */
+// oxlint-disable-next-line typescript-eslint/prefer-readonly-parameter-types -- React ref objectをpropsで受け取るためです。
 export const CommandForm = (props: CommandFormProps): ReactElement => {
   /**
    * 入力変更を親componentへ通知します。
@@ -147,6 +152,7 @@ export const CommandForm = (props: CommandFormProps): ReactElement => {
         onChange={handleInputChange}
         onKeyDown={props.onInputKeyDown}
         placeholder={commandInputPlaceholder}
+        ref={props.commandInputRef}
         spellCheck={false}
         value={props.inputValue}
       />
