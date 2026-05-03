@@ -17,6 +17,12 @@ const commandInputAriaLabelAttribute = 'aria-label="Bookmark CLI command"';
 /** Active command anchor layout属性。 */
 const activeCommandAnchorLayoutAttribute = 'data-layout="active-command-anchor"';
 
+/** Suggestion非表示状態属性。 */
+const suggestionsHiddenAttribute = 'data-suggestions="hidden"';
+
+/** Suggestion表示状態属性。 */
+const suggestionsVisibleAttribute = 'data-suggestions="visible"';
+
 /** Command suggestions aria-label属性。 */
 const commandSuggestionsAriaLabelAttribute = 'aria-label="Command suggestions"';
 
@@ -151,5 +157,15 @@ describe("BookmarkCliScreen prompt", (): void => {
     expect(commandInputIndex).toBeGreaterThan(missingIndex);
     expect(commandInputIndex).toBeGreaterThan(activeCommandAnchorIndex);
     expect(suggestionsIndex).toBeGreaterThan(commandInputIndex);
+  });
+
+  /**
+   * Suggestionがない場合はcommand line下部の余白を広げないことを検証。
+   */
+  it("does not reserve suggestion space without suggestions", (): void => {
+    const html = renderToStaticMarkup(createElement(BookmarkCliScreen, baseProps));
+
+    expect(html).toContain(suggestionsHiddenAttribute);
+    expect(html).not.toContain(suggestionsVisibleAttribute);
   });
 });

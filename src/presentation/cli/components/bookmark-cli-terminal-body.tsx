@@ -66,11 +66,23 @@ const latestTranscriptEntryOffset = 1;
 /** Scroll対象が未mountであることを表す値です。 */
 const missingScrollElement = false;
 
-/** 入力中command lineの余白を確保するclassNameです。 */
-const commandLineReserveClassName = "pb-40 pt-2";
+/** 空のsuggestion item件数です。 */
+const emptySuggestionItemCount = 0;
+
+/** 入力中command lineのbase classNameです。 */
+const commandLineReserveClassName = "pt-2";
+
+/** Suggestion表示中の入力中command line classNameです。 */
+const commandLineReserveWithSuggestionsClassName = `${commandLineReserveClassName} pb-40`;
 
 /** 入力中command lineをfloating suggestionの基準にするclassNameです。 */
 const commandLineAnchorClassName = "relative";
+
+/** Suggestion非表示状態です。 */
+const suggestionHiddenState = "hidden";
+
+/** Suggestion表示状態です。 */
+const suggestionVisibleState = "visible";
 
 /**
  * 最新transcript entry idを取得します。
@@ -80,6 +92,42 @@ const commandLineAnchorClassName = "relative";
 const getLatestTranscriptEntryId = (
   transcriptEntries: readonly BookmarkCliTranscriptEntry[],
 ): string => transcriptEntries.at(-latestTranscriptEntryOffset)?.id ?? emptyTranscriptEntryId;
+
+/**
+ * Suggestionが表示されているか判定します。
+ * @param {readonly BookmarkCliSuggestionItem[]} suggestionItems Suggestion item一覧です。
+ * @returns {boolean} Suggestionが表示されていればtrueです。
+ */
+const hasVisibleSuggestions = (suggestionItems: readonly BookmarkCliSuggestionItem[]): boolean =>
+  suggestionItems.length !== emptySuggestionItemCount;
+
+/**
+ * 入力中command lineの余白classNameを作ります。
+ * @param {readonly BookmarkCliSuggestionItem[]} suggestionItems Suggestion item一覧です。
+ * @returns {string} Command line reserve classNameです。
+ */
+const createCommandLineReserveClassName = (
+  suggestionItems: readonly BookmarkCliSuggestionItem[],
+): string => {
+  if (hasVisibleSuggestions(suggestionItems)) {
+    return commandLineReserveWithSuggestionsClassName;
+  }
+
+  return commandLineReserveClassName;
+};
+
+/**
+ * Suggestion表示状態を作ります。
+ * @param {readonly BookmarkCliSuggestionItem[]} suggestionItems Suggestion item一覧です。
+ * @returns {string} Suggestion表示状態です。
+ */
+const createSuggestionState = (suggestionItems: readonly BookmarkCliSuggestionItem[]): string => {
+  if (hasVisibleSuggestions(suggestionItems)) {
+    return suggestionVisibleState;
+  }
+
+  return suggestionHiddenState;
+};
 
 /**
  * Terminal bodyを最新promptが見える位置へ追従させます。
@@ -124,6 +172,8 @@ const useTerminalAutoScroll = (props: BookmarkCliTerminalBodyProps): RefCallback
  */
 export const BookmarkCliTerminalBody = (props: BookmarkCliTerminalBodyProps): ReactElement => {
   const handleScrollElementRef = useTerminalAutoScroll(props);
+  const commandLineReserveClassNameValue = createCommandLineReserveClassName(props.suggestionItems);
+  const suggestionState = createSuggestionState(props.suggestionItems);
 
   return (
     <section className="flex min-h-0 flex-1 flex-col px-4 py-4 font-mono text-sm leading-6 sm:px-5">
@@ -134,7 +184,7 @@ export const BookmarkCliTerminalBody = (props: BookmarkCliTerminalBodyProps): Re
           selectedResultIndex={props.selectedResultIndex}
           transcriptEntries={props.transcriptEntries}
         />
-        <section className={commandLineReserveClassName}>
+        <section className={commandLineReserveClassNameValue} data-suggestions={suggestionState}>
           <section className={commandLineAnchorClassName} data-layout="active-command-anchor">
             <CommandForm
               inputValue={props.inputValue}

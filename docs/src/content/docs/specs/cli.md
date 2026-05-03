@@ -27,6 +27,7 @@ Popupは疑似CLI本体ではなく、設定画面として扱います。
 - コマンド履歴を上キー、下キー、`Ctrl+p`、`Ctrl+n` で再利用できるようにする
 - 入力中はfish shellのように補完候補やエラーを現在promptの下へfloating表示する
 - 補完候補は現在promptより上には表示しない
+- 補完候補用の下余白は候補表示中だけ確保する
 - 破壊的操作は結果表示エリアで確認してから実行する
 - promptは `bookmark-cli $` を基準にし、Powerline風表示はprompt側へ限定する
 - 候補と結果一覧はterminalの出力としてplainな一覧表示にする
