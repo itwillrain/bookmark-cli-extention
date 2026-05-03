@@ -15,3 +15,11 @@
 body {
   margin: 0;
 }
+
+.bookmark-cli-scrollback {
+  scrollbar-width: none;
+}
+
+.bookmark-cli-scrollback::-webkit-scrollbar {
+  display: none;
+}

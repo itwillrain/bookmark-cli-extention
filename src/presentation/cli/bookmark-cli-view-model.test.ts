@@ -1,5 +1,4 @@
 import {
-  createBookmarkCliCompletionInput,
   createBookmarkCliResultItems,
   createBookmarkCliResultItemsFromEntries,
   createBookmarkCliResultItemsFromTreeEntries,
@@ -56,10 +55,10 @@ const adminTreeViewEntry = {
  */
 describe("createBookmarkCliResultItems", (): void => {
   /**
-   * Bookmark検索結果を画面表示itemへ変換できることを検証します。
+   * Bookmark検索結果をscoreなしの画面表示itemへ変換できることを検証します。
    */
   it("converts bookmark search results into CLI result items", (): void => {
-    expect(createBookmarkCliResultItems([stripeSearchResult])).toStrictEqual([
+    expect(createBookmarkCliResultItems([stripeSearchResult], { debug: false })).toStrictEqual([
       {
         folderPath: "/Work/Admin",
         kind: "bookmark",
@@ -70,9 +69,9 @@ describe("createBookmarkCliResultItems", (): void => {
   });
 
   /**
-   * Debug option指定時だけscoreを画面表示itemへ含めることを検証します。
+   * Debug時は検索scoreを画面表示itemへ含めることを検証します。
    */
-  it("includes score when debug option is enabled", (): void => {
+  it("includes score in CLI result items for debug mode", (): void => {
     expect(createBookmarkCliResultItems([stripeSearchResult], { debug: true })).toStrictEqual([
       {
         folderPath: "/Work/Admin",
@@ -101,6 +100,22 @@ describe("createBookmarkCliResultItemsFromEntries", (): void => {
       },
     ]);
   });
+
+  /**
+   * Long表示ではentryの詳細tokenを含めることを検証します。
+   */
+  it("includes entry detail tokens for long display", (): void => {
+    expect(
+      createBookmarkCliResultItemsFromEntries([adminFolderEntry], { long: true }),
+    ).toStrictEqual([
+      {
+        details: ["id=11", "parent=10", "children=1"],
+        folderPath: "/Work/Admin",
+        kind: "folder",
+        title: "Admin",
+      },
+    ]);
+  });
 });
 
 /**
@@ -119,37 +134,5 @@ describe("createBookmarkCliResultItemsFromTreeEntries", (): void => {
         title: "Admin",
       },
     ]);
-  });
-});
-
-/**
- * Bookmark CLI補完view modelのテストスイートです。
- */
-describe("createBookmarkCliCompletionInput", (): void => {
-  /**
-   * Folder result itemはfolder pathで補完することを検証します。
-   */
-  it("creates folder path completion for folder item", (): void => {
-    expect(
-      createBookmarkCliCompletionInput({
-        folderPath: "/Work/Admin",
-        kind: "folder",
-        title: "Admin",
-      }),
-    ).toBe("/Work/Admin");
-  });
-
-  /**
-   * Bookmark result itemはtitleで補完することを検証します。
-   */
-  it("creates title completion for bookmark item", (): void => {
-    expect(
-      createBookmarkCliCompletionInput({
-        folderPath: "/Work/Admin",
-        kind: "bookmark",
-        title: "Stripe Dashboard",
-        url: "https://dashboard.stripe.com/",
-      }),
-    ).toBe("Stripe Dashboard");
   });
 });

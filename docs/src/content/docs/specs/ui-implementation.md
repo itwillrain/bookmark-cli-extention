@@ -96,7 +96,39 @@ Componentは小さく分けます。
 
 疑似CLI本体は単なる入力formとして見せず、実行済みpromptとoutputを下方向へ積むtranscript viewとして表示します。
 
+Dedicated extension pageは実際の別windowとして開くため、Presentation層では内側のwindow風header、traffic light、card frameを描画しません。
+
+Dedicated extension pageのwindowはhot keyで再呼び出しできます。
+
+既存windowがある場合はwindowを増やさず、既存windowへfocusします。
+
+誤ってCLI windowが複数存在する場合は、hot keyまたは拡張actionの再実行時に1つへ集約します。
+
+Chrome Extensions APIの制約により、OSの常時最前面固定はv1では扱いません。
+
 現在入力中のpromptはtranscript末尾に置き、実行後はその入力と結果をtranscript entryへ固定します。
+
+結果一覧を持たないstatusやerrorは、実行済みcommand行の次のoutput行として描画します。
+
+たとえばunknown commandは、prompt行に混ぜず `Unknown command: <command>` を次の行に表示します。
+
+Terminal surfaceはviewport高に収め、scrollback transcriptだけを内側でscrollさせます。
+
+Scrollback transcriptは操作上scroll可能にしますが、CLI感を保つため視覚上のscrollbarは隠します。
+
+command実行でtranscriptが増えた場合だけterminal viewportを最下部へ追従させ、通常のterminalと同じように最新promptを見える位置に保ちます。
+
+入力中promptは下部固定せず、scrollback transcriptの末尾に置きます。
+
+補完候補は現在promptの直下にfloating表示します。
+
+候補は現在promptより上へ出さず、terminalの補完出力として見えるようにします。
+
+候補overlayはscrollbackの子ではなくterminal body直下に描画し、現在promptのDOM位置からtop、left、widthを解決します。
+
+これにより、scrollbar非表示のscrollbackに候補が巻き込まれて通常outputのように見える状態を避けます。
+
+候補用の下余白は候補表示中だけ確保し、command実行後の出力領域を空白で押し下げません。
 
 Container componentは状態とuse case呼び出しを扱います。
 
@@ -165,9 +197,25 @@ Dedicated extension pageは、次のcomponentへ分ける想定です。
 - `ErrorMessage`
 - `StatusBar`
 
-`ResultItem` はPowerline風segment UIを組み立てます。
+`CommandPrompt` は `bookmark-cli $` のpromptを組み立てます。
+
+Command入力はHTML上は `form` と `input` で実装し、Enter submitとaccessibilityを保ちます。
+
+ただし操作感はterminalへ寄せるため、terminal surfaceをクリックした場合はcommand inputへfocusを戻します。
+
+Powerline風表示は `CommandPrompt` の装飾として扱います。
 
 `ResultSegment` は番号、種別、folder path、title、仮想タグなどのsegmentを表示します。
+
+`ResultSegment` はPowerline glyphを使わず、terminal outputとして読めるplainな表示にします。
+
+`ResultItem` はURL resultの場合、titleの左に小さなfaviconを表示できます。
+
+faviconは実拡張ページ上でだけChrome拡張の `/_favicon/` endpointから解決します。
+
+Storybookやlocal previewのように `chrome-extension:` originではない環境では、faviconを表示せずplain text labelだけで読める状態を保ちます。
+
+faviconはtitle行の左ではなく、titleとurlを積んだtext stackの左に置き、text stack全体の縦中央に揃えます。
 
 番号指定やResult Listの意味はDomain層で扱い、componentは表示だけを担当します。
 
@@ -192,7 +240,7 @@ popupには疑似CLI本体を置きません。
 
 CSS moduleやglobal CSSは、Tailwindだけでは表現しづらい基盤styleに限定します。
 
-Powerline風segment UIのshape、focus ring、scrollbarなど、utility classだけで読みにくくなる場合は小さなCSS classへ切り出します。
+Powerline風prompt、focus ring、scrollbarなど、utility classだけで読みにくくなる場合は小さなCSS classへ切り出します。
 
 Tailwind classはcomponentの責務に沿って配置します。
 
@@ -202,9 +250,17 @@ Tailwind classはcomponentの責務に沿って配置します。
 
 ## Powerline風表示
 
-結果一覧はPowerline風segment UIとして表示します。
+Powerline風表示は `bookmark-cli $` promptに適用します。
 
-Nerd Font互換iconやPowerline glyphは視覚表現として利用できます。
+結果一覧や候補一覧は、terminal outputとしてplainに表示します。
+
+Powerline風promptの区切りはfont glyphではなくCSS shapeで描画します。
+
+候補や結果一覧の行にはPowerline glyphを使いません。
+
+Nerd Font互換iconは将来のopt-in表現として扱い、v1の標準表示では使いません。
+
+結果種別は `URL`、`DIR`、`PREV` のplain text labelで表示します。
 
 ただし、Fontの有無に意味を依存させません。
 
@@ -236,9 +292,29 @@ view modelはcomponentが直接使いやすい形にします。
 
 入力欄、候補リスト、preview表示はキーボード操作を前提にします。
 
+Dedicated extension pageを開いた直後、command実行後、terminal surfaceのpointer操作後はcommand inputへfocusを戻します。
+
 上キー、下キー、`Ctrl+p`、`Ctrl+n`、`Ctrl+a`、`Ctrl+e`、`Ctrl+u`、`Ctrl+k`、`Ctrl+w`、`Tab`、`Enter`、`Esc` の操作をcomponent設計に含めます。
 
-Command suggestionはFigのように入力欄直下へ表示し、先頭候補を`Tab`で補完できるようにします。
+Command suggestionはfish shellの補完に近い操作感を目指します。
+
+空のpromptではcandidate listを表示せず、command名を入力し始めたタイミングでprefixに一致するcandidate listを表示します。
+
+現在のprompt直下にfloating候補を表示し、`Tab` で候補選択を進め、`Enter` で選択中のfloating候補を入力へ確定します。
+
+`Tab` による候補選択中もkeyboard focusはcommand inputに残し、選択中候補を `scrollIntoView({ block: "nearest", inline: "nearest" })` で表示範囲へ追従させます。
+
+結果一覧をTab選択する場合も同じ方針で、DOM focusはcommand inputに残し、選択中result itemだけを表示範囲へ追従させます。
+
+空のpromptで結果一覧を選択している場合、`Enter` は選択行の既定アクションを実行します。
+
+folder行は `cd <result-number>`、Bookmark行は `go <result-number>` として扱います。
+
+入力中のpromptが残っている場合は、結果一覧の選択行を入力補完として扱います。
+
+`cd ./` のように移動先path入力へ入った場合は、現在ディレクトリ配下の存在するfolderを候補として表示します。
+
+`go ./` のようにBookmarkを開くpath入力へ入った場合は、現在ディレクトリ配下のfolderとBookmarkを候補として表示します。
 
 選択中の候補やpreview表示中の状態は、視覚的に分かるようにします。
 
@@ -257,6 +333,8 @@ Domain層の仕様をcomponent testで重複して確認しません。
 Presentation層では、CommandResultから表示用view modelへの変換をテストします。
 
 キーバインドはcustom hookまたはreducerとして切り出し、状態遷移をテストします。
+
+Scroll制御はDOM依存を薄くし、最下部へ移動する純粋な境界関数としてテストします。
 
 ## 参考
 

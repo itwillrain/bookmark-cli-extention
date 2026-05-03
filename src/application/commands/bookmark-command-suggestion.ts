@@ -49,6 +49,10 @@ const bookmarkCommandCatalog = [
     description: "現在または指定folderを一覧表示",
   },
   {
+    commandName: "ll",
+    description: "詳細形式でfolderを一覧表示",
+  },
+  {
     commandName: "cd",
     description: "現在folderを移動",
   },
@@ -59,6 +63,10 @@ const bookmarkCommandCatalog = [
   {
     commandName: "tree",
     description: "folder treeを表示",
+  },
+  {
+    commandName: "clear",
+    description: "画面上の実行結果を消す",
   },
   {
     commandName: "help",
@@ -138,6 +146,13 @@ const commandSuggestionMatchesPrefix = (
 ): boolean => suggestion.commandName.startsWith(commandPrefix.toLowerCase());
 
 /**
+ * Command suggestionを開始できる入力かを判定。
+ * @param {string} commandPrefix Command prefix。
+ * @returns {boolean} Suggestion開始可能ならtrue。
+ */
+const canStartCommandSuggestion = (commandPrefix: string): boolean => commandPrefix !== emptyString;
+
+/**
  * Bookmark CLI command suggestionを返す。
  * @param {string} inputValue CLI入力値。
  * @returns {readonly BookmarkCommandSuggestion[]} Command suggestion一覧。
@@ -150,6 +165,10 @@ export const suggestBookmarkCommands = (
   }
 
   const commandPrefix = extractCommandPrefix(inputValue);
+
+  if (!canStartCommandSuggestion(commandPrefix)) {
+    return [];
+  }
 
   return bookmarkCommandCatalog
     .map((item) => createBookmarkCommandSuggestion(item))

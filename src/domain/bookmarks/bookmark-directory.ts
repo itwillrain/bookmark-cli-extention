@@ -3,6 +3,16 @@ import type { FolderPath } from "./folder-path";
 import { getParentFolderPath } from "./current-directory";
 
 /**
+ * Directory entry表示optionです。
+ */
+export interface ListDirectoryEntriesOptions {
+  /**
+   * Dot始まりのentryも表示するかです。
+   */
+  readonly all: boolean;
+}
+
+/**
  * Entry sort時にfolderをbookmarkより前へ置く値です。
  */
 const folderSortPriority = 0;
@@ -26,6 +36,18 @@ const beforeSortOrder = -1;
  * 後に並べることを表すsort値です。
  */
 const afterSortOrder = 1;
+
+/**
+ * Hidden entryを表すtitle prefixです。
+ */
+const hiddenEntryTitlePrefix = ".";
+
+/**
+ * Directory entry表示optionの初期値です。
+ */
+const defaultListDirectoryEntriesOptions = {
+  all: false,
+} as const satisfies ListDirectoryEntriesOptions;
 
 /**
  * Bookmark Entryのsort優先度を取得します。
@@ -114,6 +136,25 @@ const isDirectDirectoryEntry = (entry: BookmarkEntry, directoryPath: FolderPath)
   isDirectFolderEntry(entry, directoryPath) || isDirectBookmarkEntry(entry, directoryPath);
 
 /**
+ * Dot始まりのentryかを判定します。
+ * @param {BookmarkEntry} entry 判定対象のentryです。
+ * @returns {boolean} dot始まりならtrueです。
+ */
+const isDotDirectoryEntry = (entry: BookmarkEntry): boolean =>
+  entry.title.startsWith(hiddenEntryTitlePrefix);
+
+/**
+ * Optionに基づいてentryを表示するか判定します。
+ * @param {BookmarkEntry} entry 判定対象のentryです。
+ * @param {ListDirectoryEntriesOptions} options Directory entry表示optionです。
+ * @returns {boolean} 表示するならtrueです。
+ */
+const shouldIncludeDirectoryEntry = (
+  entry: BookmarkEntry,
+  options: ListDirectoryEntriesOptions,
+): boolean => options.all || !isDotDirectoryEntry(entry);
+
+/**
  * Bookmark Tree内にfolder pathが存在するかを判定します。
  * @param {BookmarkTree} bookmarkTree 判定対象のBookmark Treeです。
  * @param {FolderPath} folderPath 判定するfolder pathです。
@@ -134,12 +175,15 @@ export const doesFolderPathExist = (
  * 指定directory直下のentry一覧をfolder-firstで取得します。
  * @param {BookmarkTree} bookmarkTree 対象のBookmark Treeです。
  * @param {FolderPath} directoryPath directory pathです。
+ * @param {ListDirectoryEntriesOptions} options Directory entry表示optionです。
  * @returns {readonly BookmarkEntry[]} directory直下のentry一覧です。
  */
 export const listDirectoryEntries = (
   bookmarkTree: BookmarkTree,
   directoryPath: FolderPath,
+  options: ListDirectoryEntriesOptions = defaultListDirectoryEntriesOptions,
 ): readonly BookmarkEntry[] =>
   bookmarkTree.entries
     .filter((entry) => isDirectDirectoryEntry(entry, directoryPath))
+    .filter((entry) => shouldIncludeDirectoryEntry(entry, options))
     .toSorted((leftEntry, rightEntry) => compareDirectoryEntry(leftEntry, rightEntry));

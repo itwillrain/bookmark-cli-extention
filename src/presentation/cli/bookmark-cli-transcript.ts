@@ -58,3 +58,12 @@ export const appendBookmarkCliTranscriptEntry = (
   nextEntry: BookmarkCliTranscriptEntry,
 ): readonly BookmarkCliTranscriptEntry[] =>
   [...entries, nextEntry].slice(retainedTranscriptEntryCount);
+
+/**
+ * Transcript entryをすべて削除。
+ * @param {readonly BookmarkCliTranscriptEntry[]} entries 現在のtranscript entry一覧。
+ * @returns {readonly BookmarkCliTranscriptEntry[]} 空のtranscript entry一覧。
+ */
+export const clearBookmarkCliTranscriptEntries = (
+  entries: readonly BookmarkCliTranscriptEntry[],
+): readonly BookmarkCliTranscriptEntry[] => entries.slice(entries.length);

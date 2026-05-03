@@ -163,6 +163,12 @@ mark "Production Admin" --to Work/Admin
 
 CLI起動元タブのURLまたはtitleを取得できない場合は `unsupported_tab` を返します。
 
+Dedicated extension pageがすでに開いている場合、hot keyや拡張actionは既存windowを前面へ戻します。
+
+Dedicated extension pageが複数開いている場合、hot keyや拡張actionは1つだけを残して重複windowを閉じます。
+
+Chrome Extensions APIではOSの常時最前面固定を指定できないため、v1では再呼び出し時の前面復帰を完了条件に含めます。
+
 保存先に同じURLが存在する場合は `already_marked` を返します。
 
 ## UC-06: 仮想タグで分類する
@@ -256,10 +262,12 @@ Chrome履歴は `find` と `go` の検索対象として参照します。
 3. 上キー、下キー、`Ctrl+p`、`Ctrl+n` で履歴を移動する
 4. `Ctrl+a`、`Ctrl+e`、`Ctrl+u`、`Ctrl+k`、`Ctrl+w` で入力を編集する
 5. 入力中にcommand suggestionを確認する
-6. `Tab` で補完する
-7. `Esc` で候補選択を解除する
-8. 実行したpromptと結果がtranscriptに追加される
-9. 結果一覧をPowerline風segment UIで読む
+6. `Tab` で補完候補を選択する
+7. `Enter` で選択中候補を入力へ確定する
+8. `Esc` で候補選択を解除する
+9. 実行したpromptと結果がtranscriptに追加される
+10. 必要に応じて `clear` でscrollback transcriptを消す
+11. Powerline風promptとplainな結果一覧で実行結果を読む
 
 完了条件は、マウス操作なしで主要な検索、移動、保存、整理ができることです。
 

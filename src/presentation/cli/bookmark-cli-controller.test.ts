@@ -1,5 +1,3 @@
-/* oxlint-disable max-lines -- CLI controllerの代表的なcommand経路を同じfixtureで検証するため。 */
-
 import {
   type BookmarkCliCommandDependencies,
   executeBookmarkCliCommand,
@@ -64,11 +62,6 @@ const initialExtensionState = createInitialExtensionState();
  * Find commandの入力です。
  */
 const findInput = "find stripe";
-
-/**
- * Debug option付きFind commandの入力です。
- */
-const findDebugInput = "find --debug stripe";
 
 /**
  * Go commandの入力です。
@@ -214,15 +207,6 @@ describe("executeBookmarkCliCommand search commands", (): void => {
       url: "https://dashboard.stripe.com/",
     });
     expect(state.resultItems[firstResultItemIndex]?.score).toBeUndefined();
-  });
-
-  /**
-   * Find commandのdebug optionからscoreを表示状態へ含めることを検証します。
-   */
-  it("returns score for find command with debug option", async (): Promise<void> => {
-    const state = await executeBookmarkCliCommand(findDebugInput, createCommandDependencies());
-
-    expect(typeof state.resultItems[firstResultItemIndex]?.score).toBe("number");
   });
 
   /**

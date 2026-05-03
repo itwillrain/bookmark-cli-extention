@@ -25,6 +25,10 @@ import type { BookmarkEntry } from "../../domain/bookmarks/bookmark-tree";
  */
 export interface ListDirectoryInput {
   /**
+   * Dot始まりのentryも表示するかです。
+   */
+  readonly all: boolean;
+  /**
    * 現在ディレクトリです。
    */
   readonly currentDirectory: CurrentDirectory;
@@ -230,7 +234,7 @@ export const listDirectory = async (
 
   return createSuccess({
     directoryPath,
-    entries: listDirectoryEntries(bookmarkTree, directoryPath),
+    entries: listDirectoryEntries(bookmarkTree, directoryPath, { all: input.all }),
   });
 };
 

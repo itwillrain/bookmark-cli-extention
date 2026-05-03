@@ -28,6 +28,10 @@ v1の権限全体は、[保存データ構造と権限](../storage-permissions/)
 }
 ```
 
+`favicon` はURL resultの小さなsite icon表示に使います。
+
+favicon取得はChrome拡張の `/_favicon/` endpointを使い、Bookmark URLへ直接fetchしません。
+
 ## データ取得
 
 初期実装では、Bookmark Tree全体を取得し、疑似CLI向けの正規化データへ変換します。

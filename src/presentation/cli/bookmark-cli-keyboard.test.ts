@@ -85,10 +85,21 @@ describe("resolveBookmarkCliKeyboardAction readline", (): void => {
  */
 describe("resolveBookmarkCliKeyboardAction common", (): void => {
   /**
-   * Tabを補完へ変換することを検証。
+   * Tabを次の補完候補選択へ変換することを検証。
    */
-  it("resolves tab as completion", (): void => {
-    expect(resolveBookmarkCliKeyboardAction({ ctrlKey: false, key: "Tab" })).toBe("complete");
+  it("resolves tab as selecting next completion", (): void => {
+    expect(resolveBookmarkCliKeyboardAction({ ctrlKey: false, key: "Tab" })).toBe(
+      "selectNextCompletion",
+    );
+  });
+
+  /**
+   * Enterを補完候補確定へ変換することを検証。
+   */
+  it("resolves enter as confirming completion", (): void => {
+    expect(resolveBookmarkCliKeyboardAction({ ctrlKey: false, key: "Enter" })).toBe(
+      "confirmCompletion",
+    );
   });
 
   /**

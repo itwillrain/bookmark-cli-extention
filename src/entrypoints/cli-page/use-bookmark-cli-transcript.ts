@@ -1,6 +1,7 @@
 import {
   type BookmarkCliTranscriptEntry,
   appendBookmarkCliTranscriptEntry,
+  clearBookmarkCliTranscriptEntries,
   createBookmarkCliTranscriptEntry,
 } from "../../presentation/cli/bookmark-cli-transcript";
 import type { BookmarkCliCommandState } from "../../presentation/cli/bookmark-cli-command-state";
@@ -18,6 +19,8 @@ export interface UseBookmarkCliTranscriptValue {
     commandState: BookmarkCliCommandState,
     entryId: string,
   ) => void;
+  /** 実行済みcommand transcriptを削除。 */
+  readonly clearExecutedCommands: () => void;
 }
 
 /** 初期transcript entry一覧。 */
@@ -54,5 +57,13 @@ export const useBookmarkCliTranscript = (): UseBookmarkCliTranscriptValue => {
     );
   };
 
-  return { appendExecutedCommand, transcriptEntries };
+  /**
+   * 実行済みcommand transcriptを削除。
+   * @returns {void} 返り値なし。
+   */
+  const clearExecutedCommands = (): void => {
+    setTranscriptEntries((currentEntries) => clearBookmarkCliTranscriptEntries(currentEntries));
+  };
+
+  return { appendExecutedCommand, clearExecutedCommands, transcriptEntries };
 };

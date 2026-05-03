@@ -1,4 +1,5 @@
 import type { LaunchContext } from "../application/bookmarks/mark-bookmark-use-case";
+import { createChromeCliPageWindowLauncher } from "../infrastructure/chrome/cli-page-window-adapter";
 import { createChromeLaunchContextStorage } from "../infrastructure/chrome/launch-context-storage-adapter";
 
 /**
@@ -20,6 +21,11 @@ const firstTabIndex = 0;
  * Launch context storageです。
  */
 const launchContextStorage = createChromeLaunchContextStorage(browser.storage.session);
+
+/**
+ * CLI page window launcherです。
+ */
+const cliPageWindowLauncher = createChromeCliPageWindowLauncher(browser.windows);
 
 /**
  * Launch context生成に使うtabの最小shapeです。
@@ -99,12 +105,12 @@ const saveActiveLaunchContext = async (): Promise<void> => {
 };
 
 /**
- * Dedicated extension pageを新しいtabで開きます。
- * @returns {Promise<void>} Tab作成完了を表すPromiseです。
+ * Dedicated extension pageを別windowで開きます。
+ * @returns {Promise<void>} Window作成完了を表すPromiseです。
  */
 const openCliPage = async (): Promise<void> => {
   await saveActiveLaunchContext();
-  await browser.tabs.create({ url: createCliPageUrl() });
+  await cliPageWindowLauncher.openCliPageWindow(createCliPageUrl());
 };
 
 /**

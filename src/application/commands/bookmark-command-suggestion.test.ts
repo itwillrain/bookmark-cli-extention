@@ -5,23 +5,28 @@ import { suggestBookmarkCommands } from "./bookmark-command-suggestion";
 const firstSuggestionIndex = 0;
 
 /**
- * Bookmark command suggestionのテストスイート。
+ * Bookmark command suggestionの空入力テストスイート。
  */
-describe("suggestBookmarkCommands", (): void => {
+describe("suggestBookmarkCommands empty input", (): void => {
   /**
-   * 空入力では主要commandを返すことを検証。
+   * 空入力ではcommand suggestionを返さないことを検証。
    */
-  it("returns initial command suggestions", (): void => {
-    expect(suggestBookmarkCommands("").map((suggestion) => suggestion.commandName)).toStrictEqual([
-      "find",
-      "go",
-      "ls",
-      "cd",
-      "pwd",
-      "tree",
-    ]);
+  it("returns no command suggestions before typing starts", (): void => {
+    expect(suggestBookmarkCommands("")).toStrictEqual([]);
   });
 
+  /**
+   * 空白だけの入力ではcommand suggestionを返さないことを検証。
+   */
+  it("returns no command suggestions for whitespace-only input", (): void => {
+    expect(suggestBookmarkCommands("   ")).toStrictEqual([]);
+  });
+});
+
+/**
+ * Bookmark command suggestionのprefixテストスイート。
+ */
+describe("suggestBookmarkCommands prefix", (): void => {
   /**
    * 入力prefixに一致するcommandだけ返すことを検証。
    */
@@ -30,6 +35,25 @@ describe("suggestBookmarkCommands", (): void => {
       "find",
       "freq",
     ]);
+  });
+
+  /**
+   * L prefixではlsとllを補完候補へ出すことを検証。
+   */
+  it("suggests ls and ll by l prefix", (): void => {
+    expect(suggestBookmarkCommands("l").map((suggestion) => suggestion.commandName)).toStrictEqual([
+      "ls",
+      "ll",
+    ]);
+  });
+
+  /**
+   * Clear commandをprefixから補完候補へ出せることを検証。
+   */
+  it("suggests clear command by prefix", (): void => {
+    expect(suggestBookmarkCommands("cl").map((suggestion) => suggestion.commandName)).toStrictEqual(
+      ["clear"],
+    );
   });
 
   /**
