@@ -22,6 +22,8 @@ Popupは疑似CLI本体ではなく、設定画面として扱います。
 - 実行済みcommandと実行結果はscrollback transcriptとして上から下へ積む
 - 実行後は入力欄を空に戻し、次のpromptをtranscript末尾に表示する
 - transcriptが画面高を超えた場合は、terminal viewportを最下部へ追従させる
+- terminal viewportの最下部追従は、command実行でtranscriptが増えたときだけ行う
+- 入力中promptは下部固定せず、scrollback transcriptの末尾行として扱う
 - コマンド履歴を上キー、下キー、`Ctrl+p`、`Ctrl+n` で再利用できるようにする
 - 入力中はfish shellのように補完候補やエラーを現在promptの下へfloating表示する
 - 補完候補は現在promptより上には表示しない
@@ -234,6 +236,8 @@ cd 2
 候補の表示領域は現在promptの下へ置き、入力中の補完結果が下方向へ流れる感覚を優先します。
 
 `ls` や `cd ./` のような入力中補完候補は、現在promptより上に出しません。
+
+候補表示や入力編集中の変化だけではterminal viewportを自動scrollしません。
 
 Tabキーは候補を順に選択します。
 

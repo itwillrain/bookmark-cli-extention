@@ -100,7 +100,9 @@ Componentは小さく分けます。
 
 Terminal panelはviewport高に収め、scrollback transcriptだけを内側でscrollさせます。
 
-transcript、入力値、補完候補、選択状態が変わった場合はterminal viewportを最下部へ追従させ、通常のterminalと同じように最新promptを見える位置に保ちます。
+command実行でtranscriptが増えた場合だけterminal viewportを最下部へ追従させ、通常のterminalと同じように最新promptを見える位置に保ちます。
+
+入力中promptは下部固定せず、scrollback transcriptの末尾に置きます。
 
 補完候補は現在promptの直下にfloating表示します。
 
