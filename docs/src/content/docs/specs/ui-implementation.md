@@ -100,6 +100,10 @@ Dedicated extension pageは実際の別windowとして開くため、Presentatio
 
 現在入力中のpromptはtranscript末尾に置き、実行後はその入力と結果をtranscript entryへ固定します。
 
+結果一覧を持たないstatusやerrorは、実行済みcommand行の次のoutput行として描画します。
+
+たとえばunknown commandは、prompt行に混ぜず `Unknown command: <command>` を次の行に表示します。
+
 Terminal surfaceはviewport高に収め、scrollback transcriptだけを内側でscrollさせます。
 
 Scrollback transcriptは操作上scroll可能にしますが、CLI感を保つため視覚上のscrollbarは隠します。

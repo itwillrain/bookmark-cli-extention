@@ -28,6 +28,12 @@ const emptyResultItemCount = 0;
 /** 空のtranscript item件数。 */
 const emptyTranscriptEntryCount = 0;
 
+/** 空のstatus text。 */
+const emptyStatusText = "";
+
+/** Promptだけのcommandで出すstatus text。 */
+const readyStatusText = "Ready";
+
 /** 最後のentryを求めるoffset。 */
 const lastEntryOffset = 1;
 
@@ -58,6 +64,54 @@ const resolveTranscriptResultCursor = (
 };
 
 /**
+ * Transcript entryがresult itemを持つか判定。
+ * @param {BookmarkCliTranscriptEntry} entry Transcript entry。
+ * @returns {boolean} result itemがあればtrue。
+ */
+const hasTranscriptResultItems = (entry: BookmarkCliTranscriptEntry): boolean =>
+  entry.resultItems.length !== emptyResultItemCount;
+
+/**
+ * Status textをoutput lineとして表示できるか判定。
+ * @param {BookmarkCliTranscriptEntry} entry Transcript entry。
+ * @returns {boolean} output lineとして表示するならtrue。
+ */
+const canRenderTranscriptStatusOutput = (entry: BookmarkCliTranscriptEntry): boolean =>
+  !hasTranscriptResultItems(entry) &&
+  entry.statusText !== emptyStatusText &&
+  entry.statusText !== readyStatusText;
+
+/**
+ * Transcript entryのinline status textを描画。
+ * @param {BookmarkCliTranscriptEntry} entry Transcript entry。
+ * @returns {ReactElement | false} Inline status text element。
+ */
+const renderTranscriptInlineStatus = (entry: BookmarkCliTranscriptEntry): ReactElement | false => {
+  if (!hasTranscriptResultItems(entry)) {
+    return false;
+  }
+
+  return <span className="text-xs text-zinc-600">{entry.statusText}</span>;
+};
+
+/**
+ * Transcript entryのstatus output lineを描画。
+ * @param {BookmarkCliTranscriptEntry} entry Transcript entry。
+ * @returns {ReactElement | false} Status output line element。
+ */
+const renderTranscriptStatusOutput = (entry: BookmarkCliTranscriptEntry): ReactElement | false => {
+  if (!canRenderTranscriptStatusOutput(entry)) {
+    return false;
+  }
+
+  return (
+    <p className="mt-1 whitespace-pre-wrap text-sm text-zinc-400" data-output="status">
+      {entry.statusText}
+    </p>
+  );
+};
+
+/**
  * Transcript entryのresult listを描画。
  * @param {BookmarkCliTranscriptListProps} props Transcript list props。
  * @param {BookmarkCliTranscriptEntry} entry Transcript entry。
@@ -69,7 +123,7 @@ const renderTranscriptResultList = (
   entry: BookmarkCliTranscriptEntry,
   isLatestEntry: boolean,
 ): ReactElement | false => {
-  if (entry.resultItems.length === emptyResultItemCount) {
+  if (!hasTranscriptResultItems(entry)) {
     return false;
   }
 
@@ -106,8 +160,9 @@ const renderTranscriptEntry = (
       <p className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-baseline gap-2">
         <BookmarkCliPrompt preferNerdFont={props.preferNerdFont} promptStyle={props.promptStyle} />
         <span className="min-w-0 truncate text-zinc-100">{entry.inputValue}</span>
-        <span className="text-xs text-zinc-600">{entry.statusText}</span>
+        {renderTranscriptInlineStatus(entry)}
       </p>
+      {renderTranscriptStatusOutput(entry)}
       {renderTranscriptResultList(props, entry, isLatestEntry)}
     </article>
   );

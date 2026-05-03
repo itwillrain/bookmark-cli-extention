@@ -23,6 +23,7 @@ Popupは疑似CLI本体ではなく、設定画面として扱います。
 - terminal surfaceをクリックした場合はcommand inputへfocusを戻し、CLI操作中にfocusが外れたままにならないようにする
 - Dedicated extension pageは別windowで開くため、画面内にはwindow風headerやtraffic light装飾を描画しない
 - 実行済みcommandと実行結果はscrollback transcriptとして上から下へ積む
+- 結果一覧を持たないstatusやerrorは、実行済みcommand行の右側ではなく次のoutput行に表示する
 - 実行後は入力欄を空に戻し、次のpromptをtranscript末尾に表示する
 - transcriptが画面高を超えた場合は、terminal viewportを最下部へ追従させる
 - terminal viewportはscroll可能にするが、CLI感を保つため視覚上のscrollbarは表示しない

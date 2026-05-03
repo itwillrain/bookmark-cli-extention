@@ -38,6 +38,9 @@ const suggestionsVisibleAttribute = 'data-suggestions="visible"';
 /** Command suggestions aria-label属性。 */
 const commandSuggestionsAriaLabelAttribute = 'aria-label="Command suggestions"';
 
+/** Status output属性。 */
+const statusOutputAttribute = 'data-output="status"';
+
 /** Powerline prompt数。 */
 const expectedPowerlinePromptCount = 2;
 
@@ -52,6 +55,12 @@ const inputValue = "find stripe";
 
 /** Status text fixture。 */
 const statusText = "1 candidate";
+
+/** Unknown command input fixture。 */
+const unknownCommandInputValue = "/FE/HTML";
+
+/** Unknown command status fixture。 */
+const unknownCommandStatusText = "Unknown command: /FE/HTML";
 
 /** 検索結果fixture。 */
 const resultItems = [
@@ -116,6 +125,20 @@ const baseProps = {
       inputValue,
       resultItems,
       statusText,
+    },
+  ],
+} satisfies BookmarkCliScreenProps;
+
+/** Unknown command表示用Bookmark CLI screen props fixture。 */
+const unknownCommandProps = {
+  ...baseProps,
+  inputValue: "",
+  transcriptEntries: [
+    {
+      id: "entry-unknown",
+      inputValue: unknownCommandInputValue,
+      resultItems: [],
+      statusText: unknownCommandStatusText,
     },
   ],
 } satisfies BookmarkCliScreenProps;
@@ -212,5 +235,24 @@ describe("BookmarkCliScreen prompt", (): void => {
 
     expect(html).toContain(suggestionsHiddenAttribute);
     expect(html).not.toContain(suggestionsVisibleAttribute);
+  });
+});
+
+/**
+ * Bookmark CLI screenのtranscript output表示テストスイート。
+ */
+describe("BookmarkCliScreen transcript output", (): void => {
+  /**
+   * Resultがないstatus textをcommand行の次のoutput行へ描画することを検証。
+   */
+  it("renders status-only output on the next transcript line", (): void => {
+    const html = renderToStaticMarkup(createElement(BookmarkCliScreen, unknownCommandProps));
+    const transcriptInputIndex = html.indexOf(unknownCommandInputValue);
+    const statusOutputIndex = html.indexOf(statusOutputAttribute);
+    const statusTextIndex = html.indexOf(unknownCommandStatusText);
+
+    expect(transcriptInputIndex).toBeGreaterThan(missingIndex);
+    expect(statusOutputIndex).toBeGreaterThan(transcriptInputIndex);
+    expect(statusTextIndex).toBeGreaterThan(statusOutputIndex);
   });
 });
