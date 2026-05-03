@@ -1,11 +1,14 @@
+/* oxlint-disable typescript-eslint/prefer-readonly-parameter-types -- Reactのref propsに合わせるため。 */
+
 import type {
   BookmarkCliResultItem,
   BookmarkCliResultListProps,
 } from "./bookmark-cli-result-list-types";
-import type { CSSProperties, ReactElement } from "react";
+import { type CSSProperties, type ReactElement, type RefObject, useEffect, useRef } from "react";
 import { BookmarkCliResultContent } from "./bookmark-cli-result-content";
 import { BookmarkCliResultSegments } from "./bookmark-cli-result-segments";
 import type { ResultCursorIndex } from "../../../domain/bookmarks/result-cursor";
+import { scrollSelectedBookmarkCliResultIntoView } from "../bookmark-cli-result-scroll";
 
 export type {
   BookmarkCliResultItem,
@@ -41,6 +44,9 @@ const defaultResultItemDepth = 1;
  * Tree depthごとのindent幅です。
  */
 const treeIndentStepRem = 1.25;
+
+/** 選択中resultをscroll対象として示す属性値です。 */
+const selectedResultScrollTarget = "selected-result";
 
 /**
  * Indentなしの幅です。
@@ -127,6 +133,14 @@ interface ResultItemRenderInput {
   readonly itemIndex: number;
   /** 選択中result indexです。 */
   readonly selectedResultIndex: ResultCursorIndex;
+  /** 選択中result item refです。 */
+  readonly selectedResultItemRef: RefObject<HTMLLIElement | null>;
+}
+
+/** 選択中result itemにだけ付与するref propsです。 */
+interface ResultItemRefProps {
+  /** 選択中result item refです。 */
+  readonly ref: RefObject<HTMLLIElement | null>;
 }
 
 /**
@@ -148,6 +162,32 @@ const createResultItemClassName = (input: ResultItemRenderInput): string => {
   }
 
   return "grid grid-cols-[minmax(0,16rem)_minmax(0,1fr)_auto] items-start gap-3 py-1.5 pr-2 text-sm";
+};
+
+/**
+ * 選択中result itemのscroll target属性を返します。
+ * @param {ResultItemRenderInput} input Result item描画入力です。
+ * @returns {string} Scroll target属性値です。
+ */
+const resolveResultScrollTarget = (input: ResultItemRenderInput): string => {
+  if (isSelectedResultItem(input)) {
+    return selectedResultScrollTarget;
+  }
+
+  return "";
+};
+
+/**
+ * 選択中result itemへだけref propsを作ります。
+ * @param {ResultItemRenderInput} input Result item描画入力です。
+ * @returns {Partial<ResultItemRefProps>} 選択中item ref propsです。
+ */
+const createResultItemRefProps = (input: ResultItemRenderInput): Partial<ResultItemRefProps> => {
+  if (isSelectedResultItem(input)) {
+    return { ref: input.selectedResultItemRef };
+  }
+
+  return {};
 };
 
 /**
@@ -174,8 +214,10 @@ const renderResultItem = (input: ResultItemRenderInput): ReactElement => (
   <li
     aria-selected={isSelectedResultItem(input)}
     className={createResultItemClassName(input)}
+    data-scroll-target={resolveResultScrollTarget(input)}
     key={`${formatResultNumber(input.itemIndex)}:${input.item.kind}:${input.item.folderPath}:${input.item.title}`}
     style={createResultItemStyle(input.item)}
+    {...createResultItemRefProps(input)}
   >
     <BookmarkCliResultSegments
       folderPath={input.item.folderPath}
@@ -195,6 +237,15 @@ const renderResultItem = (input: ResultItemRenderInput): ReactElement => (
  * @returns {ReactElement} Result listのReact elementです。
  */
 export const BookmarkCliResultList = (props: BookmarkCliResultListProps): ReactElement => {
+  const selectedResultItemRef = useRef<HTMLLIElement>(null);
+
+  useEffect((): void => {
+    scrollSelectedBookmarkCliResultIntoView({
+      selectedResultIndex: props.selectedResultIndex,
+      target: selectedResultItemRef.current,
+    });
+  }, [props.resultItems.length, props.selectedResultIndex]);
+
   if (props.resultItems.length === emptyResultItemCount) {
     return <p className="py-1.5 text-sm text-zinc-600">{emptyResultText}</p>;
   }
@@ -206,6 +257,7 @@ export const BookmarkCliResultList = (props: BookmarkCliResultListProps): ReactE
           item,
           itemIndex,
           selectedResultIndex: props.selectedResultIndex,
+          selectedResultItemRef,
         }),
       )}
     </ul>

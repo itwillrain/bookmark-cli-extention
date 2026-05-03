@@ -296,6 +296,8 @@ Command suggestionはfish shellの補完に近い操作感を目指します。
 
 `Tab` による候補選択中もkeyboard focusはcommand inputに残し、選択中候補を `scrollIntoView({ block: "nearest", inline: "nearest" })` で表示範囲へ追従させます。
 
+結果一覧をTab選択する場合も同じ方針で、DOM focusはcommand inputに残し、選択中result itemだけを表示範囲へ追従させます。
+
 `cd ./` や `go ./` のようにpath入力へ入った場合は、現在ディレクトリ配下の存在するfolderを候補として表示します。
 
 選択中の候補やpreview表示中の状態は、視覚的に分かるようにします。
