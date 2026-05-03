@@ -11,6 +11,12 @@ const previewOptionName = "--preview";
 /** Yes option名。 */
 const yesOptionName = "--yes";
 
+/** Force option名。 */
+const forceOptionName = "-f";
+
+/** Long force option名。 */
+const longForceOptionName = "--force";
+
 /** 空文字。 */
 const emptyString = "";
 
@@ -35,6 +41,22 @@ const isOrganizeOptionToken = (token: string): boolean =>
  */
 const createOrganizeValueTokens = (queryParts: readonly string[]): readonly string[] =>
   queryParts.filter((token) => !isOrganizeOptionToken(token));
+
+/**
+ * Rm command optionかを判定。
+ * @param {string} token 判定対象token。
+ * @returns {boolean} Rm command optionならtrue。
+ */
+const isRemoveOptionToken = (token: string): boolean =>
+  token === forceOptionName || token === longForceOptionName;
+
+/**
+ * Rm commandの値tokenだけを抽出。
+ * @param {readonly string[]} queryParts command名を除いたtoken一覧。
+ * @returns {readonly string[]} optionを除いた値token一覧。
+ */
+const createRemoveValueTokens = (queryParts: readonly string[]): readonly string[] =>
+  queryParts.filter((token) => !isRemoveOptionToken(token));
 
 /**
  * 二重引用符で囲まれた入力を素朴に外す。
@@ -66,6 +88,14 @@ const hasPreviewOption = (queryParts: readonly string[]): boolean =>
  * @returns {boolean} yes指定があればtrue。
  */
 const hasYesOption = (queryParts: readonly string[]): boolean => queryParts.includes(yesOptionName);
+
+/**
+ * Force指定があるかを判定。
+ * @param {readonly string[]} queryParts command名を除いたtoken一覧。
+ * @returns {boolean} force指定があればtrue。
+ */
+const hasForceOption = (queryParts: readonly string[]): boolean =>
+  queryParts.includes(forceOptionName) || queryParts.includes(longForceOptionName);
 
 /**
  * Mkdir commandを解析。
@@ -105,13 +135,12 @@ export const parseMoveBookmarkCommand = (queryParts: readonly string[]): MoveBoo
 export const parseRemoveBookmarkCommand = (
   queryParts: readonly string[],
 ): RemoveBookmarkCommand => {
-  const [targetInput = emptyString] = createOrganizeValueTokens(queryParts);
+  const [targetInput = emptyString] = createRemoveValueTokens(queryParts);
 
   return {
+    force: hasForceOption(queryParts),
     kind: "rm",
-    preview: hasPreviewOption(queryParts),
     targetInput,
-    yes: hasYesOption(queryParts),
   };
 };
 

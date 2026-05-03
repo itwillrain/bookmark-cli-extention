@@ -25,6 +25,8 @@ JSON出力は `--format json` で指定します。
 
 破壊的操作はpreviewまたは確認を挟みます。
 
+`rm` はUnix commandの操作感に寄せ、通常実行では対話確認を挟み、`-f` または `--force` で確認なしに削除します。
+
 ## コマンド一覧
 
 | コマンド | 目的                                   | v1   |
@@ -343,19 +345,27 @@ mv "GitHub" Work/DevTools
 Bookmarkを削除します。
 
 ```bash
-rm <item> [--preview] [--yes]
+rm <item>
+rm -f <item>
+rm --force <item>
 ```
 
 ```bash
-rm 5 --preview
-rm 5 --yes
+rm 5
+rm -f 5
 ```
 
 v1ではfolder削除を扱いません。
 
-`--yes` がない場合は削除せず、previewを表示して `confirmation_required` を返します。
+`rm <item>` は対象を表示し、`Remove <title>? y/N` の確認待ちに入ります。
 
-代表的なエラーは `not_found`、`confirmation_required`、`permission_denied` です。
+確認待ちの次の入力で `y` または `yes` を入力すると削除します。
+
+`n`、`no`、空入力、またはそれ以外の入力は削除せず確認待ちを解除します。
+
+`-f` または `--force` を指定した場合は確認なしで削除します。
+
+代表的なエラーは `not_found`、`permission_denied` です。
 
 ## `rename`
 

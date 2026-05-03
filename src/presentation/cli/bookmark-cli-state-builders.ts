@@ -17,13 +17,24 @@ export const emptyResultItems = [] as const satisfies readonly BookmarkCliResult
  */
 export const createCommandState = (
   input: BookmarkCliCommandStateInput,
-): BookmarkCliCommandState => ({
-  currentDirectory: input.currentDirectory,
-  extensionState: input.extensionState,
-  lastResultEntries: input.lastResultEntries,
-  resultItems: input.resultItems,
-  statusText: input.statusText,
-});
+): BookmarkCliCommandState => {
+  const state = {
+    currentDirectory: input.currentDirectory,
+    extensionState: input.extensionState,
+    lastResultEntries: input.lastResultEntries,
+    resultItems: input.resultItems,
+    statusText: input.statusText,
+  } satisfies BookmarkCliCommandState;
+
+  if (!input.pendingConfirmation) {
+    return state;
+  }
+
+  return {
+    ...state,
+    pendingConfirmation: input.pendingConfirmation,
+  };
+};
 
 /**
  * Result itemなしの状態を作ります。

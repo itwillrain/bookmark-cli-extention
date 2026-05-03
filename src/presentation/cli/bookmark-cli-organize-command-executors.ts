@@ -1,3 +1,5 @@
+/* oxlint-disable max-lines -- 整理系command executorとrm確認待ち処理を同じPresentation境界に集約するため。 */
+
 import type {
   BookmarkCliCommandDependencies,
   BookmarkCliCommandState,
@@ -24,11 +26,32 @@ import { createCommandState, createEmptyResultState } from "./bookmark-cli-state
 /** Bookmark organizer未接続時のstatus text。 */
 const organizerUnavailableStatusText = "Bookmark organizer is not available";
 
+/** Remove対象がない場合のstatus text。 */
+const removeTargetMissingStatusText = "Remove target was not found";
+
 /** Preview status prefix。 */
 const previewStatusPrefix = "Preview";
 
 /** Executed status prefix。 */
 const executedStatusPrefix = "Executed";
+
+/** Remove確認status suffix。 */
+const removeConfirmationStatusSuffix = "? y/N";
+
+/** Removed status prefix。 */
+const removedStatusPrefix = "Removed";
+
+/** Cancelled rm status prefix。 */
+const cancelledRemoveStatusPrefix = "Cancelled rm";
+
+/** Confirm入力。 */
+const confirmAnswer = "y";
+
+/** Confirm入力の長いalias。 */
+const longConfirmAnswer = "yes";
+
+/** Noop promise。 */
+const noopPromise = Promise.resolve();
 
 /**
  * Bookmark organizerが必要なcommand依存から取得。
@@ -57,6 +80,40 @@ const createOrganizeStatusText = (result: OrganizeBookmarkResult): string => {
 };
 
 /**
+ * Remove確認status textを作成。
+ * @param {OrganizeBookmarkResult} result 削除操作結果。
+ * @returns {string} Remove確認status text。
+ */
+const createRemoveConfirmationStatusText = (result: OrganizeBookmarkResult): string => {
+  if (!result.ok) {
+    return result.message;
+  }
+
+  return `Remove ${result.value.preview.title}${removeConfirmationStatusSuffix}`;
+};
+
+/**
+ * Remove成功status textを作成。
+ * @param {OrganizeBookmarkResult} result 削除操作結果。
+ * @returns {string} Remove成功status text。
+ */
+const createRemoveExecutedStatusText = (result: OrganizeBookmarkResult): string => {
+  if (!result.ok) {
+    return result.message;
+  }
+
+  return `${removedStatusPrefix} ${result.value.preview.title}`;
+};
+
+/**
+ * Remove中止status textを作成。
+ * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存。
+ * @returns {string} Remove中止status text。
+ */
+const createRemoveCancelledStatusText = (dependencies: BookmarkCliCommandDependencies): string =>
+  `${cancelledRemoveStatusPrefix} ${dependencies.pendingConfirmation?.entry.title ?? ""}`;
+
+/**
  * 整理操作結果をcommand stateへ変換。
  * @param {OrganizeBookmarkResult} result 整理操作結果。
  * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存。
@@ -80,6 +137,60 @@ const createOrganizeCommandState = (
     ],
     statusText: createOrganizeStatusText(result),
   });
+};
+
+/**
+ * Rm command実行結果をcommand stateへ変換。
+ * @param {OrganizeBookmarkResult} result 削除操作結果。
+ * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存。
+ * @returns {BookmarkCliCommandState} 画面に反映する状態。
+ */
+const createRemoveCommandState = (
+  result: OrganizeBookmarkResult,
+  dependencies: BookmarkCliCommandDependencies,
+): BookmarkCliCommandState => {
+  if (!result.ok) {
+    return createEmptyResultState(dependencies, result.message);
+  }
+
+  if (result.value.executed) {
+    return createCommandState({
+      currentDirectory: dependencies.currentDirectory,
+      extensionState: dependencies.extensionState,
+      lastResultEntries: result.value.entries,
+      resultItems: createBookmarkCliResultItemsFromEntries(result.value.entries),
+      statusText: createRemoveExecutedStatusText(result),
+    });
+  }
+
+  const [entry] = result.value.entries;
+
+  if (!entry) {
+    return createEmptyResultState(dependencies, removeTargetMissingStatusText);
+  }
+
+  return createCommandState({
+    currentDirectory: dependencies.currentDirectory,
+    extensionState: dependencies.extensionState,
+    lastResultEntries: result.value.entries,
+    pendingConfirmation: {
+      entry,
+      kind: "rm",
+    },
+    resultItems: createBookmarkCliResultItemsFromEntries(result.value.entries),
+    statusText: createRemoveConfirmationStatusText(result),
+  });
+};
+
+/**
+ * 確認入力が承認かを判定。
+ * @param {string} inputValue 入力値。
+ * @returns {boolean} 承認入力ならtrue。
+ */
+const isConfirmedInput = (inputValue: string): boolean => {
+  const normalizedInput = inputValue.trim().toLowerCase();
+
+  return normalizedInput === confirmAnswer || normalizedInput === longConfirmAnswer;
 };
 
 /**
@@ -158,15 +269,63 @@ export const executeRemoveBookmarkCommand = async (
     return createEmptyResultState(dependencies, organizerUnavailableStatusText);
   }
 
-  return createOrganizeCommandState(
+  return createRemoveCommandState(
     await removeBookmark({
       currentDirectory: dependencies.currentDirectory,
+      force: command.force,
       lastResultEntries: dependencies.lastResultEntries,
       organizer,
-      preview: command.preview,
       repository: dependencies.repository,
       targetInput: command.targetInput,
-      yes: command.yes,
+    }),
+    dependencies,
+  );
+};
+
+/**
+ * 確認待ち入力を処理。
+ * @param {string} inputValue 確認入力。
+ * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存。
+ * @returns {Promise<BookmarkCliCommandState>} 画面に反映する状態。
+ */
+export const executePendingConfirmationCommand = async (
+  inputValue: string,
+  dependencies: BookmarkCliCommandDependencies,
+): Promise<BookmarkCliCommandState> => {
+  if (dependencies.pendingConfirmation?.kind !== "rm") {
+    await noopPromise;
+
+    return createEmptyResultState(dependencies, "");
+  }
+
+  if (!isConfirmedInput(inputValue)) {
+    await noopPromise;
+
+    return createCommandState({
+      currentDirectory: dependencies.currentDirectory,
+      extensionState: dependencies.extensionState,
+      lastResultEntries: [dependencies.pendingConfirmation.entry],
+      resultItems: createBookmarkCliResultItemsFromEntries([
+        dependencies.pendingConfirmation.entry,
+      ]),
+      statusText: createRemoveCancelledStatusText(dependencies),
+    });
+  }
+
+  const organizer = getOrganizer(dependencies);
+
+  if (!organizer) {
+    return createEmptyResultState(dependencies, organizerUnavailableStatusText);
+  }
+
+  return createRemoveCommandState(
+    await removeBookmark({
+      currentDirectory: dependencies.currentDirectory,
+      force: true,
+      lastResultEntries: [dependencies.pendingConfirmation.entry],
+      organizer,
+      repository: dependencies.repository,
+      targetInput: "1",
     }),
     dependencies,
   );

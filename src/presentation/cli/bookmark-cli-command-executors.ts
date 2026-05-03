@@ -16,6 +16,7 @@ export { executeMarkCommand } from "./bookmark-cli-mark-command-executors";
 export {
   executeMakeDirectoryCommand,
   executeMoveBookmarkCommand,
+  executePendingConfirmationCommand,
   executeRemoveBookmarkCommand,
   executeRenameBookmarkCommand,
 } from "./bookmark-cli-organize-command-executors";
