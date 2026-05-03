@@ -35,10 +35,38 @@ const researchFolderEntry = {
   title: "Research",
 } satisfies BookmarkEntry;
 
+/** Eza bookmark entry。 */
+const ezaBookmarkEntry = {
+  childrenCount: 0,
+  folderPath: "/Work",
+  id: "20",
+  kind: "bookmark",
+  parentId: "10",
+  title: "eza",
+  url: "https://github.com/eza-community/eza",
+} satisfies BookmarkEntry;
+
+/** Stripe bookmark entry。 */
+const stripeBookmarkEntry = {
+  childrenCount: 0,
+  folderPath: "/Work/Admin",
+  id: "21",
+  kind: "bookmark",
+  parentId: "11",
+  title: "Stripe Dashboard",
+  url: "https://dashboard.stripe.com/",
+} satisfies BookmarkEntry;
+
 /** Bookmark tree fixture。 */
 const bookmarkTree = {
-  bookmarks: [],
-  entries: [workFolderEntry, adminFolderEntry, researchFolderEntry],
+  bookmarks: [ezaBookmarkEntry, stripeBookmarkEntry],
+  entries: [
+    workFolderEntry,
+    adminFolderEntry,
+    stripeBookmarkEntry,
+    researchFolderEntry,
+    ezaBookmarkEntry,
+  ],
   folders: [workFolderEntry, adminFolderEntry, researchFolderEntry],
 } satisfies BookmarkTree;
 
@@ -113,6 +141,35 @@ describe("suggestBookmarkDirectoryPaths for go", (): void => {
     expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual([
       "go ./Admin",
       "go ./Research",
+      "go ./eza",
+    ]);
+  });
+
+  /**
+   * Go commandでは現在ディレクトリ直下のBookmarkをprefix filterして返すことを検証。
+   */
+  it("suggests bookmark paths for go current directory prefix", (): void => {
+    const suggestions = suggestBookmarkDirectoryPaths({
+      bookmarkTree,
+      currentDirectory: "/Work",
+      inputValue: "go ./e",
+    });
+
+    expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual(["go ./eza"]);
+  });
+
+  /**
+   * Go commandではfolder配下のBookmarkをpath prefixで返すことを検証。
+   */
+  it("suggests bookmark paths under a child folder for go path prefix", (): void => {
+    const suggestions = suggestBookmarkDirectoryPaths({
+      bookmarkTree,
+      currentDirectory: "/Work",
+      inputValue: "go ./Admin/S",
+    });
+
+    expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual([
+      "go ./Admin/Stripe Dashboard",
     ]);
   });
 });

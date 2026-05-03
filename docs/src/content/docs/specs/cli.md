@@ -281,18 +281,22 @@ go ./eza
 ```bash
 cd ./
 go ./
+go ./e
 mark --to Work/
 ```
 
 ```text
 ./Admin
 ./Research
+./eza
 Work/Admin
 Work/Docs
 Work/Research
 ```
 
 `cd ./` は現在ディレクトリ直下のfolderを候補にします。
+
+`go ./` は現在ディレクトリ直下のfolderとBookmarkを候補にします。
 
 `cd ../` は親ディレクトリ直下のfolderを候補にします。
 

@@ -4,6 +4,7 @@ import {
   getParentFolderPath,
   resolveFolderPath,
 } from "../../domain/bookmarks/current-directory";
+import { createGoBookmarkPathSuggestions } from "./bookmark-go-path-suggestion";
 
 /** Bookmark CLI directory suggestion。 */
 export interface BookmarkDirectorySuggestion {
@@ -75,6 +76,8 @@ export interface SuggestBookmarkDirectoryPathsInput {
 
 /** Directory path completion context。 */
 interface DirectoryPathCompletionContext {
+  /** Command名。 */
+  readonly commandName: string;
   /** 補完結果の前に付けるcommand部分。 */
   readonly commandPrefix: string;
   /** 補完対象path入力。 */
@@ -132,11 +135,13 @@ const getPathInput = (tokens: readonly string[]): string =>
 
 /**
  * Path入力からdirectory path completion contextを作成。
+ * @param {string} commandName command名。
  * @param {string} inputValue CLI入力値。
  * @param {string} pathInput path入力。
  * @returns {DirectoryPathCompletionContext | false} contextまたはfalse。
  */
 const createDirectoryPathCompletionContextFromPathInput = (
+  commandName: string,
   inputValue: string,
   pathInput: string,
 ): DirectoryPathCompletionContext | false => {
@@ -147,6 +152,7 @@ const createDirectoryPathCompletionContextFromPathInput = (
   }
 
   return {
+    commandName,
     commandPrefix: inputValue.slice(firstIndex, pathStartIndex),
     pathInput,
   };
@@ -165,12 +171,17 @@ const createDirectoryPathCompletionContext = (
   }
 
   const tokens = splitInputTokens(inputValue);
+  const commandName = getCommandName(tokens);
 
-  if (!isDirectoryCompletionCommandName(getCommandName(tokens))) {
+  if (!isDirectoryCompletionCommandName(commandName)) {
     return false;
   }
 
-  return createDirectoryPathCompletionContextFromPathInput(inputValue, getPathInput(tokens));
+  return createDirectoryPathCompletionContextFromPathInput(
+    commandName,
+    inputValue,
+    getPathInput(tokens),
+  );
 };
 
 /**
@@ -214,32 +225,32 @@ const isChildFolderEntry = (parentPath: CurrentDirectory, entry: BookmarkEntry):
   entry.kind === "folder" && getParentFolderPath(entry.folderPath) === parentPath;
 
 /**
- * Folder titleがprefixに一致するかを判定。
- * @param {string} title folder title。
+ * Entry titleがprefixに一致するかを判定。
+ * @param {string} title entry title。
  * @param {string} titlePrefix 入力中prefix。
  * @returns {boolean} 一致するならtrue。
  */
-const folderTitleMatchesPrefix = (title: string, titlePrefix: string): boolean =>
+const entryTitleMatchesPrefix = (title: string, titlePrefix: string): boolean =>
   title.toLowerCase().startsWith(titlePrefix.toLowerCase());
 
 /**
  * Directory suggestionを作成。
  * @param {DirectoryPathCompletionContext} context completion context。
  * @param {PathCompletionParts} parts path completion parts。
- * @param {BookmarkEntry} folderEntry folder entry。
+ * @param {BookmarkEntry} entry bookmarkまたはfolder entry。
  * @returns {BookmarkDirectorySuggestion} Directory suggestion。
  */
 const createDirectorySuggestion = (
   context: DirectoryPathCompletionContext,
   parts: PathCompletionParts,
-  folderEntry: BookmarkEntry,
+  entry: BookmarkEntry,
 ): BookmarkDirectorySuggestion => {
-  const pathCompletion = `${parts.pathCompletionBase}${folderEntry.title}`;
+  const pathCompletion = `${parts.pathCompletionBase}${entry.title}`;
 
   return {
     commandName: pathCompletion,
     completion: `${context.commandPrefix}${pathCompletion}`,
-    description: folderEntry.folderPath,
+    description: entry.url ?? entry.folderPath,
   };
 };
 
@@ -259,10 +270,21 @@ export const suggestBookmarkDirectoryPaths = (
 
   const parts = createPathCompletionParts(context.pathInput);
   const parentPath = resolveFolderPath(input.currentDirectory, parts.parentPathInput);
-
-  return input.bookmarkTree.folders
+  const folderSuggestions = input.bookmarkTree.folders
     .filter((entry) => isChildFolderEntry(parentPath, entry))
-    .filter((entry) => folderTitleMatchesPrefix(entry.title, parts.titlePrefix))
-    .map((entry) => createDirectorySuggestion(context, parts, entry))
-    .slice(firstIndex, maxDirectorySuggestionCount);
+    .filter((entry) => entryTitleMatchesPrefix(entry.title, parts.titlePrefix))
+    .map((entry) => createDirectorySuggestion(context, parts, entry));
+  const bookmarkSuggestions = createGoBookmarkPathSuggestions({
+    bookmarks: input.bookmarkTree.bookmarks,
+    commandName: context.commandName,
+    commandPrefix: context.commandPrefix,
+    parentPath,
+    pathCompletionBase: parts.pathCompletionBase,
+    titlePrefix: parts.titlePrefix,
+  });
+
+  return [...folderSuggestions, ...bookmarkSuggestions].slice(
+    firstIndex,
+    maxDirectorySuggestionCount,
+  );
 };
