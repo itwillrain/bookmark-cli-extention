@@ -23,7 +23,8 @@ Popupは疑似CLI本体ではなく、設定画面として扱います。
 - 実行後は入力欄を空に戻し、次のpromptをtranscript末尾に表示する
 - transcriptが画面高を超えた場合は、terminal viewportを最下部へ追従させる
 - コマンド履歴を上キー、下キー、`Ctrl+p`、`Ctrl+n` で再利用できるようにする
-- 入力中はFigのように補完候補やエラーを入力欄直下へ表示する
+- 入力中はFigやfish shellのように補完候補やエラーをfloating表示する
+- 補完候補はscrollback transcriptの高さを変えない
 - 破壊的操作は結果表示エリアで確認してから実行する
 - promptは `bookmark-cli $` を基準にし、Powerline風表示はprompt側へ限定する
 - 候補と結果一覧はterminalの出力としてplainな一覧表示にする
@@ -226,7 +227,9 @@ cd 2
 
 存在しないfolderを補完候補として作成しません。
 
-候補は入力欄の下に表示します。
+候補は現在のprompt付近にfloating popoverとして表示します。
+
+候補の表示、非表示、選択移動ではscrollback transcriptの高さを変えません。
 
 Tabキーは候補を順に選択します。
 

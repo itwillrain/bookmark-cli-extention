@@ -12,6 +12,12 @@ const selectedAriaAttribute = 'aria-selected="true"';
 /** 選択中aria属性の出現回数。 */
 const selectedAriaAttributeCount = 1;
 
+/** Floating layout属性。 */
+const floatingLayoutAttribute = 'data-layout="floating"';
+
+/** Listbox role属性。 */
+const listboxRoleAttribute = 'role="listbox"';
+
 /** 出現回数計算でsplit結果から引くoffset。 */
 const occurrenceSplitOffset = 1;
 
@@ -45,6 +51,21 @@ const countOccurrences = (text: string, token: string): number =>
  * Bookmark CLI suggestion listのテストスイート。
  */
 describe("BookmarkCliSuggestionList", (): void => {
+  /**
+   * Suggestionをfloating popoverとして描画できることを検証。
+   */
+  it("renders suggestions as a floating popover", (): void => {
+    const html = renderToStaticMarkup(
+      createElement(BookmarkCliSuggestionList, {
+        selectedSuggestionIndex,
+        suggestionItems,
+      }),
+    );
+
+    expect(html).toContain(floatingLayoutAttribute);
+    expect(html).toContain(listboxRoleAttribute);
+  });
+
   /**
    * 選択中suggestionをaria-selectedで描画できることを検証。
    */

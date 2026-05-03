@@ -26,6 +26,13 @@ export interface BookmarkCliSuggestionListProps {
 /** 空のitem count。 */
 const emptyItemCount = 0;
 
+/** Floating suggestion popoverのclassName。 */
+const suggestionListPopoverClassName = "pointer-events-none absolute inset-x-4 bottom-14 z-20";
+
+/** Floating suggestion listのclassName。 */
+const suggestionListClassName =
+  "max-h-56 overflow-hidden rounded-md border border-zinc-800 bg-zinc-950/95 p-1 shadow-2xl shadow-black/50 backdrop-blur";
+
 /** 選択中suggestion itemのclassName。 */
 const selectedSuggestionItemClassName =
   "grid grid-cols-[minmax(0,8rem)_minmax(0,1fr)_auto] items-center gap-3 rounded-sm bg-zinc-800/80 px-2 py-1 text-xs text-zinc-100 ring-1 ring-emerald-700/50";
@@ -76,6 +83,7 @@ const renderSuggestionItem = (input: SuggestionItemRenderInput): ReactElement =>
     aria-selected={isSelectedSuggestionItem(input)}
     className={createSuggestionItemClassName(input)}
     key={input.suggestionItem.commandName}
+    role="option"
   >
     <span className="truncate font-semibold text-emerald-300">
       {input.suggestionItem.commandName}
@@ -88,7 +96,7 @@ const renderSuggestionItem = (input: SuggestionItemRenderInput): ReactElement =>
 );
 
 /**
- * Fig風のcommand suggestion listを描画。
+ * Floating command suggestion listを描画。
  * @param {BookmarkCliSuggestionListProps} props Suggestion list props。
  * @returns {ReactElement | null} Suggestion list element。
  */
@@ -100,14 +108,20 @@ export const BookmarkCliSuggestionList = (
   }
 
   return (
-    <ol className="mt-3 space-y-1 border-b border-zinc-900 pb-3">
-      {props.suggestionItems.map((suggestionItem, suggestionItemIndex) =>
-        renderSuggestionItem({
-          selectedSuggestionIndex: props.selectedSuggestionIndex,
-          suggestionItem,
-          suggestionItemIndex,
-        }),
-      )}
-    </ol>
+    <aside
+      aria-label="Command suggestions"
+      className={suggestionListPopoverClassName}
+      data-layout="floating"
+    >
+      <ol className={suggestionListClassName} role="listbox">
+        {props.suggestionItems.map((suggestionItem, suggestionItemIndex) =>
+          renderSuggestionItem({
+            selectedSuggestionIndex: props.selectedSuggestionIndex,
+            suggestionItem,
+            suggestionItemIndex,
+          }),
+        )}
+      </ol>
+    </aside>
   );
 };
