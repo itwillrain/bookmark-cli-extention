@@ -225,11 +225,17 @@ tree Work --depth 3
 
 ```bash
 help [command]
+man <command>
+<command> --help
+<command> -h
 ```
 
 ```bash
 help
 help go
+man ls
+go --help
+ls -h
 ```
 
 代表的なエラーは `not_found` です。

@@ -69,6 +69,10 @@ const bookmarkCommandCatalog = [
     description: "画面上の実行結果を消す",
   },
   {
+    commandName: "help",
+    description: "コマンドの使い方を表示",
+  },
+  {
     commandName: "mark",
     description: "現在tabをBookmarkに保存",
   },

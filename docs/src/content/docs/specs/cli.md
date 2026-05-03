@@ -115,6 +115,7 @@ preview行は既定アクションを持ちません。
 - `go` と `find` のfuzzy検索を最初に実装する
 - `mark` で現在のタブを現在のディレクトリへ保存する
 - `ls`、`cd`、`pwd`、`tree` でBookmark Treeの現在地を扱う
+- `help`、`man <command>`、`<command> --help`、`<command> -h` でCLI内から使い方を確認できるようにする
 - 書き込み操作には確認または `--preview` を用意する
 - 人間が読む番号付き一覧と、機械が読むJSON形式を切り替えられるようにする
 - IDだけでなくfolder pathでも対象を指定できるようにする

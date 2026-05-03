@@ -8,6 +8,7 @@ export type {
   FindBookmarkCommand,
   FrequentBookmarksCommand,
   GoBookmarkCommand,
+  HelpBookmarkCommand,
   ListDirectoryCommand,
   MakeDirectoryCommand,
   MarkBookmarkCommand,

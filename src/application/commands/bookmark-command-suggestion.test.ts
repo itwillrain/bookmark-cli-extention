@@ -70,3 +70,17 @@ describe("suggestBookmarkCommands prefix", (): void => {
     expect(suggestBookmarkCommands("find stripe")).toStrictEqual([]);
   });
 });
+
+/**
+ * Bookmark help command suggestionのprefixテストスイート。
+ */
+describe("suggestBookmarkCommands help prefix", (): void => {
+  /**
+   * Help commandをprefixから補完候補へ出せることを検証。
+   */
+  it("suggests help command by prefix", (): void => {
+    expect(suggestBookmarkCommands("h").map((suggestion) => suggestion.commandName)).toStrictEqual([
+      "help",
+    ]);
+  });
+});

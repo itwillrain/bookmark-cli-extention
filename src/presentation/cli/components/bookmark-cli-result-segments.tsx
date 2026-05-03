@@ -10,6 +10,9 @@ const bookmarkKindLabel = "URL";
 /** Folder label。 */
 const folderKindLabel = "DIR";
 
+/** Help label。 */
+const helpKindLabel = "HELP";
+
 /** Preview label。 */
 const previewKindLabel = "PREV";
 
@@ -35,6 +38,10 @@ const formatKindLabel = (kind: BookmarkCliResultKind): string => {
 
   if (kind === "preview") {
     return previewKindLabel;
+  }
+
+  if (kind === "help") {
+    return helpKindLabel;
   }
 
   return folderKindLabel;
