@@ -223,6 +223,7 @@ const testSelectsCommandSuggestionBeforeResultItem = (): void => {
   const handled = executeSelectNextCompletionKeyboardAction({
     commandState: createCommandState(),
     event: createCommandInputKeyEvent(),
+    inputValue: initialInputValue,
     selectedResultIndex: resultIndex,
     selectedSuggestionIndex: suggestionIndex,
     setInputValue: ignoreStateAction,
@@ -257,6 +258,7 @@ const testClearsSelectedResultAfterConfirmingResultCompletion = (): void => {
   const handled = executeConfirmCompletionKeyboardAction({
     commandState: createCommandState(),
     event: createCommandInputKeyEvent(),
+    inputValue: initialInputValue,
     selectedResultIndex: resultIndex,
     selectedSuggestionIndex: completionCursorCleared,
     setInputValue: createInputValueSetter(

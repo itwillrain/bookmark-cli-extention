@@ -29,6 +29,8 @@ export interface CompletionKeyboardActionInput {
   readonly commandState: BookmarkCliCommandState;
   /** 入力欄key event。 */
   readonly event: CommandInputKeyEvent;
+  /** 現在のCLI入力値。 */
+  readonly inputValue: string;
   /** 選択中result index。 */
   readonly selectedResultIndex: ResultCursorIndex;
   /** 選択中suggestion index。 */
@@ -100,7 +102,7 @@ const completeSelectedResult = (input: CompletionKeyboardActionInput): boolean =
     return false;
   }
 
-  input.setInputValue(createBookmarkCliCompletionInput(selectedItem));
+  input.setInputValue(createBookmarkCliCompletionInput(selectedItem, input.inputValue));
   input.setSelectedResultIndex(resultCursorCleared);
 
   return true;

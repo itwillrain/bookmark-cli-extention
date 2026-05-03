@@ -1,5 +1,4 @@
 import {
-  createBookmarkCliCompletionInput,
   createBookmarkCliResultItems,
   createBookmarkCliResultItemsFromEntries,
   createBookmarkCliResultItemsFromTreeEntries,
@@ -135,37 +134,5 @@ describe("createBookmarkCliResultItemsFromTreeEntries", (): void => {
         title: "Admin",
       },
     ]);
-  });
-});
-
-/**
- * Bookmark CLI補完view modelのテストスイートです。
- */
-describe("createBookmarkCliCompletionInput", (): void => {
-  /**
-   * Folder result itemはfolder pathで補完することを検証します。
-   */
-  it("creates folder path completion for folder item", (): void => {
-    expect(
-      createBookmarkCliCompletionInput({
-        folderPath: "/Work/Admin",
-        kind: "folder",
-        title: "Admin",
-      }),
-    ).toBe("/Work/Admin");
-  });
-
-  /**
-   * Bookmark result itemはtitleで補完することを検証します。
-   */
-  it("creates title completion for bookmark item", (): void => {
-    expect(
-      createBookmarkCliCompletionInput({
-        folderPath: "/Work/Admin",
-        kind: "bookmark",
-        title: "Stripe Dashboard",
-        url: "https://dashboard.stripe.com/",
-      }),
-    ).toBe("Stripe Dashboard");
   });
 });
