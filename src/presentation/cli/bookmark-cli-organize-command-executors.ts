@@ -21,7 +21,11 @@ import {
   createBookmarkCliResultItemFromOrganizationPreview,
   createBookmarkCliResultItemsFromEntries,
 } from "./bookmark-cli-view-model";
-import { createCommandState, createEmptyResultState } from "./bookmark-cli-state-builders";
+import {
+  createCommandState,
+  createEmptyResultState,
+  emptyResultItems,
+} from "./bookmark-cli-state-builders";
 
 /** Bookmark organizer未接続時のstatus text。 */
 const organizerUnavailableStatusText = "Bookmark organizer is not available";
@@ -158,7 +162,7 @@ const createRemoveCommandState = (
       currentDirectory: dependencies.currentDirectory,
       extensionState: dependencies.extensionState,
       lastResultEntries: result.value.entries,
-      resultItems: createBookmarkCliResultItemsFromEntries(result.value.entries),
+      resultItems: emptyResultItems,
       statusText: createRemoveExecutedStatusText(result),
     });
   }
@@ -177,7 +181,7 @@ const createRemoveCommandState = (
       entry,
       kind: "rm",
     },
-    resultItems: createBookmarkCliResultItemsFromEntries(result.value.entries),
+    resultItems: emptyResultItems,
     statusText: createRemoveConfirmationStatusText(result),
   });
 };
@@ -305,9 +309,7 @@ export const executePendingConfirmationCommand = async (
       currentDirectory: dependencies.currentDirectory,
       extensionState: dependencies.extensionState,
       lastResultEntries: [dependencies.pendingConfirmation.entry],
-      resultItems: createBookmarkCliResultItemsFromEntries([
-        dependencies.pendingConfirmation.entry,
-      ]),
+      resultItems: emptyResultItems,
       statusText: createRemoveCancelledStatusText(dependencies),
     });
   }
