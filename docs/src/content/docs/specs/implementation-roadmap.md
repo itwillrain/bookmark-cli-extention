@@ -45,13 +45,15 @@ Chrome APIに依存する処理はPortの外側へ閉じ込めます。
 - Tailwind CSSで実装する基本layout
 - command promptとtranscript形式の結果一覧
 - `go` 実行時のBookmark URL open
+- `cd ./` による現在ディレクトリ配下folder suggestion
 
 完了条件は次のとおりです。
 
 - `find stripe` で一致したBookmarkが番号付き一覧で表示される
 - `go stripe` で最上位のBookmarkが開く
 - Bookmark Tree正規化とfuzzy検索にテストがある
-- Fuse.jsのscoreをCommandResultのscoreへ変換できる
+- Fuse.jsのscoreをCommandResultのdebug用scoreへ変換できる
+- `cd ./` で現在ディレクトリ配下のfolder候補が表示される
 - Chrome Bookmarks APIの呼び出しがInfrastructure層に閉じている
 - Application層がChrome APIを直接参照していない
 
@@ -187,7 +189,7 @@ Chrome APIに依存する処理はPortの外側へ閉じ込めます。
 - `recent`
 - `freq`
 - `--limit`
-- Powerline風segment UI
+- Powerline風prompt
 - plain text fallback
 - Nerd Font設定
 - React componentの細分化
@@ -200,8 +202,10 @@ Chrome APIに依存する処理はPortの外側へ閉じ込めます。
 - `Ctrl+k`
 - `Ctrl+u`
 - `Ctrl+w`
-- `Tab` 補完
+- `Tab` による補完候補選択
+- `Enter` による選択中補完候補の確定
 - `Esc`
+- `clear`
 - command suggestion表示
 - command transcript表示
 
@@ -210,13 +214,16 @@ Chrome APIに依存する処理はPortの外側へ閉じ込めます。
 - `recent` が直近に開いたBookmarkを10件表示する
 - `freq` がよく開くBookmarkを10件表示する
 - `--limit 20` で表示件数を変えられる
-- 結果一覧がPowerline風segment UIで表示される
+- promptがPowerline風に表示される
+- 結果一覧はplainなterminal outputとして表示される
 - Fontがない場合もplain textで意味が読める
 - 主要UI componentがStorybookで確認できる
 - 上キー、下キー、`Ctrl+p`、`Ctrl+n` で履歴を移動できる
 - `Ctrl+a`、`Ctrl+e`、`Ctrl+u`、`Ctrl+k`、`Ctrl+w` で入力を編集できる
-- 入力中のcommand suggestionを`Tab`で補完できる
+- 入力中のcommand suggestionを`Tab`で選択できる
+- 選択中のcommand suggestionを`Enter`で入力へ確定できる
 - 実行したpromptとoutputがtranscriptへ追加される
+- `clear` でscrollback transcriptを削除できる
 
 ## 実装順まとめ
 

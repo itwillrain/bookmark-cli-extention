@@ -4,6 +4,12 @@ import type { BookmarkOrganizationPreview } from "../../domain/bookmarks/bookmar
 import type { BookmarkSearchResult } from "../../domain/search/bookmark-search";
 import type { BookmarkTreeViewEntry } from "../../domain/bookmarks/bookmark-tree-view";
 
+/** Bookmark検索結果変換option。 */
+export interface CreateBookmarkCliResultItemsOptions {
+  /** Debug情報を表示するか。 */
+  readonly debug: boolean;
+}
+
 /**
  * URLを持つBookmark entryです。
  */
@@ -63,12 +69,24 @@ const createBookmarkCliResultItemFromBookmarkEntry = (
 /**
  * Bookmark検索結果をCLI表示itemへ変換します。
  * @param {BookmarkSearchResult} result Bookmark検索結果です。
+ * @param {CreateBookmarkCliResultItemsOptions} options Bookmark検索結果変換optionです。
  * @returns {BookmarkCliResultItem} CLI表示itemです。
  */
-const createBookmarkCliResultItem = (result: BookmarkSearchResult): BookmarkCliResultItem => ({
-  ...createBookmarkCliResultItemFromBookmarkEntry(result.entry),
-  score: result.score,
-});
+const createBookmarkCliResultItem = (
+  result: BookmarkSearchResult,
+  options: CreateBookmarkCliResultItemsOptions,
+): BookmarkCliResultItem => {
+  const item = createBookmarkCliResultItemFromBookmarkEntry(result.entry);
+
+  if (!options.debug) {
+    return item;
+  }
+
+  return {
+    ...item,
+    score: result.score,
+  };
+};
 
 /**
  * Bookmark tree view entryをCLI表示itemへ変換します。
@@ -85,11 +103,14 @@ const createBookmarkCliTreeResultItem = (
 /**
  * Bookmark検索結果一覧をCLI表示item一覧へ変換します。
  * @param {readonly BookmarkSearchResult[]} results Bookmark検索結果一覧です。
+ * @param {CreateBookmarkCliResultItemsOptions} options Bookmark検索結果変換optionです。
  * @returns {readonly BookmarkCliResultItem[]} CLI表示item一覧です。
  */
 export const createBookmarkCliResultItems = (
   results: readonly BookmarkSearchResult[],
-): readonly BookmarkCliResultItem[] => results.map((result) => createBookmarkCliResultItem(result));
+  options: CreateBookmarkCliResultItemsOptions,
+): readonly BookmarkCliResultItem[] =>
+  results.map((result) => createBookmarkCliResultItem(result, options));
 
 /**
  * Bookmark entry一覧をCLI表示item一覧へ変換します。

@@ -32,6 +32,11 @@ const changeDirectoryToRootCommandInput = "cd";
 const printWorkingDirectoryCommandInput = "pwd";
 
 /**
+ * Clear commandの入力です。
+ */
+const clearCommandInput = "clear";
+
+/**
  * Tree commandの入力です。
  */
 const showDirectoryTreeCommandInput = "tree Work --depth 3";
@@ -85,6 +90,7 @@ describe("parseBookmarkCommand search commands", (): void => {
    */
   it("parses find command with query", (): void => {
     expect(parseBookmarkCommand(findCommandInput)).toStrictEqual({
+      debug: false,
       kind: "find",
       query: "stripe dashboard",
     });
@@ -95,6 +101,7 @@ describe("parseBookmarkCommand search commands", (): void => {
    */
   it("parses go command with normalized whitespace", (): void => {
     expect(parseBookmarkCommand(goCommandInput)).toStrictEqual({
+      debug: false,
       kind: "go",
       query: "/Work/Admin",
     });
@@ -141,6 +148,15 @@ describe("parseBookmarkCommand directory commands", (): void => {
   it("parses pwd command", (): void => {
     expect(parseBookmarkCommand(printWorkingDirectoryCommandInput)).toStrictEqual({
       kind: "pwd",
+    });
+  });
+
+  /**
+   * Clear commandを解析できることを検証します。
+   */
+  it("parses clear command", (): void => {
+    expect(parseBookmarkCommand(clearCommandInput)).toStrictEqual({
+      kind: "clear",
     });
   });
 });

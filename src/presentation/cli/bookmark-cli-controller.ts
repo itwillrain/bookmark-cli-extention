@@ -241,6 +241,7 @@ const executeParsedTagCommand = async (
  */
 const parsedBookmarkCommandExecutors = {
   cd: executeParsedChangeDirectoryCommand,
+  clear: executeParsedEmptyCommand,
   empty: executeParsedEmptyCommand,
   find: executeParsedFindCommand,
   freq: executeParsedUsageCommand,

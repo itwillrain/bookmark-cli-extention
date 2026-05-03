@@ -2,10 +2,11 @@ import {
   type ResultCursorIndex,
   resultCursorCleared,
 } from "../../../domain/bookmarks/result-cursor";
+import { BookmarkCliPrompt } from "./bookmark-cli-prompt";
 import { BookmarkCliResultList } from "./bookmark-cli-result-list";
 import type { BookmarkCliTranscriptEntry } from "../bookmark-cli-transcript";
+import type { PromptStyle } from "../../../domain/storage/extension-state";
 import type { ReactElement } from "react";
-import type { ResultViewStyle } from "../../../domain/storage/extension-state";
 
 /**
  * Bookmark CLI transcript list props。
@@ -13,16 +14,13 @@ import type { ResultViewStyle } from "../../../domain/storage/extension-state";
 export interface BookmarkCliTranscriptListProps {
   /** Nerd Font iconを優先するか。 */
   readonly preferNerdFont: boolean;
-  /** Result表示style。 */
-  readonly resultViewStyle: ResultViewStyle;
+  /** Prompt表示style。 */
+  readonly promptStyle: PromptStyle;
   /** 選択中result index。 */
   readonly selectedResultIndex: ResultCursorIndex;
   /** Transcript entry一覧。 */
   readonly transcriptEntries: readonly BookmarkCliTranscriptEntry[];
 }
-
-/** CLI promptの表示text。 */
-const commandPromptText = "bookmark-cli $";
 
 /** 空のresult item件数。 */
 const emptyResultItemCount = 0;
@@ -80,7 +78,6 @@ const renderTranscriptResultList = (
       <BookmarkCliResultList
         preferNerdFont={props.preferNerdFont}
         resultItems={entry.resultItems}
-        resultViewStyle={props.resultViewStyle}
         selectedResultIndex={resolveTranscriptResultCursor(
           isLatestEntry,
           props.selectedResultIndex,
@@ -107,7 +104,7 @@ const renderTranscriptEntry = (
   return (
     <article className="pb-5" key={entry.id}>
       <p className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-baseline gap-2">
-        <span className="whitespace-nowrap text-emerald-300">{commandPromptText}</span>
+        <BookmarkCliPrompt preferNerdFont={props.preferNerdFont} promptStyle={props.promptStyle} />
         <span className="min-w-0 truncate text-zinc-100">{entry.inputValue}</span>
         <span className="text-xs text-zinc-600">{entry.statusText}</span>
       </p>

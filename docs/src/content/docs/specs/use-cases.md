@@ -60,6 +60,8 @@ find #finance stripe
 4. Domain層がqueryを評価し、候補をscore順に並べる
 5. Presentation層が番号付き結果一覧を表示する
 
+通常表示ではscoreを出さず、`--debug` 指定時だけdebug情報として表示します。
+
 完了条件は、一致したBookmarkが番号付き一覧で表示されることです。
 
 候補がない場合は `not_found` を返します。
@@ -244,11 +246,15 @@ Chrome履歴はv1では参照しません。
 3. 上キー、下キー、`Ctrl+p`、`Ctrl+n` で履歴を移動する
 4. `Ctrl+a`、`Ctrl+e`、`Ctrl+u`、`Ctrl+k`、`Ctrl+w` で入力を編集する
 5. 入力中にcommand suggestionを確認する
-6. `Tab` で補完する
-7. `Esc` で候補選択を解除する
-8. 実行したpromptと結果がtranscriptに追加される
-9. 結果一覧をPowerline風segment UIで読む
+6. `Tab` で補完候補を選択する
+7. `Enter` で選択中候補を入力へ確定する
+8. `Esc` で候補選択を解除する
+9. 実行したpromptと結果がtranscriptに追加される
+10. 必要に応じて `clear` でscrollback transcriptを消す
+11. Powerline風promptとplainな結果一覧で実行結果を読む
 
 完了条件は、マウス操作なしで主要な検索、移動、保存、整理ができることです。
 
 Fontが利用できない場合でもplain text fallbackで意味が読めるようにします。
+
+`clear` は画面上のtranscriptだけを消し、コマンド入力履歴や現在ディレクトリは維持します。

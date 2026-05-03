@@ -33,6 +33,15 @@ describe("suggestBookmarkCommands", (): void => {
   });
 
   /**
+   * Clear commandをprefixから補完候補へ出せることを検証。
+   */
+  it("suggests clear command by prefix", (): void => {
+    expect(suggestBookmarkCommands("cl").map((suggestion) => suggestion.commandName)).toStrictEqual(
+      ["clear"],
+    );
+  });
+
+  /**
    * Command補完値に末尾空白が含まれることを検証。
    */
   it("adds a trailing space to command completion", (): void => {

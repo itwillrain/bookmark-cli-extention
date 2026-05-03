@@ -1,6 +1,7 @@
 import {
   type BookmarkCliTranscriptEntry,
   appendBookmarkCliTranscriptEntry,
+  clearBookmarkCliTranscriptEntries,
   createBookmarkCliTranscriptEntry,
 } from "./bookmark-cli-transcript";
 import { describe, expect, it } from "vitest";
@@ -123,5 +124,19 @@ describe("appendBookmarkCliTranscriptEntry", (): void => {
     expect(nextEntries).toHaveLength(transcriptEntryLimit);
     expect(nextEntries[firstEntryIndex]?.id).toBe(firstRetainedEntryId);
     expect(nextEntries.at(latestEntryIndex)?.id).toBe(latestRetainedEntryId);
+  });
+});
+
+/**
+ * Transcript entry削除のテストスイート。
+ */
+describe("clearBookmarkCliTranscriptEntries", (): void => {
+  /**
+   * Transcript entryを空にできることを検証。
+   */
+  it("clears transcript entries", (): void => {
+    expect(
+      clearBookmarkCliTranscriptEntries([createTranscriptEntry(firstFixtureIndex)]),
+    ).toStrictEqual([]);
   });
 });

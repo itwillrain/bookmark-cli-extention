@@ -6,6 +6,7 @@ import {
   type BookmarkCliTranscriptEntry,
 } from "./bookmark-cli-screen";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import { completionCursorCleared } from "../../../domain/cli/completion-cursor";
 import { resultCursorCleared } from "../../../domain/bookmarks/result-cursor";
 
 /**
@@ -30,6 +31,29 @@ const storyResultItems = [
   {
     folderPath: "/Work/Admin",
     kind: "bookmark",
+    title: "Stripe Dashboard",
+    url: "https://dashboard.stripe.com/",
+  },
+  {
+    folderPath: "/Finance",
+    kind: "bookmark",
+    title: "Stripe Billing",
+    url: "https://dashboard.stripe.com/billing",
+  },
+  {
+    folderPath: "/Work/Admin",
+    kind: "folder",
+    title: "Admin",
+  },
+] satisfies readonly BookmarkCliResultItem[];
+
+/**
+ * Storyで表示するdebug付き検索結果です。
+ */
+const storyDebugResultItems = [
+  {
+    folderPath: "/Work/Admin",
+    kind: "bookmark",
     score: 0.98,
     title: "Stripe Dashboard",
     url: "https://dashboard.stripe.com/",
@@ -40,11 +64,6 @@ const storyResultItems = [
     score: 0.91,
     title: "Stripe Billing",
     url: "https://dashboard.stripe.com/billing",
-  },
-  {
-    folderPath: "/Work/Admin",
-    kind: "folder",
-    title: "Admin",
   },
 ] satisfies readonly BookmarkCliResultItem[];
 
@@ -110,9 +129,10 @@ const meta = {
     onInputChange: handleStoryInputChange,
     onInputKeyDown: handleStoryInputKeyDown,
     onSubmit: handleStorySubmit,
-    preferNerdFont: true,
-    resultViewStyle: "powerline",
+    preferNerdFont: false,
+    promptStyle: "powerline",
     selectedResultIndex: resultCursorCleared,
+    selectedSuggestionIndex: completionCursorCleared,
     statusText: storyStatusText,
     suggestionItems: [],
     transcriptEntries: storyTranscriptEntries,
@@ -129,11 +149,29 @@ export default meta;
 export const WithCandidates: StoryObj<BookmarkCliScreenProps> = {};
 
 /**
+ * Debug付き検索結果がある状態のStoryです。
+ */
+export const WithDebugCandidates: StoryObj<BookmarkCliScreenProps> = {
+  args: {
+    inputValue: "find --debug stripe",
+    transcriptEntries: [
+      {
+        id: "story-entry-debug",
+        inputValue: "find --debug stripe",
+        resultItems: storyDebugResultItems,
+        statusText: storyStatusText,
+      },
+    ],
+  },
+};
+
+/**
  * Command suggestionがある状態のStoryです。
  */
 export const WithSuggestions: StoryObj<BookmarkCliScreenProps> = {
   args: {
     inputValue: "f",
+    selectedSuggestionIndex: 0,
     statusText: "Ready",
     suggestionItems: storySuggestionItems,
     transcriptEntries: [],
@@ -165,7 +203,7 @@ export const Empty: StoryObj<BookmarkCliScreenProps> = {
 export const PlainFallback: StoryObj<BookmarkCliScreenProps> = {
   args: {
     preferNerdFont: false,
-    resultViewStyle: "plain",
+    promptStyle: "plain",
     selectedResultIndex: selectedStoryResultIndex,
   },
 };

@@ -117,7 +117,7 @@ export const executeFindCommand = async (
     currentDirectory: dependencies.currentDirectory,
     extensionState: dependencies.extensionState,
     lastResultEntries: createLastResultEntriesFromSearchResults(result.value.results),
-    resultItems: createBookmarkCliResultItems(result.value.results),
+    resultItems: createBookmarkCliResultItems(result.value.results, { debug: command.debug }),
     statusText: createCandidateStatusText(result.value.results.length),
   });
 };
@@ -147,7 +147,7 @@ export const executeGoCommand = async (
     currentDirectory: dependencies.currentDirectory,
     extensionState: recordOpenedBookmarkState(dependencies, result.value.entry),
     lastResultEntries: [result.value.entry],
-    resultItems: createBookmarkCliResultItems([result.value]),
+    resultItems: createBookmarkCliResultItems([result.value], { debug: command.debug }),
     statusText: createOpenedStatusText(result.value.entry.title),
   });
 };

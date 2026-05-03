@@ -98,6 +98,10 @@ Componentは小さく分けます。
 
 現在入力中のpromptはtranscript末尾に置き、実行後はその入力と結果をtranscript entryへ固定します。
 
+Terminal panelはviewport高に収め、scrollback transcriptだけを内側でscrollさせます。
+
+transcript、入力値、補完候補、選択状態が変わった場合はterminal viewportを最下部へ追従させ、通常のterminalと同じように最新promptを見える位置に保ちます。
+
 Container componentは状態とuse case呼び出しを扱います。
 
 Presentational componentはpropsから表示を作ります。
@@ -165,9 +169,13 @@ Dedicated extension pageは、次のcomponentへ分ける想定です。
 - `ErrorMessage`
 - `StatusBar`
 
-`ResultItem` はPowerline風segment UIを組み立てます。
+`CommandPrompt` は `bookmark-cli $` のpromptを組み立てます。
+
+Powerline風表示は `CommandPrompt` の装飾として扱います。
 
 `ResultSegment` は番号、種別、folder path、title、仮想タグなどのsegmentを表示します。
+
+`ResultSegment` はPowerline glyphを使わず、terminal outputとして読めるplainな表示にします。
 
 番号指定やResult Listの意味はDomain層で扱い、componentは表示だけを担当します。
 
@@ -192,7 +200,7 @@ popupには疑似CLI本体を置きません。
 
 CSS moduleやglobal CSSは、Tailwindだけでは表現しづらい基盤styleに限定します。
 
-Powerline風segment UIのshape、focus ring、scrollbarなど、utility classだけで読みにくくなる場合は小さなCSS classへ切り出します。
+Powerline風prompt、focus ring、scrollbarなど、utility classだけで読みにくくなる場合は小さなCSS classへ切り出します。
 
 Tailwind classはcomponentの責務に沿って配置します。
 
@@ -202,9 +210,17 @@ Tailwind classはcomponentの責務に沿って配置します。
 
 ## Powerline風表示
 
-結果一覧はPowerline風segment UIとして表示します。
+Powerline風表示は `bookmark-cli $` promptに適用します。
 
-Nerd Font互換iconやPowerline glyphは視覚表現として利用できます。
+結果一覧や候補一覧は、terminal outputとしてplainに表示します。
+
+Powerline風promptの区切りはfont glyphではなくCSS shapeで描画します。
+
+候補や結果一覧の行にはPowerline glyphを使いません。
+
+Nerd Font互換iconは将来のopt-in表現として扱い、v1の標準表示では使いません。
+
+結果種別は `URL`、`DIR`、`PREV` のplain text labelで表示します。
 
 ただし、Fontの有無に意味を依存させません。
 
@@ -238,7 +254,11 @@ view modelはcomponentが直接使いやすい形にします。
 
 上キー、下キー、`Ctrl+p`、`Ctrl+n`、`Ctrl+a`、`Ctrl+e`、`Ctrl+u`、`Ctrl+k`、`Ctrl+w`、`Tab`、`Enter`、`Esc` の操作をcomponent設計に含めます。
 
-Command suggestionはFigのように入力欄直下へ表示し、先頭候補を`Tab`で補完できるようにします。
+Command suggestionはfish shellの補完に近い操作感を目指します。
+
+入力欄直下に候補を表示し、`Tab` で候補選択を進め、`Enter` で選択中候補を入力へ確定します。
+
+`cd ./` のようにpath引数へ入った場合は、現在ディレクトリ配下の存在するfolderを候補として表示します。
 
 選択中の候補やpreview表示中の状態は、視覚的に分かるようにします。
 
@@ -257,6 +277,8 @@ Domain層の仕様をcomponent testで重複して確認しません。
 Presentation層では、CommandResultから表示用view modelへの変換をテストします。
 
 キーバインドはcustom hookまたはreducerとして切り出し、状態遷移をテストします。
+
+Scroll制御はDOM依存を薄くし、最下部へ移動する純粋な境界関数としてテストします。
 
 ## 参考
 

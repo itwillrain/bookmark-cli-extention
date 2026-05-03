@@ -77,8 +77,8 @@ describe("createInitialExtensionState", (): void => {
       },
       schemaVersion: 1,
       settings: {
-        preferNerdFont: true,
-        resultViewStyle: "powerline",
+        preferNerdFont: false,
+        promptStyle: "powerline",
       },
       usageByBookmarkId: {},
       virtualTagsByBookmarkId: {},

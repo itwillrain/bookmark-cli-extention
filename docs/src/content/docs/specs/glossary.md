@@ -113,7 +113,7 @@ Result Listに含まれる1件の結果です。
 
 Bookmark Entry、Folder Entry、将来のtag表示などを、番号指定できる形へ変換したものです。
 
-表示ではPowerline風segment UIまたはplain text fallbackへ変換します。
+表示ではterminal outputとしてplain text fallback可能な行へ変換します。
 
 ## Bookmark Selection
 

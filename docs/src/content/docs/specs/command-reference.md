@@ -37,7 +37,7 @@ JSON出力は `--format json` で指定します。
 | `pwd`    | 現在ディレクトリを表示する             | 対象 |
 | `tree`   | Bookmark Treeを階層表示する            | 対象 |
 | `help`   | ヘルプを表示する                       | 対象 |
-| `clear`  | 画面上の実行結果を消す                 | 対象 |
+| `clear`  | 画面上のscrollback transcriptを消す    | 対象 |
 | `recent` | 最近開いたBookmarkを表示する           | 対象 |
 | `freq`   | よく開くBookmarkを表示する             | 対象 |
 | `mkdir`  | Folderを追加する                       | 対象 |
@@ -52,17 +52,21 @@ Bookmarkをfuzzy検索し、もっとも一致したBookmarkを開きます。
 
 ```bash
 go <query>
+go [--debug] <query>
 ```
 
 ```bash
 go stripe bill
 go github pr
 go #prod admin
+go --debug stripe
 ```
 
 候補が明確に1件へ絞れる場合は、そのBookmarkを開きます。
 
 候補が複数ある場合は、番号付き一覧を表示して選択を求めます。
+
+検索scoreを確認したい場合は `--debug` を指定します。
 
 代表的なエラーは `not_found`、`chrome_bookmarks_failed`、`permission_denied` です。
 
@@ -71,19 +75,24 @@ go #prod admin
 Bookmarkをfuzzy検索し、候補一覧だけを表示します。
 
 ```bash
-find <query> [--format json]
+find <query> [--debug] [--format json]
 ```
 
 ```bash
 find stripe
 find prod admin
 find #finance stripe
+find --debug stripe
 find "github.com" --format json
 ```
 
 検索対象はtitle、url、folder path、仮想タグです。
 
 `#` で始まるtokenは仮想タグとして扱います。
+
+通常の一覧では検索scoreを表示しません。
+
+検索scoreを確認したい場合は `--debug` を指定します。
 
 代表的なエラーは `not_found`、`chrome_bookmarks_failed` です。
 
@@ -209,13 +218,15 @@ help go
 
 ## `clear`
 
-画面上の実行結果を消します。
+画面上のscrollback transcriptを消します。
 
 ```bash
 clear
 ```
 
-コマンド入力履歴は削除しません。
+現在ディレクトリ、コマンド入力履歴、保存済みBookmarkデータは削除しません。
+
+`clear` 自体は通常の入力としてコマンド入力履歴へ保存できます。
 
 代表的なエラーはありません。
 

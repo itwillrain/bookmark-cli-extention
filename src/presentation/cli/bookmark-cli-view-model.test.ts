@@ -56,10 +56,24 @@ const adminTreeViewEntry = {
  */
 describe("createBookmarkCliResultItems", (): void => {
   /**
-   * Bookmark検索結果を画面表示itemへ変換できることを検証します。
+   * Bookmark検索結果をscoreなしの画面表示itemへ変換できることを検証します。
    */
   it("converts bookmark search results into CLI result items", (): void => {
-    expect(createBookmarkCliResultItems([stripeSearchResult])).toStrictEqual([
+    expect(createBookmarkCliResultItems([stripeSearchResult], { debug: false })).toStrictEqual([
+      {
+        folderPath: "/Work/Admin",
+        kind: "bookmark",
+        title: "Stripe Dashboard",
+        url: "https://dashboard.stripe.com/",
+      },
+    ]);
+  });
+
+  /**
+   * Debug時は検索scoreを画面表示itemへ含めることを検証します。
+   */
+  it("includes score in CLI result items for debug mode", (): void => {
+    expect(createBookmarkCliResultItems([stripeSearchResult], { debug: true })).toStrictEqual([
       {
         folderPath: "/Work/Admin",
         kind: "bookmark",

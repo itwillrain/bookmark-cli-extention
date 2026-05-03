@@ -206,7 +206,7 @@ describe("executeBookmarkCliCommand search commands", (): void => {
       title: "Stripe Dashboard",
       url: "https://dashboard.stripe.com/",
     });
-    expect(typeof state.resultItems[firstResultItemIndex]?.score).toBe("number");
+    expect(state.resultItems[firstResultItemIndex]?.score).toBeUndefined();
   });
 
   /**

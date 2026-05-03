@@ -61,6 +61,10 @@ const bookmarkCommandCatalog = [
     description: "folder treeを表示",
   },
   {
+    commandName: "clear",
+    description: "画面上の実行結果を消す",
+  },
+  {
     commandName: "mark",
     description: "現在tabをBookmarkに保存",
   },

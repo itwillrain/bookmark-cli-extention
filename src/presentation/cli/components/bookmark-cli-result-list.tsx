@@ -1,7 +1,6 @@
 import type { CSSProperties, ReactElement } from "react";
 import { BookmarkCliResultSegments } from "./bookmark-cli-result-segments";
 import type { ResultCursorIndex } from "../../../domain/bookmarks/result-cursor";
-import type { ResultViewStyle } from "../../../domain/storage/extension-state";
 
 /**
  * CLI resultの表示種別です。
@@ -47,17 +46,13 @@ export interface BookmarkCliResultItem {
  */
 export interface BookmarkCliResultListProps {
   /**
-   * Nerd Font iconを優先するかです。
+   * Nerd Font iconを優先するかです。v1の結果一覧はtofu防止のためASCII labelを使います。
    */
   readonly preferNerdFont: boolean;
   /**
    * CLI result一覧です。
    */
   readonly resultItems: readonly BookmarkCliResultItem[];
-  /**
-   * Result表示styleです。
-   */
-  readonly resultViewStyle: ResultViewStyle;
   /**
    * 選択中result indexです。
    */
@@ -177,10 +172,6 @@ interface ResultItemRenderInput {
   readonly item: BookmarkCliResultItem;
   /** Result itemの0-based indexです。 */
   readonly itemIndex: number;
-  /** Nerd Font iconを優先するかです。 */
-  readonly preferNerdFont: boolean;
-  /** Result表示styleです。 */
-  readonly resultViewStyle: ResultViewStyle;
   /** 選択中result indexです。 */
   readonly selectedResultIndex: ResultCursorIndex;
 }
@@ -233,6 +224,21 @@ const renderResultDescription = (item: BookmarkCliResultItem): ReactElement => {
 };
 
 /**
+ * Result itemのdebug scoreを描画します。
+ * @param {BookmarkCliResultItem} item scoreを描画するresult itemです。
+ * @returns {ReactElement} score表示のReact elementです。
+ */
+const renderResultScore = (item: BookmarkCliResultItem): ReactElement => {
+  const scoreToken = formatScoreToken(item.score);
+
+  if (scoreToken === "") {
+    return <></>;
+  }
+
+  return <span className="text-xs text-zinc-600">{scoreToken}</span>;
+};
+
+/**
  * Bookmark CLIのresult itemを描画します。
  * @param {ResultItemRenderInput} input Result item描画入力です。
  * @returns {ReactElement} Result itemのReact elementです。
@@ -247,16 +253,14 @@ const renderResultItem = (input: ResultItemRenderInput): ReactElement => (
     <BookmarkCliResultSegments
       folderPath={input.item.folderPath}
       kind={input.item.kind}
-      preferNerdFont={input.preferNerdFont}
       resultNumber={formatResultNumber(input.itemIndex)}
-      resultViewStyle={input.resultViewStyle}
     />
     <span className="min-w-0">
       <span className="block truncate text-zinc-100">{input.item.title}</span>
       {renderResultDescription(input.item)}
       {renderResultUrl(input.item)}
     </span>
-    <span className="text-xs text-zinc-600">{formatScoreToken(input.item.score)}</span>
+    {renderResultScore(input.item)}
   </li>
 );
 
@@ -276,8 +280,6 @@ export const BookmarkCliResultList = (props: BookmarkCliResultListProps): ReactE
         renderResultItem({
           item,
           itemIndex,
-          preferNerdFont: props.preferNerdFont,
-          resultViewStyle: props.resultViewStyle,
           selectedResultIndex: props.selectedResultIndex,
         }),
       )}

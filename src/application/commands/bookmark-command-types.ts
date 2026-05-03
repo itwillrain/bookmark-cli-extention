@@ -1,40 +1,15 @@
+import type { FindBookmarkCommand, GoBookmarkCommand } from "./bookmark-search-command-types";
 import type {
   FrequentBookmarksCommand,
   RecentBookmarksCommand,
 } from "./bookmark-usage-command-types";
 
+export type { FindBookmarkCommand, GoBookmarkCommand } from "./bookmark-search-command-types";
+
 export type {
   FrequentBookmarksCommand,
   RecentBookmarksCommand,
 } from "./bookmark-usage-command-types";
-
-/**
- * Find commandです。
- */
-export interface FindBookmarkCommand {
-  /**
-   * Command種別です。
-   */
-  readonly kind: "find";
-  /**
-   * 検索queryです。
-   */
-  readonly query: string;
-}
-
-/**
- * Go commandです。
- */
-export interface GoBookmarkCommand {
-  /**
-   * Command種別です。
-   */
-  readonly kind: "go";
-  /**
-   * 検索queryです。
-   */
-  readonly query: string;
-}
 
 /**
  * Directory list commandです。
@@ -243,6 +218,16 @@ export interface EmptyBookmarkCommand {
 }
 
 /**
+ * 画面表示削除commandです。
+ */
+export interface ClearBookmarkCommand {
+  /**
+   * Command種別です。
+   */
+  readonly kind: "clear";
+}
+
+/**
  * 未対応commandです。
  */
 export interface UnknownBookmarkCommand {
@@ -265,6 +250,7 @@ export interface UnknownBookmarkCommand {
  */
 export type ParsedBookmarkCommand =
   | ChangeDirectoryCommand
+  | ClearBookmarkCommand
   | EmptyBookmarkCommand
   | FindBookmarkCommand
   | GoBookmarkCommand

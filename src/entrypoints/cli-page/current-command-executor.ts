@@ -2,6 +2,7 @@ import type { Dispatch, SetStateAction } from "react";
 import { type ResultCursorIndex, resultCursorCleared } from "../../domain/bookmarks/result-cursor";
 import type { BookmarkCliCommandState } from "../../presentation/cli/bookmark-cli-command-state";
 import type { LaunchContext } from "../../application/bookmarks/mark-bookmark-use-case";
+import { parseBookmarkCommand } from "../../application/commands/bookmark-command-parser";
 
 /** Command state setter。 */
 type CommandStateSetter = Dispatch<SetStateAction<BookmarkCliCommandState>>;
@@ -29,12 +30,17 @@ type ExecutedCommandAppender = (
 /** Entry id生成関数。 */
 type EntryIdFactory = () => string;
 
+/** 実行済みcommandを削除する関数。 */
+type ExecutedCommandClearer = () => void;
+
 /**
  * Current command executor作成入力。
  */
 export interface CreateCurrentCommandExecutorInput {
   /** 実行済みcommandをtranscriptへ追加する関数。 */
   readonly appendExecutedCommand: ExecutedCommandAppender;
+  /** 実行済みcommand transcriptを削除する関数。 */
+  readonly clearExecutedCommands: ExecutedCommandClearer;
   /** 現在のcommand state。 */
   readonly commandState: BookmarkCliCommandState;
   /** Command実行と永続化を行う関数。 */
@@ -57,6 +63,14 @@ export interface CreateCurrentCommandExecutorInput {
 const emptyInputValue = "";
 
 /**
+ * 入力がtranscript clear commandか判定。
+ * @param {string} inputValue CLI入力値。
+ * @returns {boolean} Transcript clear commandならtrue。
+ */
+const isTranscriptClearCommand = (inputValue: string): boolean =>
+  parseBookmarkCommand(inputValue).kind === "clear";
+
+/**
  * 現在入力中のcommandを実行する関数を作成。
  * @param {CreateCurrentCommandExecutorInput} input Current command executor作成入力。
  * @returns {() => Promise<void>} Current command executor。
@@ -77,7 +91,13 @@ export const createCurrentCommandExecutor = (
     );
 
     input.setCommandState(nextState);
-    input.appendExecutedCommand(submittedInputValue, nextState, input.createEntryId());
+
+    if (isTranscriptClearCommand(submittedInputValue)) {
+      input.clearExecutedCommands();
+    } else {
+      input.appendExecutedCommand(submittedInputValue, nextState, input.createEntryId());
+    }
+
     input.setInputValue(emptyInputValue);
     input.setSelectedResultIndex(resultCursorCleared);
   };

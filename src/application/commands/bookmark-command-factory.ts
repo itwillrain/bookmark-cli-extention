@@ -1,3 +1,4 @@
+import { parseFindBookmarkCommand, parseGoBookmarkCommand } from "./bookmark-search-command-parser";
 import {
   parseFrequentBookmarksCommand,
   parseRecentBookmarksCommand,
@@ -30,6 +31,9 @@ const listDirectoryCommandName = "ls";
 
 /** Cd command名です。 */
 const changeDirectoryCommandName = "cd";
+
+/** Clear command名です。 */
+const clearCommandName = "clear";
 
 /** Pwd command名です。 */
 const printWorkingDirectoryCommandName = "pwd";
@@ -88,8 +92,7 @@ export type BookmarkCommandFactory = (context: CommandParseContext) => ParsedBoo
  * @returns {ParsedBookmarkCommand} Find commandです。
  */
 const createFindBookmarkCommand = (context: CommandParseContext): ParsedBookmarkCommand => ({
-  kind: "find",
-  query: context.query,
+  ...parseFindBookmarkCommand(context.queryParts),
 });
 
 /**
@@ -98,8 +101,7 @@ const createFindBookmarkCommand = (context: CommandParseContext): ParsedBookmark
  * @returns {ParsedBookmarkCommand} Go commandです。
  */
 const createGoBookmarkCommand = (context: CommandParseContext): ParsedBookmarkCommand => ({
-  kind: "go",
-  query: context.query,
+  ...parseGoBookmarkCommand(context.queryParts),
 });
 
 /**
@@ -136,6 +138,14 @@ const createListDirectoryCommand = (context: CommandParseContext): ParsedBookmar
 const createChangeDirectoryCommand = (context: CommandParseContext): ParsedBookmarkCommand => ({
   kind: "cd",
   pathInput: context.query,
+});
+
+/**
+ * Clear commandを作ります。
+ * @returns {ParsedBookmarkCommand} Clear commandです。
+ */
+const createClearCommand = (): ParsedBookmarkCommand => ({
+  kind: "clear",
 });
 
 /**
@@ -218,6 +228,7 @@ const createUnknownCommand = (context: CommandParseContext): ParsedBookmarkComma
  */
 const bookmarkCommandFactories: Readonly<Record<string, BookmarkCommandFactory>> = {
   [changeDirectoryCommandName]: createChangeDirectoryCommand,
+  [clearCommandName]: createClearCommand,
   [findCommandName]: createFindBookmarkCommand,
   [frequentBookmarksCommandName]: createFrequentBookmarksCommand,
   [goCommandName]: createGoBookmarkCommand,
