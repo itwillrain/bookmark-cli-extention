@@ -109,6 +109,7 @@ export default defineConfig({
         {
           items: [
             { label: "概要", slug: "guides/overview" },
+            { label: "プライバシーポリシー", slug: "guides/privacy-policy" },
             { label: "ドキュメント方針", slug: "guides/documentation-policy" },
           ],
           label: "はじめに",

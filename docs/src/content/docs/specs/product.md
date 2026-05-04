@@ -11,6 +11,8 @@ Bookmark CLI Extensionは、Chrome Bookmark Managerを拡張機能内の疑似CL
 
 Chromeに保存されたBookmarkをフォルダ階層として扱い、`go` で素早く開き、`find` で候補を絞り、`mark` で現在のタブを保存します。
 
+v1.1.0以降はFirefox desktopにも対応し、v1.2.0候補ではChromeとFirefoxのBookmark同期を扱います。
+
 ## 解きたい課題
 
 Chrome Bookmark ManagerはGUIでの整理に向いていますが、次のような作業にはコマンド入力の方が向いています。
@@ -59,13 +61,16 @@ mark "Production Admin"
 - JSONエクスポート
 - インポート
 - 一括整理
+- ChromeとFirefox間のBookmark同期
 - OSターミナルから利用できるローカルCLI
 
 ## 非スコープ
 
-初期段階では、複数ブラウザ対応、クラウド同期、チーム共有機能は扱いません。
+v1では、複数ブラウザ対応、クラウド同期、チーム共有機能は扱いません。
 
 まずChromeのBookmark Managerを対象に、拡張機能内で安全に操作できる体験へ集中します。
+
+ChromeとFirefox間のBookmark同期は、v1.2.0候補として [ChromeとFirefoxのBookmark同期ロードマップ](../cross-browser-sync/) で管理します。
 
 ## 成功条件
 
