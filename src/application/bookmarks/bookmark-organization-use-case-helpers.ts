@@ -18,9 +18,6 @@ const notFoundErrorCode = "not_found";
 /** 空文字。 */
 const emptyString = "";
 
-/** Root parent ID。 */
-const rootParentId = "0";
-
 /** Folder path separator。 */
 const folderPathSeparator = "/";
 
@@ -93,6 +90,14 @@ const isBookmarkEntry = (entry: BookmarkCliEntry): entry is BookmarkEntry =>
   entry.kind === "bookmark";
 
 /**
+ * EntryがBookmark Tree由来かを判定。
+ * @param {BookmarkCliEntry} entry 判定対象entry。
+ * @returns {boolean} Bookmarkまたはfolderならtrue。
+ */
+const isBookmarkTreeEntry = (entry: BookmarkCliEntry): entry is BookmarkEntry =>
+  entry.kind === "bookmark" || entry.kind === "folder";
+
+/**
  * Bookmark Treeからfolder pathに対応するfolder IDを取得。
  * @param {BookmarkTree} bookmarkTree Bookmark Tree。
  * @param {CurrentDirectory} folderPath folder path。
@@ -108,14 +113,16 @@ const findFolderId = (
  * Chrome mutationへ渡すparentIdを作成。
  * @param {BookmarkTree} bookmarkTree Bookmark Tree。
  * @param {CurrentDirectory} folderPath folder path。
- * @returns {string | undefined} parent ID。
+ * @returns {string | undefined} parent ID。CLI rootではブラウザ既定の保存先に委ねる。
  * @example
  * ```ts
  * const result = createParentId(bookmarkTree, folderPath);
  * ```
  */
-export const createParentId = (bookmarkTree: BookmarkTree, folderPath: CurrentDirectory): string =>
-  findFolderId(bookmarkTree, folderPath) ?? rootParentId;
+export const createParentId = (
+  bookmarkTree: BookmarkTree,
+  folderPath: CurrentDirectory,
+): string | undefined => findFolderId(bookmarkTree, folderPath);
 
 /**
  * Folder pathから最後のsegmentを取得。
@@ -151,6 +158,29 @@ export const resolveTargetBookmark = (
   const resolution = resolveEntryByResultNumber(lastResultEntries, targetInput);
 
   if (!resolution.ok || !isBookmarkEntry(resolution.entry)) {
+    return createNotFoundFailure(targetInput);
+  }
+
+  return createSuccess(resolution.entry);
+};
+
+/**
+ * 直前結果番号からBookmark entryを解決。
+ * @param {readonly BookmarkCliEntry[]} lastResultEntries 直前結果一覧。
+ * @param {string} targetInput 対象番号入力。
+ * @returns {BookmarkCommandResult<BookmarkEntry>} Entry解決結果。
+ * @example
+ * ```ts
+ * const result = resolveTargetEntry(lastResultEntries, targetInput);
+ * ```
+ */
+export const resolveTargetEntry = (
+  lastResultEntries: readonly BookmarkCliEntry[],
+  targetInput: string,
+): BookmarkCommandResult<BookmarkEntry> => {
+  const resolution = resolveEntryByResultNumber(lastResultEntries, targetInput);
+
+  if (!resolution.ok || !isBookmarkTreeEntry(resolution.entry)) {
     return createNotFoundFailure(targetInput);
   }
 

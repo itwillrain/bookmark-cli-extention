@@ -107,6 +107,10 @@ const getResultItemDepth = (item: BookmarkCliResultItem): number => {
  * @returns {number} indent幅です。
  */
 const getResultItemIndentRem = (item: BookmarkCliResultItem): number => {
+  if (typeof item.treePrefix === "string") {
+    return noIndentRem;
+  }
+
   const depth = getResultItemDepth(item);
 
   if (depth <= defaultResultItemDepth) {

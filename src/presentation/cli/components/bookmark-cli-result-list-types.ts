@@ -11,6 +11,8 @@ export type BookmarkCliResultKind = "bookmark" | "folder" | "help" | "history";
 export interface BookmarkCliResultItem {
   /** Tree表示時の階層です。 */
   readonly depth?: number;
+  /** Tree表示時にtitle前へ出すguideです。 */
+  readonly treePrefix?: string;
   /** Bookmarkまたはfolderを表す種別です。 */
   readonly kind: BookmarkCliResultKind;
   /** 表示名です。 */

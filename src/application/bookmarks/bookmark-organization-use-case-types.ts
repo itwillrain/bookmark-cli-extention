@@ -24,6 +24,12 @@ export interface RemoveEntryInput {
   readonly id: string;
 }
 
+/** Folder tree削除入力。 */
+export interface RemoveFolderTreeInput {
+  /** 削除対象folder ID。 */
+  readonly id: string;
+}
+
 /** Entry名称変更入力。 */
 export interface RenameEntryInput {
   /** 変更対象Bookmark ID。 */
@@ -40,6 +46,8 @@ export interface BookmarkOrganizerPort {
   readonly moveEntry: (input: MoveEntryInput) => Promise<BookmarkEntry>;
   /** Bookmarkを削除。 */
   readonly removeEntry: (input: RemoveEntryInput) => Promise<void>;
+  /** Folder subtreeを削除。 */
+  readonly removeFolderTree: (input: RemoveFolderTreeInput) => Promise<void>;
   /** Bookmark名を変更。 */
   readonly renameEntry: (input: RenameEntryInput) => Promise<BookmarkEntry>;
 }

@@ -59,6 +59,9 @@ const targetFolderPathInput = "Archive";
 /** 作成するfolder path入力。 */
 const createFolderPathInput = "Tools";
 
+/** Root直下へ作成するfolder path入力。 */
+const createRootFolderPathInput = "/Project";
+
 /** 変更後title入力。 */
 const renamedTitleInput = "GitHub Pull Requests";
 
@@ -106,6 +109,23 @@ describe("makeDirectory", (): void => {
     expect(result.ok).toBe(true);
     expect(recordingOrganizer.createdFolders).toStrictEqual([{ parentId: "10", title: "Tools" }]);
   });
+
+  /**
+   * Mkdirでroot直下のfolderをブラウザ既定の保存先へ作成することを検証。
+   */
+  it("creates root folder without root parent id", async (): Promise<void> => {
+    const recordingOrganizer = createRecordingOrganizer();
+
+    const result = await makeDirectory({
+      currentDirectory,
+      organizer: recordingOrganizer.organizer,
+      pathInput: createRootFolderPathInput,
+      repository: createBookmarkRepository(),
+    });
+
+    expect(result.ok).toBe(true);
+    expect(recordingOrganizer.createdFolders).toStrictEqual([{ title: "Project" }]);
+  });
 });
 
 /** Move use caseのテストスイート。 */
@@ -143,6 +163,7 @@ describe("removeBookmark", (): void => {
       force: false,
       lastResultEntries,
       organizer: recordingOrganizer.organizer,
+      recursive: false,
       repository: createBookmarkRepository(),
       targetInput,
     });
@@ -162,6 +183,7 @@ describe("removeBookmark", (): void => {
       force: true,
       lastResultEntries,
       organizer: recordingOrganizer.organizer,
+      recursive: false,
       repository: createBookmarkRepository(),
       targetInput,
     });

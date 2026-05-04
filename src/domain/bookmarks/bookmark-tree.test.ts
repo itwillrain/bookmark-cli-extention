@@ -16,6 +16,11 @@ const stripeDashboardUrl = "https://dashboard.stripe.com/";
 const githubPullRequestsUrl = "https://github.com/pulls";
 
 /**
+ * Firefox Release NotesのURLです。
+ */
+const firefoxReleaseNotesUrl = "https://www.mozilla.org/firefox/releases/";
+
+/**
  * Chrome Bookmarks APIが返すroot nodeを含むBookmark Tree fixtureです。
  */
 const chromeBookmarkTree = [
@@ -67,6 +72,57 @@ const chromeBookmarkTree = [
 ] satisfies readonly RawBookmarkTreeNode[];
 
 /**
+ * Firefox Bookmarks APIが返すroot nodeを含むBookmark Tree fixtureです。
+ */
+const firefoxBookmarkTree = [
+  {
+    children: [
+      {
+        children: [
+          {
+            children: [
+              {
+                id: "201",
+                parentId: "200",
+                title: "Docs",
+                url: githubPullRequestsUrl,
+              },
+            ],
+            id: "200",
+            parentId: "menu________",
+            title: "Project",
+          },
+        ],
+        id: "menu________",
+        parentId: "root________",
+        title: "ブックマークメニュー",
+      },
+      {
+        children: [],
+        id: "toolbar_____",
+        parentId: "root________",
+        title: "ブックマークツールバー",
+      },
+      {
+        children: [
+          {
+            id: "300",
+            parentId: "unfiled_____",
+            title: "Firefox Release Notes",
+            url: firefoxReleaseNotesUrl,
+          },
+        ],
+        id: "unfiled_____",
+        parentId: "root________",
+        title: "他のブックマーク",
+      },
+    ],
+    id: "root________",
+    title: "",
+  },
+] satisfies readonly RawBookmarkTreeNode[];
+
+/**
  * 正規化後に期待するentry一覧です。
  */
 const expectedEntries = [
@@ -107,6 +163,38 @@ const expectedEntries = [
 ] satisfies readonly BookmarkEntry[];
 
 /**
+ * Firefox Bookmark Tree正規化後に期待するentry一覧です。
+ */
+const expectedFirefoxEntries = [
+  {
+    childrenCount: 1,
+    folderPath: "/Project",
+    id: "200",
+    kind: "folder",
+    parentId: "menu________",
+    title: "Project",
+  },
+  {
+    childrenCount: 0,
+    folderPath: "/Project",
+    id: "201",
+    kind: "bookmark",
+    parentId: "200",
+    title: "Docs",
+    url: githubPullRequestsUrl,
+  },
+  {
+    childrenCount: 0,
+    folderPath: "/",
+    id: "300",
+    kind: "bookmark",
+    parentId: "unfiled_____",
+    title: "Firefox Release Notes",
+    url: firefoxReleaseNotesUrl,
+  },
+] satisfies readonly BookmarkEntry[];
+
+/**
  * Entry ID一覧を取得します。
  * @param {readonly BookmarkEntry[]} entries IDを取り出すentry一覧です。
  * @returns {readonly string[]} entry ID一覧です。
@@ -125,6 +213,15 @@ describe("normalizeBookmarkTree", (): void => {
     const bookmarkTree = normalizeBookmarkTree(chromeBookmarkTree);
 
     expect(bookmarkTree.entries).toStrictEqual(expectedEntries);
+  });
+
+  /**
+   * Firefoxのroot containerをCLIのfolderから除外し、Chromeと同じroot表現へ正規化できることを検証します。
+   */
+  it("normalizes Firefox root containers into CLI root entries", (): void => {
+    const bookmarkTree = normalizeBookmarkTree(firefoxBookmarkTree);
+
+    expect(bookmarkTree.entries).toStrictEqual(expectedFirefoxEntries);
   });
 
   /**

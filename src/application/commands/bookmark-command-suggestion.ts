@@ -107,7 +107,7 @@ const bookmarkCommandCatalog = [
   },
   {
     commandName: "rm",
-    description: "Bookmarkを削除",
+    description: "Bookmarkまたはfolderを削除",
   },
   {
     commandName: "rename",

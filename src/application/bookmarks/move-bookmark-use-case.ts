@@ -1,4 +1,5 @@
 import type {
+  MoveEntryInput,
   OrganizeBookmarkBaseInput,
   OrganizeBookmarkResult,
 } from "./bookmark-organization-use-case-types";
@@ -37,15 +38,27 @@ interface MoveExecutionContext {
 }
 
 /**
+ * Bookmark移動入力を作成。
+ * @param {MoveExecutionContext} context Move実行context。
+ * @returns {MoveEntryInput} Bookmark移動入力。
+ */
+const createMoveEntryInput = (context: MoveExecutionContext): MoveEntryInput => {
+  const parentId = createParentId(context.bookmarkTree, context.targetFolderPath);
+
+  if (typeof parentId === "string") {
+    return { id: context.entry.id, parentId };
+  }
+
+  return { id: context.entry.id };
+};
+
+/**
  * Moveを実行。
  * @param {MoveExecutionContext} context Move実行context。
  * @returns {Promise<OrganizeBookmarkResult>} Move実行結果。
  */
 const executeMove = async (context: MoveExecutionContext): Promise<OrganizeBookmarkResult> => {
-  const movedEntry = await context.input.organizer.moveEntry({
-    id: context.entry.id,
-    parentId: createParentId(context.bookmarkTree, context.targetFolderPath),
-  });
+  const movedEntry = await context.input.organizer.moveEntry(createMoveEntryInput(context));
 
   return createSuccess(createOrganizeBookmarkValue(true, [movedEntry]));
 };

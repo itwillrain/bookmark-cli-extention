@@ -139,6 +139,11 @@ const twoLevelExpectedDepths = [
 ] as const;
 
 /**
+ * 2階層treeの期待guide一覧です。
+ */
+const twoLevelExpectedGuides = ["├── ", "│   ├── ", "│   └── ", "└── "] as const;
+
+/**
  * 3階層treeの期待depth一覧です。
  */
 const threeLevelExpectedDepths = [
@@ -148,6 +153,11 @@ const threeLevelExpectedDepths = [
   secondTreeViewDepth,
   firstTreeViewDepth,
 ] as const;
+
+/**
+ * 3階層treeの期待guide一覧です。
+ */
+const threeLevelExpectedGuides = ["├── ", "│   ├── ", "│   │   └── ", "│   └── ", "└── "] as const;
 
 /**
  * Tree view entry一覧からid一覧を取り出します。
@@ -170,6 +180,7 @@ describe("listBookmarkTreeViewEntries", (): void => {
 
     expect(getTreeViewEntryIds(entries)).toStrictEqual(["11", "12", "43", "42"]);
     expect(entries.map((item) => item.depth)).toStrictEqual(twoLevelExpectedDepths);
+    expect(entries.map((item) => item.guide)).toStrictEqual(twoLevelExpectedGuides);
   });
 
   /**
@@ -180,6 +191,7 @@ describe("listBookmarkTreeViewEntries", (): void => {
 
     expect(getTreeViewEntryIds(entries)).toStrictEqual(["11", "12", "44", "43", "42"]);
     expect(entries.map((item) => item.depth)).toStrictEqual(threeLevelExpectedDepths);
+    expect(entries.map((item) => item.guide)).toStrictEqual(threeLevelExpectedGuides);
   });
 
   /**

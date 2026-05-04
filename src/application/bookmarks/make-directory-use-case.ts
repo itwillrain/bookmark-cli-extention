@@ -1,4 +1,5 @@
 import type {
+  CreateFolderInput,
   OrganizeBookmarkBaseInput,
   OrganizeBookmarkResult,
 } from "./bookmark-organization-use-case-types";
@@ -63,6 +64,21 @@ const isMakeDirectoryContextValid = (context: MakeDirectoryContext): boolean =>
   context.folderName !== emptyString;
 
 /**
+ * Folder作成入力を作成。
+ * @param {MakeDirectoryContext} context Folder作成context。
+ * @returns {CreateFolderInput} Folder作成入力。
+ */
+const createFolderInput = (context: MakeDirectoryContext): CreateFolderInput => {
+  const parentId = createParentId(context.bookmarkTree, context.parentFolderPath);
+
+  if (typeof parentId === "string") {
+    return { parentId, title: context.folderName };
+  }
+
+  return { title: context.folderName };
+};
+
+/**
  * Folderを作成。
  * @param {MakeDirectoryInput} input Folder作成use case入力。
  * @returns {Promise<OrganizeBookmarkResult>} Folder作成結果。
@@ -83,10 +99,7 @@ export const makeDirectory = async (input: MakeDirectoryInput): Promise<Organize
     return createFolderNotFoundFailure(context.parentFolderPath);
   }
 
-  const entry = await input.organizer.createFolder({
-    parentId: createParentId(context.bookmarkTree, context.parentFolderPath),
-    title: context.folderName,
-  });
+  const entry = await input.organizer.createFolder(createFolderInput(context));
 
   return createSuccess(createOrganizeBookmarkValue(true, [entry]));
 };

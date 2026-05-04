@@ -141,12 +141,14 @@ describe("executeBookmarkCliCommand tree commands", (): void => {
         folderPath: "/Work/Admin",
         kind: "folder",
         title: "Admin",
+        treePrefix: "├── ",
       },
       {
         depth: expectedTreeResultDepth,
         folderPath: "/Work",
         kind: "bookmark",
         title: "Stripe Dashboard",
+        treePrefix: "└── ",
         url: "https://dashboard.stripe.com/",
       },
     ]);

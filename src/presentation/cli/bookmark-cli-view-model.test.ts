@@ -61,6 +61,7 @@ const treeViewDepth = 2;
 const adminTreeViewEntry = {
   depth: treeViewDepth,
   entry: adminFolderEntry,
+  guide: "├── ",
 } satisfies BookmarkTreeViewEntry;
 
 /**
@@ -160,6 +161,7 @@ describe("createBookmarkCliResultItemsFromTreeEntries", (): void => {
         folderPath: "/Work/Admin",
         kind: "folder",
         title: "Admin",
+        treePrefix: "├── ",
       },
     ]);
   });

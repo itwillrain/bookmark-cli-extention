@@ -41,6 +41,42 @@ const resultTextStackClassName = "min-w-0 flex-1";
 const resultTitleTextClassName = "block min-w-0 truncate text-zinc-100";
 
 /**
+ * Directory result title文字列のclassNameです。
+ */
+const directoryResultTitleTextClassName = "block min-w-0 truncate text-blue-400";
+
+/**
+ * Tree guide文字列のclassNameです。
+ */
+const treePrefixTextClassName = "mr-1 whitespace-pre text-zinc-600";
+
+/**
+ * Result itemのtree prefixを描画します。
+ * @param {BookmarkCliResultItem} item tree prefixを描画するresult itemです。
+ * @returns {ReactElement} tree prefix表示のReact elementです。
+ */
+const renderTreePrefix = (item: BookmarkCliResultItem): ReactElement => {
+  if (typeof item.treePrefix === "string") {
+    return <span className={treePrefixTextClassName}>{item.treePrefix}</span>;
+  }
+
+  return <></>;
+};
+
+/**
+ * Result title文字列のclassNameを解決します。
+ * @param {BookmarkCliResultItem} item 描画するresult itemです。
+ * @returns {string} Result title文字列のclassNameです。
+ */
+const resolveResultTitleTextClassName = (item: BookmarkCliResultItem): string => {
+  if (item.kind === "folder") {
+    return directoryResultTitleTextClassName;
+  }
+
+  return resultTitleTextClassName;
+};
+
+/**
  * Bookmark URLを描画します。
  * @param {BookmarkCliResultItem} item URLを描画するresult itemです。
  * @returns {ReactElement} URL表示のReact elementです。
@@ -91,7 +127,36 @@ const renderResultDetails = (item: BookmarkCliResultItem): ReactElement => {
  * @returns {ReactElement} titleのReact elementです。
  */
 const renderResultTitle = (item: BookmarkCliResultItem): ReactElement => (
-  <span className={resultTitleTextClassName}>{item.title}</span>
+  <span className={resolveResultTitleTextClassName(item)}>
+    {renderTreePrefix(item)}
+    {item.title}
+  </span>
+);
+
+/**
+ * Result itemのtext stackを描画します。
+ * @param {BookmarkCliResultItem} item 描画するresult itemです。
+ * @returns {ReactElement} text stack elementです。
+ */
+const renderResultTextStack = (item: BookmarkCliResultItem): ReactElement => (
+  <span className={resultTextStackClassName} data-layout="result-title-url-stack">
+    {renderResultTitle(item)}
+    {renderResultDescription(item)}
+    {renderResultDetails(item)}
+    {renderResultUrl(item)}
+  </span>
+);
+
+/**
+ * Result itemを描画します。
+ * @param {BookmarkCliResultContentProps} props Result content propsです。
+ * @returns {ReactElement} Result content elementです。
+ */
+const renderResultContent = (props: BookmarkCliResultContentProps): ReactElement => (
+  <span className={resultContentClassName} data-layout="result-favicon-and-text">
+    <BookmarkCliResultFavicon item={props.item} />
+    {renderResultTextStack(props.item)}
+  </span>
 );
 
 /**
@@ -99,14 +164,5 @@ const renderResultTitle = (item: BookmarkCliResultItem): ReactElement => (
  * @param {BookmarkCliResultContentProps} props Result content propsです。
  * @returns {ReactElement} Result content elementです。
  */
-export const BookmarkCliResultContent = (props: BookmarkCliResultContentProps): ReactElement => (
-  <span className={resultContentClassName} data-layout="result-favicon-and-text">
-    <BookmarkCliResultFavicon item={props.item} />
-    <span className={resultTextStackClassName} data-layout="result-title-url-stack">
-      {renderResultTitle(props.item)}
-      {renderResultDescription(props.item)}
-      {renderResultDetails(props.item)}
-      {renderResultUrl(props.item)}
-    </span>
-  </span>
-);
+export const BookmarkCliResultContent = (props: BookmarkCliResultContentProps): ReactElement =>
+  renderResultContent(props);

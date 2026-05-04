@@ -143,6 +143,7 @@ const createBookmarkCliTreeResultItem = (
 ): BookmarkCliResultItem => ({
   ...createBookmarkCliResultItemFromBookmarkEntry(treeEntry.entry),
   depth: treeEntry.depth,
+  treePrefix: treeEntry.guide,
 });
 
 /**

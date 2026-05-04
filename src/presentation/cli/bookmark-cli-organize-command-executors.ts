@@ -143,11 +143,13 @@ const createOrganizeCommandState = (
  * Rm command実行結果をcommand stateへ変換。
  * @param {OrganizeBookmarkResult} result 削除操作結果。
  * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存。
+ * @param {boolean} recursive recursive削除として確認待ちにするか。
  * @returns {BookmarkCliCommandState} 画面に反映する状態。
  */
 const createRemoveCommandState = (
   result: OrganizeBookmarkResult,
   dependencies: BookmarkCliCommandDependencies,
+  recursive: boolean,
 ): BookmarkCliCommandState => {
   if (!result.ok) {
     return createEmptyResultState(dependencies, result.message);
@@ -176,6 +178,7 @@ const createRemoveCommandState = (
     pendingConfirmation: {
       entry,
       kind: "rm",
+      recursive,
     },
     resultItems: emptyResultItems,
     statusText: createRemoveConfirmationStatusText(result),
@@ -271,10 +274,12 @@ export const executeRemoveBookmarkCommand = async (
       force: command.force,
       lastResultEntries: dependencies.lastResultEntries,
       organizer,
+      recursive: command.recursive,
       repository: dependencies.repository,
       targetInput: command.targetInput,
     }),
     dependencies,
+    command.recursive,
   );
 };
 
@@ -318,10 +323,12 @@ export const executePendingConfirmationCommand = async (
       force: true,
       lastResultEntries: [dependencies.pendingConfirmation.entry],
       organizer,
+      recursive: dependencies.pendingConfirmation.recursive,
       repository: dependencies.repository,
       targetInput: "1",
     }),
     dependencies,
+    dependencies.pendingConfirmation.recursive,
   );
 };
 

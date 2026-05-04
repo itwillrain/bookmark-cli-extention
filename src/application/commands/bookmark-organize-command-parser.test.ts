@@ -16,6 +16,15 @@ const forceRemoveBookmarkCommandInput = "rm -f 5";
 /** Long force Rm commandの入力です。 */
 const longForceRemoveBookmarkCommandInput = "rm --force 5";
 
+/** Recursive rm commandの入力です。 */
+const recursiveRemoveBookmarkCommandInput = "rm -r 2";
+
+/** Force付きrecursive rm commandの入力です。 */
+const forceRecursiveRemoveBookmarkCommandInput = "rm -rf 2";
+
+/** Long option付きrecursive rm commandの入力です。 */
+const longRecursiveRemoveBookmarkCommandInput = "rm --recursive --force 2";
+
 /** Rename commandの入力です。 */
 const renameBookmarkCommandInput = 'rename 3 "GitHub Pull Requests"';
 
@@ -72,6 +81,7 @@ describe("parseBookmarkCommand remove command", (): void => {
     expect(parseBookmarkCommand(removeBookmarkCommandInput)).toStrictEqual({
       force: false,
       kind: "rm",
+      recursive: false,
       targetInput: "5",
     });
   });
@@ -83,6 +93,7 @@ describe("parseBookmarkCommand remove command", (): void => {
     expect(parseBookmarkCommand(forceRemoveBookmarkCommandInput)).toStrictEqual({
       force: true,
       kind: "rm",
+      recursive: false,
       targetInput: "5",
     });
   });
@@ -94,7 +105,49 @@ describe("parseBookmarkCommand remove command", (): void => {
     expect(parseBookmarkCommand(longForceRemoveBookmarkCommandInput)).toStrictEqual({
       force: true,
       kind: "rm",
+      recursive: false,
       targetInput: "5",
+    });
+  });
+});
+
+/**
+ * Bookmark recursive削除command parserの正常系テストスイートです。
+ */
+describe("parseBookmarkCommand recursive remove command", (): void => {
+  /**
+   * Rm commandをrecursive option付きで解析できることを検証します。
+   */
+  it("parses rm command with recursive option", (): void => {
+    expect(parseBookmarkCommand(recursiveRemoveBookmarkCommandInput)).toStrictEqual({
+      force: false,
+      kind: "rm",
+      recursive: true,
+      targetInput: "2",
+    });
+  });
+
+  /**
+   * Rm commandをcombined short option付きで解析できることを検証します。
+   */
+  it("parses rm command with force recursive combined option", (): void => {
+    expect(parseBookmarkCommand(forceRecursiveRemoveBookmarkCommandInput)).toStrictEqual({
+      force: true,
+      kind: "rm",
+      recursive: true,
+      targetInput: "2",
+    });
+  });
+
+  /**
+   * Rm commandをlong option付きで解析できることを検証します。
+   */
+  it("parses rm command with long recursive and force options", (): void => {
+    expect(parseBookmarkCommand(longRecursiveRemoveBookmarkCommandInput)).toStrictEqual({
+      force: true,
+      kind: "rm",
+      recursive: true,
+      targetInput: "2",
     });
   });
 });

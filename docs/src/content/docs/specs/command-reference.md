@@ -27,6 +27,8 @@ JSON出力は `--format json` で指定します。
 
 `rm` はUnix commandの操作感に寄せ、通常実行では対話確認を挟み、`-f` または `--force` で確認なしに削除します。
 
+Folderを削除する場合は、配下のBookmarkとfolderも削除するため `-r`、`-R`、または `--recursive` を必須にします。
+
 ## コマンド一覧
 
 | コマンド | 目的                                   | v1   |
@@ -46,7 +48,7 @@ JSON出力は `--format json` で指定します。
 | `freq`   | よく開くBookmarkを表示する             | 対象 |
 | `mkdir`  | Folderを追加する                       | 対象 |
 | `mv`     | Bookmarkまたはfolderを移動する         | 対象 |
-| `rm`     | Bookmarkを削除する                     | 対象 |
+| `rm`     | Bookmarkまたはfolderを削除する         | 対象 |
 | `rename` | Bookmarkまたはfolderのtitleを変更する  | 対象 |
 | `tag`    | Bookmarkの仮想タグを追加または削除する | 対象 |
 
@@ -311,6 +313,21 @@ tree Work --depth 3
 
 `--depth` で表示する深さを指定します。
 
+表示は結果番号とkind列を揃え、title列にtree guideを表示します。
+
+Faviconやiconは、`tree` を含むすべての結果行でtitleやURLの前に表示します。
+
+これにより、通常resultとtree resultでicon位置を統一します。
+
+Directory行のtitleはURL色のcyanとは分けたblue accentで表示し、Bookmark行のtitleと見分けやすくします。
+
+```text
+1 | DIR | /Work/Admin          ├── Admin
+2 | DIR | /Work/Admin/Billing  │   ├── Billing
+3 | URL | /Work/Admin/Billing  │   │   └── Invoice
+4 | URL | /Work                └── Stripe Dashboard
+```
+
 代表的なエラーは `folder_not_found`、`chrome_bookmarks_failed` です。
 
 ## `help`
@@ -430,8 +447,11 @@ mkdir <name> [--to <path>]
 
 ```bash
 mkdir Tools
+mkdir /Project
 mkdir Admin --to Work
 ```
+
+CLI root直下へ作成する場合は、Bookmarks APIへroot node IDを渡さず、ブラウザ既定の書き込み可能な保存先へ作成します。
 
 同じ親folderに同名folderが存在する場合は `already_exists` を返します。
 
@@ -456,32 +476,41 @@ mv "GitHub" Work/DevTools
 
 ## `rm`
 
-Bookmarkを削除します。
+Bookmarkまたはfolderを削除します。
 
 ```bash
 rm <item>
 rm -f <item>
 rm --force <item>
+rm -r <item>
+rm -rf <item>
+rm --recursive --force <item>
 ```
 
 ```bash
 rm 5
 rm -f 5
+rm -r 2
+rm -rf 2
 ```
-
-v1ではfolder削除を扱いません。
 
 `rm <item>` は対象を表示し、`Remove <title>? y/N` の確認待ちに入ります。
 
 確認待ちはcommand行とは別の新しいstatus output行に表示します。
 
-`rm` は直前の結果番号から対象を解決するため、削除対象のBookmark行を結果一覧として再表示しません。
+`rm` は直前の結果番号から対象を解決するため、削除対象の行を結果一覧として再表示しません。
 
 確認待ちの次の入力で `y` または `yes` を入力すると削除します。
 
 `n`、`no`、空入力、またはそれ以外の入力は削除せず確認待ちを解除します。
 
 `-f` または `--force` を指定した場合は確認なしで削除します。
+
+Folderを対象に `-r` を指定しない場合は削除せず、recursive指定が必要であることを表示します。
+
+Bookmark削除はChrome Bookmarks APIの `remove` を使います。
+
+Folder削除はChrome Bookmarks APIの `removeTree` を使い、対象folder配下のsubtreeを削除します。
 
 代表的なエラーは `not_found`、`permission_denied` です。
 

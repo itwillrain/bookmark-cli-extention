@@ -34,7 +34,7 @@ const aliasSaveFailedStatusText = "Aliasを保存できませんでした";
 const shortcutReader = createChromeCommandShortcutReader(browser.commands);
 
 /** Chrome tabs APIを使うshortcut settings openerです。 */
-const shortcutSettingsPageOpener = createChromeShortcutSettingsPageOpener(browser.tabs);
+const shortcutSettingsPageOpener = createChromeShortcutSettingsPageOpener(browser);
 
 /** Chrome storage.localを使う拡張状態storageです。 */
 const extensionStateStorage = createChromeExtensionStateStorage(browser.storage.local);

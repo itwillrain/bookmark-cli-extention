@@ -1,14 +1,14 @@
-import type { Dispatch, ReactElement, SetStateAction } from "react";
 import type { BookmarkCliCommandState } from "../../presentation/cli/bookmark-cli-controller";
 import { BookmarkCliScreen } from "../../presentation/cli/components/bookmark-cli-screen";
 import type { BookmarkCliSuggestionItem } from "../../presentation/cli/components/bookmark-cli-suggestion-list";
 import type { BookmarkCliTranscriptEntry } from "../../presentation/cli/bookmark-cli-transcript";
 import type { CompletionCursorIndex } from "../../domain/cli/completion-cursor";
+import type { ReactElement } from "react";
 import type { ResultCursorIndex } from "../../domain/bookmarks/result-cursor";
 import type { UseBookmarkCliKeyboardValue } from "./use-bookmark-cli-keyboard";
 
-/** 入力値setter。 */
-type InputValueSetter = Dispatch<SetStateAction<string>>;
+/** 入力値変更handler。 */
+type InputChangeHandler = (value: string) => void;
 
 /** Bookmark CLI app screen props。 */
 export interface BookmarkCliAppScreenProps {
@@ -18,8 +18,8 @@ export interface BookmarkCliAppScreenProps {
   readonly inputValue: string;
   /** Keyboard hook戻り値。 */
   readonly keyboard: UseBookmarkCliKeyboardValue;
-  /** 入力値setter。 */
-  readonly setInputValue: InputValueSetter;
+  /** 入力値変更handler。 */
+  readonly onInputChange: InputChangeHandler;
   /** 選択中result index。 */
   readonly selectedResultIndex: ResultCursorIndex;
   /** 選択中suggestion index。 */
@@ -40,7 +40,7 @@ export interface BookmarkCliAppScreenProps {
 export const BookmarkCliAppScreen = (props: BookmarkCliAppScreenProps): ReactElement => (
   <BookmarkCliScreen
     inputValue={props.inputValue}
-    onInputChange={props.setInputValue}
+    onInputChange={props.onInputChange}
     onInputKeyDown={props.keyboard.handleInputKeyDown}
     onSubmit={props.onSubmit}
     preferNerdFont={props.commandState.extensionState.settings.preferNerdFont}

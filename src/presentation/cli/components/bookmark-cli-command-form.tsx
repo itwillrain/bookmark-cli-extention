@@ -115,6 +115,21 @@ interface CommandFormProps {
 const commandInputPlaceholder = "find stripe dashboard";
 
 /**
+ * Browser native autocompleteを無効化する値です。
+ */
+const autocompleteDisabledValue = "off";
+
+/**
+ * Mobile keyboardなどの自動大文字化を無効化する値です。
+ */
+const autocapitalizeDisabledValue = "off";
+
+/**
+ * Browser native autocorrectを無効化する値です。
+ */
+const autocorrectDisabledValue = "off";
+
+/**
  * CLI commandのprompt formを描画します。
  * @param {CommandFormProps} props Command formのpropsです。
  * @returns {ReactElement} Prompt formのReact elementです。
@@ -142,6 +157,7 @@ export const CommandForm = (props: CommandFormProps): ReactElement => {
 
   return (
     <form
+      autoComplete={autocompleteDisabledValue}
       className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-2 py-1"
       onSubmit={handleSubmit}
     >
@@ -150,6 +166,9 @@ export const CommandForm = (props: CommandFormProps): ReactElement => {
       </label>
       <input
         aria-label="Bookmark CLI command"
+        autoCapitalize={autocapitalizeDisabledValue}
+        autoComplete={autocompleteDisabledValue}
+        autoCorrect={autocorrectDisabledValue}
         autoFocus
         className="min-w-0 bg-transparent text-zinc-100 caret-emerald-300 outline-none placeholder:text-zinc-600"
         id="bookmark-cli-command"

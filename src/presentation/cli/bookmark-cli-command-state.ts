@@ -26,6 +26,10 @@ export interface BookmarkCliRemovePendingConfirmation {
    * 確認種別です。
    */
   readonly kind: "rm";
+  /**
+   * Folder subtreeを再帰削除する確認かです。
+   */
+  readonly recursive: boolean;
 }
 
 /**

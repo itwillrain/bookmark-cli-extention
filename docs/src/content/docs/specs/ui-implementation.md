@@ -114,7 +114,11 @@ PopupはDedicated extension page本体ではなく、設定画面として扱い
 
 Popupでは現在のhot keyを表示します。
 
-Chrome Extensions Commands APIにはshortcutを書き換えるAPIがないため、Popupの変更buttonは `chrome://extensions/shortcuts` を開きます。
+Chrome Extensions Commands APIにはshortcutを書き換えるAPIがないため、Popupの変更buttonはブラウザ標準のshortcut管理UIを開きます。
+
+Chromeでは `chrome://extensions/shortcuts` を新しいtabで開きます。
+
+Firefoxでは `browser.commands.openShortcutSettings()` でManage Extension Shortcutsを開きます。
 
 PopupからCLIを開くbuttonを提供し、backgroundへruntime messageを送ってDedicated extension pageを開きます。
 
@@ -233,6 +237,10 @@ Dedicated extension pageは、次のcomponentへ分ける想定です。
 
 Command入力はHTML上で `form` と `input` を使い、Enter submitとaccessibilityを保ちます。
 
+Command入力ではBrowser nativeのautocomplete、autocapitalize、autocorrectを無効化します。
+
+Firefoxなどのフォーム履歴候補ではなく、Bookmark CLI自身のfloating suggestionだけを補完UIとして表示します。
+
 ただし操作感はterminalへ寄せるため、terminal surfaceをクリックした場合はcommand inputへfocusを戻します。
 
 Powerline風表示は `CommandPrompt` の装飾として扱います。
@@ -241,13 +249,15 @@ Powerline風表示は `CommandPrompt` の装飾として扱います。
 
 `ResultSegment` はPowerline glyphを使わず、terminal outputとして読めるplainな表示にします。
 
-`ResultItem` はURL resultの場合、titleの左に小さなfaviconを表示できます。
+`ResultItem` はURL resultの場合、titleとURLを積んだtext stackの左に小さなfaviconを表示できます。
 
 faviconは実拡張ページ上でだけChrome拡張の `/_favicon/` endpointから解決します。
 
 Storybookやlocal表示など `chrome-extension:` origin以外の環境では、faviconを表示せずplain text labelだけで読める状態を保ちます。
 
-faviconはtitle行の左ではなく、titleとurlを積んだtext stackの左に置き、text stack全体の縦中央に揃えます。
+faviconやiconは `tree` を含むすべてのresultでtext stackの左に置き、text stack全体の縦中央に揃えます。
+
+Directory resultのtitleはURL色のcyanとは分け、blue accentで表示します。
 
 番号指定やResult Listの意味はDomain層で扱い、componentは表示だけを担当します。
 
@@ -349,11 +359,15 @@ Command suggestionはfish shellの補完に近い操作感を目指します。
 
 結果一覧をTabまたはShift+Tabで選択する場合も同じ方針で、DOM focusはcommand inputに残し、選択中result itemだけを表示範囲へ追従させます。
 
+ユーザーがcommand inputを手で編集した場合は、選択中のsuggestion cursorとresult cursorを解除します。
+
+手入力したcommandの `Enter` が古い選択状態に奪われず、通常のsubmitとして実行されるようにします。
+
 空のpromptで結果一覧を選択している場合、`Enter` は選択行の既定アクションを実行します。
 
 folder行は `cd <result-number>`、Bookmark行は `go <result-number>` として扱います。
 
-入力中のpromptが残っている場合は、結果一覧の選択行を入力補完として扱います。
+入力済みcommandがある場合、結果一覧の選択状態が残っていても `Enter` はresult補完ではなく通常のsubmitへ委ねます。
 
 空のpromptで `Ctrl+d` を押した場合は、Dedicated extension pageの現在windowを閉じます。
 

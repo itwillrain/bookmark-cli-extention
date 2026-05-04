@@ -84,10 +84,12 @@ workflowは次の順番で実行します。
 5. `pnpm run check` を実行する
 6. `pnpm test` を実行する
 7. `pnpm run build` を実行する
-8. `pnpm run zip` を実行する
-9. `dist` のうち入力versionと一致するzipをrelease assetとして集める
-10. `vX.Y.Z` のtagがなければ作成してpushする
-11. `vX.Y.Z` のGitHub Release draftを作成または更新する
+8. Firefox対応後は `pnpm run build:firefox` を実行する
+9. `pnpm run zip` を実行する
+10. Firefox対応後は `pnpm run zip:firefox` を実行する
+11. `dist` のうち入力versionと一致するzipをrelease assetとして集める
+12. `vX.Y.Z` のtagがなければ作成してpushする
+13. `vX.Y.Z` のGitHub Release draftを作成または更新する
 
 既存のrelease draftがある場合は、zip assetを上書きuploadします。
 
@@ -123,3 +125,5 @@ v1.0.0では、Chrome向けzipをGitHub Release assetとして添付します。
 Chrome Web Store申請やFirefox Add-ons申請は、GitHub Releaseとは別の公開作業として扱います。
 
 Firefox対応後は、Firefox向けzipまたは提出物もrelease assetへ追加します。
+
+Firefox向け提出物は `pnpm run zip:firefox` で生成します。
