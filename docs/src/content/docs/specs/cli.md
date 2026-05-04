@@ -29,7 +29,7 @@ Popupは疑似CLI本体ではなく、設定画面として扱います。
 - terminal viewportはscroll可能にするが、CLI感を保つため視覚上のscrollbarは表示しない
 - terminal viewportの最下部追従は、command実行でtranscriptが増えたときだけ行う
 - 入力中promptは下部固定せず、scrollback transcriptの末尾行として扱う
-- コマンド履歴を上キー、下キー、`Ctrl+p`、`Ctrl+n` で再利用できるようにする
+- コマンド履歴を上キー、下キー、`Ctrl+p`、`Ctrl+n`、`Ctrl+r` で再利用できるようにする
 - 入力中はfish shellのように補完候補やエラーを現在promptの下へfloating表示する
 - 空のpromptでは補完候補を表示せず、ユーザーが入力を開始したタイミングで候補を表示する
 - 補完候補は現在promptより上には表示しない
@@ -75,7 +75,15 @@ Bookmark行の既定アクションは `go <result-number>` です。
 
 `Esc` は候補の選択状態を解除します。
 
-`Ctrl+r` は将来の履歴検索用に予約します。
+`Ctrl+r` はCLI入力履歴のfloating一覧を表示します。
+
+履歴一覧はChrome閲覧履歴ではなく、疑似CLIで実行したcommand inputを対象にします。
+
+履歴一覧は新しい入力から順に表示し、現在の入力値がある場合はその文字列を含む履歴だけを表示します。
+
+履歴一覧の候補も `Tab` と `Shift+Tab` で選択し、`Enter` で選択中の履歴を入力欄へ戻します。
+
+履歴一覧から戻したcommandは、その時点では実行せず、次の `Enter` で通常のcommandとして実行します。
 
 ## コマンド実行履歴
 
@@ -86,6 +94,8 @@ Bookmark行の既定アクションは `go <result-number>` です。
 上キーまたは `Ctrl+p` で古い履歴へ移動します。
 
 下キーまたは `Ctrl+n` で新しい履歴へ移動します。
+
+`Ctrl+r` で履歴一覧をfloating表示し、表示中の履歴候補を入力欄へ戻せます。
 
 `clear` は画面上のscrollback transcriptだけを消します。
 

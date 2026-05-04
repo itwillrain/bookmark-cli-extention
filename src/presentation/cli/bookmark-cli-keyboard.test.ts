@@ -24,6 +24,15 @@ describe("resolveBookmarkCliKeyboardAction history", (): void => {
   });
 
   /**
+   * Ctrl+rを履歴一覧表示へ変換することを検証。
+   */
+  it("resolves control r as showing history list", (): void => {
+    expect(resolveBookmarkCliKeyboardAction({ ctrlKey: true, key: "r", shiftKey: false })).toBe(
+      "showHistoryList",
+    );
+  });
+
+  /**
    * 下矢印を新しい履歴移動へ変換することを検証。
    */
   it("resolves arrow down as history next", (): void => {

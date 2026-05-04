@@ -319,13 +319,21 @@ view modelはcomponentが直接使いやすい形にします。
 
 Dedicated extension pageを開いた直後、command実行後、terminal surfaceのpointer操作後はcommand inputへfocusを戻します。
 
-上キー、下キー、`Ctrl+p`、`Ctrl+n`、`Ctrl+a`、`Ctrl+e`、`Ctrl+u`、`Ctrl+k`、`Ctrl+w`、`Ctrl+d`、`Tab`、`Shift+Tab`、`Enter`、`Esc` の操作をcomponent設計に含めます。
+上キー、下キー、`Ctrl+p`、`Ctrl+n`、`Ctrl+r`、`Ctrl+a`、`Ctrl+e`、`Ctrl+u`、`Ctrl+k`、`Ctrl+w`、`Ctrl+d`、`Tab`、`Shift+Tab`、`Enter`、`Esc` の操作をcomponent設計に含めます。
 
 Command suggestionはfish shellの補完に近い操作感を目指します。
 
 空のpromptではcandidate listを表示せず、command名を入力し始めたタイミングでprefixに一致するcandidate listを表示します。
 
 現在のprompt直下にfloating候補を表示し、`Tab` で候補選択を進め、`Shift+Tab` で候補選択を戻し、`Enter` で選択中のfloating候補を入力へ確定します。
+
+`Ctrl+r` はCLI入力履歴をfloating候補として表示します。
+
+履歴候補は新しい順に並べ、現在入力中の文字列を含む履歴だけに絞り込めます。
+
+履歴候補の選択中もkeyboard focusはcommand inputに残します。
+
+履歴候補を `Enter` で確定した場合は入力欄へ戻すだけで、即時実行はしません。
 
 `Tab` や `Shift+Tab` による候補選択中もkeyboard focusはcommand inputに残します。
 

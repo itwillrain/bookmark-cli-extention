@@ -12,7 +12,8 @@ export type BookmarkCliKeyboardAction =
   | "lineStart"
   | "none"
   | "selectNextCompletion"
-  | "selectPreviousCompletion";
+  | "selectPreviousCompletion"
+  | "showHistoryList";
 
 /** Bookmark CLI keyboard eventの最小shape。 */
 export interface BookmarkCliKeyboardEvent {
@@ -29,6 +30,9 @@ const historyNextControlKey = "n";
 
 /** Ctrl+p key。 */
 const historyPreviousControlKey = "p";
+
+/** Ctrl+r key。 */
+const historyListControlKey = "r";
 
 /** Ctrl+a key。 */
 const lineStartControlKey = "a";
@@ -69,6 +73,7 @@ const clearKey = "Escape";
 const controlKeyActions = {
   [closeCliPageControlKey]: "closeCliPage",
   [deletePreviousWordControlKey]: "deletePreviousWord",
+  [historyListControlKey]: "showHistoryList",
   [historyNextControlKey]: "historyNext",
   [historyPreviousControlKey]: "historyPrevious",
   [killAfterCursorControlKey]: "killAfterCursor",

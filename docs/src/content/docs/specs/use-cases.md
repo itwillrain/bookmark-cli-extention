@@ -261,16 +261,17 @@ Chrome履歴は `find` と `go` の検索対象として参照します。
 1. ユーザーがhot keyでDedicated extension pageを開く
 2. 入力欄へ自動フォーカスする
 3. 上キー、下キー、`Ctrl+p`、`Ctrl+n` で履歴を移動する
-4. `Ctrl+a`、`Ctrl+e`、`Ctrl+u`、`Ctrl+k`、`Ctrl+w` で入力を編集する
-5. 入力中にcommand suggestionを確認する
-6. `Tab` または `Shift+Tab` で補完候補を選択する
-7. `Enter` で選択中候補を入力へ確定する
-8. `Esc` で候補選択を解除する
-9. 実行したpromptと結果がtranscriptに追加される
-10. `ls | grep stripe` のように結果一覧を絞り込む
-11. 必要に応じて `clear` でscrollback transcriptを消す
-12. 空promptで `Ctrl+d` を押してCLI windowを閉じる
-13. Powerline風promptとplainな結果一覧で実行結果を読む
+4. `Ctrl+r` でCLI入力履歴のfloating一覧を表示する
+5. `Ctrl+a`、`Ctrl+e`、`Ctrl+u`、`Ctrl+k`、`Ctrl+w` で入力を編集する
+6. 入力中にcommand suggestionを確認する
+7. `Tab` または `Shift+Tab` で補完候補を選択する
+8. `Enter` で選択中候補を入力へ確定する
+9. `Esc` で候補選択を解除する
+10. 実行したpromptと結果がtranscriptに追加される
+11. `ls | grep stripe` のように結果一覧を絞り込む
+12. 必要に応じて `clear` でscrollback transcriptを消す
+13. 空promptで `Ctrl+d` を押してCLI windowを閉じる
+14. Powerline風promptとplainな結果一覧で実行結果を読む
 
 完了条件は、マウス操作なしで主要な検索、移動、保存、整理ができることです。
 
