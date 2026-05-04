@@ -1,3 +1,7 @@
+import {
+  type BookmarkCliResultDetailOptions,
+  createEntryDetailTokens,
+} from "./bookmark-cli-result-details";
 import type { BookmarkCliEntry } from "../../domain/cli/bookmark-cli-entry";
 import type { BookmarkCliResultItem } from "./components/bookmark-cli-screen";
 import type { BookmarkSearchResult } from "../../domain/search/bookmark-search";
@@ -6,16 +10,10 @@ import type { BookmarkTreeViewEntry } from "../../domain/bookmarks/bookmark-tree
 export { createBookmarkCliCompletionInput } from "./bookmark-cli-completion-input";
 
 /** Bookmark検索結果変換option。 */
-export interface CreateBookmarkCliResultItemsOptions {
-  /** Debug情報を表示するか。 */
-  readonly debug: boolean;
-}
+export type CreateBookmarkCliResultItemsOptions = BookmarkCliResultDetailOptions;
 
 /** Bookmark entry変換option。 */
-export interface CreateBookmarkCliResultItemsFromEntriesOptions {
-  /** 詳細情報を表示するか。 */
-  readonly long: boolean;
-}
+export type CreateBookmarkCliResultItemsFromEntriesOptions = BookmarkCliResultDetailOptions;
 
 /**
  * URLを持つBookmark entryです。
@@ -27,47 +25,15 @@ type BookmarkEntryWithUrl = BookmarkCliEntry & {
   readonly url: string;
 };
 
-/** Entry詳細tokenのid keyです。 */
-const idDetailKey = "id";
-
-/** Entry詳細tokenのparent keyです。 */
-const parentDetailKey = "parent";
-
-/** Entry詳細tokenのchildren keyです。 */
-const childrenDetailKey = "children";
-
-/** Entry詳細tokenの区切り文字です。 */
-const detailTokenSeparator = "=";
-
 /** Bookmark entry変換optionの初期値です。 */
 const defaultEntryResultItemsOptions = {
   long: false,
 } as const satisfies CreateBookmarkCliResultItemsFromEntriesOptions;
 
 /**
- * Entry詳細tokenを作ります。
- * @param {string} key 詳細keyです。
- * @param {string | number} value 詳細値です。
- * @returns {string} 詳細tokenです。
- */
-const createEntryDetailToken = (key: string, value: string | number): string =>
-  `${key}${detailTokenSeparator}${String(value)}`;
-
-/**
- * Bookmark entryの詳細token一覧を作ります。
- * @param {BookmarkEntry} entry Bookmark entryです。
- * @returns {readonly string[]} 詳細token一覧です。
- */
-const createEntryDetailTokens = (entry: BookmarkCliEntry): readonly string[] => [
-  createEntryDetailToken(idDetailKey, entry.id),
-  createEntryDetailToken(parentDetailKey, entry.parentId),
-  createEntryDetailToken(childrenDetailKey, entry.childrenCount),
-];
-
-/**
  * Long表示optionに応じて詳細tokenを付与します。
  * @param {BookmarkCliResultItem} item CLI表示itemです。
- * @param {BookmarkEntry} entry Bookmark entryです。
+ * @param {BookmarkCliEntry} entry Bookmark entryです。
  * @param {CreateBookmarkCliResultItemsFromEntriesOptions} options Bookmark entry変換optionです。
  * @returns {BookmarkCliResultItem} 詳細token反映後のCLI表示itemです。
  */
@@ -82,13 +48,13 @@ const applyEntryDetails = (
 
   return {
     ...item,
-    details: createEntryDetailTokens(entry),
+    details: createEntryDetailTokens(entry, options),
   };
 };
 
 /**
  * Bookmark entryをCLI表示itemへ変換します。
- * @param {BookmarkEntry} entry Bookmark entryです。
+ * @param {BookmarkCliEntry} entry Bookmark CLI entryです。
  * @param {CreateBookmarkCliResultItemsFromEntriesOptions} options Bookmark entry変換optionです。
  * @returns {BookmarkCliResultItem} CLI表示itemです。
  */
@@ -122,7 +88,7 @@ const createBookmarkCliResultItemWithUrl = (
 
 /**
  * Bookmark entryがURLを持つかを判定します。
- * @param {BookmarkEntry} entry Bookmark entryです。
+ * @param {BookmarkCliEntry} entry Bookmark CLI entryです。
  * @returns {boolean} URLを持つBookmark entryならtrueです。
  */
 const hasBookmarkEntryUrl = (entry: BookmarkCliEntry): entry is BookmarkEntryWithUrl =>
@@ -130,7 +96,7 @@ const hasBookmarkEntryUrl = (entry: BookmarkCliEntry): entry is BookmarkEntryWit
 
 /**
  * Bookmark entryをURL有無に応じてCLI表示itemへ変換します。
- * @param {BookmarkEntry} entry Bookmark entryです。
+ * @param {BookmarkCliEntry} entry Bookmark CLI entryです。
  * @param {CreateBookmarkCliResultItemsFromEntriesOptions} options Bookmark entry変換optionです。
  * @returns {BookmarkCliResultItem} CLI表示itemです。
  */
@@ -155,9 +121,9 @@ const createBookmarkCliResultItem = (
   result: BookmarkSearchResult,
   options: CreateBookmarkCliResultItemsOptions,
 ): BookmarkCliResultItem => {
-  const item = createBookmarkCliResultItemFromBookmarkEntry(result.entry);
+  const item = createBookmarkCliResultItemFromBookmarkEntry(result.entry, options);
 
-  if (!options.debug) {
+  if (!options.long) {
     return item;
   }
 

@@ -90,8 +90,8 @@ describe("parseBookmarkCommand search commands", (): void => {
    */
   it("parses find command with query", (): void => {
     expect(parseBookmarkCommand(findCommandInput)).toStrictEqual({
-      debug: false,
       kind: "find",
+      long: false,
       query: "stripe dashboard",
     });
   });
@@ -101,8 +101,8 @@ describe("parseBookmarkCommand search commands", (): void => {
    */
   it("parses go command with normalized whitespace", (): void => {
     expect(parseBookmarkCommand(goCommandInput)).toStrictEqual({
-      debug: false,
       kind: "go",
+      long: false,
       query: "/Work/Admin",
     });
   });

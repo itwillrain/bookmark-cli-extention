@@ -37,6 +37,19 @@ const adminFolderEntry = {
   title: "Admin",
 } satisfies BookmarkEntry;
 
+/** Bookmark IDごとの仮想タグfixtureです。 */
+const virtualTagsByBookmarkId = {
+  "42": ["finance", "prod"],
+};
+
+/** Bookmark IDごとの利用統計fixtureです。 */
+const usageByBookmarkId = {
+  "42": {
+    lastOpenedAt: "2026-05-03T00:00:00.000Z",
+    openCount: 5,
+  },
+};
+
 /**
  * Tree view fixtureのdepthです。
  */
@@ -58,7 +71,7 @@ describe("createBookmarkCliResultItems", (): void => {
    * Bookmark検索結果をscoreなしの画面表示itemへ変換できることを検証します。
    */
   it("converts bookmark search results into CLI result items", (): void => {
-    expect(createBookmarkCliResultItems([stripeSearchResult], { debug: false })).toStrictEqual([
+    expect(createBookmarkCliResultItems([stripeSearchResult], { long: false })).toStrictEqual([
       {
         folderPath: "/Work/Admin",
         kind: "bookmark",
@@ -69,11 +82,26 @@ describe("createBookmarkCliResultItems", (): void => {
   });
 
   /**
-   * Debug時は検索scoreを画面表示itemへ含めることを検証します。
+   * Long表示時は検索scoreと詳細tokenを画面表示itemへ含めることを検証します。
    */
-  it("includes score in CLI result items for debug mode", (): void => {
-    expect(createBookmarkCliResultItems([stripeSearchResult], { debug: true })).toStrictEqual([
+  it("includes score and details in CLI result items for long mode", (): void => {
+    expect(
+      createBookmarkCliResultItems([stripeSearchResult], {
+        long: true,
+        usageByBookmarkId,
+        virtualTagsByBookmarkId,
+      }),
+    ).toStrictEqual([
       {
+        details: [
+          "host=dashboard.stripe.com",
+          "#finance",
+          "#prod",
+          "opened=5",
+          "last=2026-05-03",
+          "id=42",
+          "parent=10",
+        ],
         folderPath: "/Work/Admin",
         kind: "bookmark",
         score: 0.98,
@@ -109,7 +137,7 @@ describe("createBookmarkCliResultItemsFromEntries", (): void => {
       createBookmarkCliResultItemsFromEntries([adminFolderEntry], { long: true }),
     ).toStrictEqual([
       {
-        details: ["id=11", "parent=10", "children=1"],
+        details: ["children=1", "id=11", "parent=10"],
         folderPath: "/Work/Admin",
         kind: "folder",
         title: "Admin",

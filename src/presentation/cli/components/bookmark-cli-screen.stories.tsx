@@ -48,10 +48,11 @@ const storyResultItems = [
 ] satisfies readonly BookmarkCliResultItem[];
 
 /**
- * Storyで表示するdebug付き検索結果です。
+ * Storyで表示するlong表示付き検索結果です。
  */
-const storyDebugResultItems = [
+const storyLongResultItems = [
   {
+    details: ["host=dashboard.stripe.com", "#prod", "#finance", "opened=5"],
     folderPath: "/Work/Admin",
     kind: "bookmark",
     score: 0.98,
@@ -59,6 +60,7 @@ const storyDebugResultItems = [
     url: "https://dashboard.stripe.com/",
   },
   {
+    details: ["host=dashboard.stripe.com", "#finance", "opened=2"],
     folderPath: "/Finance",
     kind: "bookmark",
     score: 0.91,
@@ -149,16 +151,16 @@ export default meta;
 export const WithCandidates: StoryObj<BookmarkCliScreenProps> = {};
 
 /**
- * Debug付き検索結果がある状態のStoryです。
+ * Long表示付き検索結果がある状態のStoryです。
  */
-export const WithDebugCandidates: StoryObj<BookmarkCliScreenProps> = {
+export const WithLongCandidates: StoryObj<BookmarkCliScreenProps> = {
   args: {
-    inputValue: "find --debug stripe",
+    inputValue: "find -l stripe",
     transcriptEntries: [
       {
-        id: "story-entry-debug",
-        inputValue: "find --debug stripe",
-        resultItems: storyDebugResultItems,
+        id: "story-entry-long",
+        inputValue: "find -l stripe",
+        resultItems: storyLongResultItems,
         statusText: storyStatusText,
       },
     ],

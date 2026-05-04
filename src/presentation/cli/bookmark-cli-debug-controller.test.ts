@@ -11,8 +11,8 @@ import { describe, expect, it } from "vitest";
 import type { BookmarkCreatorPort } from "../../application/bookmarks/mark-bookmark-use-case";
 import { createInitialExtensionState } from "../../domain/storage/extension-state";
 
-/** Debug付きFind commandの入力です。 */
-const debugFindInput = "find --debug stripe";
+/** Long表示付きFind commandの入力です。 */
+const longFindInput = "find -l stripe";
 
 /** Root current directoryです。 */
 const rootCurrentDirectory = "/";
@@ -109,14 +109,14 @@ const createCommandDependencies = (): BookmarkCliCommandDependencies => ({
 });
 
 /**
- * Bookmark検索系CLI controller debug表示のテストスイートです。
+ * Bookmark検索系CLI controller long表示のテストスイートです。
  */
-describe("executeBookmarkCliCommand search debug option", (): void => {
+describe("executeBookmarkCliCommand search long option", (): void => {
   /**
-   * Debug付きFind commandではscoreを表示状態へ含めることを検証します。
+   * Long表示付きFind commandではscoreを表示状態へ含めることを検証します。
    */
-  it("returns score for debug find command", async (): Promise<void> => {
-    const state = await executeBookmarkCliCommand(debugFindInput, createCommandDependencies());
+  it("returns score for long find command", async (): Promise<void> => {
+    const state = await executeBookmarkCliCommand(longFindInput, createCommandDependencies());
 
     expect(typeof state.resultItems[firstResultItemIndex]?.score).toBe("number");
   });

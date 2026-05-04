@@ -157,7 +157,7 @@ describe("executeBookmarkCliCommand help commands", (): void => {
     expect(state.resultItems).toStrictEqual([
       {
         description: "Bookmarkを検索して開く",
-        details: ["usage: go <query>", "usage: go <result-number>", "usage: go [--debug] <query>"],
+        details: ["usage: go <query>", "usage: go <result-number>", "usage: go [-l] <query>"],
         folderPath: "/",
         kind: "help",
         title: "go",

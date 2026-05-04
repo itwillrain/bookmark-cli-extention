@@ -1,25 +1,25 @@
 import type { FindBookmarkCommand, GoBookmarkCommand } from "./bookmark-search-command-types";
 
-/** Debug option名。 */
-const debugOptionName = "--debug";
+/** Long option名。 */
+const longOptionName = "-l";
 
 /** Command tokenの区切り文字。 */
 const commandTokenSeparator = " ";
 
 /** 検索command共通のparse結果。 */
 interface SearchCommandParseValue {
-  /** Debug情報を表示するか。 */
-  readonly debug: boolean;
+  /** 詳細情報を表示するか。 */
+  readonly long: boolean;
   /** 検索query。 */
   readonly query: string;
 }
 
 /**
- * Debug option tokenかを判定。
+ * Long option tokenかを判定。
  * @param {string} token 判定対象token。
- * @returns {boolean} debug optionならtrue。
+ * @returns {boolean} long optionならtrue。
  */
-const isDebugOptionToken = (token: string): boolean => token === debugOptionName;
+const isLongOptionToken = (token: string): boolean => token === longOptionName;
 
 /**
  * 検索queryに使う値tokenだけを抽出。
@@ -27,7 +27,7 @@ const isDebugOptionToken = (token: string): boolean => token === debugOptionName
  * @returns {readonly string[]} optionを除いた値token一覧。
  */
 const createSearchValueTokens = (queryParts: readonly string[]): readonly string[] =>
-  queryParts.filter((token) => !isDebugOptionToken(token));
+  queryParts.filter((token) => !isLongOptionToken(token));
 
 /**
  * 値tokenを検索query文字列へ戻す。
@@ -37,12 +37,12 @@ const createSearchValueTokens = (queryParts: readonly string[]): readonly string
 const joinSearchQuery = (tokens: readonly string[]): string => tokens.join(commandTokenSeparator);
 
 /**
- * Debug option指定があるかを判定。
+ * Long option指定があるかを判定。
  * @param {readonly string[]} queryParts command名を除いたtoken一覧。
- * @returns {boolean} debug option指定があればtrue。
+ * @returns {boolean} long option指定があればtrue。
  */
-const hasDebugOption = (queryParts: readonly string[]): boolean =>
-  queryParts.includes(debugOptionName);
+const hasLongOption = (queryParts: readonly string[]): boolean =>
+  queryParts.includes(longOptionName);
 
 /**
  * 検索command共通部分を解析。
@@ -50,7 +50,7 @@ const hasDebugOption = (queryParts: readonly string[]): boolean =>
  * @returns {SearchCommandParseValue} 検索command共通のparse結果。
  */
 const parseSearchCommand = (queryParts: readonly string[]): SearchCommandParseValue => ({
-  debug: hasDebugOption(queryParts),
+  long: hasLongOption(queryParts),
   query: joinSearchQuery(createSearchValueTokens(queryParts)),
 });
 

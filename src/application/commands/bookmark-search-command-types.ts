@@ -3,9 +3,9 @@
  */
 export interface FindBookmarkCommand {
   /**
-   * Debug情報を表示するかです。
+   * 詳細情報を表示するかです。
    */
-  readonly debug: boolean;
+  readonly long: boolean;
   /**
    * Command種別です。
    */
@@ -21,9 +21,9 @@ export interface FindBookmarkCommand {
  */
 export interface GoBookmarkCommand {
   /**
-   * Debug情報を表示するかです。
+   * 詳細情報を表示するかです。
    */
-  readonly debug: boolean;
+  readonly long: boolean;
   /**
    * Command種別です。
    */

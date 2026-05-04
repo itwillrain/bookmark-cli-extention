@@ -2,37 +2,37 @@ import { describe, expect, it } from "vitest";
 import { parseBookmarkCommand } from "./bookmark-command-parser";
 
 /**
- * Debug付きFind commandの入力です。
+ * Long表示付きFind commandの入力です。
  */
-const debugFindCommandInput = "find --debug stripe dashboard";
+const longFindCommandInput = "find -l stripe dashboard";
 
 /**
- * Debug付きGo commandの入力です。
+ * Long表示付きGo commandの入力です。
  */
-const debugGoCommandInput = "go /Work/Admin --debug";
+const longGoCommandInput = "go /Work/Admin -l";
 
 /**
- * Bookmark検索系command debug option parserのテストスイートです。
+ * Bookmark検索系command long option parserのテストスイートです。
  */
-describe("parseBookmarkCommand search debug option", (): void => {
+describe("parseBookmarkCommand search long option", (): void => {
   /**
-   * Find commandのdebug optionを解析できることを検証します。
+   * Find commandのlong optionを解析できることを検証します。
    */
-  it("parses find command with debug option", (): void => {
-    expect(parseBookmarkCommand(debugFindCommandInput)).toStrictEqual({
-      debug: true,
+  it("parses find command with long option", (): void => {
+    expect(parseBookmarkCommand(longFindCommandInput)).toStrictEqual({
       kind: "find",
+      long: true,
       query: "stripe dashboard",
     });
   });
 
   /**
-   * Go commandのdebug optionを解析できることを検証します。
+   * Go commandのlong optionを解析できることを検証します。
    */
-  it("parses go command with debug option", (): void => {
-    expect(parseBookmarkCommand(debugGoCommandInput)).toStrictEqual({
-      debug: true,
+  it("parses go command with long option", (): void => {
+    expect(parseBookmarkCommand(longGoCommandInput)).toStrictEqual({
       kind: "go",
+      long: true,
       query: "/Work/Admin",
     });
   });

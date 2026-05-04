@@ -77,6 +77,8 @@ export const executeListDirectoryCommand = async (
     lastResultEntries: result.value.entries,
     resultItems: createBookmarkCliResultItemsFromEntries(result.value.entries, {
       long: command.options.long,
+      usageByBookmarkId: dependencies.extensionState.usageByBookmarkId,
+      virtualTagsByBookmarkId: dependencies.extensionState.virtualTagsByBookmarkId,
     }),
     statusText: createEntryStatusText(result.value.entries.length),
   });
