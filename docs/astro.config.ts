@@ -134,7 +134,10 @@ export default defineConfig({
           label: "仕様",
         },
         {
-          items: [{ label: "開発環境", slug: "development/environment" }],
+          items: [
+            { label: "開発環境", slug: "development/environment" },
+            { label: "リリース運用", slug: "development/release" },
+          ],
           label: "開発",
         },
         typeDocSidebarGroup,
