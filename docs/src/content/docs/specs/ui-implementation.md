@@ -249,13 +249,13 @@ Powerline風表示は `CommandPrompt` の装飾として扱います。
 
 `ResultSegment` はPowerline glyphを使わず、terminal outputとして読めるplainな表示にします。
 
-`ResultItem` はURL resultの場合、titleの左に小さなfaviconを表示できます。
+`ResultItem` はURL resultの場合、titleとURLを積んだtext stackの左に小さなfaviconを表示できます。
 
 faviconは実拡張ページ上でだけChrome拡張の `/_favicon/` endpointから解決します。
 
 Storybookやlocal表示など `chrome-extension:` origin以外の環境では、faviconを表示せずplain text labelだけで読める状態を保ちます。
 
-faviconはtitle行の左ではなく、titleとurlを積んだtext stackの左に置き、text stack全体の縦中央に揃えます。
+faviconやiconは `tree` を含むすべてのresultでtext stackの左に置き、text stack全体の縦中央に揃えます。
 
 番号指定やResult Listの意味はDomain層で扱い、componentは表示だけを担当します。
 

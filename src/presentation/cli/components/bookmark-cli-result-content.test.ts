@@ -30,11 +30,8 @@ const treeBookmarkResultItem = {
   url: "https://dashboard.stripe.com/",
 } satisfies BookmarkCliResultItem;
 
-/** Tree result layout属性。 */
-const treeLayoutAttribute = 'data-layout="result-tree-text-and-favicon"';
-
-/** Tree result favicon slot layout属性。 */
-const treeFaviconSlotLayoutAttribute = 'data-layout="result-tree-favicon-slot"';
+/** Result favicon/text layout属性。 */
+const resultFaviconAndTextLayoutAttribute = 'data-layout="result-favicon-and-text"';
 
 /** Directory title色class token。 */
 const directoryTitleClassToken = "text-sky-300";
@@ -60,17 +57,17 @@ describe("BookmarkCliResultContent", (): void => {
   });
 
   /**
-   * Tree resultではURLがあってもiconをtitleの後ろに描画することを検証。
+   * Tree resultでもURLがあればiconをtitleの前に描画することを検証。
    */
-  it("renders tree result icon after the title", (): void => {
+  it("renders tree result icon before the title", (): void => {
     const html = renderToStaticMarkup(
       createElement(BookmarkCliResultContent, { item: treeBookmarkResultItem }),
     );
     const titleIndex = html.indexOf(treeTitleText);
-    const faviconSlotIndex = html.indexOf(treeFaviconSlotLayoutAttribute);
+    const layoutIndex = html.indexOf(resultFaviconAndTextLayoutAttribute);
 
-    expect(html).toContain(treeLayoutAttribute);
-    expect(faviconSlotIndex).toBeGreaterThan(titleIndex);
+    expect(layoutIndex).toBeGreaterThan(missingIndex);
+    expect(layoutIndex).toBeLessThan(titleIndex);
   });
 
   /**
