@@ -257,6 +257,8 @@ Storybookやlocal表示など `chrome-extension:` origin以外の環境では、
 
 faviconやiconは `tree` を含むすべてのresultでtext stackの左に置き、text stack全体の縦中央に揃えます。
 
+Directory resultのtitleはURL色のcyanとは分け、blue accentで表示します。
+
 番号指定やResult Listの意味はDomain層で扱い、componentは表示だけを担当します。
 
 ## Popupのcomponent候補

@@ -43,7 +43,7 @@ const resultTitleTextClassName = "block min-w-0 truncate text-zinc-100";
 /**
  * Directory result title文字列のclassNameです。
  */
-const directoryResultTitleTextClassName = "block min-w-0 truncate text-sky-300";
+const directoryResultTitleTextClassName = "block min-w-0 truncate text-blue-400";
 
 /**
  * Tree guide文字列のclassNameです。

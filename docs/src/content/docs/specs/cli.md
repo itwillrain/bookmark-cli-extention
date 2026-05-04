@@ -672,7 +672,7 @@ Faviconやiconは、`tree` を含むすべての結果行でtitleやURLの前に
 
 これにより、通常resultとtree resultでicon位置を統一します。
 
-Directory行のtitleは専用色で表示し、Bookmark行のtitleと見分けやすくします。
+Directory行のtitleはURL色のcyanとは分けたblue accentで表示し、Bookmark行のtitleと見分けやすくします。
 
 ```text
 1 | DIR | /Work/Admin          ├── Admin

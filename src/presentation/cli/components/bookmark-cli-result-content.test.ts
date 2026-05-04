@@ -34,7 +34,7 @@ const treeBookmarkResultItem = {
 const resultFaviconAndTextLayoutAttribute = 'data-layout="result-favicon-and-text"';
 
 /** Directory title色class token。 */
-const directoryTitleClassToken = "text-sky-300";
+const directoryTitleClassToken = "text-blue-400";
 
 /** Default title色class token。 */
 const defaultTitleClassToken = "text-zinc-100";
