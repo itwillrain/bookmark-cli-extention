@@ -230,7 +230,9 @@ Dedicated extension pageは単一のpopup windowとして扱います。
 
 hot keyまたは拡張actionで起動するたびに `chrome.windows.getAll({ populate: true })` で既存のCLI windowを探します。
 
-既存のCLI windowが残っていてfocus中ではない場合は、新規作成せず `chrome.windows.update(windowId, { focused: true })` で前面へ戻します。
+既存のCLI windowが残っており、focusされていない場合は新規作成しません。
+
+この場合は `chrome.windows.update(windowId, { focused: true })` で前面へ戻します。
 
 hot key再押下時にCLI window自身がfocus中の場合は、`chrome.windows.remove(windowId)` でCLI windowを閉じます。
 
@@ -248,7 +250,9 @@ CLI windowが複数見つかった場合は、先頭の1つだけを残して重
 
 Chrome Extensionsの `windows` APIにはalways-on-topとしてOS上へ固定する指定がないため、v1では常時最前面固定を扱いません。
 
-Dedicated extension page内で空promptの `Ctrl+d` を押した場合も、`chrome.windows.getCurrent()` で現在window IDを取得し、`chrome.windows.remove(windowId)` で閉じます。
+Dedicated extension page内で空promptの `Ctrl+d` を押した場合も、現在window IDを取得します。
+
+取得には `chrome.windows.getCurrent()` を使い、`chrome.windows.remove(windowId)` で閉じます。
 
 ## 必要な権限
 

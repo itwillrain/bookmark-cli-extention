@@ -296,7 +296,9 @@ TabキーやShift+Tabキーで候補を選択しても、DOM focusはcommand inp
 
 選択中候補はfocus移動の代わりに表示範囲へscrollし、候補が多い場合でも選択位置を見失わないようにします。
 
-結果一覧のBookmark候補をTabキーやShift+Tabキーで選択する場合も、選択中resultを `scrollIntoView({ block: "nearest", inline: "nearest" })` で表示範囲へ追従させます。
+結果一覧のBookmark候補をTabキーやShift+Tabキーで選択する場合も、選択中resultを表示範囲へ追従させます。
+
+追従には `scrollIntoView({ block: "nearest", inline: "nearest" })` を使います。
 
 Enterキーは選択中のfloating補完候補を入力へ反映します。
 

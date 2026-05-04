@@ -118,6 +118,14 @@ Chrome Extensions Commands APIにはshortcutを書き換えるAPIがないため
 
 PopupからCLIを開くbuttonを提供し、backgroundへruntime messageを送ってDedicated extension pageを開きます。
 
+拡張機能本体のiconは `public/icons/16.png`、`public/icons/24.png`、`public/icons/32.png` を使います。
+
+同じく `public/icons/48.png`、`public/icons/128.png` も使い、すべてを `manifest.icons` に設定します。
+
+Toolbar actionのiconは `public/icons/16.png`、`public/icons/24.png`、`public/icons/32.png` を `action.default_icon` に設定します。
+
+Docs siteのfaviconは同じ元画像から生成した `docs/public/favicon.png` を使います。
+
 Popupではcommand aliasの追加、削除、保存も扱います。
 
 疑似CLIでは `alias` / `unalias` commandで同じ `settings.commandAliases` を更新します。

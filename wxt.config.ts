@@ -24,6 +24,28 @@ const extensionDescription = "Bookmark CLI browser extension built with WXT.";
 const outputDirectory = "dist";
 
 /**
+ * Manifest iconとして登録する画像path一覧です。
+ * @see https://developer.chrome.com/docs/extensions/reference/manifest/icons
+ */
+const manifestIconPaths = {
+  "128": "icons/128.png",
+  "16": "icons/16.png",
+  "24": "icons/24.png",
+  "32": "icons/32.png",
+  "48": "icons/48.png",
+} as const;
+
+/**
+ * Toolbar action iconとして登録する画像path一覧です。
+ * @see https://developer.chrome.com/docs/extensions/reference/manifest/action#icons
+ */
+const actionIconPaths = {
+  "16": manifestIconPaths["16"],
+  "24": manifestIconPaths["24"],
+  "32": manifestIconPaths["32"],
+} as const;
+
+/**
  * Dedicated extension pageを開くcommand名です。
  */
 const openCliPageCommandName = "open-cli-page";
@@ -67,6 +89,7 @@ const createViteConfig = (): WxtViteConfig => ({
 export default defineConfig({
   manifest: {
     action: {
+      default_icon: actionIconPaths,
       default_title: extensionName,
     },
     commands: {
@@ -79,6 +102,7 @@ export default defineConfig({
       },
     },
     description: extensionDescription,
+    icons: manifestIconPaths,
     name: extensionName,
     permissions: manifestPermissions,
   },

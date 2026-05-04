@@ -333,7 +333,11 @@ go --help
 ls -h
 ```
 
-`history` topicでは、`history` commandでChrome履歴を一覧表示できること、Chrome履歴が `find` / `go` の検索候補として扱われること、`HIST` result、`#tag` 検索では履歴を含めないことを確認できます。
+`history` topicでは、`history` commandでChrome履歴を一覧表示できることを確認できます。
+
+Chrome履歴が `find` / `go` の検索候補として扱われることも確認できます。
+
+`HIST` result、`#tag` 検索では履歴を含めないことも確認できます。
 
 代表的なエラーは `not_found` です。
 
