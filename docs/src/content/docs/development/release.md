@@ -86,11 +86,12 @@ workflowは次の順番で実行します。
 7. `pnpm run build` を実行する
 8. `pnpm run zip` を実行する
 9. `dist` のうち入力versionと一致するzipをrelease assetとして集める
-10. `vX.Y.Z` のGitHub Release draftを作成または更新する
+10. `vX.Y.Z` のtagがなければ作成してpushする
+11. `vX.Y.Z` のGitHub Release draftを作成または更新する
 
 既存のrelease draftがある場合は、zip assetを上書きuploadします。
 
-release draftがない場合は、`vX.Y.Z` tagとrelease draftを作成します。
+release draftがない場合は、`vX.Y.Z` のrelease draftを作成します。
 
 ## リリース手順
 

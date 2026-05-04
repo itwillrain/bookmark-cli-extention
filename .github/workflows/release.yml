@@ -86,6 +86,22 @@ jobs:
         env:
           RELEASE_VERSION: ${{ inputs.version }}
 
+      - name: Ensure release tag
+        run: |
+          TAG_NAME="v${RELEASE_VERSION}"
+
+          if git ls-remote --exit-code --tags origin "refs/tags/${TAG_NAME}" >/dev/null 2>&1; then
+            echo "Release tag ${TAG_NAME} already exists."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "${TAG_NAME}" "${GITHUB_SHA}" -m "${TAG_NAME}"
+          git push origin "refs/tags/${TAG_NAME}"
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+
       - name: Create or update draft release
         run: |
           TAG_NAME="v${RELEASE_VERSION}"
