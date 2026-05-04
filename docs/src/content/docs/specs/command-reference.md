@@ -315,9 +315,9 @@ tree Work --depth 3
 
 表示は結果番号とkind列を揃え、title列にtree guideを表示します。
 
-Tree guideと通常resultの読み始めを揃えるため、結果行ではfaviconやiconをtitleの前に表示しません。
+Tree guideの視認性を優先するため、`tree` の結果行ではfaviconやiconをtitleの前に表示しません。
 
-Faviconやiconを表示する場合は、`tree` 以外の結果行でもtitleやURLの後ろに表示します。
+Faviconやiconを表示する場合は、titleやURLの後ろに表示します。
 
 Directory行のtitleは専用色で表示し、Bookmark行のtitleと見分けやすくします。
 

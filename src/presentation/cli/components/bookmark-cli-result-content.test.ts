@@ -30,11 +30,11 @@ const treeBookmarkResultItem = {
   url: "https://dashboard.stripe.com/",
 } satisfies BookmarkCliResultItem;
 
-/** Result layout属性。 */
-const resultLayoutAttribute = 'data-layout="result-text-and-favicon"';
+/** Tree result layout属性。 */
+const treeLayoutAttribute = 'data-layout="result-tree-text-and-favicon"';
 
-/** Result favicon slot layout属性。 */
-const resultFaviconSlotLayoutAttribute = 'data-layout="result-favicon-slot"';
+/** Tree result favicon slot layout属性。 */
+const treeFaviconSlotLayoutAttribute = 'data-layout="result-tree-favicon-slot"';
 
 /** Directory title色class token。 */
 const directoryTitleClassToken = "text-sky-300";
@@ -45,7 +45,7 @@ const defaultTitleClassToken = "text-zinc-100";
 /**
  * Result content表示テストスイート。
  */
-describe("BookmarkCliResultContent tree layout", (): void => {
+describe("BookmarkCliResultContent", (): void => {
   /**
    * Tree resultではtitleの前にtree guideを描画することを検証。
    */
@@ -67,38 +67,12 @@ describe("BookmarkCliResultContent tree layout", (): void => {
       createElement(BookmarkCliResultContent, { item: treeBookmarkResultItem }),
     );
     const titleIndex = html.indexOf(treeTitleText);
-    const faviconSlotIndex = html.indexOf(resultFaviconSlotLayoutAttribute);
+    const faviconSlotIndex = html.indexOf(treeFaviconSlotLayoutAttribute);
 
-    expect(html).toContain(resultLayoutAttribute);
+    expect(html).toContain(treeLayoutAttribute);
     expect(faviconSlotIndex).toBeGreaterThan(titleIndex);
   });
 
-  /**
-   * Default resultでもiconをtitleの後ろに描画することを検証。
-   */
-  it("renders default result icon after the title", (): void => {
-    const html = renderToStaticMarkup(
-      createElement(BookmarkCliResultContent, {
-        item: {
-          folderPath: "/Work/Admin",
-          kind: "bookmark",
-          title: "Stripe Dashboard",
-          url: "https://dashboard.stripe.com/",
-        },
-      }),
-    );
-    const titleIndex = html.indexOf("Stripe Dashboard");
-    const faviconSlotIndex = html.indexOf(resultFaviconSlotLayoutAttribute);
-
-    expect(html).toContain(resultLayoutAttribute);
-    expect(faviconSlotIndex).toBeGreaterThan(titleIndex);
-  });
-});
-
-/**
- * Result content色表示テストスイート。
- */
-describe("BookmarkCliResultContent title color", (): void => {
   /**
    * Directory resultだけtitleをdirectory色で描画することを検証。
    */
