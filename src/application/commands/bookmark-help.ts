@@ -54,10 +54,10 @@ const bookmarkCliHelpTopics = [
   },
   {
     commandName: "history",
-    description: "Chrome履歴をfind/goの検索候補として扱う",
-    examples: ["find docs", "go docs", "go 3"],
+    description: "Chrome履歴を一覧表示しfind/goの検索候補として扱う",
+    examples: ["history", "history docs", "history | grep github", "go 3"],
     usage: [
-      "find <query> includes HIST results",
+      "history [query] [--limit <number>]",
       "go <query> can open a history URL",
       "#tag queries search bookmarks only",
     ],

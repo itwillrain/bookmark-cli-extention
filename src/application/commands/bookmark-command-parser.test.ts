@@ -12,6 +12,11 @@ const findCommandInput = "find stripe dashboard";
 const goCommandInput = "  go   /Work/Admin  ";
 
 /**
+ * History commandの入力です。
+ */
+const historyCommandInput = "history github docs --limit 20";
+
+/**
  * Cd commandの入力です。
  */
 const changeDirectoryCommandInput = "cd ../Research";
@@ -99,6 +104,17 @@ describe("parseBookmarkCommand search commands", (): void => {
       debug: false,
       kind: "go",
       query: "/Work/Admin",
+    });
+  });
+
+  /**
+   * History commandをqueryとlimit付きで解析できることを検証します。
+   */
+  it("parses history command with query and limit", (): void => {
+    expect(parseBookmarkCommand(historyCommandInput)).toStrictEqual({
+      kind: "history",
+      limit: 20,
+      query: "github docs",
     });
   });
 });

@@ -40,7 +40,7 @@ favicon取得はChrome拡張の `/_favicon/` endpointを使い、Bookmark URLへ
 chrome.bookmarks.getTree();
 ```
 
-Chrome履歴は `find` と `go` のqueryに対して検索します。
+Chrome履歴は `history` commandで直接一覧表示し、`find` と `go` のqueryに対しても検索します。
 
 ```ts
 chrome.history.search({
@@ -49,6 +49,8 @@ chrome.history.search({
   text: query,
 });
 ```
+
+`history` commandでqueryを省略した場合は、`text: ""` で直近履歴を取得します。
 
 History APIの検索結果はBookmark Treeへ保存せず、検索結果表示用の一時候補として扱います。
 

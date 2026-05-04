@@ -11,6 +11,7 @@ import {
 } from "../../application/commands/bookmark-command-parser";
 import {
   executeAliasCommand,
+  executeBrowserHistoryCommand,
   executeChangeDirectoryCommand,
   executeEmptyCommand,
   executeFindCommand,
@@ -114,6 +115,27 @@ const executeParsedGoCommand = async (
 ): Promise<BookmarkCliCommandState> => {
   if (command.kind === "go") {
     const state = await executeGoCommand(command, dependencies);
+
+    return state;
+  }
+
+  await Promise.resolve();
+
+  return executeEmptyCommand(dependencies);
+};
+
+/**
+ * History command executor adapterです。
+ * @param {ParsedBookmarkCommand} command Parsed commandです。
+ * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存です。
+ * @returns {Promise<BookmarkCliCommandState>} 画面に反映する状態です。
+ */
+const executeParsedBrowserHistoryCommand = async (
+  command: ParsedBookmarkCommand,
+  dependencies: BookmarkCliCommandDependencies,
+): Promise<BookmarkCliCommandState> => {
+  if (command.kind === "history") {
+    const state = await executeBrowserHistoryCommand(command, dependencies);
 
     return state;
   }
@@ -271,6 +293,7 @@ const pipeSourceCommandExecutors = {
   find: executeParsedFindCommand,
   freq: executeParsedUsageCommand,
   help: executeParsedHelpCommand,
+  history: executeParsedBrowserHistoryCommand,
   ls: executeParsedListDirectoryCommand,
   recent: executeParsedUsageCommand,
   tree: executeParsedShowDirectoryTreeCommand,
@@ -361,6 +384,7 @@ const parsedBookmarkCommandExecutors = {
   freq: executeParsedUsageCommand,
   go: executeParsedGoCommand,
   help: executeParsedHelpCommand,
+  history: executeParsedBrowserHistoryCommand,
   ls: executeParsedListDirectoryCommand,
   mark: executeParsedMarkCommand,
   mkdir: executeParsedOrganizeCommand,

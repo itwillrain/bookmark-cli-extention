@@ -28,6 +28,12 @@ const findHistoryInput = "find docs";
 /** Go history command入力。 */
 const goHistoryInput = "go docs";
 
+/** History command入力。 */
+const historyInput = "history docs";
+
+/** Grep pipe付きHistory command入力。 */
+const historyGrepInput = "history | grep github";
+
 /** Chrome履歴Entry fixture。 */
 const githubDocsHistoryEntry = {
   childrenCount: 0,
@@ -153,9 +159,32 @@ const createCommandDependencies = (
 });
 
 /**
- * Bookmark history CLI controllerのテストスイート。
+ * Bookmark history command CLI controllerのテストスイート。
  */
-describe("executeBookmarkCliCommand history integration", (): void => {
+describe("executeBookmarkCliCommand history command", (): void => {
+  /**
+   * History commandでChrome履歴だけを表示できることを検証。
+   */
+  it("returns history result items for history command", async (): Promise<void> => {
+    const state = await executeBookmarkCliCommand(historyInput, createCommandDependencies());
+
+    expect(state.statusText).toBe("1 history");
+    expect(state.lastResultEntries).toStrictEqual([githubDocsHistoryEntry]);
+    expect(state.resultItems).toStrictEqual([
+      {
+        folderPath: "/History",
+        kind: "history",
+        title: "GitHub Docs",
+        url: "https://docs.github.com/",
+      },
+    ]);
+  });
+});
+
+/**
+ * Bookmark history search CLI controllerのテストスイート。
+ */
+describe("executeBookmarkCliCommand history search integration", (): void => {
   /**
    * Find commandでChrome履歴resultを表示できることを検証。
    */
@@ -187,5 +216,21 @@ describe("executeBookmarkCliCommand history integration", (): void => {
     expect(recordingOpener.openedUrls).toStrictEqual(["https://docs.github.com/"]);
     expect(state.statusText).toBe("Opened GitHub Docs");
     expect(state.extensionState.usageByBookmarkId).toStrictEqual({});
+  });
+});
+
+/**
+ * Bookmark history pipe CLI controllerのテストスイート。
+ */
+describe("executeBookmarkCliCommand history pipe integration", (): void => {
+  /**
+   * History commandの結果をgrep pipeで絞り込めることを検証。
+   */
+  it("filters history result items by grep pipe", async (): Promise<void> => {
+    const state = await executeBookmarkCliCommand(historyGrepInput, createCommandDependencies());
+
+    expect(state.statusText).toBe("1 matches");
+    expect(state.lastResultEntries).toStrictEqual([githubDocsHistoryEntry]);
+    expect(state.resultItems.map((item) => item.title)).toStrictEqual(["GitHub Docs"]);
   });
 });

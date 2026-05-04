@@ -4,11 +4,12 @@ import {
   parseAliasBookmarkCommand,
   parseUnaliasBookmarkCommand,
 } from "./bookmark-alias-command-parser";
-import { parseFindBookmarkCommand, parseGoBookmarkCommand } from "./bookmark-search-command-parser";
 import {
+  parseBrowserHistoryCommand,
   parseFrequentBookmarksCommand,
   parseRecentBookmarksCommand,
 } from "./bookmark-usage-command-parser";
+import { parseFindBookmarkCommand, parseGoBookmarkCommand } from "./bookmark-search-command-parser";
 import {
   parseMakeDirectoryCommand,
   parseMoveBookmarkCommand,
@@ -32,6 +33,9 @@ const recentBookmarksCommandName = "recent";
 
 /** Freq command名です。 */
 const frequentBookmarksCommandName = "freq";
+
+/** History command名です。 */
+const browserHistoryCommandName = "history";
 
 /** Ls command名です。 */
 const listDirectoryCommandName = "ls";
@@ -147,6 +151,14 @@ const createRecentBookmarksCommand = (context: CommandParseContext): ParsedBookm
  */
 const createFrequentBookmarksCommand = (context: CommandParseContext): ParsedBookmarkCommand =>
   parseFrequentBookmarksCommand(context.queryParts);
+
+/**
+ * History commandを作ります。
+ * @param {CommandParseContext} context Command parse contextです。
+ * @returns {ParsedBookmarkCommand} History commandです。
+ */
+const createBrowserHistoryCommand = (context: CommandParseContext): ParsedBookmarkCommand =>
+  parseBrowserHistoryCommand(context.queryParts);
 
 /**
  * Ls commandを作ります。
@@ -296,6 +308,7 @@ const bookmarkCommandFactories: Readonly<Record<string, BookmarkCommandFactory>>
   [findCommandName]: createFindBookmarkCommand,
   [frequentBookmarksCommandName]: createFrequentBookmarksCommand,
   [goCommandName]: createGoBookmarkCommand,
+  [browserHistoryCommandName]: createBrowserHistoryCommand,
   [helpCommandName]: createHelpCommand,
   [listDirectoryCommandName]: createListDirectoryCommand,
   [longListDirectoryCommandName]: createListDirectoryCommand,

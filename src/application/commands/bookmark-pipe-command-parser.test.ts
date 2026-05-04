@@ -7,6 +7,9 @@ const pipeListGrepCommandInput = "ls Work | grep stripe";
 /** 複数grep stage付きPipe commandの入力です。 */
 const multipleGrepPipeCommandInput = "find stripe | grep dashboard | grep work";
 
+/** History commandをpipe sourceにする入力です。 */
+const historyGrepCommandInput = "history github --limit 20 | grep docs";
+
 /** 未対応pipe stage付きcommandの入力です。 */
 const unsupportedPipeStageCommandInput = "ls Work | sort";
 
@@ -59,6 +62,31 @@ describe("parseBookmarkCommand pipe commands", (): void => {
         {
           kind: "grep",
           queryInput: "work",
+        },
+      ],
+    });
+  });
+});
+
+/**
+ * Bookmark history pipe command parserの正常系テストスイートです。
+ */
+describe("parseBookmarkCommand history pipe commands", (): void => {
+  /**
+   * History commandとgrep stageをpipe commandとして解析できることを検証します。
+   */
+  it("parses history piped to grep", (): void => {
+    expect(parseBookmarkCommand(historyGrepCommandInput)).toStrictEqual({
+      kind: "pipe",
+      source: {
+        kind: "history",
+        limit: 20,
+        query: "github",
+      },
+      stages: [
+        {
+          kind: "grep",
+          queryInput: "docs",
         },
       ],
     });

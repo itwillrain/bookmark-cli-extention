@@ -27,6 +27,7 @@ export {
   executeFrequentBookmarksCommand,
   executeRecentBookmarksCommand,
 } from "./bookmark-cli-usage-command-executors";
+export { executeBrowserHistoryCommand } from "./bookmark-cli-history-command-executors";
 
 /**
  * 初期状態のstatus textです。

@@ -1,17 +1,19 @@
 /* oxlint-disable max-lines -- Command AST型の集約地点としてunionを同じfileに保つため。 */
 
-import type { FindBookmarkCommand, GoBookmarkCommand } from "./bookmark-search-command-types";
 import type {
+  BrowserHistoryCommand,
+  FrequentBookmarksCommand,
+  RecentBookmarksCommand,
+} from "./bookmark-usage-command-types";
+import type { FindBookmarkCommand, GoBookmarkCommand } from "./bookmark-search-command-types";
+
+export type {
+  BrowserHistoryCommand,
   FrequentBookmarksCommand,
   RecentBookmarksCommand,
 } from "./bookmark-usage-command-types";
 
 export type { FindBookmarkCommand, GoBookmarkCommand } from "./bookmark-search-command-types";
-
-export type {
-  FrequentBookmarksCommand,
-  RecentBookmarksCommand,
-} from "./bookmark-usage-command-types";
 
 /**
  * Directory list command optionです。
@@ -310,6 +312,7 @@ export interface UnknownBookmarkCommand {
  * Pipe sourceとして許可する読み取りcommandです。
  */
 export type PipeSourceBookmarkCommand =
+  | BrowserHistoryCommand
   | FindBookmarkCommand
   | FrequentBookmarksCommand
   | HelpBookmarkCommand
@@ -344,6 +347,7 @@ export type ParsedBookmarkCommand =
   | ClearBookmarkCommand
   | EmptyBookmarkCommand
   | FindBookmarkCommand
+  | BrowserHistoryCommand
   | GoBookmarkCommand
   | HelpBookmarkCommand
   | ListDirectoryCommand

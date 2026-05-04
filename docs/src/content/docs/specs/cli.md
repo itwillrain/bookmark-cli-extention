@@ -133,6 +133,7 @@ Bookmark行の既定アクションは `go <result-number>` です。
 - `ls`、`cd`、`pwd`、`tree` でBookmark Treeの現在地を扱う
 - `help`、`man <command>`、`<command> --help`、`<command> -h` でCLI内から使い方を確認できるようにする
 - `ls | grep hoge` のように結果一覧をpipeで絞り込めるようにする
+- `history` でChrome閲覧履歴だけを一覧表示し、`history | grep hoge` で絞り込めるようにする
 - `mkdir`、`mv`、`rename` は対象と変更先を解決できたら即時実行する
 - `rm` は対話確認または `-f` / `--force` で実行する
 - 人間が読む番号付き一覧と、機械が読むJSON形式を切り替えられるようにする
@@ -368,6 +369,7 @@ find docs | grep github
 tree Work | grep dashboard
 recent | grep stripe
 help | grep history
+history | grep github
 ```
 
 `grep` はtitle、folder path、url、description、details、result種別を大文字小文字を区別せずに部分一致で検索します。
@@ -382,7 +384,7 @@ help | grep history
 find stripe | grep dashboard | grep work
 ```
 
-v1でpipe sourceにできるcommandは `ls`、`ll`、`find`、`tree`、`recent`、`freq`、`help` です。
+v1でpipe sourceにできるcommandは `ls`、`ll`、`find`、`history`、`tree`、`recent`、`freq`、`help` です。
 
 `mv`、`rm`、`rename`、`mkdir`、`mark`、`tag` のような書き込み系commandは、意図しない副作用を避けるためpipe sourceにしません。
 
