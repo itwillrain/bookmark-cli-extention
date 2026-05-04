@@ -7,6 +7,9 @@ import { describe, expect, it } from "vitest";
 /** Extension origin fixture。 */
 const extensionOrigin = "chrome-extension://extension-id";
 
+/** Firefox extension origin fixture。 */
+const firefoxExtensionOrigin = "moz-extension://extension-id";
+
 /** Bookmark URL fixture。 */
 const bookmarkUrl = "https://dashboard.stripe.com/";
 
@@ -40,6 +43,19 @@ describe("createBookmarkCliFaviconUrl", (): void => {
       createBookmarkCliFaviconUrl({
         extensionOrigin,
         pageUrl: "chrome://extensions/",
+        size: faviconSize,
+      }),
+    ).toBe(false);
+  });
+
+  /**
+   * Firefox extension originではChrome専用favicon endpointを使わないことを検証。
+   */
+  it("returns false for Firefox extension origin", (): void => {
+    expect(
+      createBookmarkCliFaviconUrl({
+        extensionOrigin: firefoxExtensionOrigin,
+        pageUrl: bookmarkUrl,
         size: faviconSize,
       }),
     ).toBe(false);

@@ -1,4 +1,5 @@
 import type { LaunchContext } from "../application/bookmarks/mark-bookmark-use-case";
+import { addToolbarActionClickListener } from "../infrastructure/chrome/toolbar-action-adapter";
 import { createChromeCliPageWindowLauncher } from "../infrastructure/chrome/cli-page-window-adapter";
 import { createChromeLaunchContextStorage } from "../infrastructure/chrome/launch-context-storage-adapter";
 import { isOpenCliPageMessage } from "./popup/popup-messages";
@@ -177,7 +178,7 @@ const handleRuntimeMessage = (message: unknown): void => {
  * @returns {void} 返り値はありません。
  */
 const setupBackground = (): void => {
-  browser.action.onClicked.addListener(handleActionClicked);
+  addToolbarActionClickListener(browser, handleActionClicked);
   browser.commands.onCommand.addListener(handleCommand);
   browser.runtime.onInstalled.addListener(handleInstalled);
   browser.runtime.onMessage.addListener(handleRuntimeMessage);

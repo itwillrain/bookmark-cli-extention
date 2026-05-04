@@ -57,6 +57,11 @@ ChromeとFirefox間のBookmark同期はv1.1.0では扱いません。
 
 目的は、Firefox向け成果物を毎回同じ手順で生成できる状態にすることです。
 
+実装済みの手順は次のとおりです。
+
+- `pnpm run build:firefox`
+- `pnpm run zip:firefox`
+
 実装対象は次のとおりです。
 
 - `build:firefox`
@@ -75,6 +80,10 @@ ChromeとFirefox間のBookmark同期はv1.1.0では扱いません。
 ## Slice 2: Firefox manifestを整える
 
 目的は、Firefox向けmanifestをAMOに提出できる形へ近づけることです。
+
+Firefox buildではChrome専用の `favicon` permissionを除外します。
+
+Firefox向けmanifestには `browser_specific_settings.gecko.id` と `data_collection_permissions.required: ["none"]` を追加します。
 
 実装対象は次のとおりです。
 
@@ -96,6 +105,8 @@ ChromeとFirefox間のBookmark同期はv1.1.0では扱いません。
 
 目的は、ChromeとFirefoxで同じApplication層を使える状態にすることです。
 
+Toolbar action clickは、Chrome MV3の `browser.action` を優先し、Firefox MV2では `browser.browserAction` へfallbackします。
+
 実装対象は次のとおりです。
 
 - toolbar action clickの互換adapter
@@ -114,6 +125,10 @@ ChromeとFirefox間のBookmark同期はv1.1.0では扱いません。
 ## Slice 4: favicon表示をFirefox対応にする
 
 目的は、FirefoxでChrome専用favicon endpointへ依存しない表示にすることです。
+
+Firefoxではextension pageのoriginが `moz-extension://` になるため、Chrome専用の `/_favicon/` endpoint URLを生成しません。
+
+Firefox版ではfaviconなしのplain text result表示を正とします。
 
 実装対象は次のとおりです。
 
