@@ -44,6 +44,10 @@ export interface CommandInputKeyEvent {
    */
   readonly key: string;
   /**
+   * Shift keyが押されているかです。
+   */
+  readonly shiftKey: boolean;
+  /**
    * Browser標準のkey動作を止めます。
    */
   readonly preventDefault: () => void;

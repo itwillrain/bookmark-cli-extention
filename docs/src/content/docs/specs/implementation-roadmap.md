@@ -201,7 +201,8 @@ Chrome APIに依存する処理はPortの外側へ閉じ込めます。
 - `Ctrl+k`
 - `Ctrl+u`
 - `Ctrl+w`
-- `Tab` による補完候補選択
+- `Tab` による補完候補の順方向選択
+- `Shift+Tab` による補完候補の逆方向選択
 - `Enter` による選択中補完候補の確定
 - `Esc`
 - `clear`
@@ -219,7 +220,7 @@ Chrome APIに依存する処理はPortの外側へ閉じ込めます。
 - 主要UI componentがStorybookで確認できる
 - 上キー、下キー、`Ctrl+p`、`Ctrl+n` で履歴を移動できる
 - `Ctrl+a`、`Ctrl+e`、`Ctrl+u`、`Ctrl+k`、`Ctrl+w` で入力を編集できる
-- 入力中のcommand suggestionを`Tab`で選択できる
+- 入力中のcommand suggestionを`Tab`と`Shift+Tab`で選択できる
 - 選択中のcommand suggestionを`Enter`で入力へ確定できる
 - 実行したpromptとoutputがtranscriptへ追加される
 - `clear` でscrollback transcriptを削除できる

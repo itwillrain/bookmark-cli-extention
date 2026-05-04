@@ -259,7 +259,7 @@ Chrome履歴は `find` と `go` の検索対象として参照します。
 3. 上キー、下キー、`Ctrl+p`、`Ctrl+n` で履歴を移動する
 4. `Ctrl+a`、`Ctrl+e`、`Ctrl+u`、`Ctrl+k`、`Ctrl+w` で入力を編集する
 5. 入力中にcommand suggestionを確認する
-6. `Tab` で補完候補を選択する
+6. `Tab` または `Shift+Tab` で補完候補を選択する
 7. `Enter` で選択中候補を入力へ確定する
 8. `Esc` で候補選択を解除する
 9. 実行したpromptと結果がtranscriptに追加される

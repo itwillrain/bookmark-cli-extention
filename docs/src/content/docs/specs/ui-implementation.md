@@ -292,19 +292,19 @@ view modelはcomponentが直接使いやすい形にします。
 
 Dedicated extension pageを開いた直後、command実行後、terminal surfaceのpointer操作後はcommand inputへfocusを戻します。
 
-上キー、下キー、`Ctrl+p`、`Ctrl+n`、`Ctrl+a`、`Ctrl+e`、`Ctrl+u`、`Ctrl+k`、`Ctrl+w`、`Tab`、`Enter`、`Esc` の操作をcomponent設計に含めます。
+上キー、下キー、`Ctrl+p`、`Ctrl+n`、`Ctrl+a`、`Ctrl+e`、`Ctrl+u`、`Ctrl+k`、`Ctrl+w`、`Tab`、`Shift+Tab`、`Enter`、`Esc` の操作をcomponent設計に含めます。
 
 Command suggestionはfish shellの補完に近い操作感を目指します。
 
 空のpromptではcandidate listを表示せず、command名を入力し始めたタイミングでprefixに一致するcandidate listを表示します。
 
-現在のprompt直下にfloating候補を表示し、`Tab` で候補選択を進め、`Enter` で選択中のfloating候補を入力へ確定します。
+現在のprompt直下にfloating候補を表示し、`Tab` で候補選択を進め、`Shift+Tab` で候補選択を戻し、`Enter` で選択中のfloating候補を入力へ確定します。
 
-`Tab` による候補選択中もkeyboard focusはcommand inputに残します。
+`Tab` や `Shift+Tab` による候補選択中もkeyboard focusはcommand inputに残します。
 
 選択中候補は `scrollIntoView({ block: "nearest", inline: "nearest" })` で表示範囲へ追従させます。
 
-結果一覧をTab選択する場合も同じ方針で、DOM focusはcommand inputに残し、選択中result itemだけを表示範囲へ追従させます。
+結果一覧をTabまたはShift+Tabで選択する場合も同じ方針で、DOM focusはcommand inputに残し、選択中result itemだけを表示範囲へ追従させます。
 
 空のpromptで結果一覧を選択している場合、`Enter` は選択行の既定アクションを実行します。
 

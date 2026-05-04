@@ -13,6 +13,7 @@ import {
 import {
   executeConfirmCompletionKeyboardAction,
   executeSelectNextCompletionKeyboardAction,
+  executeSelectPreviousCompletionKeyboardAction,
 } from "./completion-keyboard";
 import type { BookmarkCliCommandState } from "../../presentation/cli/bookmark-cli-controller";
 import type { BookmarkCliSuggestionItem } from "../../presentation/cli/components/bookmark-cli-suggestion-list";
@@ -123,6 +124,15 @@ const executeSelectNextCompletionKeyboardActionAdapter = (
 ): boolean => executeSelectNextCompletionKeyboardAction({ ...input.input, event: input.event });
 
 /**
+ * 前補完候補選択keyboard actionを実行。
+ * @param {ExecuteKeyboardActionInput} input Keyboard action実行入力。
+ * @returns {boolean} 処理済みならtrue。
+ */
+const executeSelectPreviousCompletionKeyboardActionAdapter = (
+  input: ExecuteKeyboardActionInput,
+): boolean => executeSelectPreviousCompletionKeyboardAction({ ...input.input, event: input.event });
+
+/**
  * 解除keyboard actionを実行。
  * @param {ExecuteKeyboardActionInput} input Keyboard action実行入力。
  * @returns {boolean} 処理済みならtrue。
@@ -161,6 +171,7 @@ const keyboardActionExecutors = {
   lineStart: executeNoneKeyboardAction,
   none: executeNoneKeyboardAction,
   selectNextCompletion: executeSelectNextCompletionKeyboardActionAdapter,
+  selectPreviousCompletion: executeSelectPreviousCompletionKeyboardActionAdapter,
 } satisfies Readonly<
   Record<ReturnType<typeof resolveBookmarkCliKeyboardAction>, KeyboardActionExecutor>
 >;
