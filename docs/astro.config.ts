@@ -75,7 +75,7 @@ export default defineConfig({
     starlight({
       customCss: ["./src/styles/fonts.css"],
       description: documentationDescription,
-      favicon: "/favicon.svg",
+      favicon: "/favicon.png",
       plugins: [
         starlightTypeDoc({
           entryPoints: typeDocEntryPoints,
