@@ -21,6 +21,7 @@ Bookmark CLI Extensionは、Chrome Bookmark Managerを拡張機能内の疑似CL
 - [アーキテクチャと責務境界](./architecture/)
 - [UI 実装方針](./ui-implementation/)
 - [実装ロードマップ](./implementation-roadmap/)
+- [Firefox対応ロードマップ](./firefox-roadmap/)
 - [ユースケース](./use-cases/)
 - [テスト方針](./testing-policy/)
 

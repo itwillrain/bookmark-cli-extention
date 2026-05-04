@@ -276,3 +276,11 @@ v1は、次の状態を満たしたら完了とします。
 - Chrome履歴URLを検索して開ける
 - Domain層の主要な純粋関数にテストがある
 - OSターミナル連携を含めない
+
+## v1.1.0方針
+
+v1.1.0ではFirefox desktop対応を追加します。
+
+Chrome版の主要体験を維持したまま、Firefox向けbuild、manifest調整、runtime API差分を吸収します。
+
+詳細な順序と完了条件は [Firefox対応ロードマップ](../firefox-roadmap/) で管理します。
