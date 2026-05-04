@@ -20,7 +20,7 @@ Popupは疑似CLI本体ではなく、設定画面として扱います。
 - 入力欄は1行のcommand promptとして扱う
 - HTML実装上はsubmit可能な `form` と `input` を使う
 - Dedicated extension pageを開いたら入力欄へ自動フォーカスする
-- terminal surfaceをクリックした場合はcommand inputへfocusを戻し、CLI操作中にfocusが外れたままにならないようにする
+- terminal surfaceをクリックしたときはcommand inputへfocusを戻し、CLI操作中にfocusが外れたままになる状態を防ぐ
 - Dedicated extension pageは別windowで開くため、画面内にはwindow風headerやtraffic light装飾を描画しない
 - 実行済みcommandと実行結果はscrollback transcriptとして上から下へ積む
 - 結果一覧を持たないstatusやerrorは、実行済みcommand行の右側ではなく次のoutput行に表示する
@@ -262,7 +262,7 @@ cd 2
 
 候補はscrollback内の通常outputとして描画せず、terminal body直下のoverlayとして描画します。
 
-overlay位置は現在promptの位置を基準にし、scrollbackのスクロールやoverflowに巻き込まれないようにします。
+overlayは現在promptを基準として配置し、scrollbackのスクロールやoverflowへ巻き込まれない状態を保ちます。
 
 `ls` や `cd ./` のような入力中補完候補は、現在promptより上に出しません。
 

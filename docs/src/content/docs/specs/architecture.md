@@ -215,7 +215,7 @@ type Clock = {
 2. Application層のcommand parserがCommand ASTへ変換する
 3. Application層のexecutorが対応するuse caseを呼ぶ
 4. use caseがPort経由でBookmark Treeや保存データを取得する
-5. Domain層の純粋関数で検索、path解決、結果選択を行う
+5. Domain層の純粋関数が検索、path解決、結果選択を担う
 6. use caseが必要なChrome書き込み操作をPort経由で実行する
 7. use caseがCommandResultを返す
 8. Presentation層がCommandResultをplain text結果一覧へ変換する
