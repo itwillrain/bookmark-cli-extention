@@ -171,6 +171,8 @@ folderを先に表示し、その後にBookmarkを表示します。
 
 aliasは先頭command tokenだけを1回展開します。
 
+alias展開後のcommand種別は実行だけでなく、`clear` のscrollback transcript削除のようなUI副作用にも適用します。
+
 ```bash
 g stripe
 la /Work
