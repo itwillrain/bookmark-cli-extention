@@ -51,6 +51,12 @@ const bookmarkCliHelpTopics = [
     ],
   },
   {
+    commandName: "grep",
+    description: "pipeで結果一覧を絞り込む",
+    examples: ["ls | grep stripe", "find docs | grep github"],
+    usage: ["<result-command> | grep <query>", "<result-command> | grep <query> | grep <query>"],
+  },
+  {
     commandName: "ls",
     description: "現在ディレクトリの中身を表示する",
     examples: ["ls", "ls -a", "ls -la Work/Admin", "ll -a"],

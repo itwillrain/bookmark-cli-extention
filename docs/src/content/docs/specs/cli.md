@@ -114,6 +114,7 @@ Bookmark行の既定アクションは `go <result-number>` です。
 - `mark` で現在のタブを現在のディレクトリへ保存する
 - `ls`、`cd`、`pwd`、`tree` でBookmark Treeの現在地を扱う
 - `help`、`man <command>`、`<command> --help`、`<command> -h` でCLI内から使い方を確認できるようにする
+- `ls | grep hoge` のように結果一覧をpipeで絞り込めるようにする
 - `mkdir`、`mv`、`rename` は対象と変更先を解決できたら即時実行する
 - `rm` は対話確認または `-f` / `--force` で実行する
 - 人間が読む番号付き一覧と、機械が読むJSON形式を切り替えられるようにする
@@ -331,6 +332,37 @@ Work/Research
 補完候補が複数ある場合、Tabキーは候補選択を次へ進めます。
 
 末尾候補の次は先頭候補へ循環します。
+
+## pipeとgrep
+
+v1では、結果一覧を出す読み取りcommandに対して `grep` pipe stageを使えます。
+
+```bash
+ls | grep stripe
+ls Work | grep admin
+find docs | grep github
+tree Work | grep dashboard
+recent | grep stripe
+help | grep history
+```
+
+`grep` はtitle、folder path、url、description、details、result種別を大文字小文字を区別せずに部分一致で検索します。
+
+`grep` は表示中のresult rowsを絞り込み、表示番号も絞り込み後の一覧で振り直します。
+
+そのため、`ls | grep stripe` の後に `go 1` や `cd 1` を実行した場合、絞り込み後の1件目を参照します。
+
+複数stageのgrepも左から順に適用します。
+
+```bash
+find stripe | grep dashboard | grep work
+```
+
+v1でpipe sourceにできるcommandは `ls`、`ll`、`find`、`tree`、`recent`、`freq`、`help` です。
+
+`mv`、`rm`、`rename`、`mkdir`、`mark`、`tag` のような書き込み系commandは、意図しない副作用を避けるためpipe sourceにしません。
+
+`grep` はpipe stageとして扱い、standalone commandとしては扱いません。
 
 ## 整理操作と確認
 

@@ -1,5 +1,11 @@
 import { type CommandParseContext, getBookmarkCommandFactory } from "./bookmark-command-factory";
-import type { ParsedBookmarkCommand } from "./bookmark-command-types";
+import type {
+  GrepPipeStageCommand,
+  ParsedBookmarkCommand,
+  PipeBookmarkCommand,
+  PipeSourceBookmarkCommand,
+  UnknownBookmarkCommand,
+} from "./bookmark-command-types";
 
 export type {
   ChangeDirectoryCommand,
@@ -13,6 +19,8 @@ export type {
   MakeDirectoryCommand,
   MarkBookmarkCommand,
   MoveBookmarkCommand,
+  PipeBookmarkCommand,
+  PipeSourceBookmarkCommand,
   ParsedBookmarkCommand,
   PrintWorkingDirectoryCommand,
   RecentBookmarksCommand,
@@ -25,6 +33,15 @@ export type {
 
 /** 空command名です。 */
 const emptyCommandName = "";
+
+/** Pipe operatorです。 */
+const pipeOperator = "|";
+
+/** Grep command名です。 */
+const grepCommandName = "grep";
+
+/** 空のpipe stage数です。 */
+const emptyPipeStageCount = 0;
 
 /** Command tokenの区切り文字です。 */
 const commandTokenSeparator = " ";
@@ -39,6 +56,21 @@ const whitespacePattern = /\s+/gu;
  */
 const normalizeCommandInput = (input: string): string =>
   input.trim().replace(whitespacePattern, commandTokenSeparator);
+
+/**
+ * 入力にpipe operatorが含まれるかを判定します。
+ * @param {string} input 判定する入力です。
+ * @returns {boolean} pipe operatorを含むならtrueです。
+ */
+const hasPipeOperator = (input: string): boolean => input.includes(pipeOperator);
+
+/**
+ * Pipe入力をsegmentへ分割します。
+ * @param {string} normalizedInput 正規化済み入力です。
+ * @returns {readonly string[]} 正規化済みpipe segment一覧です。
+ */
+const splitPipeSegments = (normalizedInput: string): readonly string[] =>
+  normalizedInput.split(pipeOperator).map((segment) => normalizeCommandInput(segment));
 
 /**
  * Command token一覧からquery部分を取り出します。
@@ -67,13 +99,107 @@ const createCommandParseContext = (normalizedInput: string): CommandParseContext
 };
 
 /**
- * Bookmark command入力を解析します。
- * @param {string} input CLIに入力された文字列です。
+ * Unknown commandを作成します。
+ * @param {string} commandName command名です。
+ * @param {string} rawInput 正規化済み入力全体です。
+ * @returns {UnknownBookmarkCommand} Unknown commandです。
+ */
+const createUnknownCommand = (commandName: string, rawInput: string): UnknownBookmarkCommand => ({
+  commandName,
+  kind: "unknown",
+  rawInput,
+});
+
+/**
+ * 値がUnknown commandかを判定します。
+ * @param {UnknownBookmarkCommand | readonly GrepPipeStageCommand[]} value 判定する値です。
+ * @returns {boolean} Unknown commandならtrueです。
+ */
+const isUnknownBookmarkCommand = (
+  value: UnknownBookmarkCommand | readonly GrepPipeStageCommand[],
+): value is UnknownBookmarkCommand => !Array.isArray(value);
+
+/**
+ * Commandがpipe sourceとして使えるかを判定します。
+ * @param {ParsedBookmarkCommand} command 判定するcommandです。
+ * @returns {boolean} pipe sourceとして使えるならtrueです。
+ */
+const isPipeSourceBookmarkCommand = (
+  command: ParsedBookmarkCommand,
+): command is PipeSourceBookmarkCommand =>
+  command.kind === "find" ||
+  command.kind === "freq" ||
+  command.kind === "help" ||
+  command.kind === "ls" ||
+  command.kind === "recent" ||
+  command.kind === "tree";
+
+/**
+ * 未対応pipe sourceのcommand名を取得します。
+ * @param {ParsedBookmarkCommand} source pipe source commandです。
+ * @returns {string} 未対応pipe sourceのcommand名です。
+ */
+const getUnsupportedPipeSourceCommandName = (source: ParsedBookmarkCommand): string => {
+  if (source.kind === "unknown") {
+    return source.commandName;
+  }
+
+  return source.kind;
+};
+
+/**
+ * Pipe stage segmentをgrep stageへ変換します。
+ * @param {string} segment pipe stage segmentです。
+ * @param {string} rawInput 正規化済み入力全体です。
+ * @returns {GrepPipeStageCommand | UnknownBookmarkCommand} Grep stageまたはunknown commandです。
+ */
+const parseGrepPipeStage = (
+  segment: string,
+  rawInput: string,
+): GrepPipeStageCommand | UnknownBookmarkCommand => {
+  const context = createCommandParseContext(segment);
+
+  if (context.commandName !== grepCommandName || context.query === emptyCommandName) {
+    return createUnknownCommand(context.commandName, rawInput);
+  }
+
+  return {
+    kind: "grep",
+    queryInput: context.query,
+  };
+};
+
+/**
+ * Pipe stage一覧を作成します。
+ * @param {readonly string[]} stageSegments pipe stage segment一覧です。
+ * @param {string} rawInput 正規化済み入力全体です。
+ * @returns {GrepPipeStageCommand[] | UnknownBookmarkCommand} pipe stage一覧またはunknown commandです。
+ */
+const parseGrepPipeStages = (
+  stageSegments: readonly string[],
+  rawInput: string,
+): readonly GrepPipeStageCommand[] | UnknownBookmarkCommand => {
+  const stages: GrepPipeStageCommand[] = [];
+
+  for (const segment of stageSegments) {
+    const stage = parseGrepPipeStage(segment, rawInput);
+
+    if (stage.kind !== grepCommandName) {
+      return stage;
+    }
+
+    stages.push(stage);
+  }
+
+  return stages;
+};
+
+/**
+ * 単一Bookmark command入力を解析します。
+ * @param {string} normalizedInput 正規化済み入力です。
  * @returns {ParsedBookmarkCommand} 解析済みBookmark commandです。
  */
-export const parseBookmarkCommand = (input: string): ParsedBookmarkCommand => {
-  const normalizedInput = normalizeCommandInput(input);
-
+const parseSingleBookmarkCommand = (normalizedInput: string): ParsedBookmarkCommand => {
   if (normalizedInput === emptyCommandName) {
     return { kind: "empty" };
   }
@@ -82,4 +208,49 @@ export const parseBookmarkCommand = (input: string): ParsedBookmarkCommand => {
   const factory = getBookmarkCommandFactory(context);
 
   return factory(context);
+};
+
+/**
+ * Pipe command入力を解析します。
+ * @param {string} normalizedInput 正規化済み入力です。
+ * @returns {ParsedBookmarkCommand} 解析済みBookmark commandです。
+ */
+const parsePipeBookmarkCommand = (normalizedInput: string): ParsedBookmarkCommand => {
+  const [sourceSegment = emptyCommandName, ...stageSegments] = splitPipeSegments(normalizedInput);
+  const source = parseSingleBookmarkCommand(sourceSegment);
+
+  if (!isPipeSourceBookmarkCommand(source)) {
+    return createUnknownCommand(getUnsupportedPipeSourceCommandName(source), normalizedInput);
+  }
+
+  const stages = parseGrepPipeStages(stageSegments, normalizedInput);
+
+  if (isUnknownBookmarkCommand(stages)) {
+    return stages;
+  }
+
+  if (stages.length === emptyPipeStageCount) {
+    return createUnknownCommand(grepCommandName, normalizedInput);
+  }
+
+  return {
+    kind: "pipe",
+    source,
+    stages,
+  } satisfies PipeBookmarkCommand;
+};
+
+/**
+ * Bookmark command入力を解析します。
+ * @param {string} input CLIに入力された文字列です。
+ * @returns {ParsedBookmarkCommand} 解析済みBookmark commandです。
+ */
+export const parseBookmarkCommand = (input: string): ParsedBookmarkCommand => {
+  const normalizedInput = normalizeCommandInput(input);
+
+  if (hasPipeOperator(normalizedInput)) {
+    return parsePipeBookmarkCommand(normalizedInput);
+  }
+
+  return parseSingleBookmarkCommand(normalizedInput);
 };
