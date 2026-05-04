@@ -5,12 +5,6 @@ import type {
   RenameBookmarkCommand,
 } from "./bookmark-command-types";
 
-/** Preview option名。 */
-const previewOptionName = "--preview";
-
-/** Yes option名。 */
-const yesOptionName = "--yes";
-
 /** Force option名。 */
 const forceOptionName = "-f";
 
@@ -27,20 +21,11 @@ const commandTokenSeparator = " ";
 const wrappingDoubleQuotePattern = /^"|"$/gu;
 
 /**
- * 整理系command optionかを判定。
- * @param {string} token 判定対象token。
- * @returns {boolean} 整理系optionならtrue。
- */
-const isOrganizeOptionToken = (token: string): boolean =>
-  token === previewOptionName || token === yesOptionName;
-
-/**
  * 整理系commandの値tokenだけを抽出。
  * @param {readonly string[]} queryParts command名を除いたtoken一覧。
  * @returns {readonly string[]} optionを除いた値token一覧。
  */
-const createOrganizeValueTokens = (queryParts: readonly string[]): readonly string[] =>
-  queryParts.filter((token) => !isOrganizeOptionToken(token));
+const createOrganizeValueTokens = (queryParts: readonly string[]): readonly string[] => queryParts;
 
 /**
  * Rm command optionかを判定。
@@ -75,21 +60,6 @@ const joinValueTokens = (tokens: readonly string[]): string =>
   stripWrappingDoubleQuotes(tokens.join(commandTokenSeparator));
 
 /**
- * Preview指定があるかを判定。
- * @param {readonly string[]} queryParts command名を除いたtoken一覧。
- * @returns {boolean} preview指定があればtrue。
- */
-const hasPreviewOption = (queryParts: readonly string[]): boolean =>
-  queryParts.includes(previewOptionName);
-
-/**
- * Yes指定があるかを判定。
- * @param {readonly string[]} queryParts command名を除いたtoken一覧。
- * @returns {boolean} yes指定があればtrue。
- */
-const hasYesOption = (queryParts: readonly string[]): boolean => queryParts.includes(yesOptionName);
-
-/**
  * Force指定があるかを判定。
  * @param {readonly string[]} queryParts command名を除いたtoken一覧。
  * @returns {boolean} force指定があればtrue。
@@ -105,8 +75,6 @@ const hasForceOption = (queryParts: readonly string[]): boolean =>
 export const parseMakeDirectoryCommand = (queryParts: readonly string[]): MakeDirectoryCommand => ({
   kind: "mkdir",
   pathInput: joinValueTokens(createOrganizeValueTokens(queryParts)),
-  preview: hasPreviewOption(queryParts),
-  yes: hasYesOption(queryParts),
 });
 
 /**
@@ -120,10 +88,8 @@ export const parseMoveBookmarkCommand = (queryParts: readonly string[]): MoveBoo
 
   return {
     kind: "mv",
-    preview: hasPreviewOption(queryParts),
     targetFolderPathInput: joinValueTokens(targetFolderPathTokens),
     targetInput,
-    yes: hasYesOption(queryParts),
   };
 };
 
@@ -156,9 +122,7 @@ export const parseRenameBookmarkCommand = (
 
   return {
     kind: "rename",
-    preview: hasPreviewOption(queryParts),
     targetInput,
     titleInput: joinValueTokens(titleTokens),
-    yes: hasYesOption(queryParts),
   };
 };

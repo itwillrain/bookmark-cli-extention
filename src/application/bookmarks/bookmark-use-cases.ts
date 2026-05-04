@@ -24,7 +24,6 @@ import { resolveBookmarkSearchResultByResultNumber } from "./go-bookmark-result-
  */
 export type BookmarkCommandErrorCode =
   | "already_marked"
-  | "confirmation_required"
   | "folder_not_found"
   | "invalid_tag"
   | "not_found"

@@ -18,23 +18,17 @@ import {
   renameBookmark,
 } from "../../application/bookmarks/organize-bookmark-use-case";
 import {
-  createBookmarkCliResultItemFromOrganizationPreview,
-  createBookmarkCliResultItemsFromEntries,
-} from "./bookmark-cli-view-model";
-import {
   createCommandState,
   createEmptyResultState,
   emptyResultItems,
 } from "./bookmark-cli-state-builders";
+import { createBookmarkCliResultItemsFromEntries } from "./bookmark-cli-view-model";
 
 /** Bookmark organizer未接続時のstatus text。 */
 const organizerUnavailableStatusText = "Bookmark organizer is not available";
 
 /** Remove対象がない場合のstatus text。 */
 const removeTargetMissingStatusText = "Remove target was not found";
-
-/** Preview status prefix。 */
-const previewStatusPrefix = "Preview";
 
 /** Executed status prefix。 */
 const executedStatusPrefix = "Executed";
@@ -57,6 +51,9 @@ const longConfirmAnswer = "yes";
 /** Noop promise。 */
 const noopPromise = Promise.resolve();
 
+/** 空文字。 */
+const emptyString = "";
+
 /**
  * Bookmark organizerが必要なcommand依存から取得。
  * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存。
@@ -76,11 +73,9 @@ const createOrganizeStatusText = (result: OrganizeBookmarkResult): string => {
     return result.message;
   }
 
-  if (result.value.executed) {
-    return `${executedStatusPrefix} ${result.value.preview.description}`;
-  }
+  const [entry] = result.value.entries;
 
-  return `${previewStatusPrefix} ${result.value.preview.description}`;
+  return `${executedStatusPrefix} ${entry?.title ?? emptyString}`;
 };
 
 /**
@@ -93,7 +88,9 @@ const createRemoveConfirmationStatusText = (result: OrganizeBookmarkResult): str
     return result.message;
   }
 
-  return `Remove ${result.value.preview.title}${removeConfirmationStatusSuffix}`;
+  const [entry] = result.value.entries;
+
+  return `Remove ${entry?.title ?? emptyString}${removeConfirmationStatusSuffix}`;
 };
 
 /**
@@ -106,7 +103,9 @@ const createRemoveExecutedStatusText = (result: OrganizeBookmarkResult): string 
     return result.message;
   }
 
-  return `${removedStatusPrefix} ${result.value.preview.title}`;
+  const [entry] = result.value.entries;
+
+  return `${removedStatusPrefix} ${entry?.title ?? emptyString}`;
 };
 
 /**
@@ -135,10 +134,7 @@ const createOrganizeCommandState = (
     currentDirectory: dependencies.currentDirectory,
     extensionState: dependencies.extensionState,
     lastResultEntries: result.value.entries,
-    resultItems: [
-      createBookmarkCliResultItemFromOrganizationPreview(result.value.preview),
-      ...createBookmarkCliResultItemsFromEntries(result.value.entries),
-    ],
+    resultItems: createBookmarkCliResultItemsFromEntries(result.value.entries),
     statusText: createOrganizeStatusText(result),
   });
 };
@@ -218,9 +214,7 @@ export const executeMakeDirectoryCommand = async (
       currentDirectory: dependencies.currentDirectory,
       organizer,
       pathInput: command.pathInput,
-      preview: command.preview,
       repository: dependencies.repository,
-      yes: command.yes,
     }),
     dependencies,
   );
@@ -247,11 +241,9 @@ export const executeMoveBookmarkCommand = async (
       currentDirectory: dependencies.currentDirectory,
       lastResultEntries: dependencies.lastResultEntries,
       organizer,
-      preview: command.preview,
       repository: dependencies.repository,
       targetFolderPathInput: command.targetFolderPathInput,
       targetInput: command.targetInput,
-      yes: command.yes,
     }),
     dependencies,
   );
@@ -354,11 +346,9 @@ export const executeRenameBookmarkCommand = async (
       currentDirectory: dependencies.currentDirectory,
       lastResultEntries: dependencies.lastResultEntries,
       organizer,
-      preview: command.preview,
       repository: dependencies.repository,
       targetInput: command.targetInput,
       titleInput: command.titleInput,
-      yes: command.yes,
     }),
     dependencies,
   );

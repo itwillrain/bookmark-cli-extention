@@ -2,10 +2,10 @@ import { describe, expect, it } from "vitest";
 import { parseBookmarkCommand } from "./bookmark-command-parser";
 
 /** Mkdir commandの入力です。 */
-const makeDirectoryCommandInput = "mkdir Tools --preview";
+const makeDirectoryCommandInput = "mkdir Tools";
 
 /** Mv commandの入力です。 */
-const moveBookmarkCommandInput = "mv 3 Archive --preview";
+const moveBookmarkCommandInput = "mv 3 Archive";
 
 /** Rm commandの入力です。 */
 const removeBookmarkCommandInput = "rm 5";
@@ -30,8 +30,6 @@ describe("parseBookmarkCommand create organize commands", (): void => {
     expect(parseBookmarkCommand(makeDirectoryCommandInput)).toStrictEqual({
       kind: "mkdir",
       pathInput: "Tools",
-      preview: true,
-      yes: false,
     });
   });
 });
@@ -46,10 +44,8 @@ describe("parseBookmarkCommand mutation organize commands", (): void => {
   it("parses mv command", (): void => {
     expect(parseBookmarkCommand(moveBookmarkCommandInput)).toStrictEqual({
       kind: "mv",
-      preview: true,
       targetFolderPathInput: "Archive",
       targetInput: "3",
-      yes: false,
     });
   });
 
@@ -59,10 +55,8 @@ describe("parseBookmarkCommand mutation organize commands", (): void => {
   it("parses rename command", (): void => {
     expect(parseBookmarkCommand(renameBookmarkCommandInput)).toStrictEqual({
       kind: "rename",
-      preview: false,
       targetInput: "3",
       titleInput: "GitHub Pull Requests",
-      yes: false,
     });
   });
 });

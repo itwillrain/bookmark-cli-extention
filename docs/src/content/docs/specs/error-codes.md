@@ -47,7 +47,6 @@ JSON出力では `ok: false` と `error.code` を返します。
 | `already_exists`          | 同じ親folderに同名のfolderが存在する      | `mkdir`                                         |
 | `unsupported_tab`         | CLI起動元タブをBookmarkとして保存できない | `mark`, `tag current`                           |
 | `invalid_argument`        | 引数の形や組み合わせが不正                | 全コマンド                                      |
-| `confirmation_required`   | 破壊的操作の確認が不足している            | `mv`, `rename`                                  |
 | `permission_denied`       | Chrome APIの権限が不足している            | 書き込み系                                      |
 | `chrome_bookmarks_failed` | Chrome Bookmarks APIの呼び出しに失敗した  | Bookmark操作全般                                |
 | `storage_failed`          | `chrome.storage` の読み書きに失敗した     | 状態保存、仮想タグ、利用統計                    |
@@ -132,25 +131,6 @@ rename 3
 
 その場合も、Presentation層では同じCommandResultとして表示します。
 
-## `confirmation_required`
-
-破壊的操作に確認が必要な場合に返します。
-
-v1では `mv`、`rename` で使います。
-
-`rm` は `confirmation_required` を返さず、通常実行ではCLI上の確認待ち状態に入ります。
-
-```bash
-mv 3 Archive
-rename 3 "GitHub Pull Requests"
-```
-
-`--preview` は変更予定だけを表示します。
-
-`--yes` は確認を省略して実行します。
-
-`rm` は `-f` または `--force` で確認なしに削除します。
-
 ## `permission_denied`
 
 Chrome APIの権限が不足している場合に返します。
@@ -194,7 +174,7 @@ JSON出力では、`error.code` を安定した値として返します。
 
 Domain層の純粋関数が返すエラーにはテストを書きます。
 
-対象はpath解決、番号解決、tag正規化、preview生成です。
+対象はpath解決、番号解決、tag正規化、結果選択です。
 
 Application層はPortの失敗をエラーコードへ変換するテストを書きます。
 

@@ -143,14 +143,6 @@ export interface MakeDirectoryCommand {
    * 作成するfolder path入力です。
    */
   readonly pathInput: string;
-  /**
-   * Previewだけ表示するかです。
-   */
-  readonly preview: boolean;
-  /**
-   * 確認済みとして実行するかです。
-   */
-  readonly yes: boolean;
 }
 
 /**
@@ -162,10 +154,6 @@ export interface MoveBookmarkCommand {
    */
   readonly kind: "mv";
   /**
-   * Previewだけ表示するかです。
-   */
-  readonly preview: boolean;
-  /**
    * 移動先folder path入力です。
    */
   readonly targetFolderPathInput: string;
@@ -173,10 +161,6 @@ export interface MoveBookmarkCommand {
    * 対象の直前結果番号です。
    */
   readonly targetInput: string;
-  /**
-   * 確認済みとして実行するかです。
-   */
-  readonly yes: boolean;
 }
 
 /**
@@ -206,10 +190,6 @@ export interface RenameBookmarkCommand {
    */
   readonly kind: "rename";
   /**
-   * Previewだけ表示するかです。
-   */
-  readonly preview: boolean;
-  /**
    * 対象の直前結果番号です。
    */
   readonly targetInput: string;
@@ -217,10 +197,6 @@ export interface RenameBookmarkCommand {
    * 変更後title入力です。
    */
   readonly titleInput: string;
-  /**
-   * 確認済みとして実行するかです。
-   */
-  readonly yes: boolean;
 }
 
 /**

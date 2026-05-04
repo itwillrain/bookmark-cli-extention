@@ -17,14 +17,6 @@ const bookmarkResultItem = {
   url: "https://dashboard.stripe.com/",
 } satisfies BookmarkCliResultItem;
 
-/** Preview result item fixtureです。 */
-const previewResultItem = {
-  description: "Move preview",
-  folderPath: "/Work",
-  kind: "preview",
-  title: "Stripe Dashboard",
-} satisfies BookmarkCliResultItem;
-
 /** History result item fixtureです。 */
 const historyResultItem = {
   folderPath: "/History",
@@ -80,17 +72,5 @@ describe("createBookmarkCliResultDefaultCommand", (): void => {
         resultIndex: thirdResultIndex,
       }),
     ).toBe("go 3");
-  });
-
-  /**
-   * Preview resultには既定commandを持たせないことを検証します。
-   */
-  it("returns false for preview result", (): void => {
-    expect(
-      createBookmarkCliResultDefaultCommand({
-        item: previewResultItem,
-        resultIndex: firstResultIndex,
-      }),
-    ).toBe(false);
   });
 });
