@@ -46,6 +46,11 @@ const resultTextStackClassName = "min-w-0 flex-1";
 const resultTitleTextClassName = "block min-w-0 truncate text-zinc-100";
 
 /**
+ * Directory result title文字列のclassNameです。
+ */
+const directoryResultTitleTextClassName = "block min-w-0 truncate text-sky-300";
+
+/**
  * Tree guide文字列のclassNameです。
  */
 const treePrefixTextClassName = "mr-1 whitespace-pre text-zinc-600";
@@ -69,6 +74,19 @@ const renderTreePrefix = (item: BookmarkCliResultItem): ReactElement => {
   }
 
   return <></>;
+};
+
+/**
+ * Result title文字列のclassNameを解決します。
+ * @param {BookmarkCliResultItem} item 描画するresult itemです。
+ * @returns {string} Result title文字列のclassNameです。
+ */
+const resolveResultTitleTextClassName = (item: BookmarkCliResultItem): string => {
+  if (item.kind === "folder") {
+    return directoryResultTitleTextClassName;
+  }
+
+  return resultTitleTextClassName;
 };
 
 /**
@@ -122,7 +140,7 @@ const renderResultDetails = (item: BookmarkCliResultItem): ReactElement => {
  * @returns {ReactElement} titleのReact elementです。
  */
 const renderResultTitle = (item: BookmarkCliResultItem): ReactElement => (
-  <span className={resultTitleTextClassName}>
+  <span className={resolveResultTitleTextClassName(item)}>
     {renderTreePrefix(item)}
     {item.title}
   </span>

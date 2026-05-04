@@ -36,6 +36,12 @@ const treeLayoutAttribute = 'data-layout="result-tree-text-and-favicon"';
 /** Tree result favicon slot layout属性。 */
 const treeFaviconSlotLayoutAttribute = 'data-layout="result-tree-favicon-slot"';
 
+/** Directory title色class token。 */
+const directoryTitleClassToken = "text-sky-300";
+
+/** Default title色class token。 */
+const defaultTitleClassToken = "text-zinc-100";
+
 /**
  * Result content表示テストスイート。
  */
@@ -65,5 +71,21 @@ describe("BookmarkCliResultContent", (): void => {
 
     expect(html).toContain(treeLayoutAttribute);
     expect(faviconSlotIndex).toBeGreaterThan(titleIndex);
+  });
+
+  /**
+   * Directory resultだけtitleをdirectory色で描画することを検証。
+   */
+  it("renders only directory title with directory color", (): void => {
+    const folderHtml = renderToStaticMarkup(
+      createElement(BookmarkCliResultContent, { item: treeResultItem }),
+    );
+    const bookmarkHtml = renderToStaticMarkup(
+      createElement(BookmarkCliResultContent, { item: treeBookmarkResultItem }),
+    );
+
+    expect(folderHtml).toContain(directoryTitleClassToken);
+    expect(bookmarkHtml).toContain(defaultTitleClassToken);
+    expect(bookmarkHtml).not.toContain(directoryTitleClassToken);
   });
 });
