@@ -4,6 +4,7 @@
   "description": "Documentation site for Bookmark CLI Extension.",
   "type": "module",
   "private": true,
+  "license": "MIT",
   "packageManager": "pnpm@10.30.0",
   "scripts": {
     "astro": "astro",
