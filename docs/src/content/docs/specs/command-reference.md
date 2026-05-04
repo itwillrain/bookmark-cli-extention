@@ -430,8 +430,11 @@ mkdir <name> [--to <path>]
 
 ```bash
 mkdir Tools
+mkdir /Project
 mkdir Admin --to Work
 ```
+
+CLI root直下へ作成する場合は、Bookmarks APIへroot node IDを渡さず、ブラウザ既定の書き込み可能な保存先へ作成します。
 
 同じ親folderに同名folderが存在する場合は `already_exists` を返します。
 

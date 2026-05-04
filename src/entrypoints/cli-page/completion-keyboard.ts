@@ -10,7 +10,6 @@ import type { BookmarkCliCommandState } from "../../presentation/cli/bookmark-cl
 import type { BookmarkCliSuggestionItem } from "../../presentation/cli/components/bookmark-cli-suggestion-list";
 import type { CommandInputKeyEvent } from "../../presentation/cli/components/bookmark-cli-screen";
 import { applyCommandLineEditState } from "./command-line-editing-keyboard";
-import { createBookmarkCliCompletionInput } from "../../presentation/cli/bookmark-cli-view-model";
 import { createBookmarkCliResultDefaultCommand } from "../../presentation/cli/bookmark-cli-result-default-command";
 
 /** Command入力値を実行する関数。 */
@@ -172,24 +171,6 @@ const executeSelectedResultDefaultCommand = (input: CompletionKeyboardActionInpu
 };
 
 /**
- * 選択中result itemを入力へ補完する。
- * @param {CompletionKeyboardActionInput} input Completion keyboard action入力。
- * @returns {boolean} 補完したならtrue。
- */
-const completeSelectedResult = (input: CompletionKeyboardActionInput): boolean => {
-  const selectedItem = getSelectedResultItem(input);
-
-  if (selectedItem === false) {
-    return false;
-  }
-
-  input.setInputValue(createBookmarkCliCompletionInput(selectedItem, input.inputValue));
-  input.setSelectedResultIndex(resultCursorCleared);
-
-  return true;
-};
-
-/**
  * Suggestion cursorを指定方向の候補へ移動。
  * @param {CompletionKeyboardActionInput} input Completion keyboard action入力。
  * @param {CompletionCursorDirection} direction Completion cursor移動方向。
@@ -296,5 +277,5 @@ export const executeConfirmCompletionKeyboardAction = (
     return true;
   }
 
-  return completeSelectedResult(input);
+  return false;
 };

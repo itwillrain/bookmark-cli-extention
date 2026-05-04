@@ -71,6 +71,8 @@ folder行の既定アクションは `cd <result-number>` です。
 
 Bookmark行の既定アクションは `go <result-number>` です。
 
+入力済みcommandがある場合、結果行の選択状態が残っていても `Enter` はcommand実行を優先します。
+
 選択中の候補がない場合、`Enter` は入力中のコマンドを実行します。
 
 `Esc` は候補の選択状態を解除します。
@@ -710,7 +712,10 @@ Folderを追加します。
 
 ```bash
 mkdir Tools
+mkdir /Project
 ```
+
+`mkdir /Project` のようにCLI root直下へ作成する場合、Chrome Bookmarks APIへroot node IDを渡さず、ブラウザ既定の書き込み可能な保存先へ作成します。
 
 ### mv
 

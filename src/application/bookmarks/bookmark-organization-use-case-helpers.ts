@@ -18,9 +18,6 @@ const notFoundErrorCode = "not_found";
 /** 空文字。 */
 const emptyString = "";
 
-/** Root parent ID。 */
-const rootParentId = "0";
-
 /** Folder path separator。 */
 const folderPathSeparator = "/";
 
@@ -108,14 +105,16 @@ const findFolderId = (
  * Chrome mutationへ渡すparentIdを作成。
  * @param {BookmarkTree} bookmarkTree Bookmark Tree。
  * @param {CurrentDirectory} folderPath folder path。
- * @returns {string | undefined} parent ID。
+ * @returns {string | undefined} parent ID。CLI rootではブラウザ既定の保存先に委ねる。
  * @example
  * ```ts
  * const result = createParentId(bookmarkTree, folderPath);
  * ```
  */
-export const createParentId = (bookmarkTree: BookmarkTree, folderPath: CurrentDirectory): string =>
-  findFolderId(bookmarkTree, folderPath) ?? rootParentId;
+export const createParentId = (
+  bookmarkTree: BookmarkTree,
+  folderPath: CurrentDirectory,
+): string | undefined => findFolderId(bookmarkTree, folderPath);
 
 /**
  * Folder pathから最後のsegmentを取得。

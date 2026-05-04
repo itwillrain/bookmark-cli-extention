@@ -365,7 +365,7 @@ Command suggestionはfish shellの補完に近い操作感を目指します。
 
 folder行は `cd <result-number>`、Bookmark行は `go <result-number>` として扱います。
 
-入力中のpromptが残っている場合は、結果一覧の選択行を入力補完として扱います。
+入力済みcommandがある場合、結果一覧の選択状態が残っていても `Enter` はresult補完ではなく通常のsubmitへ委ねます。
 
 空のpromptで `Ctrl+d` を押した場合は、Dedicated extension pageの現在windowを閉じます。
 

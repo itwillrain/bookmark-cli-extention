@@ -34,8 +34,8 @@ const initialInputValue = "";
 /** 入力中command fixture。 */
 const activeInputValue = "go ";
 
-/** 補完後folder入力値。 */
-const completedFolderInputValue = "/Work";
+/** Folder path fixture。 */
+const folderPath = "/Work";
 
 /** Selection index fixture。 */
 const selectionIndex = 0;
@@ -57,7 +57,7 @@ const commandExecutionErrorCalls: number[] = [];
 
 /** Folder result item fixture。 */
 const folderResultItem = {
-  folderPath: completedFolderInputValue,
+  folderPath,
   kind: "folder",
   title: "Work",
 } as const;
@@ -326,10 +326,10 @@ const testSelectsPreviousCommandSuggestionBeforeResultItem = (): void => {
 };
 
 /**
- * Enterで入力中のresult候補を入力へ確定し、result候補選択を解除することを検証。
+ * 入力済みcommandでEnterした場合、古いresult選択があってもsubmitへ委ねることを検証。
  * @returns {void} 返り値なし。
  */
-const testClearsSelectedResultAfterConfirmingResultCompletion = (): void => {
+const testLeavesNonEmptyInputUnhandledWhenResultIsSelected = (): void => {
   let inputValue = activeInputValue;
   let resultIndex: ResultCursorIndex = selectedResultIndex;
 
@@ -357,9 +357,9 @@ const testClearsSelectedResultAfterConfirmingResultCompletion = (): void => {
     suggestionItems: [],
   });
 
-  expect(handled).toBe(true);
-  expect(inputValue).toBe(completedFolderInputValue);
-  expect(resultIndex).toBe(resultCursorCleared);
+  expect(handled).toBe(false);
+  expect(inputValue).toBe(activeInputValue);
+  expect(resultIndex).toBe(selectedResultIndex);
 };
 
 /**
@@ -411,8 +411,8 @@ describe("completion keyboard actions", (): void => {
     testSelectsPreviousCommandSuggestionBeforeResultItem,
   );
   it(
-    "clears selected result after confirming result completion",
-    testClearsSelectedResultAfterConfirmingResultCompletion,
+    "leaves non-empty input unhandled when result is selected",
+    testLeavesNonEmptyInputUnhandledWhenResultIsSelected,
   );
   it("executes selected result default command", testExecutesSelectedResultDefaultCommand);
 });
