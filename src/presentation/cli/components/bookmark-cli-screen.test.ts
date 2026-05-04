@@ -41,8 +41,11 @@ const suggestionsVisibleAttribute = 'data-suggestions="visible"';
 /** Command suggestions aria-label属性。 */
 const commandSuggestionsAriaLabelAttribute = 'aria-label="Command suggestions"';
 
-/** Result icon/text layout属性。 */
-const resultFaviconAndTextLayoutAttribute = 'data-layout="result-favicon-and-text"';
+/** Result text/icon layout属性。 */
+const resultTextAndFaviconLayoutAttribute = 'data-layout="result-text-and-favicon"';
+
+/** Result favicon slot layout属性。 */
+const resultFaviconSlotLayoutAttribute = 'data-layout="result-favicon-slot"';
 
 /** Result title/url stack layout属性。 */
 const resultTitleUrlStackLayoutAttribute = 'data-layout="result-title-url-stack"';
@@ -253,19 +256,24 @@ describe("BookmarkCliScreen prompt", (): void => {
  */
 describe("BookmarkCliScreen transcript output", (): void => {
   /**
-   * Result faviconをtitle/url stackの左に縦中央配置するlayoutを検証。
+   * Result faviconをtitle/url stackの後ろに配置するlayoutを検証。
    */
-  it("renders favicon beside the result title and url stack", (): void => {
+  it("renders favicon after the result title and url stack", (): void => {
     const html = renderToStaticMarkup(createElement(BookmarkCliScreen, baseProps));
-    const faviconAndTextIndex = html.indexOf(resultFaviconAndTextLayoutAttribute);
-    const titleUrlStackIndex = html.indexOf(resultTitleUrlStackLayoutAttribute);
-    const titleIndex = html.indexOf("Stripe Dashboard");
-    const urlIndex = html.indexOf("https://dashboard.stripe.com/");
 
-    expect(faviconAndTextIndex).toBeGreaterThan(missingIndex);
-    expect(titleUrlStackIndex).toBeGreaterThan(faviconAndTextIndex);
-    expect(titleIndex).toBeGreaterThan(titleUrlStackIndex);
-    expect(urlIndex).toBeGreaterThan(titleIndex);
+    expect(html.indexOf(resultTextAndFaviconLayoutAttribute)).toBeGreaterThan(missingIndex);
+    expect(html.indexOf(resultTitleUrlStackLayoutAttribute)).toBeGreaterThan(
+      html.indexOf(resultTextAndFaviconLayoutAttribute),
+    );
+    expect(html.indexOf("Stripe Dashboard")).toBeGreaterThan(
+      html.indexOf(resultTitleUrlStackLayoutAttribute),
+    );
+    expect(html.indexOf("https://dashboard.stripe.com/")).toBeGreaterThan(
+      html.indexOf("Stripe Dashboard"),
+    );
+    expect(html.indexOf(resultFaviconSlotLayoutAttribute)).toBeGreaterThan(
+      html.indexOf("https://dashboard.stripe.com/"),
+    );
   });
 
   /**
