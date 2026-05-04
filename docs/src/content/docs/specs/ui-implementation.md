@@ -233,6 +233,10 @@ Dedicated extension pageは、次のcomponentへ分ける想定です。
 
 Command入力はHTML上で `form` と `input` を使い、Enter submitとaccessibilityを保ちます。
 
+Command入力ではBrowser nativeのautocomplete、autocapitalize、autocorrectを無効化します。
+
+Firefoxなどのフォーム履歴候補ではなく、Bookmark CLI自身のfloating suggestionだけを補完UIとして表示します。
+
 ただし操作感はterminalへ寄せるため、terminal surfaceをクリックした場合はcommand inputへfocusを戻します。
 
 Powerline風表示は `CommandPrompt` の装飾として扱います。

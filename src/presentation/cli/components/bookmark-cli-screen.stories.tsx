@@ -6,6 +6,10 @@ import {
   type BookmarkCliTranscriptEntry,
 } from "./bookmark-cli-screen";
 import type { Meta, StoryObj } from "@storybook/react-vite";
+import {
+  nativeAutocompleteSuggestionItems,
+  playNativeAutocompleteDisabled,
+} from "./bookmark-cli-screen-story-test";
 import { completionCursorCleared } from "../../../domain/cli/completion-cursor";
 import { resultCursorCleared } from "../../../domain/bookmarks/result-cursor";
 
@@ -178,6 +182,20 @@ export const WithSuggestions: StoryObj<BookmarkCliScreenProps> = {
     suggestionItems: storySuggestionItems,
     transcriptEntries: [],
   },
+};
+
+/**
+ * Browser native補完を出さず、CLI補完だけを表示するStoryです。
+ */
+export const NativeAutocompleteDisabled: StoryObj<BookmarkCliScreenProps> = {
+  args: {
+    inputValue: "l",
+    selectedSuggestionIndex: 0,
+    statusText: "Ready",
+    suggestionItems: nativeAutocompleteSuggestionItems,
+    transcriptEntries: [],
+  },
+  play: playNativeAutocompleteDisabled,
 };
 
 /**
