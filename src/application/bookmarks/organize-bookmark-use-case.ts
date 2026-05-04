@@ -5,6 +5,7 @@ export type {
   OrganizeBookmarkResult,
   OrganizeBookmarkValue,
   RemoveEntryInput,
+  RemoveFolderTreeInput,
   RenameEntryInput,
 } from "./bookmark-organization-use-case-types";
 export { makeDirectory } from "./make-directory-use-case";

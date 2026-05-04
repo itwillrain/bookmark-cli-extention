@@ -11,6 +11,9 @@ import type { RawBookmarkTreeNode } from "../../domain/bookmarks/bookmark-tree";
 /** 対象Bookmark ID fixtureです。 */
 const targetBookmarkId = "42";
 
+/** 対象folder ID fixtureです。 */
+const targetFolderId = "10";
+
 /** 移動先parent ID fixtureです。 */
 const targetParentId = "11";
 
@@ -52,6 +55,8 @@ interface RecordingMutationApi {
   readonly movedEntries: readonly MoveCall[];
   /** 削除要求一覧です。 */
   readonly removedEntries: readonly string[];
+  /** Folder subtree削除要求一覧です。 */
+  readonly removedFolderTrees: readonly string[];
   /** 更新要求一覧です。 */
   readonly updatedEntries: readonly UpdateCall[];
 }
@@ -94,11 +99,12 @@ const getEmptyTree = async (): Promise<readonly RawBookmarkTreeNode[]> => {
  * Chrome Bookmarks mutation API fixtureを作ります。
  * @returns {RecordingMutationApi} Chrome Bookmarks mutation API fixtureです。
  */
-// oxlint-disable-next-line max-lines-per-function
+// oxlint-disable-next-line max-lines-per-function, max-statements
 const createRecordingMutationApi = (): RecordingMutationApi => {
   const createdFolders: ChromeBookmarkCreateProperties[] = [];
   const movedEntries: MoveCall[] = [];
   const removedEntries: string[] = [];
+  const removedFolderTrees: string[] = [];
   const updatedEntries: UpdateCall[] = [];
 
   /**
@@ -137,6 +143,15 @@ const createRecordingMutationApi = (): RecordingMutationApi => {
     await Promise.resolve();
   };
   /**
+   * Chrome Bookmark folder subtree削除入力を記録します。
+   * @param {string} id 削除対象folder IDです。
+   * @returns {Promise<void>} 完了Promiseです。
+   */
+  const removeTree = async (id: string): Promise<void> => {
+    removedFolderTrees.push(id);
+    await Promise.resolve();
+  };
+  /**
    * Chrome Bookmark更新入力を記録します。
    * @param {string} id 更新対象IDです。
    * @param {ChromeBookmarkUpdateProperties} changes 更新内容です。
@@ -153,10 +168,11 @@ const createRecordingMutationApi = (): RecordingMutationApi => {
   };
 
   return {
-    bookmarksApi: { create, getTree: getEmptyTree, move, remove, update },
+    bookmarksApi: { create, getTree: getEmptyTree, move, remove, removeTree, update },
     createdFolders,
     movedEntries,
     removedEntries,
+    removedFolderTrees,
     updatedEntries,
   };
 };
@@ -225,5 +241,22 @@ describe("createChromeBookmarkOrganizer mutation", (): void => {
       { changes: { title: renamedTitle }, id: targetBookmarkId },
     ]);
     expect(entry).toMatchObject({ id: targetBookmarkId, title: renamedTitle });
+  });
+});
+
+/**
+ * Chrome Bookmark organizer folder deletion adapterのテストスイートです。
+ */
+describe("createChromeBookmarkOrganizer remove folder tree", (): void => {
+  /**
+   * Chrome Bookmarks APIでfolder subtreeを削除できることを検証します。
+   */
+  it("removes folder tree through Chrome Bookmarks API", async (): Promise<void> => {
+    const recordingApi = createRecordingMutationApi();
+    const organizer = createChromeBookmarkOrganizer(recordingApi.bookmarksApi);
+
+    await organizer.removeFolderTree({ id: targetFolderId });
+
+    expect(recordingApi.removedFolderTrees).toStrictEqual([targetFolderId]);
   });
 });

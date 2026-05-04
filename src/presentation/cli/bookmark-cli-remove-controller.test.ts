@@ -111,6 +111,7 @@ interface RecordingOrganizer {
  * 削除を記録するorganizerを作る。
  * @returns {RecordingOrganizer} 削除記録organizer。
  */
+// oxlint-disable-next-line max-lines-per-function
 const createRecordingOrganizer = (): RecordingOrganizer => {
   const removedIds: string[] = [];
 
@@ -142,6 +143,13 @@ const createRecordingOrganizer = (): RecordingOrganizer => {
        */
       removeEntry: async (input: { readonly id: string }): Promise<void> => {
         removedIds.push(input.id);
+        await Promise.resolve();
+      },
+      /**
+       * Folder tree削除はこのfixtureでは未使用。
+       * @returns {Promise<void>} 完了Promise。
+       */
+      removeFolderTree: async (): Promise<void> => {
         await Promise.resolve();
       },
       /**
@@ -187,6 +195,7 @@ const createPendingCommandDependencies = (
   pendingConfirmation: {
     entry: stripeDashboardEntry,
     kind: "rm",
+    recursive: false,
   },
 });
 
@@ -204,6 +213,7 @@ describe("executeBookmarkCliCommand rm command", (): void => {
     expect(state.pendingConfirmation).toStrictEqual({
       entry: stripeDashboardEntry,
       kind: "rm",
+      recursive: false,
     });
     expect(state.resultItems).toStrictEqual([]);
     expect(state.statusText).toBe(removeConfirmationStatusText);

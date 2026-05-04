@@ -90,6 +90,14 @@ const isBookmarkEntry = (entry: BookmarkCliEntry): entry is BookmarkEntry =>
   entry.kind === "bookmark";
 
 /**
+ * EntryがBookmark Tree由来かを判定。
+ * @param {BookmarkCliEntry} entry 判定対象entry。
+ * @returns {boolean} Bookmarkまたはfolderならtrue。
+ */
+const isBookmarkTreeEntry = (entry: BookmarkCliEntry): entry is BookmarkEntry =>
+  entry.kind === "bookmark" || entry.kind === "folder";
+
+/**
  * Bookmark Treeからfolder pathに対応するfolder IDを取得。
  * @param {BookmarkTree} bookmarkTree Bookmark Tree。
  * @param {CurrentDirectory} folderPath folder path。
@@ -150,6 +158,29 @@ export const resolveTargetBookmark = (
   const resolution = resolveEntryByResultNumber(lastResultEntries, targetInput);
 
   if (!resolution.ok || !isBookmarkEntry(resolution.entry)) {
+    return createNotFoundFailure(targetInput);
+  }
+
+  return createSuccess(resolution.entry);
+};
+
+/**
+ * 直前結果番号からBookmark entryを解決。
+ * @param {readonly BookmarkCliEntry[]} lastResultEntries 直前結果一覧。
+ * @param {string} targetInput 対象番号入力。
+ * @returns {BookmarkCommandResult<BookmarkEntry>} Entry解決結果。
+ * @example
+ * ```ts
+ * const result = resolveTargetEntry(lastResultEntries, targetInput);
+ * ```
+ */
+export const resolveTargetEntry = (
+  lastResultEntries: readonly BookmarkCliEntry[],
+  targetInput: string,
+): BookmarkCommandResult<BookmarkEntry> => {
+  const resolution = resolveEntryByResultNumber(lastResultEntries, targetInput);
+
+  if (!resolution.ok || !isBookmarkTreeEntry(resolution.entry)) {
     return createNotFoundFailure(targetInput);
   }
 

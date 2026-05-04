@@ -136,9 +136,14 @@ const bookmarkCliHelpTopics = [
   },
   {
     commandName: "rm",
-    description: "Bookmarkを削除する",
-    examples: ["rm 3", "rm -f 3", "rm --force 3"],
-    usage: ["rm <result-number>", "rm -f <result-number>", "rm --force <result-number>"],
+    description: "Bookmarkまたはfolderを削除する",
+    examples: ["rm 3", "rm -f 3", "rm -r 2", "rm -rf 2"],
+    usage: [
+      "rm <result-number>",
+      "rm -f <result-number>",
+      "rm -r <result-number>",
+      "rm -rf <result-number>",
+    ],
   },
   {
     commandName: "rename",

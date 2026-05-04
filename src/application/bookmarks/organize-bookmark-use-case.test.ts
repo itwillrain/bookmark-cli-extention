@@ -163,6 +163,7 @@ describe("removeBookmark", (): void => {
       force: false,
       lastResultEntries,
       organizer: recordingOrganizer.organizer,
+      recursive: false,
       repository: createBookmarkRepository(),
       targetInput,
     });
@@ -182,6 +183,7 @@ describe("removeBookmark", (): void => {
       force: true,
       lastResultEntries,
       organizer: recordingOrganizer.organizer,
+      recursive: false,
       repository: createBookmarkRepository(),
       targetInput,
     });

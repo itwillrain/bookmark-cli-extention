@@ -11,6 +11,7 @@ import type {
   CreateFolderInput,
   MoveEntryInput,
   RemoveEntryInput,
+  RemoveFolderTreeInput,
   RenameEntryInput,
 } from "../../application/bookmarks/organize-bookmark-use-case";
 import {
@@ -52,6 +53,10 @@ export interface ChromeBookmarksMutationApi extends ChromeBookmarksApi {
    * Chrome Bookmarkを削除します。
    */
   readonly remove: (id: string) => Promise<void>;
+  /**
+   * Chrome Bookmark folder subtreeを削除します。
+   */
+  readonly removeTree: (id: string) => Promise<void>;
   /**
    * Chrome Bookmarkを更新します。
    */
@@ -237,7 +242,6 @@ export const createChromeBookmarkOrganizer = (
    */
   const createFolder = async (input: CreateFolderInput): Promise<BookmarkTree["folders"][number]> =>
     createFolderEntryFromRawNode(await bookmarksApi.create(input));
-
   /**
    * Chrome Bookmarks APIでBookmarkを移動します。
    * @param {MoveEntryInput} input Bookmark移動入力です。
@@ -248,7 +252,6 @@ export const createChromeBookmarkOrganizer = (
       await bookmarksApi.move(input.id, createChromeBookmarkMoveDestination(input)),
       "",
     );
-
   /**
    * Chrome Bookmarks APIでBookmarkを削除します。
    * @param {RemoveEntryInput} input Bookmark削除入力です。
@@ -256,6 +259,15 @@ export const createChromeBookmarkOrganizer = (
    */
   const removeEntry = async (input: RemoveEntryInput): Promise<void> => {
     await bookmarksApi.remove(input.id);
+  };
+  /**
+   * Chrome Bookmarks APIでfolder subtreeを削除します。
+   * @param {RemoveFolderTreeInput} input Folder subtree削除入力です。
+   * @returns {Promise<void>} 削除完了Promiseです。
+   * @see https://developer.chrome.com/docs/extensions/reference/api/bookmarks#method-removeTree
+   */
+  const removeFolderTree = async (input: RemoveFolderTreeInput): Promise<void> => {
+    await bookmarksApi.removeTree(input.id);
   };
 
   /**
@@ -266,7 +278,7 @@ export const createChromeBookmarkOrganizer = (
   const renameEntry = async (input: RenameEntryInput): Promise<BookmarkTree["bookmarks"][number]> =>
     createBookmarkEntryFromRawNode(await bookmarksApi.update(input.id, { title: input.title }), "");
 
-  return { createFolder, moveEntry, removeEntry, renameEntry };
+  return { createFolder, moveEntry, removeEntry, removeFolderTree, renameEntry };
 };
 
 /**

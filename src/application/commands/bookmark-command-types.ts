@@ -178,6 +178,10 @@ export interface RemoveBookmarkCommand {
    */
   readonly kind: "rm";
   /**
+   * Folder配下も再帰的に削除するかです。
+   */
+  readonly recursive: boolean;
+  /**
    * 対象の直前結果番号です。
    */
   readonly targetInput: string;

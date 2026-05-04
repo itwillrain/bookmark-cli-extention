@@ -11,6 +11,33 @@ const forceOptionName = "-f";
 /** Long force option名。 */
 const longForceOptionName = "--force";
 
+/** Recursive option名。 */
+const recursiveOptionName = "-r";
+
+/** 大文字recursive option名。 */
+const upperRecursiveOptionName = "-R";
+
+/** Long recursive option名。 */
+const longRecursiveOptionName = "--recursive";
+
+/** Short option prefix。 */
+const shortOptionPrefix = "-";
+
+/** Long option prefix。 */
+const longOptionPrefix = "--";
+
+/** Force option文字。 */
+const forceOptionCharacter = "f";
+
+/** Recursive option文字。 */
+const recursiveOptionCharacter = "r";
+
+/** 大文字recursive option文字。 */
+const upperRecursiveOptionCharacter = "R";
+
+/** Short optionの本文開始index。 */
+const shortOptionContentStartIndex = 1;
+
 /** 空文字。 */
 const emptyString = "";
 
@@ -28,12 +55,62 @@ const wrappingDoubleQuotePattern = /^"|"$/gu;
 const createOrganizeValueTokens = (queryParts: readonly string[]): readonly string[] => queryParts;
 
 /**
+ * Short option tokenかを判定。
+ * @param {string} token 判定対象token。
+ * @returns {boolean} Short option tokenならtrue。
+ */
+const isShortOptionToken = (token: string): boolean =>
+  token.startsWith(shortOptionPrefix) && !token.startsWith(longOptionPrefix);
+
+/**
+ * Rm commandのcombined short optionかを判定。
+ * @param {string} token 判定対象token。
+ * @returns {boolean} combined short optionならtrue。
+ */
+const isCombinedRemoveShortOptionToken = (token: string): boolean => {
+  if (!isShortOptionToken(token)) {
+    return false;
+  }
+
+  const optionCharacters = token.slice(shortOptionContentStartIndex).split(emptyString);
+
+  return optionCharacters.every(
+    (optionCharacter) =>
+      optionCharacter === forceOptionCharacter ||
+      optionCharacter === recursiveOptionCharacter ||
+      optionCharacter === upperRecursiveOptionCharacter,
+  );
+};
+
+/**
+ * Rm command force optionかを判定。
+ * @param {string} token 判定対象token。
+ * @returns {boolean} force optionならtrue。
+ */
+const isForceOptionToken = (token: string): boolean =>
+  token === forceOptionName ||
+  token === longForceOptionName ||
+  (isCombinedRemoveShortOptionToken(token) && token.includes(forceOptionCharacter));
+
+/**
+ * Rm command recursive optionかを判定。
+ * @param {string} token 判定対象token。
+ * @returns {boolean} recursive optionならtrue。
+ */
+const isRecursiveOptionToken = (token: string): boolean =>
+  token === recursiveOptionName ||
+  token === upperRecursiveOptionName ||
+  token === longRecursiveOptionName ||
+  (isCombinedRemoveShortOptionToken(token) &&
+    (token.includes(recursiveOptionCharacter) || token.includes(upperRecursiveOptionCharacter)));
+
+/**
  * Rm command optionかを判定。
  * @param {string} token 判定対象token。
  * @returns {boolean} Rm command optionならtrue。
  */
 const isRemoveOptionToken = (token: string): boolean =>
-  token === forceOptionName || token === longForceOptionName;
+  isForceOptionToken(token) || isRecursiveOptionToken(token);
 
 /**
  * Rm commandの値tokenだけを抽出。
@@ -65,7 +142,15 @@ const joinValueTokens = (tokens: readonly string[]): string =>
  * @returns {boolean} force指定があればtrue。
  */
 const hasForceOption = (queryParts: readonly string[]): boolean =>
-  queryParts.includes(forceOptionName) || queryParts.includes(longForceOptionName);
+  queryParts.some((token) => isForceOptionToken(token));
+
+/**
+ * Recursive指定があるかを判定。
+ * @param {readonly string[]} queryParts command名を除いたtoken一覧。
+ * @returns {boolean} recursive指定があればtrue。
+ */
+const hasRecursiveOption = (queryParts: readonly string[]): boolean =>
+  queryParts.some((token) => isRecursiveOptionToken(token));
 
 /**
  * Mkdir commandを解析。
@@ -110,7 +195,7 @@ export const parseMoveBookmarkCommand = (queryParts: readonly string[]): MoveBoo
  * @example
  * ```ts
  * const result = parseRemoveBookmarkCommand(["-f", "3"]);
- * // { kind: "rm", force: true, targetInput: "3" }
+ * // { kind: "rm", force: true, recursive: false, targetInput: "3" }
  * ```
  */
 export const parseRemoveBookmarkCommand = (
@@ -121,6 +206,7 @@ export const parseRemoveBookmarkCommand = (
   return {
     force: hasForceOption(queryParts),
     kind: "rm",
+    recursive: hasRecursiveOption(queryParts),
     targetInput,
   };
 };

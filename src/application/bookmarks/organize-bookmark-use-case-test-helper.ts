@@ -3,6 +3,7 @@ import type {
   CreateFolderInput,
   MoveEntryInput,
   RemoveEntryInput,
+  RemoveFolderTreeInput,
   RenameEntryInput,
 } from "./organize-bookmark-use-case";
 import type { BookmarkEntry } from "../../domain/bookmarks/bookmark-tree";
@@ -15,6 +16,8 @@ export interface RecordingOrganizer {
   readonly movedEntries: readonly MoveEntryInput[];
   /** 削除要求一覧。 */
   readonly removedEntries: readonly RemoveEntryInput[];
+  /** Folder subtree削除要求一覧。 */
+  readonly removedFolderTrees: readonly RemoveFolderTreeInput[];
   /** 名称変更要求一覧。 */
   readonly renamedEntries: readonly RenameEntryInput[];
   /** Bookmark整理port。 */
@@ -39,6 +42,7 @@ export const createRecordingOrganizer = (input: RecordingOrganizerInput): Record
   const createdFolders: CreateFolderInput[] = [];
   const movedEntries: MoveEntryInput[] = [];
   const removedEntries: RemoveEntryInput[] = [];
+  const removedFolderTrees: RemoveFolderTreeInput[] = [];
   const renamedEntries: RenameEntryInput[] = [];
 
   return {
@@ -77,6 +81,15 @@ export const createRecordingOrganizer = (input: RecordingOrganizerInput): Record
         await Promise.resolve();
       },
       /**
+       * Folder subtree削除要求を記録。
+       * @param {RemoveFolderTreeInput} removeInput Folder subtree削除入力。
+       * @returns {Promise<void>} 完了Promise。
+       */
+      removeFolderTree: async (removeInput: RemoveFolderTreeInput): Promise<void> => {
+        removedFolderTrees.push(removeInput);
+        await Promise.resolve();
+      },
+      /**
        * Bookmark名称変更要求を記録。
        * @param {RenameEntryInput} renameInput Bookmark名称変更入力。
        * @returns {Promise<BookmarkEntry>} 名称変更済みBookmark entry。
@@ -89,6 +102,7 @@ export const createRecordingOrganizer = (input: RecordingOrganizerInput): Record
       },
     },
     removedEntries,
+    removedFolderTrees,
     renamedEntries,
   };
 };

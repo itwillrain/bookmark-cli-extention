@@ -408,6 +408,8 @@ v1でpipe sourceにできるcommandは `ls`、`ll`、`find`、`history`、`tree`
 
 `rm` はUnix commandの操作感に寄せ、通常実行では対話確認を挟み、`-f` または `--force` で確認なしに削除します。
 
+Folderを削除する場合は、配下のBookmarkとfolderも削除するため `-r`、`-R`、または `--recursive` を必須にします。
+
 ### rm
 
 `rm` は通常実行では確認待ちに入ります。
@@ -418,14 +420,18 @@ v1でpipe sourceにできるcommandは `ls`、`ll`、`find`、`history`、`tree`
 
 `-f` または `--force` を指定した場合は確認なしで削除します。
 
+Folderを対象に `-r` を指定しない場合は削除せず、recursive指定が必要であることを表示します。
+
 ```bash
 rm 5
 rm -f 5
+rm -r 2
+rm -rf 2
 ```
 
-v1の `rm` はBookmarkの削除だけを対象にします。
+Bookmark削除はChrome Bookmarks APIの `remove` を使います。
 
-Folder削除は扱いません。
+Folder削除はChrome Bookmarks APIの `removeTree` を使い、対象folder配下のsubtreeを削除します。
 
 ### mv
 
