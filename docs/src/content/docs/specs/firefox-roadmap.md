@@ -49,6 +49,10 @@ Bookmark、History、Storage、Windows、Tabs、Commandsの主要APIはFirefox W
 - Manifest V3版Firefox buildへの移行
 - Firefox専用UIの大きな作り替え
 
+ChromeとFirefox間のBookmark同期はv1.1.0では扱いません。
+
+同期方針は [ChromeとFirefoxのBookmark同期ロードマップ](../cross-browser-sync/) で管理します。
+
 ## Slice 1: Firefox buildをCI可能にする
 
 目的は、Firefox向け成果物を毎回同じ手順で生成できる状態にすることです。

@@ -284,3 +284,13 @@ v1.1.0ではFirefox desktop対応を追加します。
 Chrome版の主要体験を維持したまま、Firefox向けbuild、manifest調整、runtime API差分を吸収します。
 
 詳細な順序と完了条件は [Firefox対応ロードマップ](../firefox-roadmap/) で管理します。
+
+## v1.2.0方針
+
+v1.2.0ではChromeとFirefoxのBookmark同期を候補にします。
+
+Chrome拡張からFirefoxのBookmarkを直接読むことはできないため、同期用の中間snapshotと各ブラウザのBookmarks APIを使います。
+
+最初は外部serverを持たない手動ファイル同期を対象にし、cloud同期先は後続候補として扱います。
+
+詳細な順序と完了条件は [ChromeとFirefoxのBookmark同期ロードマップ](../cross-browser-sync/) で管理します。
