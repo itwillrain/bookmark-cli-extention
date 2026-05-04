@@ -1,6 +1,7 @@
 /** Bookmark CLI keyboard action。 */
 export type BookmarkCliKeyboardAction =
   | "clear"
+  | "closeCliPage"
   | "confirmCompletion"
   | "deletePreviousWord"
   | "historyNext"
@@ -10,7 +11,9 @@ export type BookmarkCliKeyboardAction =
   | "lineEnd"
   | "lineStart"
   | "none"
-  | "selectNextCompletion";
+  | "selectNextCompletion"
+  | "selectPreviousCompletion"
+  | "showHistoryList";
 
 /** Bookmark CLI keyboard eventの最小shape。 */
 export interface BookmarkCliKeyboardEvent {
@@ -18,6 +21,8 @@ export interface BookmarkCliKeyboardEvent {
   readonly ctrlKey: boolean;
   /** 押されたkey名。 */
   readonly key: string;
+  /** Shift keyが押されているか。 */
+  readonly shiftKey: boolean;
 }
 
 /** Ctrl+n key。 */
@@ -25,6 +30,9 @@ const historyNextControlKey = "n";
 
 /** Ctrl+p key。 */
 const historyPreviousControlKey = "p";
+
+/** Ctrl+r key。 */
+const historyListControlKey = "r";
 
 /** Ctrl+a key。 */
 const lineStartControlKey = "a";
@@ -41,6 +49,9 @@ const killAfterCursorControlKey = "k";
 /** Ctrl+w key。 */
 const deletePreviousWordControlKey = "w";
 
+/** Ctrl+d key。 */
+const closeCliPageControlKey = "d";
+
 /** 履歴を新しい方向へ移動するkey。 */
 const historyNextArrowKey = "ArrowDown";
 
@@ -48,7 +59,7 @@ const historyNextArrowKey = "ArrowDown";
 const historyPreviousArrowKey = "ArrowUp";
 
 /** Tab key。 */
-const selectNextCompletionKey = "Tab";
+const completionSelectionKey = "Tab";
 
 /** Enter key。 */
 const confirmCompletionKey = "Enter";
@@ -60,7 +71,9 @@ const clearKey = "Escape";
  * Ctrl付きkeyごとのkeyboard actionです。
  */
 const controlKeyActions = {
+  [closeCliPageControlKey]: "closeCliPage",
   [deletePreviousWordControlKey]: "deletePreviousWord",
+  [historyListControlKey]: "showHistoryList",
   [historyNextControlKey]: "historyNext",
   [historyPreviousControlKey]: "historyPrevious",
   [killAfterCursorControlKey]: "killAfterCursor",
@@ -77,7 +90,7 @@ const keyActions = {
   [confirmCompletionKey]: "confirmCompletion",
   [historyNextArrowKey]: "historyNext",
   [historyPreviousArrowKey]: "historyPrevious",
-  [selectNextCompletionKey]: "selectNextCompletion",
+  [completionSelectionKey]: "selectNextCompletion",
 } satisfies Readonly<Record<string, BookmarkCliKeyboardAction>>;
 
 /**
@@ -92,6 +105,14 @@ const getKeyboardAction = (
 ): BookmarkCliKeyboardAction | undefined => actions[key];
 
 /**
+ * 前の補完候補選択shortcutかを判定します。
+ * @param {BookmarkCliKeyboardEvent} event keyboard event。
+ * @returns {boolean} Shift+Tabならtrue。
+ */
+const isPreviousCompletionSelection = (event: BookmarkCliKeyboardEvent): boolean =>
+  event.shiftKey && event.key === completionSelectionKey;
+
+/**
  * Bookmark CLI keyboard actionを解決。
  * @param {BookmarkCliKeyboardEvent} event keyboard event。
  * @returns {BookmarkCliKeyboardAction} keyboard action。
@@ -101,6 +122,10 @@ export const resolveBookmarkCliKeyboardAction = (
 ): BookmarkCliKeyboardAction => {
   if (event.ctrlKey) {
     return getKeyboardAction(controlKeyActions, event.key) ?? "none";
+  }
+
+  if (isPreviousCompletionSelection(event)) {
+    return "selectPreviousCompletion";
   }
 
   return getKeyboardAction(keyActions, event.key) ?? "none";

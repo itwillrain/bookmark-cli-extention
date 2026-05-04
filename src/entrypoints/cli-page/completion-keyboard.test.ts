@@ -9,6 +9,7 @@ import { describe, expect, it } from "vitest";
 import {
   executeConfirmCompletionKeyboardAction,
   executeSelectNextCompletionKeyboardAction,
+  executeSelectPreviousCompletionKeyboardAction,
 } from "./completion-keyboard";
 import type { BookmarkCliCommandState } from "../../presentation/cli/bookmark-cli-controller";
 import type { BookmarkCliSuggestionItem } from "../../presentation/cli/components/bookmark-cli-suggestion-list";
@@ -23,6 +24,9 @@ const selectedResultIndex = 0;
 
 /** 選択中suggestion index fixture。 */
 const selectedSuggestionIndex = 0;
+
+/** 2番目のsuggestion index fixture。 */
+const secondSuggestionIndex = 1;
 
 /** 補完前入力値。 */
 const initialInputValue = "";
@@ -64,6 +68,11 @@ const suggestionItems = [
     commandName: "find",
     completion: "find ",
     description: "Bookmarkを検索",
+  },
+  {
+    commandName: "go",
+    completion: "go ",
+    description: "Bookmarkを開く",
   },
 ] satisfies readonly BookmarkCliSuggestionItem[];
 
@@ -124,6 +133,7 @@ const createCommandInputKeyEvent = (): CommandInputKeyEvent => ({
   },
   key: "Tab",
   preventDefault: recordPreventDefault,
+  shiftKey: false,
 });
 
 /**
@@ -279,6 +289,43 @@ const testSelectsCommandSuggestionBeforeResultItem = (): void => {
 };
 
 /**
+ * Shift+Tabでsuggestion候補を逆方向に選択し、result候補選択を解除することを検証。
+ * @returns {void} 返り値なし。
+ */
+const testSelectsPreviousCommandSuggestionBeforeResultItem = (): void => {
+  let resultIndex: ResultCursorIndex = selectedResultIndex;
+  let suggestionIndex: CompletionCursorIndex = completionCursorCleared;
+
+  const handled = executeSelectPreviousCompletionKeyboardAction({
+    commandState: createCommandState(),
+    event: createCommandInputKeyEvent(),
+    executeInputValue: recordExecutedInputValue,
+    handleCommandExecutionError: recordCommandExecutionError,
+    inputValue: initialInputValue,
+    selectedResultIndex: resultIndex,
+    selectedSuggestionIndex: suggestionIndex,
+    setInputValue: ignoreStateAction,
+    setSelectedResultIndex: createResultCursorSetter(
+      () => resultIndex,
+      (value) => {
+        resultIndex = value;
+      },
+    ),
+    setSelectedSuggestionIndex: createCompletionCursorSetter(
+      () => suggestionIndex,
+      (value) => {
+        suggestionIndex = value;
+      },
+    ),
+    suggestionItems,
+  });
+
+  expect(handled).toBe(true);
+  expect(resultIndex).toBe(resultCursorCleared);
+  expect(suggestionIndex).toBe(secondSuggestionIndex);
+};
+
+/**
  * Enterで入力中のresult候補を入力へ確定し、result候補選択を解除することを検証。
  * @returns {void} 返り値なし。
  */
@@ -359,6 +406,10 @@ const testExecutesSelectedResultDefaultCommand = (): void => {
  */
 describe("completion keyboard actions", (): void => {
   it("selects command suggestion before result item", testSelectsCommandSuggestionBeforeResultItem);
+  it(
+    "selects previous command suggestion before result item",
+    testSelectsPreviousCommandSuggestionBeforeResultItem,
+  );
   it(
     "clears selected result after confirming result completion",
     testClearsSelectedResultAfterConfirmingResultCompletion,

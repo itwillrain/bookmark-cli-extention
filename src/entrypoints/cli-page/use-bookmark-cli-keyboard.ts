@@ -13,7 +13,13 @@ import {
 import {
   executeConfirmCompletionKeyboardAction,
   executeSelectNextCompletionKeyboardAction,
+  executeSelectPreviousCompletionKeyboardAction,
 } from "./completion-keyboard";
+import {
+  executeHistoryNextKeyboardAction,
+  executeHistoryPreviousKeyboardAction,
+  executeShowHistoryListKeyboardAction,
+} from "./command-history-keyboard-actions";
 import type { BookmarkCliCommandState } from "../../presentation/cli/bookmark-cli-controller";
 import type { BookmarkCliSuggestionItem } from "../../presentation/cli/components/bookmark-cli-suggestion-list";
 import type { CommandInputKeyEvent } from "../../presentation/cli/components/bookmark-cli-screen";
@@ -30,6 +36,9 @@ type CommandInputExecutor = (inputValue: string) => Promise<void>;
 /** Command実行失敗handler。 */
 type CommandExecutionErrorHandler = () => void;
 
+/** CLI page close handler。 */
+type CloseCliPageHandler = () => Promise<void>;
+
 /** Result cursor setter。 */
 type ResultCursorSetter = Dispatch<SetStateAction<ResultCursorIndex>>;
 
@@ -38,8 +47,12 @@ type SuggestionCursorSetter = Dispatch<SetStateAction<CompletionCursorIndex>>;
 
 /** Bookmark CLI keyboard hook入力。 */
 export interface UseBookmarkCliKeyboardInput {
+  /** CLI pageを閉じる関数。 */
+  readonly closeCliPage: CloseCliPageHandler;
   /** 現在のcommand state。 */
   readonly commandState: BookmarkCliCommandState;
+  /** Command history一覧を閉じる関数。 */
+  readonly closeCommandHistoryList: () => void;
   /** Command入力値を実行する関数。 */
   readonly executeInputValue: CommandInputExecutor;
   /** Command実行失敗handler。 */
@@ -56,6 +69,8 @@ export interface UseBookmarkCliKeyboardInput {
   readonly setSelectedResultIndex: ResultCursorSetter;
   /** Suggestion cursor setter。 */
   readonly setSelectedSuggestionIndex: SuggestionCursorSetter;
+  /** Command history一覧を表示する関数。 */
+  readonly showCommandHistoryList: () => boolean;
   /** 入力中commandのsuggestion一覧。 */
   readonly suggestionItems: readonly BookmarkCliSuggestionItem[];
 }
@@ -65,28 +80,6 @@ export interface UseBookmarkCliKeyboardValue {
   /** 入力欄key操作handler。 */
   readonly handleInputKeyDown: (event: CommandInputKeyEvent) => void;
 }
-
-/** 履歴系keyboard action実行入力。 */
-interface ExecuteHistoryKeyboardActionInput {
-  /** Command historyを入力欄へ反映する関数。 */
-  readonly moveCommandHistoryInput: (direction: ResultCursorDirection) => boolean;
-}
-
-/**
- * 新しい履歴方向のkeyboard actionを実行。
- * @param {ExecuteHistoryKeyboardActionInput} input 履歴系keyboard action実行入力。
- * @returns {boolean} 処理済みならtrue。
- */
-const executeHistoryNextKeyboardAction = (input: ExecuteHistoryKeyboardActionInput): boolean =>
-  input.moveCommandHistoryInput("next");
-
-/**
- * 古い履歴方向のkeyboard actionを実行。
- * @param {ExecuteHistoryKeyboardActionInput} input 履歴系keyboard action実行入力。
- * @returns {boolean} 処理済みならtrue。
- */
-const executeHistoryPreviousKeyboardAction = (input: ExecuteHistoryKeyboardActionInput): boolean =>
-  input.moveCommandHistoryInput("previous");
 
 /** Context付きkeyboard action実行入力。 */
 interface ExecuteContextKeyboardActionInput {
@@ -102,7 +95,12 @@ interface ExecuteKeyboardActionInput extends ExecuteContextKeyboardActionInput {
   readonly clearHistoryCursor: () => void;
   /** Command historyを入力欄へ反映する関数。 */
   readonly moveCommandHistoryInput: (direction: ResultCursorDirection) => boolean;
+  /** Command history一覧を表示する関数。 */
+  readonly showCommandHistoryList: () => boolean;
 }
+
+/** 空のinput value。 */
+const emptyInputValue = "";
 
 /**
  * 補完候補確定keyboard actionを実行。
@@ -111,7 +109,15 @@ interface ExecuteKeyboardActionInput extends ExecuteContextKeyboardActionInput {
  */
 const executeConfirmCompletionKeyboardActionAdapter = (
   input: ExecuteKeyboardActionInput,
-): boolean => executeConfirmCompletionKeyboardAction({ ...input.input, event: input.event });
+): boolean => {
+  const handled = executeConfirmCompletionKeyboardAction({ ...input.input, event: input.event });
+
+  if (handled) {
+    input.input.closeCommandHistoryList();
+  }
+
+  return handled;
+};
 
 /**
  * 次補完候補選択keyboard actionを実行。
@@ -123,12 +129,44 @@ const executeSelectNextCompletionKeyboardActionAdapter = (
 ): boolean => executeSelectNextCompletionKeyboardAction({ ...input.input, event: input.event });
 
 /**
+ * 前補完候補選択keyboard actionを実行。
+ * @param {ExecuteKeyboardActionInput} input Keyboard action実行入力。
+ * @returns {boolean} 処理済みならtrue。
+ */
+const executeSelectPreviousCompletionKeyboardActionAdapter = (
+  input: ExecuteKeyboardActionInput,
+): boolean => executeSelectPreviousCompletionKeyboardAction({ ...input.input, event: input.event });
+
+/**
+ * 空promptかを判定。
+ * @param {string} inputValue 現在のCLI入力値。
+ * @returns {boolean} 空ならtrue。
+ */
+const isEmptyInputValue = (inputValue: string): boolean => inputValue.trim() === emptyInputValue;
+
+/**
+ * CLI page close keyboard actionを実行。
+ * @param {ExecuteKeyboardActionInput} input Keyboard action実行入力。
+ * @returns {boolean} 処理済みならtrue。
+ */
+const executeCloseCliPageKeyboardAction = (input: ExecuteKeyboardActionInput): boolean => {
+  if (!isEmptyInputValue(input.input.inputValue)) {
+    return false;
+  }
+
+  input.input.closeCliPage().catch(input.input.handleCommandExecutionError);
+
+  return true;
+};
+
+/**
  * 解除keyboard actionを実行。
  * @param {ExecuteKeyboardActionInput} input Keyboard action実行入力。
  * @returns {boolean} 処理済みならtrue。
  */
 const executeClearKeyboardAction = (input: ExecuteKeyboardActionInput): boolean => {
   input.clearHistoryCursor();
+  input.input.closeCommandHistoryList();
   input.input.setSelectedResultIndex(resultCursorCleared);
   input.input.setSelectedSuggestionIndex(completionCursorCleared);
 
@@ -151,6 +189,7 @@ type KeyboardActionExecutor = (input: ExecuteKeyboardActionInput) => boolean;
  */
 const keyboardActionExecutors = {
   clear: executeClearKeyboardAction,
+  closeCliPage: executeCloseCliPageKeyboardAction,
   confirmCompletion: executeConfirmCompletionKeyboardActionAdapter,
   deletePreviousWord: executeNoneKeyboardAction,
   historyNext: executeHistoryNextKeyboardAction,
@@ -161,6 +200,8 @@ const keyboardActionExecutors = {
   lineStart: executeNoneKeyboardAction,
   none: executeNoneKeyboardAction,
   selectNextCompletion: executeSelectNextCompletionKeyboardActionAdapter,
+  selectPreviousCompletion: executeSelectPreviousCompletionKeyboardActionAdapter,
+  showHistoryList: executeShowHistoryListKeyboardAction,
 } satisfies Readonly<
   Record<ReturnType<typeof resolveBookmarkCliKeyboardAction>, KeyboardActionExecutor>
 >;
@@ -244,15 +285,14 @@ export const useBookmarkCliKeyboard = (
         event,
         input,
         moveCommandHistoryInput: commandHistoryKeyboard.moveCommandHistoryInput,
+        showCommandHistoryList: input.showCommandHistoryList,
       },
       action,
     );
 
-    if (!handled) {
-      return;
+    if (handled) {
+      event.preventDefault();
     }
-
-    event.preventDefault();
   };
 
   return { handleInputKeyDown };

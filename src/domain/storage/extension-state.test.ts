@@ -5,6 +5,7 @@ import {
   createInitialExtensionState,
   createPersistedCurrentDirectory,
   maxCommandHistoryEntries,
+  updateCommandAliases,
 } from "./extension-state";
 import { describe, expect, it } from "vitest";
 import {
@@ -75,8 +76,9 @@ describe("createInitialExtensionState", (): void => {
         folderPath: "/",
         updatedAt: "",
       },
-      schemaVersion: 1,
+      schemaVersion: 2,
       settings: {
+        commandAliases: [],
         preferNerdFont: false,
         promptStyle: "powerline",
       },
@@ -122,6 +124,22 @@ describe("appendCommandHistory", (): void => {
       executedAt,
       input: "find latest",
     });
+  });
+});
+
+/** Command alias設定更新のテストスイート。 */
+describe("updateCommandAliases", (): void => {
+  /**
+   * Command aliasを正規化して設定へ反映できることを検証。
+   */
+  it("updates command aliases", (): void => {
+    const state = createInitialExtensionState();
+    const nextState = updateCommandAliases(state, [
+      { command: " go ", name: " g " },
+      { command: "", name: "empty" },
+    ]);
+
+    expect(nextState.settings.commandAliases).toStrictEqual([{ command: "go", name: "g" }]);
   });
 });
 

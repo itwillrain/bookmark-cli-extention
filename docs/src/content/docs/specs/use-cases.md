@@ -163,11 +163,15 @@ mark "Production Admin" --to Work/Admin
 
 CLI起動元タブのURLまたはtitleを取得できない場合は `unsupported_tab` を返します。
 
-Dedicated extension pageがすでに開いている場合、hot keyや拡張actionは既存windowを前面へ戻します。
+Dedicated extension pageがすでに開いている場合、拡張actionは既存windowを前面へ戻します。
+
+Dedicated extension pageがfocus中の場合、hot key再押下は既存windowを閉じます。
+
+hot keyで再度開くと、新しいwindowを作り、保存済みの現在ディレクトリ、設定、command historyを復元します。
 
 Dedicated extension pageが複数開いている場合、hot keyや拡張actionは1つだけを残して重複windowを閉じます。
 
-Chrome Extensions APIではOSの常時最前面固定を指定できないため、v1では再呼び出し時の前面復帰を完了条件に含めます。
+Chrome Extensions APIではOSの常時最前面固定を指定できないため、v1ではfocus中のhot key再押下によるclose/reopenを完了条件に含めます。
 
 保存先に同じURLが存在する場合は `already_marked` を返します。
 
@@ -257,15 +261,17 @@ Chrome履歴は `find` と `go` の検索対象として参照します。
 1. ユーザーがhot keyでDedicated extension pageを開く
 2. 入力欄へ自動フォーカスする
 3. 上キー、下キー、`Ctrl+p`、`Ctrl+n` で履歴を移動する
-4. `Ctrl+a`、`Ctrl+e`、`Ctrl+u`、`Ctrl+k`、`Ctrl+w` で入力を編集する
-5. 入力中にcommand suggestionを確認する
-6. `Tab` で補完候補を選択する
-7. `Enter` で選択中候補を入力へ確定する
-8. `Esc` で候補選択を解除する
-9. 実行したpromptと結果がtranscriptに追加される
-10. `ls | grep stripe` のように結果一覧を絞り込む
-11. 必要に応じて `clear` でscrollback transcriptを消す
-12. Powerline風promptとplainな結果一覧で実行結果を読む
+4. `Ctrl+r` でCLI入力履歴のfloating一覧を表示する
+5. `Ctrl+a`、`Ctrl+e`、`Ctrl+u`、`Ctrl+k`、`Ctrl+w` で入力を編集する
+6. 入力中にcommand suggestionを確認する
+7. `Tab` または `Shift+Tab` で補完候補を選択する
+8. `Enter` で選択中候補を入力へ確定する
+9. `Esc` で候補選択を解除する
+10. 実行したpromptと結果がtranscriptに追加される
+11. `ls | grep stripe` のように結果一覧を絞り込む
+12. 必要に応じて `clear` でscrollback transcriptを消す
+13. 空promptで `Ctrl+d` を押してCLI windowを閉じる
+14. Powerline風promptとplainな結果一覧で実行結果を読む
 
 完了条件は、マウス操作なしで主要な検索、移動、保存、整理ができることです。
 
@@ -296,3 +302,32 @@ go stripe login
 完了条件は、Bookmarkに存在しないChrome履歴URLを検索、表示、番号指定、直接起動できることです。
 
 Chrome履歴は読み取りだけに使い、履歴の追加、削除、変更は行いません。
+
+## UC-11: Popupで設定する
+
+ユーザーは拡張actionから設定を確認します。
+
+主な対象はhot key設定とcommand alias設定です。
+
+基本フローは次のとおりです。
+
+1. ユーザーが拡張actionをクリックする
+2. Popupが設定画面として開く
+3. Popupが `chrome.commands.getAll()` で現在のhot keyを読み取る
+4. ユーザーが変更buttonを押す
+5. Popupが `chrome://extensions/shortcuts` を新しいtabで開く
+6. ユーザーがChrome標準UIでhot keyを変更する
+7. ユーザーがPopupでaliasを追加、編集、削除する
+8. Popupがaliasを `chrome.storage.local` の `settings.commandAliases` に保存する
+9. ユーザーが疑似CLIで `alias g=go` を実行する
+10. 疑似CLIがaliasを `settings.commandAliases` に保存する
+11. ユーザーが疑似CLIで `unalias g` を実行する
+12. 疑似CLIがaliasを削除して保存する
+
+完了条件は、Popupで現在のhot keyを確認でき、Chrome標準UIへ移動でき、Popupと疑似CLIの両方からcommand aliasを保存できることです。
+
+Chrome Extensions Commands APIにはshortcutを書き換えるAPIがないため、拡張機能内で直接hot keyを保存、変更しません。
+
+aliasは拡張機能側の設定として保存し、CLI入力の先頭command tokenだけを1回展開します。
+
+alias展開後のcommand種別は、`clear` によるscrollback transcript削除のようなUI副作用にも反映します。

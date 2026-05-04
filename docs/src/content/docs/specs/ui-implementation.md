@@ -102,9 +102,35 @@ Dedicated extension pageのwindowはhot keyで再呼び出しできます。
 
 既存windowがある場合はwindowを増やさず、既存windowへfocusします。
 
+hot key再呼び出し時にDedicated extension page自身がfocus中の場合は、そのCLI windowを閉じます。
+
+再度hot keyで開いた場合は、新しいwindowを作り、保存済みの現在ディレクトリ、設定、command historyを復元します。
+
 誤ってCLI windowが複数存在する場合は、hot keyまたは拡張actionの再実行時に1つへ集約します。
 
 Chrome Extensions APIの制約により、OSの常時最前面固定はv1では扱いません。
+
+PopupはDedicated extension page本体ではなく、設定画面として扱います。
+
+Popupでは現在のhot keyを表示します。
+
+Chrome Extensions Commands APIにはshortcutを書き換えるAPIがないため、Popupの変更buttonは `chrome://extensions/shortcuts` を開きます。
+
+PopupからCLIを開くbuttonを提供し、backgroundへruntime messageを送ってDedicated extension pageを開きます。
+
+Popupではcommand aliasの追加、削除、保存も扱います。
+
+疑似CLIでは `alias` / `unalias` commandで同じ `settings.commandAliases` を更新します。
+
+alias設定は `chrome.storage.local` の `settings.commandAliases` に保存します。
+
+CLI windowがすでに開いている状態でPopupからaliasを保存した場合、開いているCLI windowの入力解決へ即時反映することはv1の必須要件にしません。
+
+ただしCLI command実行後の永続化では、保存直前にstorageの最新settingsを読み直し、Popupで保存したaliasを古い画面状態で上書きしないようにします。
+
+`alias` / `unalias` command自身がsettingsを更新した場合は、command実行結果側のsettingsを保存します。
+
+Popup UIはTailwindとReact componentで実装し、表示componentとChrome API adapterを分けます。
 
 現在入力中のpromptはtranscript末尾に置き、実行後はその入力と結果をtranscript entryへ固定します。
 
@@ -226,6 +252,7 @@ popupは設定画面として扱います。
 - `PopupApp`
 - `OpenCliButton`
 - `ShortcutHint`
+- `AliasSettings`
 - `DisplaySettings`
 - `FontPreferenceToggle`
 - `SettingsSection`
@@ -292,25 +319,35 @@ view modelはcomponentが直接使いやすい形にします。
 
 Dedicated extension pageを開いた直後、command実行後、terminal surfaceのpointer操作後はcommand inputへfocusを戻します。
 
-上キー、下キー、`Ctrl+p`、`Ctrl+n`、`Ctrl+a`、`Ctrl+e`、`Ctrl+u`、`Ctrl+k`、`Ctrl+w`、`Tab`、`Enter`、`Esc` の操作をcomponent設計に含めます。
+上キー、下キー、`Ctrl+p`、`Ctrl+n`、`Ctrl+r`、`Ctrl+a`、`Ctrl+e`、`Ctrl+u`、`Ctrl+k`、`Ctrl+w`、`Ctrl+d`、`Tab`、`Shift+Tab`、`Enter`、`Esc` の操作をcomponent設計に含めます。
 
 Command suggestionはfish shellの補完に近い操作感を目指します。
 
 空のpromptではcandidate listを表示せず、command名を入力し始めたタイミングでprefixに一致するcandidate listを表示します。
 
-現在のprompt直下にfloating候補を表示し、`Tab` で候補選択を進め、`Enter` で選択中のfloating候補を入力へ確定します。
+現在のprompt直下にfloating候補を表示し、`Tab` で候補選択を進め、`Shift+Tab` で候補選択を戻し、`Enter` で選択中のfloating候補を入力へ確定します。
 
-`Tab` による候補選択中もkeyboard focusはcommand inputに残します。
+`Ctrl+r` はCLI入力履歴をfloating候補として表示します。
+
+履歴候補は新しい順に並べ、現在入力中の文字列を含む履歴だけに絞り込めます。
+
+履歴候補の選択中もkeyboard focusはcommand inputに残します。
+
+履歴候補を `Enter` で確定した場合は入力欄へ戻すだけで、即時実行はしません。
+
+`Tab` や `Shift+Tab` による候補選択中もkeyboard focusはcommand inputに残します。
 
 選択中候補は `scrollIntoView({ block: "nearest", inline: "nearest" })` で表示範囲へ追従させます。
 
-結果一覧をTab選択する場合も同じ方針で、DOM focusはcommand inputに残し、選択中result itemだけを表示範囲へ追従させます。
+結果一覧をTabまたはShift+Tabで選択する場合も同じ方針で、DOM focusはcommand inputに残し、選択中result itemだけを表示範囲へ追従させます。
 
 空のpromptで結果一覧を選択している場合、`Enter` は選択行の既定アクションを実行します。
 
 folder行は `cd <result-number>`、Bookmark行は `go <result-number>` として扱います。
 
 入力中のpromptが残っている場合は、結果一覧の選択行を入力補完として扱います。
+
+空のpromptで `Ctrl+d` を押した場合は、Dedicated extension pageの現在windowを閉じます。
 
 `cd ./` のように移動先path入力へ入った場合は、現在ディレクトリ配下の存在するfolderを候補として表示します。
 

@@ -4,6 +4,7 @@ import {
   currentExtensionStateSchemaVersion,
 } from "../../domain/storage/extension-state";
 import type { ExtensionStateStoragePort } from "../../application/storage/extension-state-ports";
+import { normalizeCommandAliases } from "../../domain/cli/command-alias";
 import typia from "typia";
 
 export type { ExtensionStateStoragePort } from "../../application/storage/extension-state-ports";
@@ -16,6 +17,51 @@ export interface ChromeStorageLocalArea {
   readonly set: (items: ExtensionState) => Promise<void>;
 }
 
+/** 旧schema versionです。 */
+const legacyExtensionStateSchemaVersion = 1;
+
+/** Unknown recordです。 */
+type UnknownRecord = Readonly<Record<string, unknown>>;
+
+/**
+ * 値がrecordか判定します。
+ * @param {unknown} value 判定対象です。
+ * @returns {boolean} recordならtrueです。
+ */
+const isUnknownRecord = (value: unknown): value is UnknownRecord =>
+  typeof value === "object" && value !== null;
+
+/**
+ * Settings payloadをmigrationします。
+ * @param {unknown} payload settings payloadです。
+ * @returns {unknown} migration後settingsです。
+ */
+const migrateExtensionSettingsPayload = (payload: unknown): unknown => {
+  const initialSettings = createInitialExtensionState().settings;
+
+  if (!isUnknownRecord(payload)) {
+    return initialSettings;
+  }
+
+  return {
+    ...initialSettings,
+    ...payload,
+    commandAliases: normalizeCommandAliases([]),
+  };
+};
+
+/**
+ * 旧schema payloadを現在schemaへmigrationします。
+ * @param {UnknownRecord} payload storageから取得した旧schema payloadです。
+ * @returns {unknown} migration後payloadです。
+ */
+const migrateLegacyExtensionStatePayload = (payload: UnknownRecord): unknown => ({
+  ...createInitialExtensionState(),
+  ...payload,
+  schemaVersion: currentExtensionStateSchemaVersion,
+  settings: migrateExtensionSettingsPayload(payload["settings"]),
+});
+
 /**
  * 未対応versionまたは旧schemaを初期状態へmigration。
  * @param {unknown} payload storageから取得したraw payload。
@@ -23,12 +69,19 @@ export interface ChromeStorageLocalArea {
  */
 const migrateExtensionStatePayload = (payload: unknown): unknown => {
   if (
-    typeof payload === "object" &&
-    payload !== null &&
+    isUnknownRecord(payload) &&
     "schemaVersion" in payload &&
-    payload.schemaVersion === currentExtensionStateSchemaVersion
+    payload["schemaVersion"] === currentExtensionStateSchemaVersion
   ) {
     return payload;
+  }
+
+  if (
+    isUnknownRecord(payload) &&
+    "schemaVersion" in payload &&
+    payload["schemaVersion"] === legacyExtensionStateSchemaVersion
+  ) {
+    return migrateLegacyExtensionStatePayload(payload);
   }
 
   return createInitialExtensionState();

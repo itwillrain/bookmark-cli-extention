@@ -172,3 +172,60 @@ describe("persistCommandExecutionState", (): void => {
     expect(recordingStorage.writtenStates).toHaveLength(expectedWrittenStateCount);
   });
 });
+
+/** Extension state settings保存保護use caseのテストスイート。 */
+describe("persistCommandExecutionState latest settings", (): void => {
+  /** 保存直前にstorage側で更新されたsettingsを保持できることを検証。 */
+  it("keeps latest persisted settings", async (): Promise<void> => {
+    const persistedState = {
+      ...createInitialExtensionState(),
+      settings: {
+        ...createInitialExtensionState().settings,
+        commandAliases: [{ command: "go", name: "g" }],
+      },
+    };
+    const recordingStorage = createRecordingStorage(persistedState);
+
+    const result = await persistCommandExecutionState({
+      commandInput: "ls",
+      currentDirectory: "/",
+      extensionState: createInitialExtensionState(),
+      now,
+      repository: createBookmarkRepository(),
+      storage: recordingStorage.storage,
+    });
+
+    expect(result.ok && result.value.settings.commandAliases).toStrictEqual([
+      { command: "go", name: "g" },
+    ]);
+  });
+});
+
+/** Extension state command settings保存use caseのテストスイート。 */
+describe("persistCommandExecutionState command settings", (): void => {
+  /** Commandが更新したsettingsを保持できることを検証。 */
+  it("keeps command updated settings when requested", async (): Promise<void> => {
+    const commandUpdatedState = {
+      ...createInitialExtensionState(),
+      settings: {
+        ...createInitialExtensionState().settings,
+        commandAliases: [{ command: "ls -la", name: "la" }],
+      },
+    };
+    const recordingStorage = createRecordingStorage(createInitialExtensionState());
+
+    const result = await persistCommandExecutionState({
+      commandInput: "alias la='ls -la'",
+      currentDirectory: "/",
+      extensionState: commandUpdatedState,
+      now,
+      preserveExtensionSettings: true,
+      repository: createBookmarkRepository(),
+      storage: recordingStorage.storage,
+    });
+
+    expect(result.ok && result.value.settings.commandAliases).toStrictEqual([
+      { command: "ls -la", name: "la" },
+    ]);
+  });
+});

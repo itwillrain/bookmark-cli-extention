@@ -21,9 +21,9 @@ const twoItemCount = 2;
 const outOfRangeIndex = 9;
 
 /**
- * Completion cursor移動のテストスイート。
+ * Completion cursor順方向移動のテストスイート。
  */
-describe("moveCompletionCursor", (): void => {
+describe("moveCompletionCursor next", (): void => {
   /**
    * 未選択から先頭候補を選択することを検証。
    */
@@ -31,6 +31,7 @@ describe("moveCompletionCursor", (): void => {
     expect(
       moveCompletionCursor({
         currentIndex: completionCursorCleared,
+        direction: "next",
         itemCount: twoItemCount,
       }),
     ).toBe(firstItemIndex);
@@ -43,6 +44,7 @@ describe("moveCompletionCursor", (): void => {
     expect(
       moveCompletionCursor({
         currentIndex: firstItemIndex,
+        direction: "next",
         itemCount: twoItemCount,
       }),
     ).toBe(secondItemIndex);
@@ -55,11 +57,61 @@ describe("moveCompletionCursor", (): void => {
     expect(
       moveCompletionCursor({
         currentIndex: secondItemIndex,
+        direction: "next",
         itemCount: twoItemCount,
       }),
     ).toBe(firstItemIndex);
   });
+});
 
+/**
+ * Completion cursor逆方向移動のテストスイート。
+ */
+describe("moveCompletionCursor previous", (): void => {
+  /**
+   * 未選択から逆方向に移動すると末尾候補を選択することを検証。
+   */
+  it("selects last item from cleared cursor when moving previous", (): void => {
+    expect(
+      moveCompletionCursor({
+        currentIndex: completionCursorCleared,
+        direction: "previous",
+        itemCount: twoItemCount,
+      }),
+    ).toBe(secondItemIndex);
+  });
+
+  /**
+   * 先頭候補から逆方向に移動すると末尾候補へ循環することを検証。
+   */
+  it("wraps first item to last item when moving previous", (): void => {
+    expect(
+      moveCompletionCursor({
+        currentIndex: firstItemIndex,
+        direction: "previous",
+        itemCount: twoItemCount,
+      }),
+    ).toBe(secondItemIndex);
+  });
+
+  /**
+   * 逆方向に前の候補を選択することを検証。
+   */
+  it("selects previous item", (): void => {
+    expect(
+      moveCompletionCursor({
+        currentIndex: secondItemIndex,
+        direction: "previous",
+        itemCount: twoItemCount,
+      }),
+    ).toBe(firstItemIndex);
+  });
+});
+
+/**
+ * Completion cursor空候補移動のテストスイート。
+ */
+describe("moveCompletionCursor empty", (): void => {
   /**
    * 候補がない場合は未選択のままにすることを検証。
    */
@@ -67,6 +119,7 @@ describe("moveCompletionCursor", (): void => {
     expect(
       moveCompletionCursor({
         currentIndex: completionCursorCleared,
+        direction: "next",
         itemCount: emptyItemCount,
       }),
     ).toBe(completionCursorCleared);

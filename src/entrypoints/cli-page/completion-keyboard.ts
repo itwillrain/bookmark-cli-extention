@@ -1,4 +1,5 @@
 import {
+  type CompletionCursorDirection,
   type CompletionCursorIndex,
   completionCursorCleared,
   moveCompletionCursor,
@@ -189,11 +190,15 @@ const completeSelectedResult = (input: CompletionKeyboardActionInput): boolean =
 };
 
 /**
- * Suggestion cursorを次候補へ移動。
+ * Suggestion cursorを指定方向の候補へ移動。
  * @param {CompletionKeyboardActionInput} input Completion keyboard action入力。
+ * @param {CompletionCursorDirection} direction Completion cursor移動方向。
  * @returns {boolean} 処理済みならtrue。
  */
-const selectNextSuggestion = (input: CompletionKeyboardActionInput): boolean => {
+const selectSuggestion = (
+  input: CompletionKeyboardActionInput,
+  direction: CompletionCursorDirection,
+): boolean => {
   if (!hasItems(input.suggestionItems.length)) {
     return false;
   }
@@ -201,6 +206,7 @@ const selectNextSuggestion = (input: CompletionKeyboardActionInput): boolean => 
   input.setSelectedSuggestionIndex((currentIndex) =>
     moveCompletionCursor({
       currentIndex,
+      direction,
       itemCount: input.suggestionItems.length,
     }),
   );
@@ -210,11 +216,15 @@ const selectNextSuggestion = (input: CompletionKeyboardActionInput): boolean => 
 };
 
 /**
- * Result cursorを次候補へ移動。
+ * Result cursorを指定方向の候補へ移動。
  * @param {CompletionKeyboardActionInput} input Completion keyboard action入力。
+ * @param {CompletionCursorDirection} direction Completion cursor移動方向。
  * @returns {boolean} 処理済みならtrue。
  */
-const selectNextResult = (input: CompletionKeyboardActionInput): boolean => {
+const selectResult = (
+  input: CompletionKeyboardActionInput,
+  direction: CompletionCursorDirection,
+): boolean => {
   if (!hasItems(input.commandState.resultItems.length)) {
     return false;
   }
@@ -222,6 +232,7 @@ const selectNextResult = (input: CompletionKeyboardActionInput): boolean => {
   input.setSelectedResultIndex((currentIndex) =>
     moveCompletionCursor({
       currentIndex,
+      direction,
       itemCount: input.commandState.resultItems.length,
     }),
   );
@@ -231,19 +242,38 @@ const selectNextResult = (input: CompletionKeyboardActionInput): boolean => {
 };
 
 /**
+ * 補完候補を指定方向へ選択。
+ * @param {CompletionKeyboardActionInput} input Completion keyboard action入力。
+ * @param {CompletionCursorDirection} direction Completion cursor移動方向。
+ * @returns {boolean} 処理済みならtrue。
+ */
+const selectCompletion = (
+  input: CompletionKeyboardActionInput,
+  direction: CompletionCursorDirection,
+): boolean => {
+  if (selectSuggestion(input, direction)) {
+    return true;
+  }
+
+  return selectResult(input, direction);
+};
+/**
  * Tabで次の補完候補を選択。
  * @param {CompletionKeyboardActionInput} input Completion keyboard action入力。
  * @returns {boolean} 処理済みならtrue。
  */
 export const executeSelectNextCompletionKeyboardAction = (
   input: CompletionKeyboardActionInput,
-): boolean => {
-  if (selectNextSuggestion(input)) {
-    return true;
-  }
+): boolean => selectCompletion(input, "next");
 
-  return selectNextResult(input);
-};
+/**
+ * Shift+Tabで前の補完候補を選択。
+ * @param {CompletionKeyboardActionInput} input Completion keyboard action入力。
+ * @returns {boolean} 処理済みならtrue。
+ */
+export const executeSelectPreviousCompletionKeyboardAction = (
+  input: CompletionKeyboardActionInput,
+): boolean => selectCompletion(input, "previous");
 
 /**
  * Enterで選択中補完候補を確定。

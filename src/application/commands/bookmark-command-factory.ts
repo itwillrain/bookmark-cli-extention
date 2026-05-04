@@ -1,5 +1,9 @@
 /* oxlint-disable max-lines -- Command名からASTを作る集約地点としてfactory mapを同じfileに保つため。 */
 
+import {
+  parseAliasBookmarkCommand,
+  parseUnaliasBookmarkCommand,
+} from "./bookmark-alias-command-parser";
 import { parseFindBookmarkCommand, parseGoBookmarkCommand } from "./bookmark-search-command-parser";
 import {
   parseFrequentBookmarksCommand,
@@ -40,6 +44,12 @@ const changeDirectoryCommandName = "cd";
 
 /** Clear command名です。 */
 const clearCommandName = "clear";
+
+/** Alias command名です。 */
+const aliasCommandName = "alias";
+
+/** Unalias command名です。 */
+const unaliasCommandName = "unalias";
 
 /** Help command名です。 */
 const helpCommandName = "help";
@@ -166,6 +176,22 @@ const createClearCommand = (): ParsedBookmarkCommand => ({
 });
 
 /**
+ * Alias commandを作ります。
+ * @param {CommandParseContext} context Command parse contextです。
+ * @returns {ParsedBookmarkCommand} Alias commandです。
+ */
+const createAliasCommand = (context: CommandParseContext): ParsedBookmarkCommand =>
+  parseAliasBookmarkCommand(context.query);
+
+/**
+ * Unalias commandを作ります。
+ * @param {CommandParseContext} context Command parse contextです。
+ * @returns {ParsedBookmarkCommand} Unalias commandです。
+ */
+const createUnaliasCommand = (context: CommandParseContext): ParsedBookmarkCommand =>
+  parseUnaliasBookmarkCommand(context.queryParts);
+
+/**
  * Help commandを作ります。
  * @param {CommandParseContext} context Command parse contextです。
  * @returns {ParsedBookmarkCommand} Help commandです。
@@ -264,6 +290,7 @@ const createUnknownCommand = (context: CommandParseContext): ParsedBookmarkComma
  * Command名ごとのfactoryです。
  */
 const bookmarkCommandFactories: Readonly<Record<string, BookmarkCommandFactory>> = {
+  [aliasCommandName]: createAliasCommand,
   [changeDirectoryCommandName]: createChangeDirectoryCommand,
   [clearCommandName]: createClearCommand,
   [findCommandName]: createFindBookmarkCommand,
@@ -282,6 +309,7 @@ const bookmarkCommandFactories: Readonly<Record<string, BookmarkCommandFactory>>
   [renameBookmarkCommandName]: createRenameBookmarkCommand,
   [showDirectoryTreeCommandName]: createTreeCommand,
   [tagBookmarkCommandName]: createTagBookmarkCommand,
+  [unaliasCommandName]: createUnaliasCommand,
 };
 
 /**

@@ -2,6 +2,7 @@ import type { Dispatch, SetStateAction } from "react";
 import { type ResultCursorIndex, resultCursorCleared } from "../../domain/bookmarks/result-cursor";
 import type { BookmarkCliCommandState } from "../../presentation/cli/bookmark-cli-command-state";
 import type { LaunchContext } from "../../application/bookmarks/mark-bookmark-use-case";
+import { expandCommandAlias } from "../../domain/cli/command-alias";
 import { parseBookmarkCommand } from "../../application/commands/bookmark-command-parser";
 
 /** Command state setter。 */
@@ -73,10 +74,13 @@ const emptyInputValue = "";
 /**
  * 入力がtranscript clear commandか判定。
  * @param {string} inputValue CLI入力値。
+ * @param {readonly CommandAlias[]} commandAliases command alias一覧。
  * @returns {boolean} Transcript clear commandならtrue。
  */
-const isTranscriptClearCommand = (inputValue: string): boolean =>
-  parseBookmarkCommand(inputValue).kind === "clear";
+const isTranscriptClearCommand = (
+  inputValue: string,
+  commandAliases: BookmarkCliCommandState["extensionState"]["settings"]["commandAliases"],
+): boolean => parseBookmarkCommand(expandCommandAlias(inputValue, commandAliases)).kind === "clear";
 
 /**
  * 指定されたcommand入力を実行する関数を作成。
@@ -100,7 +104,12 @@ export const createCommandInputExecutor = (
 
     input.setCommandState(nextState);
 
-    if (isTranscriptClearCommand(submittedInputValue)) {
+    if (
+      isTranscriptClearCommand(
+        submittedInputValue,
+        input.commandState.extensionState.settings.commandAliases,
+      )
+    ) {
       input.clearExecutedCommands();
     } else {
       input.appendExecutedCommand(submittedInputValue, nextState, input.createEntryId());

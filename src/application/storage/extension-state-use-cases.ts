@@ -35,6 +35,8 @@ export interface PersistCommandExecutionStateInput {
   readonly extensionState: ExtensionState;
   /** 現在日時を返すport。 */
   readonly now: NowProvider;
+  /** Command実行結果のsettingsを保存するか。 */
+  readonly preserveExtensionSettings?: boolean;
   /** Bookmark Tree repository port。 */
   readonly repository: BookmarkRepositoryPort;
   /** Extension state storage port。 */
@@ -66,6 +68,30 @@ const createStorageFailedFailure = (): BookmarkCommandFailure => ({
   message: storageFailedMessage,
   ok: false,
 });
+
+/**
+ * 最新保存状態のsettingsを反映します。
+ * @param {ExtensionStateStoragePort} storage Extension state storage port。
+ * @param {ExtensionState} state 保存前の拡張状態。
+ * @param {boolean} preserveExtensionSettings command実行結果のsettingsを保存するか。
+ * @returns {Promise<ExtensionState>} 最新settingsを反映した拡張状態。
+ */
+const mergeLatestPersistedSettings = async (
+  storage: ExtensionStateStoragePort,
+  state: ExtensionState,
+  preserveExtensionSettings: boolean,
+): Promise<ExtensionState> => {
+  if (preserveExtensionSettings) {
+    return state;
+  }
+
+  const latestState = await storage.readExtensionState();
+
+  return {
+    ...state,
+    settings: latestState.settings,
+  };
+};
 
 /**
  * 起動時の拡張状態を読み込み、Bookmark Treeと照合。
@@ -116,10 +142,15 @@ export const persistCommandExecutionState = async (
       input.commandInput,
       executedAt,
     );
+    const stateWithLatestSettings = await mergeLatestPersistedSettings(
+      input.storage,
+      stateWithHistory,
+      input.preserveExtensionSettings === true,
+    );
 
-    await input.storage.writeExtensionState(stateWithHistory);
+    await input.storage.writeExtensionState(stateWithLatestSettings);
 
-    return createSuccess(stateWithHistory);
+    return createSuccess(stateWithLatestSettings);
   } catch {
     return createStorageFailedFailure();
   }

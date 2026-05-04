@@ -10,6 +10,7 @@ import {
   parseBookmarkCommand,
 } from "../../application/commands/bookmark-command-parser";
 import {
+  executeAliasCommand,
   executeChangeDirectoryCommand,
   executeEmptyCommand,
   executeFindCommand,
@@ -21,11 +22,13 @@ import {
   executePrintWorkingDirectoryCommand,
   executeShowDirectoryTreeCommand,
   executeTagCommand,
+  executeUnaliasCommand,
   executeUnknownCommand,
 } from "./bookmark-cli-command-executors";
 import { executeParsedOrganizeCommand } from "./bookmark-cli-organize-command-router";
 import { executeParsedUsageCommand } from "./bookmark-cli-usage-command-router";
 import { executePipeCommand } from "./bookmark-cli-pipe-command-executors";
+import { expandCommandAlias } from "../../domain/cli/command-alias";
 
 export type {
   BookmarkCliCommandDependencies,
@@ -309,9 +312,48 @@ const executeParsedPipeCommand = async (
 };
 
 /**
+ * Alias command executor adapterです。
+ * @param {ParsedBookmarkCommand} command Parsed commandです。
+ * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存です。
+ * @returns {Promise<BookmarkCliCommandState>} 画面に反映する状態です。
+ */
+const executeParsedAliasCommand = async (
+  command: ParsedBookmarkCommand,
+  dependencies: BookmarkCliCommandDependencies,
+): Promise<BookmarkCliCommandState> => {
+  await Promise.resolve();
+
+  if (command.kind === "alias") {
+    return executeAliasCommand(command, dependencies);
+  }
+
+  return executeEmptyCommand(dependencies);
+};
+
+/**
+ * Unalias command executor adapterです。
+ * @param {ParsedBookmarkCommand} command Parsed commandです。
+ * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存です。
+ * @returns {Promise<BookmarkCliCommandState>} 画面に反映する状態です。
+ */
+const executeParsedUnaliasCommand = async (
+  command: ParsedBookmarkCommand,
+  dependencies: BookmarkCliCommandDependencies,
+): Promise<BookmarkCliCommandState> => {
+  await Promise.resolve();
+
+  if (command.kind === "unalias") {
+    return executeUnaliasCommand(command, dependencies);
+  }
+
+  return executeEmptyCommand(dependencies);
+};
+
+/**
  * Command kindごとのexecutorです。
  */
 const parsedBookmarkCommandExecutors = {
+  alias: executeParsedAliasCommand,
   cd: executeParsedChangeDirectoryCommand,
   clear: executeParsedEmptyCommand,
   empty: executeParsedEmptyCommand,
@@ -330,6 +372,7 @@ const parsedBookmarkCommandExecutors = {
   rm: executeParsedOrganizeCommand,
   tag: executeParsedTagCommand,
   tree: executeParsedShowDirectoryTreeCommand,
+  unalias: executeParsedUnaliasCommand,
   unknown: executeParsedUnknownCommand,
 } satisfies Readonly<Record<ParsedBookmarkCommand["kind"], ParsedBookmarkCommandExecutor>>;
 
@@ -356,7 +399,11 @@ export const executeBookmarkCliCommand = async (
     return executePendingConfirmationCommand(input, dependencies);
   }
 
-  const command = parseBookmarkCommand(input);
+  const expandedInput = expandCommandAlias(
+    input,
+    dependencies.extensionState.settings.commandAliases,
+  );
+  const command = parseBookmarkCommand(expandedInput);
   const executor = getParsedBookmarkCommandExecutor(command);
   const state = await executor(command, dependencies);
 

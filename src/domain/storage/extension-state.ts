@@ -1,7 +1,8 @@
+import { type CommandAlias, normalizeCommandAliases } from "../cli/command-alias";
 import type { CurrentDirectory } from "../bookmarks/current-directory";
 
 /** 保存データschema versionの現在値。 */
-export const currentExtensionStateSchemaVersion = 1;
+export const currentExtensionStateSchemaVersion = 2;
 
 /** 保存する入力履歴の最大件数。 */
 export const maxCommandHistoryEntries = 100;
@@ -61,6 +62,8 @@ export type PromptStyle = "plain" | "powerline";
 
 /** 拡張機能の保存済み設定。 */
 export interface ExtensionSettings {
+  /** Command alias一覧。 */
+  readonly commandAliases: readonly CommandAlias[];
   /** Nerd Font互換iconを優先するか。 */
   readonly preferNerdFont: boolean;
   /** CLI promptの表示style。 */
@@ -113,6 +116,7 @@ export const createInitialExtensionState = (): ExtensionState => ({
   ),
   schemaVersion: currentExtensionStateSchemaVersion,
   settings: {
+    commandAliases: [],
     preferNerdFont: false,
     promptStyle: powerlinePromptStyle,
   },
@@ -186,3 +190,20 @@ export const appendCommandHistory = (
     ]),
   };
 };
+
+/**
+ * Command alias設定を更新します。
+ * @param {ExtensionState} state 更新前の拡張状態です。
+ * @param {readonly CommandAlias[]} commandAliases 保存するcommand alias一覧です。
+ * @returns {ExtensionState} command alias更新後の拡張状態です。
+ */
+export const updateCommandAliases = (
+  state: ExtensionState,
+  commandAliases: readonly CommandAlias[],
+): ExtensionState => ({
+  ...state,
+  settings: {
+    ...state.settings,
+    commandAliases: normalizeCommandAliases(commandAliases),
+  },
+});

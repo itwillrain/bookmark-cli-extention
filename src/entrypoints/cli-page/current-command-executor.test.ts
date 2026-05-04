@@ -10,6 +10,9 @@ import { currentDirectoryRoot } from "../../domain/bookmarks/current-directory";
 /** Clear command入力。 */
 const clearInputValue = "clear";
 
+/** Clear command alias入力。 */
+const clearAliasInputValue = "c";
+
 /** Find command入力。 */
 const findInputValue = "find stripe";
 
@@ -45,6 +48,18 @@ const commandState = {
   lastResultEntries: [],
   resultItems: [],
   statusText: readyStatusText,
+} satisfies BookmarkCliCommandState;
+
+/** Clear alias設定済みcommand state fixture。 */
+const clearAliasedCommandState = {
+  ...commandState,
+  extensionState: {
+    ...commandState.extensionState,
+    settings: {
+      ...commandState.extensionState.settings,
+      commandAliases: [{ command: "clear", name: "c" }],
+    },
+  },
 } satisfies BookmarkCliCommandState;
 
 /** 実行結果command state fixture。 */
@@ -170,16 +185,18 @@ const executeAndPersistCommand = async (): Promise<BookmarkCliCommandState> => {
 /**
  * Current command executorの記録fixtureを作成。
  * @param {string} inputValue CLI入力値。
+ * @param {BookmarkCliCommandState} currentCommandState 実行前command state。
  * @returns {Readonly<CurrentCommandExecutorRecording>} 記録fixture。
  */
 const createRecording = async (
   inputValue: string,
+  currentCommandState: BookmarkCliCommandState = commandState,
 ): Promise<Readonly<CurrentCommandExecutorRecording>> => {
   const recorder = new CurrentCommandExecutorRecorder();
   const executor = createCurrentCommandExecutor({
     appendExecutedCommand: recorder.appendExecutedCommand,
     clearExecutedCommands: recorder.clearExecutedCommands,
-    commandState,
+    commandState: currentCommandState,
     createEntryId,
     executeAndPersistCommand,
     inputValue,
@@ -216,6 +233,19 @@ describe("createCurrentCommandExecutor", (): void => {
    */
   it("clears transcript for clear command", async (): Promise<void> => {
     const recording = await createRecording(clearInputValue);
+
+    expect(recording.appendedInputs).toStrictEqual([]);
+    expect(recording.clearCount).toBe(singleCallCount);
+    expect(recording.states).toStrictEqual([nextCommandState]);
+    expect(recording.inputValues).toStrictEqual([emptyInputValue]);
+    expect(recording.resultCursorValues).toStrictEqual([resultCursorCleared]);
+  });
+
+  /**
+   * Clear alias commandもtranscript削除を行うことを検証。
+   */
+  it("clears transcript for clear command alias", async (): Promise<void> => {
+    const recording = await createRecording(clearAliasInputValue, clearAliasedCommandState);
 
     expect(recording.appendedInputs).toStrictEqual([]);
     expect(recording.clearCount).toBe(singleCallCount);

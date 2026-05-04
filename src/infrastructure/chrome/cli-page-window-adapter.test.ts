@@ -1,3 +1,5 @@
+/* oxlint-disable max-lines -- Chrome windows API境界のfixtureと単一window制御の仕様を同じ場所で確認するため。 */
+
 import {
   type ChromeWindow,
   type ChromeWindowCreateProperties,
@@ -63,9 +65,11 @@ interface RecordingWindowsApiOptions {
  * Chrome window fixtureを作ります。
  * @param {number} windowId window IDです。
  * @param {string} tabUrl window内tab URLです。
+ * @param {boolean} focused windowがfocus中かです。
  * @returns {ChromeWindow} Chrome window fixtureです。
  */
-const createChromeWindow = (windowId: number, tabUrl: string): ChromeWindow => ({
+const createChromeWindow = (windowId: number, tabUrl: string, focused = false): ChromeWindow => ({
+  focused,
   id: windowId,
   tabs: [{ url: tabUrl }],
 });
@@ -177,7 +181,7 @@ describe("createCliPageWindowCreateProperties", (): void => {
 
   /** CLI page windowを前面へ戻す入力を作ることを検証します。 */
   it("creates focus properties for the CLI page window", (): void => {
-    expect(createCliPageWindowFocusProperties()).toStrictEqual({ focused: true });
+    expect(createCliPageWindowFocusProperties()).toStrictEqual({ focused: true, state: "normal" });
   });
 });
 
@@ -212,6 +216,34 @@ describe("createChromeCliPageWindowLauncher reuse", (): void => {
     expect(recordingWindowsApi.updatedWindows).toStrictEqual([
       [createdWindowId, createCliPageWindowFocusProperties()],
     ]);
+  });
+
+  /** Focus中のCLI windowがある場合は閉じることを検証します。 */
+  it("closes focused CLI page window", async (): Promise<void> => {
+    const recordingWindowsApi = createRecordingWindowsApi({
+      existingWindows: [createChromeWindow(existingWindowId, cliPageUrl, true)],
+    });
+    const launcher = createChromeCliPageWindowLauncher(recordingWindowsApi.windowsApi);
+
+    const closed = await launcher.closeFocusedCliPageWindow(cliPageUrl);
+
+    expect(closed).toBe(true);
+    expect(recordingWindowsApi.createdWindows).toStrictEqual([]);
+    expect(recordingWindowsApi.removedWindowIds).toStrictEqual([existingWindowId]);
+    expect(recordingWindowsApi.updatedWindows).toStrictEqual([]);
+  });
+
+  /** Focus中ではないCLI windowは閉じないことを検証します。 */
+  it("keeps unfocused CLI page window as is", async (): Promise<void> => {
+    const recordingWindowsApi = createRecordingWindowsApi({
+      existingWindows: [createChromeWindow(existingWindowId, cliPageUrl)],
+    });
+    const launcher = createChromeCliPageWindowLauncher(recordingWindowsApi.windowsApi);
+
+    const closed = await launcher.closeFocusedCliPageWindow(cliPageUrl);
+
+    expect(closed).toBe(false);
+    expect(recordingWindowsApi.removedWindowIds).toStrictEqual([]);
   });
 });
 

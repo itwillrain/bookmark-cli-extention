@@ -19,12 +19,14 @@ import {
 import { BookmarkCliAppScreen } from "./bookmark-cli-app-screen";
 import type { LaunchContext } from "../../application/bookmarks/mark-bookmark-use-case";
 import { createAppCommandRuntime } from "./app-command-runtime";
+import { createChromeCurrentWindowCloser } from "../../infrastructure/chrome/current-window-adapter";
 import { createChromeExtensionStateStorage } from "../../infrastructure/chrome/extension-state-storage-adapter";
 import { createChromeHistoryRepository } from "../../infrastructure/chrome/history-adapter";
 import { createChromeLaunchContextStorage } from "../../infrastructure/chrome/launch-context-storage-adapter";
 import { createCommandExecutionErrorHandler } from "./app-command-handlers";
 import { createInitialExtensionState } from "../../domain/storage/extension-state";
 import { currentDirectoryRoot } from "../../domain/bookmarks/current-directory";
+import { parseBookmarkCommand } from "../../application/commands/bookmark-command-parser";
 import { useBookmarkCliAppKeyboard } from "./use-bookmark-cli-app-keyboard";
 import { useBookmarkCliCursorState } from "./use-bookmark-cli-cursor-state";
 import { useBookmarkCliTranscript } from "./use-bookmark-cli-transcript";
@@ -83,6 +85,11 @@ const extensionStateStorage = createChromeExtensionStateStorage(browser.storage.
  * Chrome Storage Session APIを使うlaunch context storage。
  */
 const launchContextStorage = createChromeLaunchContextStorage(browser.storage.session);
+
+/**
+ * Chrome Windows APIを使う現在window closerです。
+ */
+const currentWindowCloser = createChromeCurrentWindowCloser(browser.windows);
 
 /**
  * 現在日時ISO文字列を返します。
@@ -173,6 +180,17 @@ const createCommandDependencies = (
 };
 
 /**
+ * Command実行結果のsettingsを保存すべきか判定。
+ * @param {string} inputValue command入力値。
+ * @returns {boolean} commandがsettingsを更新するならtrue。
+ */
+const shouldPreserveExtensionSettings = (inputValue: string): boolean => {
+  const command = parseBookmarkCommand(inputValue);
+
+  return command.kind === "alias" || command.kind === "unalias";
+};
+
+/**
  * Command実行結果を永続化。
  * @param {string} inputValue command入力値。
  * @param {BookmarkCliCommandState} nextState command実行後state。
@@ -187,6 +205,7 @@ const persistNextCommandState = async (
     currentDirectory: nextState.currentDirectory,
     extensionState: nextState.extensionState,
     now: nowIsoString,
+    preserveExtensionSettings: shouldPreserveExtensionSettings(inputValue),
     repository: bookmarkRepository,
     storage: extensionStateStorage,
   });
@@ -291,6 +310,7 @@ export const App = (): ReactElement => {
     transcript,
   });
   const keyboardState = useBookmarkCliAppKeyboard({
+    closeCliPage: currentWindowCloser.closeCurrentWindow,
     commandState,
     cursors,
     executeInputValue: commandRuntime.executeInputValue,

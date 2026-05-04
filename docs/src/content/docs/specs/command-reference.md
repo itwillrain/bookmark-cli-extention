@@ -167,7 +167,56 @@ folderを先に表示し、その後にBookmarkを表示します。
 
 `ll` は `ls -l` のaliasです。
 
+ユーザー定義aliasはPopupの設定画面、または疑似CLIの `alias` / `unalias` で追加、削除、保存します。
+
+aliasは先頭command tokenだけを1回展開します。
+
+alias展開後のcommand種別は実行だけでなく、`clear` のscrollback transcript削除のようなUI副作用にも適用します。
+
+```bash
+g stripe
+la /Work
+```
+
+`g = go`、`la = ls -la` と設定している場合、上の入力はそれぞれ `go stripe`、`ls -la /Work` として実行します。
+
 代表的なエラーは `folder_not_found`、`chrome_bookmarks_failed` です。
+
+## `alias`
+
+command aliasを一覧表示、または設定します。
+
+```bash
+alias
+alias <name>=<command>
+```
+
+```bash
+alias
+alias g=go
+alias la='ls -la'
+```
+
+`alias` は現在のalias一覧を表示します。
+
+`alias <name>=<command>` はaliasを追加または上書きします。
+
+alias名は空白とpipe記号を含まない1 tokenに限定します。
+
+aliasは再帰的に展開しません。
+
+## `unalias`
+
+command aliasを削除します。
+
+```bash
+unalias <name>
+```
+
+```bash
+unalias g
+unalias la
+```
 
 ## `cd`
 
