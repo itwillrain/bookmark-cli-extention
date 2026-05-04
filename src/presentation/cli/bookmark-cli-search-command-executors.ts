@@ -193,7 +193,11 @@ export const executeFindCommand = async (
     currentDirectory: dependencies.currentDirectory,
     extensionState: dependencies.extensionState,
     lastResultEntries: createLastResultEntriesFromSearchResults(result.value.results),
-    resultItems: createBookmarkCliResultItems(result.value.results, { debug: command.debug }),
+    resultItems: createBookmarkCliResultItems(result.value.results, {
+      long: command.long,
+      usageByBookmarkId: dependencies.extensionState.usageByBookmarkId,
+      virtualTagsByBookmarkId: dependencies.extensionState.virtualTagsByBookmarkId,
+    }),
     statusText: createCandidateStatusText(result.value.results.length),
   });
 };
@@ -229,7 +233,11 @@ export const executeGoCommand = async (
     currentDirectory: dependencies.currentDirectory,
     extensionState: recordOpenedEntryState(dependencies, result.value.entry),
     lastResultEntries: [result.value.entry],
-    resultItems: createBookmarkCliResultItems([result.value], { debug: command.debug }),
+    resultItems: createBookmarkCliResultItems([result.value], {
+      long: command.long,
+      usageByBookmarkId: dependencies.extensionState.usageByBookmarkId,
+      virtualTagsByBookmarkId: dependencies.extensionState.virtualTagsByBookmarkId,
+    }),
     statusText: createOpenedStatusText(result.value.entry.title),
   });
 };

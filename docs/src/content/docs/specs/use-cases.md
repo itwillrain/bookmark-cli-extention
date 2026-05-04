@@ -64,7 +64,7 @@ find #finance stripe
 7. Bookmark化されていない履歴は `history` resultとして候補に含める
 8. Presentation層が番号付き結果一覧を表示する
 
-通常表示ではscoreを出さず、`--debug` 指定時だけdebug情報として表示します。
+通常表示ではscoreを出さず、`find -l` 指定時だけ詳細情報として表示します。
 
 完了条件は、一致したBookmarkまたはChrome履歴が番号付き一覧で表示されることです。
 

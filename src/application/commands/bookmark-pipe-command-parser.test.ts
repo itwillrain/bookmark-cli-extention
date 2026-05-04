@@ -50,8 +50,8 @@ describe("parseBookmarkCommand pipe commands", (): void => {
     expect(parseBookmarkCommand(multipleGrepPipeCommandInput)).toStrictEqual({
       kind: "pipe",
       source: {
-        debug: false,
         kind: "find",
+        long: false,
         query: "stripe",
       },
       stages: [

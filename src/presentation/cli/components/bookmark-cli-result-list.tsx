@@ -191,7 +191,7 @@ const createResultItemRefProps = (input: ResultItemRenderInput): Partial<ResultI
 };
 
 /**
- * Result itemのdebug scoreを描画します。
+ * Result itemの検索scoreを描画します。
  * @param {BookmarkCliResultItem} item scoreを描画するresult itemです。
  * @returns {ReactElement} score表示のReact elementです。
  */

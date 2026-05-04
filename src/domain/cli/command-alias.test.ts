@@ -58,8 +58,8 @@ describe("upsertCommandAlias", (): void => {
 
   /** 既存aliasを置き換えられることを検証。 */
   it("replaces an alias", (): void => {
-    expect(upsertCommandAlias([goAlias], { command: "go --debug", name: "g" })).toStrictEqual([
-      { command: "go --debug", name: "g" },
+    expect(upsertCommandAlias([goAlias], { command: "go -l", name: "g" })).toStrictEqual([
+      { command: "go -l", name: "g" },
     ]);
   });
 });

@@ -43,14 +43,14 @@ const bookmarkCliHelpTopics = [
   {
     commandName: "go",
     description: "Bookmarkを検索して開く",
-    examples: ["go stripe bill", "go #prod admin", "go 3", "go --debug stripe"],
-    usage: ["go <query>", "go <result-number>", "go [--debug] <query>"],
+    examples: ["go stripe bill", "go #prod admin", "go 3", "go -l stripe"],
+    usage: ["go <query>", "go <result-number>", "go [-l] <query>"],
   },
   {
     commandName: "find",
     description: "Bookmarkを検索して一覧表示する",
-    examples: ["find stripe", "find #finance stripe", "find --debug stripe"],
-    usage: ["find <query>", "find [--debug] <query>"],
+    examples: ["find stripe", "find #finance stripe", "find -l stripe"],
+    usage: ["find [-l] <query>"],
   },
   {
     commandName: "history",

@@ -204,7 +204,7 @@ Slice 1では、次のテストを優先します。
 - Bookmark TreeをBookmark EntryとFolder Entryへ正規化できる
 - folder pathを生成できる
 - Fuse.jsへ渡す検索対象がtitle、folder path、urlを含む
-- Fuse.jsのscoreをCommandResultのdebug用scoreへ変換できる
+- Fuse.jsのscoreをCommandResultの詳細表示用scoreへ変換できる
 - folder path一致が検索結果へ反映される
 - `find #tag` が仮想タグで絞り込む
 - `go` の候補がない場合は `not_found` を返す

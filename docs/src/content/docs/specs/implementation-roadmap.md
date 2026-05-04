@@ -52,7 +52,7 @@ Chrome APIに依存する処理はPortの外側へ閉じ込めます。
 - `find stripe` で一致したBookmarkが番号付き一覧で表示される
 - `go stripe` で最上位のBookmarkが開く
 - Bookmark Tree正規化とfuzzy検索にテストがある
-- Fuse.jsのscoreをCommandResultのdebug用scoreへ変換できる
+- Fuse.jsのscoreをCommandResultの詳細表示用scoreへ変換できる
 - `cd ./` で現在ディレクトリ配下のfolder候補が表示される
 - Chrome Bookmarks APIの呼び出しがInfrastructure層に閉じている
 - Application層がChrome APIを直接参照していない
