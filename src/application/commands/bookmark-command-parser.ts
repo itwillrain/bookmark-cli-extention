@@ -9,6 +9,7 @@ import type {
 
 export type {
   AliasBookmarkCommand,
+  BrowserHistoryCommand,
   ChangeDirectoryCommand,
   ClearBookmarkCommand,
   EmptyBookmarkCommand,
@@ -132,6 +133,7 @@ const isPipeSourceBookmarkCommand = (
   command.kind === "find" ||
   command.kind === "freq" ||
   command.kind === "help" ||
+  command.kind === "history" ||
   command.kind === "ls" ||
   command.kind === "recent" ||
   command.kind === "tree";

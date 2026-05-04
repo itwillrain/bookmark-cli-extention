@@ -38,7 +38,7 @@ OSターミナル連携はv1に含めません。
 | UC-07 | Bookmarkを安全に整理する | `mkdir`, `mv`, `rm`, `rename`      | Slice 6       |
 | UC-08 | 利用頻度から再訪する     | `recent`, `freq`                   | Slice 7       |
 | UC-09 | 疑似CLIを快適に操作する  | hot key, keybinding, result view   | Slice 7       |
-| UC-10 | Chrome履歴から再訪する   | `find`, `go`                       | Slice 8       |
+| UC-10 | Chrome履歴から再訪する   | `history`, `find`, `go`            | Slice 8       |
 
 ## UC-01: Bookmarkを検索する
 
@@ -283,23 +283,27 @@ Fontが利用できない場合でもplain text fallbackで意味が読めるよ
 
 ユーザーはBookmark化していないURLも、Chrome履歴から疑似CLIで再訪します。
 
-主コマンドは `find` と `go` です。
+主コマンドは `history`、`find`、`go` です。
 
 ```bash
+history
+history design
 find design system
 go stripe login
 ```
 
 基本フローは次のとおりです。
 
-1. ユーザーが `find` または `go` でqueryを入力する
-2. Application層がBookmark TreeとChrome履歴を取得する
-3. Domain層がBookmark候補と履歴候補をmergeする
-4. 同じURLがBookmarkとChrome履歴の両方に存在する場合はBookmark候補として表示する
-5. Bookmark化されていないChrome履歴は `HIST` resultとして表示する
-6. `go <result-number>` でBookmark resultと同じように履歴URLを開ける
+1. ユーザーが `history` でChrome履歴だけを一覧表示する
+2. 必要に応じて `history query` または `history | grep query` で履歴を絞り込む
+3. ユーザーが `find` または `go` でBookmark TreeとChrome履歴を横断検索する
+4. Application層がBookmark TreeとChrome履歴を取得する
+5. Domain層がBookmark候補と履歴候補をmergeする
+6. 同じURLがBookmarkとChrome履歴の両方に存在する場合はBookmark候補として表示する
+7. Bookmark化されていないChrome履歴は `HIST` resultとして表示する
+8. `go <result-number>` でBookmark resultと同じように履歴URLを開ける
 
-完了条件は、Bookmarkに存在しないChrome履歴URLを検索、表示、番号指定、直接起動できることです。
+完了条件は、Bookmarkに存在しないChrome履歴URLを一覧表示、絞り込み、検索、番号指定、直接起動できることです。
 
 Chrome履歴は読み取りだけに使い、履歴の追加、削除、変更は行いません。
 

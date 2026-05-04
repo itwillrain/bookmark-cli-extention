@@ -110,6 +110,7 @@ describe("suggestBookmarkCommands help prefix", (): void => {
   it("suggests help command by prefix", (): void => {
     expect(suggestBookmarkCommands("h").map((suggestion) => suggestion.commandName)).toStrictEqual([
       "help",
+      "history",
     ]);
   });
 });

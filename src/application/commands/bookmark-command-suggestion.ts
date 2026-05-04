@@ -86,6 +86,10 @@ const bookmarkCommandCatalog = [
     description: "コマンドの使い方を表示",
   },
   {
+    commandName: "history",
+    description: "Chrome履歴を表示",
+  },
+  {
     commandName: "mark",
     description: "現在tabをBookmarkに保存",
   },

@@ -1,6 +1,5 @@
 import type { BookmarkCliEntry } from "../../domain/cli/bookmark-cli-entry";
 import type { BookmarkCliResultItem } from "./components/bookmark-cli-screen";
-import type { BookmarkEntry } from "../../domain/bookmarks/bookmark-tree";
 import type { BookmarkSearchResult } from "../../domain/search/bookmark-search";
 import type { BookmarkTreeViewEntry } from "../../domain/bookmarks/bookmark-tree-view";
 
@@ -193,13 +192,13 @@ export const createBookmarkCliResultItems = (
   results.map((result) => createBookmarkCliResultItem(result, options));
 
 /**
- * Bookmark entry一覧をCLI表示item一覧へ変換します。
- * @param {readonly BookmarkEntry[]} entries Bookmark entry一覧です。
+ * Bookmark CLI entry一覧をCLI表示item一覧へ変換します。
+ * @param {readonly BookmarkCliEntry[]} entries Bookmark CLI entry一覧です。
  * @param {CreateBookmarkCliResultItemsFromEntriesOptions} options Bookmark entry変換optionです。
  * @returns {readonly BookmarkCliResultItem[]} CLI表示item一覧です。
  */
 export const createBookmarkCliResultItemsFromEntries = (
-  entries: readonly BookmarkEntry[],
+  entries: readonly BookmarkCliEntry[],
   options: CreateBookmarkCliResultItemsFromEntriesOptions = defaultEntryResultItemsOptions,
 ): readonly BookmarkCliResultItem[] =>
   entries.map((entry) => createBookmarkCliResultItemFromBookmarkEntry(entry, options));

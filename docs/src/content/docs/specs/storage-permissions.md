@@ -168,7 +168,9 @@ Bookmarkを疑似CLIから開いたタイミングで更新します。
 
 `lastOpenedAt` は疑似CLIから最後に開いた日時です。
 
-Chrome履歴はv1に含めないため、ブラウザ標準UIやアドレスバーから開いた履歴は反映しません。
+Chrome履歴は `history`、`find`、`go` の読み取り対象として扱います。
+
+ただし `usageByBookmarkId` は疑似CLIから開いたBookmarkだけを対象にするため、ブラウザ標準UI、アドレスバー、Chrome履歴URLのopenはBookmark利用統計へ反映しません。
 
 ### settings
 
@@ -260,7 +262,7 @@ v1の必須権限は `bookmarks`、`history`、`storage`、`activeTab`、`favico
 
 `bookmarks` はChrome Bookmark Managerの読み取り、追加、更新、移動、削除に使います。
 
-`history` はChrome履歴を読み取り、`find` と `go` の候補へ含めるために使います。
+`history` はChrome履歴を読み取り、`history` commandの一覧表示と `find` / `go` の候補へ含めるために使います。
 
 Chrome履歴は読み取り専用で扱い、履歴の追加、削除、変更は行いません。
 

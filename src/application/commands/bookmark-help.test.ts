@@ -71,7 +71,7 @@ describe("bookmark CLI help catalog", (): void => {
  */
 describe("bookmark CLI history help catalog", (): void => {
   /**
-   * History topicからChrome履歴の検索仕様を取得できることを検証します。
+   * History topicからChrome履歴の一覧と検索仕様を取得できることを検証します。
    */
   it("finds history help topic", (): void => {
     const topic = findBookmarkCliHelpTopic(historyHelpTopicName);
@@ -79,8 +79,8 @@ describe("bookmark CLI history help catalog", (): void => {
     expect(topic).not.toBe(false);
 
     if (topic !== false) {
-      expect(topic.description).toBe("Chrome履歴をfind/goの検索候補として扱う");
-      expect(topic.usage).toContain("find <query> includes HIST results");
+      expect(topic.description).toBe("Chrome履歴を一覧表示しfind/goの検索候補として扱う");
+      expect(topic.usage).toContain("history [query] [--limit <number>]");
       expect(topic.usage).toContain("#tag queries search bookmarks only");
     }
   });

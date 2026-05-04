@@ -179,9 +179,9 @@ describe("executeBookmarkCliCommand history help command", (): void => {
     expect(state.statusText).toBe("Help history");
     expect(state.resultItems).toStrictEqual([
       {
-        description: "Chrome履歴をfind/goの検索候補として扱う",
+        description: "Chrome履歴を一覧表示しfind/goの検索候補として扱う",
         details: [
-          "usage: find <query> includes HIST results",
+          "usage: history [query] [--limit <number>]",
           "usage: go <query> can open a history URL",
           "usage: #tag queries search bookmarks only",
         ],
