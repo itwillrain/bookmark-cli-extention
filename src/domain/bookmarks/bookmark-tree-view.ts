@@ -28,6 +28,31 @@ const childTreeDepthIncrement = 1;
 const emptyTreeViewEntries = [] as const satisfies readonly BookmarkTreeViewEntry[];
 
 /**
+ * Tree guideのbranch記号です。
+ */
+const treeBranchGuide = "├── ";
+
+/**
+ * Tree guideのlast branch記号です。
+ */
+const treeLastBranchGuide = "└── ";
+
+/**
+ * Tree guideの縦線継続記号です。
+ */
+const treeAncestorContinuationGuide = "│   ";
+
+/**
+ * Tree guideの空白記号です。
+ */
+const treeAncestorBlankGuide = "    ";
+
+/**
+ * Entry indexのoffsetです。
+ */
+const entryIndexOffset = 1;
+
+/**
  * Bookmark Treeをtree表示するためのflat entryです。
  */
 export interface BookmarkTreeViewEntry {
@@ -39,6 +64,10 @@ export interface BookmarkTreeViewEntry {
    * 表示するBookmark entryです。
    */
   readonly entry: BookmarkEntry;
+  /**
+   * Tree commandでtitle前に表示するguideです。
+   */
+  readonly guide: string;
 }
 
 /**
@@ -56,6 +85,28 @@ interface BookmarkTreeViewTraversalContext {
 }
 
 /**
+ * Directory配下のtree view entry取得入力です。
+ */
+interface BookmarkTreeViewDirectoryInput {
+  /**
+   * Ancestorごとの後続entry有無です。
+   */
+  readonly ancestorHasNextSiblings: readonly boolean[];
+  /**
+   * Tree view巡回contextです。
+   */
+  readonly context: BookmarkTreeViewTraversalContext;
+  /**
+   * 表示開始depthです。
+   */
+  readonly depth: number;
+  /**
+   * 起点directory pathです。
+   */
+  readonly directoryPath: FolderPath;
+}
+
+/**
  * Entryがfolderかを判定します。
  * @param {BookmarkEntry} entry 判定対象のentryです。
  * @returns {boolean} folderならtrueです。
@@ -63,14 +114,54 @@ interface BookmarkTreeViewTraversalContext {
 const isFolderEntry = (entry: BookmarkEntry): boolean => entry.kind === "folder";
 
 /**
+ * Ancestorの継続有無をguide文字列へ変換します。
+ * @param {boolean} hasNextSibling 同階層に後続entryがあるancestorならtrueです。
+ * @returns {string} Ancestor guide文字列です。
+ */
+const formatAncestorGuide = (hasNextSibling: boolean): string => {
+  if (hasNextSibling) {
+    return treeAncestorContinuationGuide;
+  }
+
+  return treeAncestorBlankGuide;
+};
+
+/**
+ * Tree guideを作ります。
+ * @param {readonly boolean[]} ancestorHasNextSiblings ancestorごとの後続entry有無です。
+ * @param {boolean} isLastSibling 同階層の最後のentryならtrueです。
+ * @returns {string} Tree guide文字列です。
+ */
+const createTreeGuide = (
+  ancestorHasNextSiblings: readonly boolean[],
+  isLastSibling: boolean,
+): string => {
+  const ancestorGuide = ancestorHasNextSiblings.map((hasNextSibling) =>
+    formatAncestorGuide(hasNextSibling),
+  );
+
+  if (isLastSibling) {
+    return [...ancestorGuide, treeLastBranchGuide].join("");
+  }
+
+  return [...ancestorGuide, treeBranchGuide].join("");
+};
+
+/**
  * Tree view entryを作ります。
  * @param {BookmarkEntry} entry 表示するBookmark entryです。
  * @param {number} depth 表示上の階層です。
+ * @param {string} guide tree command用のguideです。
  * @returns {BookmarkTreeViewEntry} Tree view entryです。
  */
-const createTreeViewEntry = (entry: BookmarkEntry, depth: number): BookmarkTreeViewEntry => ({
+const createTreeViewEntry = (
+  entry: BookmarkEntry,
+  depth: number,
+  guide: string,
+): BookmarkTreeViewEntry => ({
   depth,
   entry,
+  guide,
 });
 
 /**
@@ -82,22 +173,25 @@ const incrementTreeDepth = (depth: number): number => depth + childTreeDepthIncr
 
 /**
  * Directory配下のtree view entryを取得します。
- * @param {BookmarkTreeViewTraversalContext} context Tree view巡回contextです。
- * @param {FolderPath} directoryPath 起点directory pathです。
- * @param {number} depth 表示開始depthです。
+ * @param {BookmarkTreeViewDirectoryInput} input Directory配下のtree view entry取得入力です。
  * @returns {readonly BookmarkTreeViewEntry[]} Directory配下entryのflat listです。
  */
 const listDirectoryTreeViewEntries = (
-  context: BookmarkTreeViewTraversalContext,
-  directoryPath: FolderPath,
-  depth: number,
+  input: BookmarkTreeViewDirectoryInput,
 ): readonly BookmarkTreeViewEntry[] => {
-  if (depth > context.maxDepth) {
+  if (input.depth > input.context.maxDepth) {
     return emptyTreeViewEntries;
   }
 
-  return listDirectoryEntries(context.bookmarkTree, directoryPath).flatMap((entry) => {
-    const currentEntry = createTreeViewEntry(entry, depth);
+  const entries = listDirectoryEntries(input.context.bookmarkTree, input.directoryPath);
+
+  return entries.flatMap((entry, entryIndex) => {
+    const isLastSibling = entryIndex + entryIndexOffset === entries.length;
+    const currentEntry = createTreeViewEntry(
+      entry,
+      input.depth,
+      createTreeGuide(input.ancestorHasNextSiblings, isLastSibling),
+    );
 
     if (!isFolderEntry(entry)) {
       return [currentEntry];
@@ -105,7 +199,12 @@ const listDirectoryTreeViewEntries = (
 
     return [
       currentEntry,
-      ...listDirectoryTreeViewEntries(context, entry.folderPath, incrementTreeDepth(depth)),
+      ...listDirectoryTreeViewEntries({
+        ancestorHasNextSiblings: [...input.ancestorHasNextSiblings, !isLastSibling],
+        context: input.context,
+        depth: incrementTreeDepth(input.depth),
+        directoryPath: entry.folderPath,
+      }),
     ];
   });
 };
@@ -130,9 +229,10 @@ export const listBookmarkTreeViewEntries = (
     return emptyTreeViewEntries;
   }
 
-  return listDirectoryTreeViewEntries(
-    { bookmarkTree, maxDepth },
+  return listDirectoryTreeViewEntries({
+    ancestorHasNextSiblings: [],
+    context: { bookmarkTree, maxDepth },
+    depth: rootChildTreeDepth,
     directoryPath,
-    rootChildTreeDepth,
-  );
+  });
 };

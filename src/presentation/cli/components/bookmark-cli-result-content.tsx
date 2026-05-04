@@ -41,6 +41,24 @@ const resultTextStackClassName = "min-w-0 flex-1";
 const resultTitleTextClassName = "block min-w-0 truncate text-zinc-100";
 
 /**
+ * Tree guide文字列のclassNameです。
+ */
+const treePrefixTextClassName = "mr-1 whitespace-pre text-zinc-600";
+
+/**
+ * Result itemのtree prefixを描画します。
+ * @param {BookmarkCliResultItem} item tree prefixを描画するresult itemです。
+ * @returns {ReactElement} tree prefix表示のReact elementです。
+ */
+const renderTreePrefix = (item: BookmarkCliResultItem): ReactElement => {
+  if (typeof item.treePrefix === "string") {
+    return <span className={treePrefixTextClassName}>{item.treePrefix}</span>;
+  }
+
+  return <></>;
+};
+
+/**
  * Bookmark URLを描画します。
  * @param {BookmarkCliResultItem} item URLを描画するresult itemです。
  * @returns {ReactElement} URL表示のReact elementです。
@@ -91,7 +109,10 @@ const renderResultDetails = (item: BookmarkCliResultItem): ReactElement => {
  * @returns {ReactElement} titleのReact elementです。
  */
 const renderResultTitle = (item: BookmarkCliResultItem): ReactElement => (
-  <span className={resultTitleTextClassName}>{item.title}</span>
+  <span className={resultTitleTextClassName}>
+    {renderTreePrefix(item)}
+    {item.title}
+  </span>
 );
 
 /**

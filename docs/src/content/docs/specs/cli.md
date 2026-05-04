@@ -666,6 +666,15 @@ pwd
 
 `--depth` で表示する深さを指定できます。
 
+表示は結果番号とkind列を揃え、title列にtree guideを表示します。
+
+```text
+1 | DIR | /Work/Admin          ├── Admin
+2 | DIR | /Work/Admin/Billing  │   ├── Billing
+3 | URL | /Work/Admin/Billing  │   │   └── Invoice
+4 | URL | /Work                └── Stripe Dashboard
+```
+
 ```bash
 tree
 tree Work
