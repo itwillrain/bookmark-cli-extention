@@ -26,6 +26,7 @@ import { createChromeLaunchContextStorage } from "../../infrastructure/chrome/la
 import { createCommandExecutionErrorHandler } from "./app-command-handlers";
 import { createInitialExtensionState } from "../../domain/storage/extension-state";
 import { currentDirectoryRoot } from "../../domain/bookmarks/current-directory";
+import { parseBookmarkCommand } from "../../application/commands/bookmark-command-parser";
 import { useBookmarkCliAppKeyboard } from "./use-bookmark-cli-app-keyboard";
 import { useBookmarkCliCursorState } from "./use-bookmark-cli-cursor-state";
 import { useBookmarkCliTranscript } from "./use-bookmark-cli-transcript";
@@ -179,6 +180,17 @@ const createCommandDependencies = (
 };
 
 /**
+ * Command実行結果のsettingsを保存すべきか判定。
+ * @param {string} inputValue command入力値。
+ * @returns {boolean} commandがsettingsを更新するならtrue。
+ */
+const shouldPreserveExtensionSettings = (inputValue: string): boolean => {
+  const command = parseBookmarkCommand(inputValue);
+
+  return command.kind === "alias" || command.kind === "unalias";
+};
+
+/**
  * Command実行結果を永続化。
  * @param {string} inputValue command入力値。
  * @param {BookmarkCliCommandState} nextState command実行後state。
@@ -193,6 +205,7 @@ const persistNextCommandState = async (
     currentDirectory: nextState.currentDirectory,
     extensionState: nextState.extensionState,
     now: nowIsoString,
+    preserveExtensionSettings: shouldPreserveExtensionSettings(inputValue),
     repository: bookmarkRepository,
     storage: extensionStateStorage,
   });

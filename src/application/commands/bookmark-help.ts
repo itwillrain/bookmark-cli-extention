@@ -29,6 +29,18 @@ const emptyTopicInput = "";
 /** Bookmark CLI help topic一覧。 */
 const bookmarkCliHelpTopics = [
   {
+    commandName: "alias",
+    description: "command aliasを表示または設定する",
+    examples: ["alias", "alias g=go", "alias la='ls -la'"],
+    usage: ["alias", "alias <name>=<command>"],
+  },
+  {
+    commandName: "unalias",
+    description: "command aliasを削除する",
+    examples: ["unalias g", "unalias la"],
+    usage: ["unalias <name>"],
+  },
+  {
     commandName: "go",
     description: "Bookmarkを検索して開く",
     examples: ["go stripe bill", "go #prod admin", "go 3", "go --debug stripe"],

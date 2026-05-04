@@ -60,6 +60,15 @@ const aliasedExtensionState = {
 /** Go command alias入力です。 */
 const goAliasInput = "g stripe";
 
+/** Alias一覧command入力です。 */
+const aliasListInput = "alias";
+
+/** Alias設定command入力です。 */
+const aliasSetInput = "alias la='ls -la'";
+
+/** Unalias command入力です。 */
+const unaliasInput = "unalias g";
+
 /** URL記録opener fixtureです。 */
 interface RecordingBookmarkOpener {
   /** 開いたURL一覧です。 */
@@ -136,6 +145,18 @@ const createCommandDependencies = (opener: BookmarkOpenerPort): BookmarkCliComma
   repository: createBookmarkRepository(),
 });
 
+/**
+ * Bookmark CLI command dependencies fixtureを拡張状態付きで作ります。
+ * @param {typeof initialExtensionState} extensionState 拡張状態です。
+ * @returns {BookmarkCliCommandDependencies} Command実行依存です。
+ */
+const createCommandDependenciesWithState = (
+  extensionState: typeof initialExtensionState,
+): BookmarkCliCommandDependencies => ({
+  ...createCommandDependencies(createRecordingBookmarkOpener().opener),
+  extensionState,
+});
+
 /** Command alias付きCLI controllerのテストスイートです。 */
 describe("executeBookmarkCliCommand command aliases", (): void => {
   /** 設定済みaliasからGo commandを実行できることを検証します。 */
@@ -148,5 +169,52 @@ describe("executeBookmarkCliCommand command aliases", (): void => {
 
     expect(recordingOpener.openedUrls).toStrictEqual(["https://dashboard.stripe.com/"]);
     expect(state.statusText).toBe("Opened Stripe Dashboard");
+  });
+});
+
+/** Command alias設定CLI controllerのテストスイートです。 */
+describe("executeBookmarkCliCommand alias settings", (): void => {
+  /** Alias一覧を表示できることを検証します。 */
+  it("lists configured command aliases", async (): Promise<void> => {
+    const state = await executeBookmarkCliCommand(
+      aliasListInput,
+      createCommandDependenciesWithState(aliasedExtensionState),
+    );
+
+    expect(state.statusText).toBe("1 aliases");
+    expect(state.resultItems).toStrictEqual([
+      {
+        description: "go",
+        details: ["alias g='go'"],
+        folderPath: "/",
+        kind: "help",
+        title: "g",
+      },
+    ]);
+  });
+
+  /** Alias設定を追加できることを検証します。 */
+  it("sets a command alias", async (): Promise<void> => {
+    const state = await executeBookmarkCliCommand(
+      aliasSetInput,
+      createCommandDependenciesWithState(aliasedExtensionState),
+    );
+
+    expect(state.statusText).toBe("alias la='ls -la'");
+    expect(state.extensionState.settings.commandAliases).toStrictEqual([
+      { command: "go", name: "g" },
+      { command: "ls -la", name: "la" },
+    ]);
+  });
+
+  /** Alias設定を削除できることを検証します。 */
+  it("removes a command alias", async (): Promise<void> => {
+    const state = await executeBookmarkCliCommand(
+      unaliasInput,
+      createCommandDependenciesWithState(aliasedExtensionState),
+    );
+
+    expect(state.statusText).toBe("unalias g");
+    expect(state.extensionState.settings.commandAliases).toStrictEqual([]);
   });
 });

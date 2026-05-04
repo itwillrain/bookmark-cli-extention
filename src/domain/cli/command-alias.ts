@@ -52,13 +52,24 @@ const isValidCommandAlias = (alias: CommandAlias): boolean =>
  * @param {CommandAlias} alias 追加するaliasです。
  * @returns {readonly CommandAlias[]} 追加後alias一覧です。
  */
-const upsertCommandAlias = (
+export const upsertCommandAlias = (
   aliases: readonly CommandAlias[],
   alias: CommandAlias,
 ): readonly CommandAlias[] => [
   ...aliases.filter((currentAlias) => currentAlias.name !== alias.name),
   alias,
 ];
+
+/**
+ * Alias一覧から指定名のaliasを削除します。
+ * @param {readonly CommandAlias[]} aliases 削除前alias一覧です。
+ * @param {string} aliasName 削除対象alias名です。
+ * @returns {readonly CommandAlias[]} 削除後alias一覧です。
+ */
+export const removeCommandAlias = (
+  aliases: readonly CommandAlias[],
+  aliasName: string,
+): readonly CommandAlias[] => aliases.filter((alias) => alias.name !== aliasName.trim());
 
 /**
  * Command alias一覧を保存可能な形へ正規化します。

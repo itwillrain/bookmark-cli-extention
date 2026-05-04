@@ -114,6 +114,7 @@ Bookmark行の既定アクションは `go <result-number>` です。
 - Popupは設定画面として扱い、現在のhot keyを表示する
 - Popupから `chrome://extensions/shortcuts` を開き、ユーザーがhot keyを変更できるようにする
 - Popupでcommand aliasを設定できる
+- 疑似CLI内でも `alias` / `unalias` でcommand aliasを設定できる
 
 ## コマンド設計方針
 
@@ -570,7 +571,7 @@ ls Work/Admin
 
 `ll` は `ls -l` のaliasとして扱います。
 
-ユーザー定義aliasはPopupの設定画面で保存します。
+ユーザー定義aliasはPopupの設定画面、または疑似CLIの `alias` / `unalias` で保存します。
 
 aliasは先頭command tokenだけを1回展開します。
 
@@ -580,6 +581,29 @@ la /Work
 ```
 
 たとえば `g = go`、`la = ls -la` と設定している場合、上の入力はそれぞれ `go stripe`、`ls -la /Work` として実行します。
+
+### alias
+
+command aliasを一覧表示、または設定します。
+
+```bash
+alias
+alias g=go
+alias la='ls -la'
+```
+
+`alias` は現在のalias一覧を表示します。
+
+`alias <name>=<command>` はaliasを追加または上書きします。
+
+### unalias
+
+command aliasを削除します。
+
+```bash
+unalias g
+unalias la
+```
 
 ### cd
 

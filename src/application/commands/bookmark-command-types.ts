@@ -234,6 +234,47 @@ export interface ClearBookmarkCommand {
 }
 
 /**
+ * Command alias操作種別です。
+ */
+export type AliasBookmarkCommandOperation = "list" | "set";
+
+/**
+ * Command alias設定commandです。
+ */
+export interface AliasBookmarkCommand {
+  /**
+   * Alias名です。
+   */
+  readonly aliasName: string;
+  /**
+   * 展開後command入力です。
+   */
+  readonly commandInput: string;
+  /**
+   * Command種別です。
+   */
+  readonly kind: "alias";
+  /**
+   * Alias操作種別です。
+   */
+  readonly operation: AliasBookmarkCommandOperation;
+}
+
+/**
+ * Command alias削除commandです。
+ */
+export interface UnaliasBookmarkCommand {
+  /**
+   * 削除対象alias名です。
+   */
+  readonly aliasName: string;
+  /**
+   * Command種別です。
+   */
+  readonly kind: "unalias";
+}
+
+/**
  * Help表示commandです。
  */
 export interface HelpBookmarkCommand {
@@ -298,6 +339,7 @@ export interface PipeBookmarkCommand {
  * 解析済みBookmark commandです。
  */
 export type ParsedBookmarkCommand =
+  | AliasBookmarkCommand
   | ChangeDirectoryCommand
   | ClearBookmarkCommand
   | EmptyBookmarkCommand
@@ -316,4 +358,5 @@ export type ParsedBookmarkCommand =
   | RenameBookmarkCommand
   | ShowDirectoryTreeCommand
   | TagBookmarkCommand
+  | UnaliasBookmarkCommand
   | UnknownBookmarkCommand;

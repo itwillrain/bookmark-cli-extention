@@ -1,4 +1,10 @@
-import { type CommandAlias, expandCommandAlias, normalizeCommandAliases } from "./command-alias";
+import {
+  type CommandAlias,
+  expandCommandAlias,
+  normalizeCommandAliases,
+  removeCommandAlias,
+  upsertCommandAlias,
+} from "./command-alias";
 import { describe, expect, it } from "vitest";
 
 /** Go alias fixture。 */
@@ -40,6 +46,29 @@ describe("normalizeCommandAliases", (): void => {
         { command: "freq", name: "f" },
       ]),
     ).toStrictEqual([{ command: "freq", name: "f" }]);
+  });
+});
+
+/** Command alias更新のテストスイート。 */
+describe("upsertCommandAlias", (): void => {
+  /** Aliasを追加できることを検証。 */
+  it("adds an alias", (): void => {
+    expect(upsertCommandAlias([], goAlias)).toStrictEqual([goAlias]);
+  });
+
+  /** 既存aliasを置き換えられることを検証。 */
+  it("replaces an alias", (): void => {
+    expect(upsertCommandAlias([goAlias], { command: "go --debug", name: "g" })).toStrictEqual([
+      { command: "go --debug", name: "g" },
+    ]);
+  });
+});
+
+/** Command alias削除のテストスイート。 */
+describe("removeCommandAlias", (): void => {
+  /** Alias名に一致するaliasを削除できることを検証。 */
+  it("removes an alias by name", (): void => {
+    expect(removeCommandAlias([goAlias, longListAlias], "g")).toStrictEqual([longListAlias]);
   });
 });
 
