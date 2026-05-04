@@ -32,6 +32,13 @@ const requiredJsdocContexts = [
   "Program > VariableDeclaration[kind='const']",
 ];
 
+/** TypeDoc向けのexampleを要求する TypeScript AST セレクター。 */
+const requiredTypedocExampleContexts = [
+  "ExportNamedDeclaration > FunctionDeclaration",
+  "ExportNamedDeclaration > VariableDeclaration[kind='const'] > VariableDeclarator > ArrowFunctionExpression",
+  "ExportNamedDeclaration > VariableDeclaration[kind='const'] > VariableDeclarator > FunctionExpression",
+];
+
 /** JSDoc commentの開始文字。 */
 const jsdocCommentStart = "*";
 
@@ -182,6 +189,7 @@ export default defineConfig(
       "@typescript-eslint/strict-boolean-expressions": "error",
       "jsdoc/no-types": "off",
       "jsdoc/require-description": "error",
+      "jsdoc/require-example": "off",
       "jsdoc/require-jsdoc": [
         "error",
         {
@@ -213,6 +221,21 @@ export default defineConfig(
       "jsdoc/require-returns-description": "error",
       "jsdoc/require-throws": "error",
       [`${jsdocStylePluginName}/${noDesuEndingJsdocRuleName}`]: "off",
+    },
+  },
+  {
+    files: ["src/application/**/*.ts", "src/domain/**/*.ts"],
+    ignores: ["**/*.test.ts", "**/*test-helper.ts"],
+    rules: {
+      "jsdoc/require-example": [
+        "warn",
+        {
+          contexts: requiredTypedocExampleContexts,
+          enableFixer: false,
+          exemptNoArguments: false,
+          exemptedBy: ["inheritdoc", "internal"],
+        },
+      ],
     },
   },
 );

@@ -35,6 +35,20 @@ Codexなどの自動作業者は、作業前にこの方針と関連する仕様
 - 仕様ファイルはdocs配下に置き、Starlightのページとして読める状態にする
 - 純粋関数にロジックを置く場合は、テスト観点も合わせて整理する
 
+## TypeDoc
+
+TypeDocは、公開APIを読むための補助ドキュメントとして扱います。
+
+`src/domain` と `src/application` のexported関数は、呼び出し方が分かるように `@example` を追加します。
+
+ただし、単純な文字列定数、index定数、separator定数には機械的に `@example` を追加しません。
+
+React componentはTypeDocの `@example` よりStorybookを正とします。
+
+`@example` の不足はESLintでwarningとして検出します。
+
+既存APIへexampleを追加し終えたら、warningからerrorへ引き上げます。
+
 ## 実装時の確認手順
 
 1. 変更対象に関係するdocsを先に読む
