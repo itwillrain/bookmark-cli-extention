@@ -31,6 +31,9 @@ type CommandInputExecutor = (inputValue: string) => Promise<void>;
 /** Command実行失敗handler。 */
 type CommandExecutionErrorHandler = () => void;
 
+/** CLI page close handler。 */
+type CloseCliPageHandler = () => Promise<void>;
+
 /** Result cursor setter。 */
 type ResultCursorSetter = Dispatch<SetStateAction<ResultCursorIndex>>;
 
@@ -39,6 +42,8 @@ type SuggestionCursorSetter = Dispatch<SetStateAction<CompletionCursorIndex>>;
 
 /** Bookmark CLI keyboard hook入力。 */
 export interface UseBookmarkCliKeyboardInput {
+  /** CLI pageを閉じる関数。 */
+  readonly closeCliPage: CloseCliPageHandler;
   /** 現在のcommand state。 */
   readonly commandState: BookmarkCliCommandState;
   /** Command入力値を実行する関数。 */
@@ -105,6 +110,9 @@ interface ExecuteKeyboardActionInput extends ExecuteContextKeyboardActionInput {
   readonly moveCommandHistoryInput: (direction: ResultCursorDirection) => boolean;
 }
 
+/** 空のinput value。 */
+const emptyInputValue = "";
+
 /**
  * 補完候補確定keyboard actionを実行。
  * @param {ExecuteKeyboardActionInput} input Keyboard action実行入力。
@@ -131,6 +139,28 @@ const executeSelectNextCompletionKeyboardActionAdapter = (
 const executeSelectPreviousCompletionKeyboardActionAdapter = (
   input: ExecuteKeyboardActionInput,
 ): boolean => executeSelectPreviousCompletionKeyboardAction({ ...input.input, event: input.event });
+
+/**
+ * 空promptかを判定。
+ * @param {string} inputValue 現在のCLI入力値。
+ * @returns {boolean} 空ならtrue。
+ */
+const isEmptyInputValue = (inputValue: string): boolean => inputValue.trim() === emptyInputValue;
+
+/**
+ * CLI page close keyboard actionを実行。
+ * @param {ExecuteKeyboardActionInput} input Keyboard action実行入力。
+ * @returns {boolean} 処理済みならtrue。
+ */
+const executeCloseCliPageKeyboardAction = (input: ExecuteKeyboardActionInput): boolean => {
+  if (!isEmptyInputValue(input.input.inputValue)) {
+    return false;
+  }
+
+  input.input.closeCliPage().catch(input.input.handleCommandExecutionError);
+
+  return true;
+};
 
 /**
  * 解除keyboard actionを実行。
@@ -161,6 +191,7 @@ type KeyboardActionExecutor = (input: ExecuteKeyboardActionInput) => boolean;
  */
 const keyboardActionExecutors = {
   clear: executeClearKeyboardAction,
+  closeCliPage: executeCloseCliPageKeyboardAction,
   confirmCompletion: executeConfirmCompletionKeyboardActionAdapter,
   deletePreviousWord: executeNoneKeyboardAction,
   historyNext: executeHistoryNextKeyboardAction,
@@ -259,11 +290,9 @@ export const useBookmarkCliKeyboard = (
       action,
     );
 
-    if (!handled) {
-      return;
+    if (handled) {
+      event.preventDefault();
     }
-
-    event.preventDefault();
   };
 
   return { handleInputKeyDown };

@@ -163,11 +163,15 @@ mark "Production Admin" --to Work/Admin
 
 CLI起動元タブのURLまたはtitleを取得できない場合は `unsupported_tab` を返します。
 
-Dedicated extension pageがすでに開いている場合、hot keyや拡張actionは既存windowを前面へ戻します。
+Dedicated extension pageがすでに開いている場合、拡張actionは既存windowを前面へ戻します。
+
+Dedicated extension pageがfocus中の場合、hot key再押下は既存windowを閉じます。
+
+hot keyで再度開くと、新しいwindowを作り、保存済みの現在ディレクトリ、設定、command historyを復元します。
 
 Dedicated extension pageが複数開いている場合、hot keyや拡張actionは1つだけを残して重複windowを閉じます。
 
-Chrome Extensions APIではOSの常時最前面固定を指定できないため、v1では再呼び出し時の前面復帰を完了条件に含めます。
+Chrome Extensions APIではOSの常時最前面固定を指定できないため、v1ではfocus中のhot key再押下によるclose/reopenを完了条件に含めます。
 
 保存先に同じURLが存在する場合は `already_marked` を返します。
 
@@ -265,7 +269,8 @@ Chrome履歴は `find` と `go` の検索対象として参照します。
 9. 実行したpromptと結果がtranscriptに追加される
 10. `ls | grep stripe` のように結果一覧を絞り込む
 11. 必要に応じて `clear` でscrollback transcriptを消す
-12. Powerline風promptとplainな結果一覧で実行結果を読む
+12. 空promptで `Ctrl+d` を押してCLI windowを閉じる
+13. Powerline風promptとplainな結果一覧で実行結果を読む
 
 完了条件は、マウス操作なしで主要な検索、移動、保存、整理ができることです。
 

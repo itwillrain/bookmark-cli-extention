@@ -6,6 +6,9 @@
  */
 export type ChromeWindowCreateType = "normal" | "popup";
 
+/** Chrome windows APIで指定できるwindow状態です。 */
+export type ChromeWindowState = "minimized" | "normal";
+
 /**
  * Chrome windows.createに渡す入力です。
  * @see https://developer.chrome.com/docs/extensions/reference/api/windows#method-create
@@ -29,7 +32,9 @@ export interface ChromeWindowCreateProperties {
  */
 export interface ChromeWindowUpdateProperties {
   /** Windowへfocusするかです。 */
-  readonly focused: boolean;
+  readonly focused?: boolean;
+  /** Window状態です。 */
+  readonly state?: ChromeWindowState;
 }
 
 /**
@@ -56,6 +61,8 @@ export interface ChromeWindowTab {
  * @see https://developer.chrome.com/docs/extensions/reference/api/windows#type-Window
  */
 export interface ChromeWindow {
+  /** Windowがfocus中かです。 */
+  readonly focused?: boolean | undefined;
   /** Window IDです。 */
   readonly id?: number | undefined;
   /** Window内tab一覧です。 */
@@ -123,6 +130,7 @@ export const createCliPageWindowCreateProperties = (url: string): ChromeWindowCr
  */
 export const createCliPageWindowFocusProperties = (): ChromeWindowUpdateProperties => ({
   focused: true,
+  state: "normal",
 });
 
 /**
@@ -166,6 +174,18 @@ const filterCliPageWindows = (
   windows: readonly ChromeWindow[],
   url: string,
 ): readonly ChromeWindow[] => windows.filter((window) => isCliPageWindow(window, url));
+
+/**
+ * Focus中のCLI page windowを取得します。
+ * @param {readonly ChromeWindow[]} windows Chrome window一覧です。
+ * @param {string} url CLI page URLです。
+ * @returns {ChromeWindow | undefined} Focus中のCLI page windowです。
+ */
+const findFocusedCliPageWindow = (
+  windows: readonly ChromeWindow[],
+  url: string,
+): ChromeWindow | undefined =>
+  filterCliPageWindows(windows, url).find((window) => window.focused === true);
 
 /**
  * 重複CLI page windowを閉じます。
@@ -220,6 +240,25 @@ const focusCliPageWindow = async (
 };
 
 /**
+ * 保存済みCLI page windowを閉じます。
+ * @param {ChromeWindowsApi} windowsApi Chrome windows APIです。
+ * @param {number} windowId 保存済みwindow IDです。
+ * @returns {Promise<boolean>} 閉じられた場合はtrueです。
+ */
+const closeCliPageWindow = async (
+  windowsApi: ChromeWindowsApi,
+  windowId: number,
+): Promise<boolean> => {
+  try {
+    await windowsApi.remove(windowId);
+
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+/**
  * 実在するCLI page windowを探して前面へ戻します。
  * @param {ChromeWindowsApi} windowsApi Chrome windows APIです。
  * @param {string} url CLI page URLです。
@@ -248,8 +287,33 @@ const focusDiscoveredCliPageWindow = async (
   return primaryWindowId;
 };
 
+/**
+ * Focus中のCLI page windowを探して閉じます。
+ * @param {ChromeWindowsApi} windowsApi Chrome windows APIです。
+ * @param {string} url CLI page URLです。
+ * @returns {Promise<boolean>} 閉じられた場合はtrueです。
+ */
+const closeFocusedDiscoveredCliPageWindow = async (
+  windowsApi: ChromeWindowsApi,
+  url: string,
+): Promise<boolean> => {
+  const focusedWindow = findFocusedCliPageWindow(
+    await windowsApi.getAll(createCliPageWindowGetAllQuery()),
+    url,
+  );
+  const focusedWindowId = resolveStoredCliPageWindowId(focusedWindow);
+
+  if (focusedWindowId === cliPageWindowIdMissing) {
+    return false;
+  }
+
+  return closeCliPageWindow(windowsApi, focusedWindowId);
+};
+
 /** CLI page window launcherです。 */
 export interface ChromeCliPageWindowLauncher {
+  /** Focus中のCLI pageを閉じます。 */
+  readonly closeFocusedCliPageWindow: (url: string) => Promise<boolean>;
   /** CLI pageを別windowで開きます。 */
   readonly openCliPageWindow: (url: string) => Promise<void>;
 }
@@ -331,5 +395,16 @@ export const createChromeCliPageWindowLauncher = (
     await openCliPageWindowTask;
   };
 
-  return { openCliPageWindow };
+  /**
+   * Focus中のCLI pageを閉じます。
+   * @param {string} url CLI page URLです。
+   * @returns {Promise<boolean>} 閉じられた場合はtrueです。
+   */
+  const closeFocusedCliPageWindow = async (url: string): Promise<boolean> => {
+    const closed = await closeFocusedDiscoveredCliPageWindow(windowsApi, url);
+
+    return closed;
+  };
+
+  return { closeFocusedCliPageWindow, openCliPageWindow };
 };

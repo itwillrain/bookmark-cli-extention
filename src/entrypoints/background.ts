@@ -114,6 +114,18 @@ const openCliPage = async (): Promise<void> => {
 };
 
 /**
+ * HotkeyからDedicated extension pageをtoggleします。
+ * @returns {Promise<void>} Window更新完了を表すPromiseです。
+ */
+const toggleCliPageByHotkey = async (): Promise<void> => {
+  if (await cliPageWindowLauncher.closeFocusedCliPageWindow(createCliPageUrl())) {
+    return;
+  }
+
+  await openCliPage();
+};
+
+/**
  * Dedicated extension page表示失敗を握りつぶします。
  * @returns {void} 返り値はありません。
  */
@@ -144,7 +156,7 @@ const handleActionClicked = (): void => {
  */
 const handleCommand = (commandName: string): void => {
   if (commandName === openCliPageCommandName) {
-    openCliPage().catch(handleOpenCliPageError);
+    toggleCliPageByHotkey().catch(handleOpenCliPageError);
   }
 };
 

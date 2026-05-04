@@ -1,6 +1,7 @@
 /** Bookmark CLI keyboard action。 */
 export type BookmarkCliKeyboardAction =
   | "clear"
+  | "closeCliPage"
   | "confirmCompletion"
   | "deletePreviousWord"
   | "historyNext"
@@ -44,6 +45,9 @@ const killAfterCursorControlKey = "k";
 /** Ctrl+w key。 */
 const deletePreviousWordControlKey = "w";
 
+/** Ctrl+d key。 */
+const closeCliPageControlKey = "d";
+
 /** 履歴を新しい方向へ移動するkey。 */
 const historyNextArrowKey = "ArrowDown";
 
@@ -63,6 +67,7 @@ const clearKey = "Escape";
  * Ctrl付きkeyごとのkeyboard actionです。
  */
 const controlKeyActions = {
+  [closeCliPageControlKey]: "closeCliPage",
   [deletePreviousWordControlKey]: "deletePreviousWord",
   [historyNextControlKey]: "historyNext",
   [historyPreviousControlKey]: "historyPrevious",

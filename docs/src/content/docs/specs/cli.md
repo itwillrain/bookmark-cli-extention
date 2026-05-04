@@ -105,6 +105,9 @@ Bookmark行の既定アクションは `go <result-number>` です。
 
 - hot keyからDedicated extension pageを別windowで開く
 - 拡張actionからDedicated extension pageを別windowで開く
+- Dedicated extension pageがfocus中の場合、hot key再押下でCLI windowを閉じる
+- hot keyで再度開いた場合、新しいCLI windowを開き、保存済みの現在ディレクトリ、設定、command historyを復元する
+- 空promptで `Ctrl+D` を押した場合、CLI windowを閉じる
 - CLI windowを開く直前に、起動元tabの `launchContext` を保存する
 - `mark` はCLI window自身ではなく、CLI起動元tabを保存対象にする
 - PopupからもDedicated extension pageの別windowを開ける
@@ -282,6 +285,8 @@ TabキーやShift+Tabキーで候補を選択しても、DOM focusはcommand inp
 結果一覧のBookmark候補をTabキーやShift+Tabキーで選択する場合も、選択中resultを `scrollIntoView({ block: "nearest", inline: "nearest" })` で表示範囲へ追従させます。
 
 Enterキーは選択中のfloating補完候補を入力へ反映します。
+
+空promptでCtrl+Dキーを押した場合、CLI windowを閉じます。
 
 空のpromptで結果一覧の行を選択している場合、Enterキーは選択行の既定アクションを実行します。
 

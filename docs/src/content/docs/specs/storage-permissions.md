@@ -202,7 +202,15 @@ Dedicated extension pageは単一のpopup windowとして扱います。
 
 hot keyまたは拡張actionで起動するたびに `chrome.windows.getAll({ populate: true })` で既存のCLI windowを探します。
 
-既存のCLI windowが残っていれば新規作成せず `chrome.windows.update(windowId, { focused: true })` で前面へ戻します。
+既存のCLI windowが残っていてfocus中ではない場合は、新規作成せず `chrome.windows.update(windowId, { focused: true })` で前面へ戻します。
+
+hot key再押下時にCLI window自身がfocus中の場合は、`chrome.windows.remove(windowId)` でCLI windowを閉じます。
+
+このとき `launchContext` は更新しません。
+
+再度hot keyで開いた場合は、新しいpopup windowを作り、保存済みの `currentDirectory`、`settings`、`commandHistory` を復元します。
+
+既存windowがユーザー操作などで閉じられている場合は新しいpopup windowを作り、保存済みの `currentDirectory`、`settings`、`commandHistory` を復元します。
 
 CLI windowが複数見つかった場合は、先頭の1つだけを残して重複windowを閉じます。
 
@@ -210,7 +218,9 @@ CLI windowが複数見つかった場合は、先頭の1つだけを残して重
 
 既存windowが閉じられている場合は新しいpopup windowを作ります。
 
-Chrome Extensionsの `windows` APIにはalways-on-topとしてOS上へ固定する指定がないため、v1の「最前面」はhot key再押下時の前面復帰として扱います。
+Chrome Extensionsの `windows` APIにはalways-on-topとしてOS上へ固定する指定がないため、v1では常時最前面固定を扱いません。
+
+Dedicated extension page内で空promptの `Ctrl+d` を押した場合も、`chrome.windows.getCurrent()` で現在window IDを取得し、`chrome.windows.remove(windowId)` で閉じます。
 
 ## 必要な権限
 

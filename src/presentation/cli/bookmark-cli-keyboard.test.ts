@@ -42,10 +42,8 @@ describe("resolveBookmarkCliKeyboardAction history", (): void => {
   });
 });
 
-/**
- * Bookmark CLI readline keyboard action解決のテストスイート。
- */
-describe("resolveBookmarkCliKeyboardAction readline", (): void => {
+/** Bookmark CLI readline編集keyboard action解決のテストスイート。 */
+describe("resolveBookmarkCliKeyboardAction readline editing", (): void => {
   /**
    * Ctrl+aを行頭移動へ変換することを検証。
    */
@@ -88,6 +86,16 @@ describe("resolveBookmarkCliKeyboardAction readline", (): void => {
   it("resolves control w as delete previous word", (): void => {
     expect(resolveBookmarkCliKeyboardAction({ ctrlKey: true, key: "w", shiftKey: false })).toBe(
       "deletePreviousWord",
+    );
+  });
+});
+
+/** Bookmark CLI close keyboard action解決のテストスイート。 */
+describe("resolveBookmarkCliKeyboardAction close", (): void => {
+  /** Ctrl+dをCLI window closeへ変換することを検証。 */
+  it("resolves control d as close cli page", (): void => {
+    expect(resolveBookmarkCliKeyboardAction({ ctrlKey: true, key: "d", shiftKey: false })).toBe(
+      "closeCliPage",
     );
   });
 });

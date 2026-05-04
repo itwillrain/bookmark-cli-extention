@@ -15,11 +15,16 @@ type InputValueSetter = Dispatch<SetStateAction<string>>;
 /** Command入力値を実行する関数。 */
 type CommandInputExecutor = (inputValue: string) => Promise<void>;
 
+/** CLI page close handler。 */
+type CloseCliPageHandler = () => Promise<void>;
+
 /** Command実行失敗handler。 */
 type CommandExecutionErrorHandler = () => void;
 
 /** Bookmark CLI app keyboard入力。 */
 export interface UseBookmarkCliAppKeyboardInput {
+  /** CLI pageを閉じる関数。 */
+  readonly closeCliPage: CloseCliPageHandler;
   /** 現在のcommand state。 */
   readonly commandState: BookmarkCliCommandState;
   /** Cursor state。 */
@@ -58,6 +63,7 @@ export const useBookmarkCliAppKeyboard = (
     repository: input.repository,
   });
   const keyboard = useBookmarkCliKeyboard({
+    closeCliPage: input.closeCliPage,
     commandState: input.commandState,
     executeInputValue: input.executeInputValue,
     handleCommandExecutionError: input.handleCommandExecutionError,

@@ -102,6 +102,10 @@ Dedicated extension pageのwindowはhot keyで再呼び出しできます。
 
 既存windowがある場合はwindowを増やさず、既存windowへfocusします。
 
+hot key再呼び出し時にDedicated extension page自身がfocus中の場合は、そのCLI windowを閉じます。
+
+再度hot keyで開いた場合は、新しいwindowを作り、保存済みの現在ディレクトリ、設定、command historyを復元します。
+
 誤ってCLI windowが複数存在する場合は、hot keyまたは拡張actionの再実行時に1つへ集約します。
 
 Chrome Extensions APIの制約により、OSの常時最前面固定はv1では扱いません。
@@ -292,7 +296,7 @@ view modelはcomponentが直接使いやすい形にします。
 
 Dedicated extension pageを開いた直後、command実行後、terminal surfaceのpointer操作後はcommand inputへfocusを戻します。
 
-上キー、下キー、`Ctrl+p`、`Ctrl+n`、`Ctrl+a`、`Ctrl+e`、`Ctrl+u`、`Ctrl+k`、`Ctrl+w`、`Tab`、`Shift+Tab`、`Enter`、`Esc` の操作をcomponent設計に含めます。
+上キー、下キー、`Ctrl+p`、`Ctrl+n`、`Ctrl+a`、`Ctrl+e`、`Ctrl+u`、`Ctrl+k`、`Ctrl+w`、`Ctrl+d`、`Tab`、`Shift+Tab`、`Enter`、`Esc` の操作をcomponent設計に含めます。
 
 Command suggestionはfish shellの補完に近い操作感を目指します。
 
@@ -311,6 +315,8 @@ Command suggestionはfish shellの補完に近い操作感を目指します。
 folder行は `cd <result-number>`、Bookmark行は `go <result-number>` として扱います。
 
 入力中のpromptが残っている場合は、結果一覧の選択行を入力補完として扱います。
+
+空のpromptで `Ctrl+d` を押した場合は、Dedicated extension pageの現在windowを閉じます。
 
 `cd ./` のように移動先path入力へ入った場合は、現在ディレクトリ配下の存在するfolderを候補として表示します。
 

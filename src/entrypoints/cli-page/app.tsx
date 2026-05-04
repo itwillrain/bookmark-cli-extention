@@ -19,6 +19,7 @@ import {
 import { BookmarkCliAppScreen } from "./bookmark-cli-app-screen";
 import type { LaunchContext } from "../../application/bookmarks/mark-bookmark-use-case";
 import { createAppCommandRuntime } from "./app-command-runtime";
+import { createChromeCurrentWindowCloser } from "../../infrastructure/chrome/current-window-adapter";
 import { createChromeExtensionStateStorage } from "../../infrastructure/chrome/extension-state-storage-adapter";
 import { createChromeHistoryRepository } from "../../infrastructure/chrome/history-adapter";
 import { createChromeLaunchContextStorage } from "../../infrastructure/chrome/launch-context-storage-adapter";
@@ -83,6 +84,11 @@ const extensionStateStorage = createChromeExtensionStateStorage(browser.storage.
  * Chrome Storage Session APIを使うlaunch context storage。
  */
 const launchContextStorage = createChromeLaunchContextStorage(browser.storage.session);
+
+/**
+ * Chrome Windows APIを使う現在window closerです。
+ */
+const currentWindowCloser = createChromeCurrentWindowCloser(browser.windows);
 
 /**
  * 現在日時ISO文字列を返します。
@@ -291,6 +297,7 @@ export const App = (): ReactElement => {
     transcript,
   });
   const keyboardState = useBookmarkCliAppKeyboard({
+    closeCliPage: currentWindowCloser.closeCurrentWindow,
     commandState,
     cursors,
     executeInputValue: commandRuntime.executeInputValue,
