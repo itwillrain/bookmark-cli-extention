@@ -37,6 +37,14 @@ migrationは拡張機能側の保存データだけを対象にし、Chrome Book
 
 Bookmark IDは端末間で同じとは限らず、`storage.sync` に同期すると仮想タグや利用統計が別端末のBookmarkへ誤って紐づく可能性があるためです。
 
+ChromeとFirefox間のBookmark同期でも、`storage.sync` だけには依存しません。
+
+Chromeの `storage.sync` はChrome Sync、Firefoxの `storage.sync` はFirefox Syncを通じて同じブラウザのprofile間で同期されるためです。
+
+ブラウザ間同期では、各ブラウザのBookmark IDとは別に `syncId` を発行し、同期snapshotを介して対応付けます。
+
+詳細は [ChromeとFirefoxのBookmark同期ロードマップ](../cross-browser-sync/) で管理します。
+
 直前の結果一覧や確認待ち状態は、画面内メモリまたは `chrome.storage.session` に保持します。
 
 これらの一時データは、ブラウザ再起動、拡張のreload、Dedicated extension pageの再作成で失われてよいものとして扱います。
@@ -353,4 +361,5 @@ Chrome Bookmark Manager側のBookmarkやfolderは削除しません。
 - [Chrome Extensions Fetching favicons](https://developer.chrome.com/docs/extensions/how-to/ui/favicons)
 - [Chrome Extensions Permissions](https://developer.chrome.com/docs/extensions/reference/permissions-list)
 - [Chrome Extensions Declare permissions](https://developer.chrome.com/docs/extensions/develop/concepts/declare-permissions)
+- [MDN WebExtensions storage.sync](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/storage/sync)
 - [Typia Setup](https://typia.io/docs/setup/)
