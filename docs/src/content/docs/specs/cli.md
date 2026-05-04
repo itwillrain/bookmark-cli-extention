@@ -111,7 +111,8 @@ Bookmark行の既定アクションは `go <result-number>` です。
 - CLI windowを開く直前に、起動元tabの `launchContext` を保存する
 - `mark` はCLI window自身ではなく、CLI起動元tabを保存対象にする
 - PopupからもDedicated extension pageの別windowを開ける
-- Popupにはショートカット設定への案内を置く
+- Popupは設定画面として扱い、現在のhot keyを表示する
+- Popupから `chrome://extensions/shortcuts` を開き、ユーザーがhot keyを変更できるようにする
 
 ## コマンド設計方針
 

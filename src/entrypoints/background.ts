@@ -1,6 +1,7 @@
 import type { LaunchContext } from "../application/bookmarks/mark-bookmark-use-case";
 import { createChromeCliPageWindowLauncher } from "../infrastructure/chrome/cli-page-window-adapter";
 import { createChromeLaunchContextStorage } from "../infrastructure/chrome/launch-context-storage-adapter";
+import { isOpenCliPageMessage } from "./popup/popup-messages";
 
 /**
  * Dedicated extension pageのpathです。
@@ -161,6 +162,17 @@ const handleCommand = (commandName: string): void => {
 };
 
 /**
+ * Popup runtime messageを処理します。
+ * @param {unknown} message runtime messageです。
+ * @returns {void} 返り値はありません。
+ */
+const handleRuntimeMessage = (message: unknown): void => {
+  if (isOpenCliPageMessage(message)) {
+    openCliPage().catch(handleOpenCliPageError);
+  }
+};
+
+/**
  * 起動時に実行する background script の初期化処理です。
  * @returns {void} 返り値はありません。
  */
@@ -168,6 +180,7 @@ const setupBackground = (): void => {
   browser.action.onClicked.addListener(handleActionClicked);
   browser.commands.onCommand.addListener(handleCommand);
   browser.runtime.onInstalled.addListener(handleInstalled);
+  browser.runtime.onMessage.addListener(handleRuntimeMessage);
 };
 
 /**

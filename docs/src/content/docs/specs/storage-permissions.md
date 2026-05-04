@@ -256,6 +256,10 @@ hot keyは `commands` manifest keyで定義します。
 
 `commands` はショートカット定義であり、v1の権限一覧には含めません。
 
+Popupは `chrome.commands.getAll()` で現在のshortcutを読み取ります。
+
+Chrome Extensions Commands APIはshortcutを直接変更するAPIを提供しないため、変更操作は `chrome://extensions/shortcuts` を新しいtabで開く導線として扱います。
+
 ```json
 {
   "commands": {

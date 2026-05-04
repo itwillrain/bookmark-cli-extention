@@ -301,3 +301,22 @@ go stripe login
 完了条件は、Bookmarkに存在しないChrome履歴URLを検索、表示、番号指定、直接起動できることです。
 
 Chrome履歴は読み取りだけに使い、履歴の追加、削除、変更は行いません。
+
+## UC-11: Popupで設定する
+
+ユーザーは拡張actionから設定を確認します。
+
+主な対象はhot key設定です。
+
+基本フローは次のとおりです。
+
+1. ユーザーが拡張actionをクリックする
+2. Popupが設定画面として開く
+3. Popupが `chrome.commands.getAll()` で現在のhot keyを読み取る
+4. ユーザーが変更buttonを押す
+5. Popupが `chrome://extensions/shortcuts` を新しいtabで開く
+6. ユーザーがChrome標準UIでhot keyを変更する
+
+完了条件は、Popupで現在のhot keyを確認でき、Chrome標準UIへ移動できることです。
+
+Chrome Extensions Commands APIにはshortcutを書き換えるAPIがないため、拡張機能内で直接hot keyを保存、変更しません。
