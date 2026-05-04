@@ -333,6 +333,14 @@ const goBookmarkByResultNumber = async (
  * RepositoryからBookmark Treeを取得して検索します。
  * @param {FindBookmarksInput} input Bookmark候補検索の入力です。
  * @returns {Promise<BookmarkCommandResult<FindBookmarksValue>>} Bookmark候補検索の結果です。
+ * @example
+ * ```ts
+ * const result = await findBookmarks({
+ *   query: "Stripe #finance",
+ *   repository,
+ *   virtualTagsByBookmarkId,
+ * });
+ * ```
  */
 export const findBookmarks = async (
   input: FindBookmarksInput,
@@ -353,6 +361,14 @@ export const findBookmarks = async (
  * 最上位のBookmark候補を開きます。
  * @param {GoBookmarkInput} input Bookmarkを開く入力です。
  * @returns {Promise<BookmarkCommandResult<BookmarkSearchResult>>} Bookmarkを開いた結果です。
+ * @example
+ * ```ts
+ * const result = await goBookmark({
+ *   opener,
+ *   query: "Stripe Dashboard",
+ *   repository,
+ * });
+ * ```
  */
 export const goBookmark = async (
   input: GoBookmarkInput,

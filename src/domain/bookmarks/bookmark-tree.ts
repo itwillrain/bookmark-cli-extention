@@ -248,6 +248,10 @@ const filterEntriesByKind = (
  * Chrome Bookmark Treeを疑似CLI向けの平坦なBookmark Treeへ正規化します。
  * @param {readonly RawBookmarkTreeNode[]} nodes Chrome Bookmarks API由来のroot node一覧です。
  * @returns {BookmarkTree} 正規化済みBookmark Treeです。
+ * @example
+ * ```ts
+ * const result = normalizeBookmarkTree(chromeBookmarkTreeNodes);
+ * ```
  */
 export const normalizeBookmarkTree = (nodes: readonly RawBookmarkTreeNode[]): BookmarkTree => {
   const entries = normalizeRootNodes(nodes);

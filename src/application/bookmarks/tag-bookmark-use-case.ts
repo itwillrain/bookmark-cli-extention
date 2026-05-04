@@ -126,6 +126,16 @@ const updateVirtualTags = (
  * Bookmarkへ仮想タグを追加または削除。
  * @param {TagBookmarkInput} input 仮想タグ更新入力。
  * @returns {BookmarkCommandResult<TagBookmarkValue>} 仮想タグ更新結果。
+ * @example
+ * ```ts
+ * const result = tagBookmark({
+ *   extensionState,
+ *   lastResultEntries,
+ *   remove: false,
+ *   tagInputs: ["#prod", "finance"],
+ *   targetInput: "2",
+ * });
+ * ```
  */
 export const tagBookmark = (input: TagBookmarkInput): BookmarkCommandResult<TagBookmarkValue> => {
   const tags = normalizeVirtualTags(input.tagInputs);

@@ -67,6 +67,11 @@ const moveClearedCursor = (
  * Result cursorを移動。
  * @param {MoveResultCursorInput} input Result cursor移動入力。
  * @returns {ResultCursorIndex} 移動後cursor index。
+ * @example
+ * ```ts
+ * const result = moveResultCursor({ currentIndex: false, direction: "next", itemCount: 3 });
+ * // 0
+ * ```
  */
 export const moveResultCursor = (input: MoveResultCursorInput): ResultCursorIndex => {
   if (input.currentIndex === resultCursorCleared) {
@@ -85,6 +90,11 @@ export const moveResultCursor = (input: MoveResultCursorInput): ResultCursorInde
  * @param {ResultCursorIndex} currentIndex 現在のcursor index。
  * @param {number} itemCount Result item件数。
  * @returns {ResultCursorIndex} 正規化後cursor index。
+ * @example
+ * ```ts
+ * const result = normalizeResultCursor(4, 3);
+ * // false
+ * ```
  */
 export const normalizeResultCursor = (
   currentIndex: ResultCursorIndex,

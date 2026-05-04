@@ -205,6 +205,18 @@ const createBookmarkInput = (input: CreateBookmarkInputInput): CreatedBookmarkIn
  * CLI起動元タブをBookmarkへ保存。
  * @param {MarkCurrentTabInput} input 現在タブ保存入力。
  * @returns {Promise<BookmarkCommandResult<MarkCurrentTabValue>>} 現在タブ保存結果。
+ * @example
+ * ```ts
+ * const result = await markCurrentTab({
+ *   allowDuplicate: false,
+ *   creator,
+ *   currentDirectory: "/Work",
+ *   folderPathInput: "./Admin",
+ *   launchContext,
+ *   repository,
+ *   titleInput: "",
+ * });
+ * ```
  */
 export const markCurrentTab = async (
   input: MarkCurrentTabInput,

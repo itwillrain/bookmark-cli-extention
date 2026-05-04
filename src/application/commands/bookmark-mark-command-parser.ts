@@ -90,6 +90,11 @@ const normalizeMarkBookmarkTitle = (queryParts: readonly string[]): string =>
  * Mark commandを解析。
  * @param {readonly string[]} queryParts command名を除いたtoken一覧。
  * @returns {MarkBookmarkCommand} Mark command。
+ * @example
+ * ```ts
+ * const result = parseMarkBookmarkCommand(["--to", "./Work", "Stripe"]);
+ * // { kind: "mark", targetFolderPathInput: "./Work", titleInput: "Stripe", allowDuplicate: false }
+ * ```
  */
 export const parseMarkBookmarkCommand = (queryParts: readonly string[]): MarkBookmarkCommand => ({
   allowDuplicate: queryParts.includes(allowDuplicateOptionName),

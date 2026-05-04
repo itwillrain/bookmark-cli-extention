@@ -109,6 +109,11 @@ const applyLimitOption = <
  * Recent commandを解析。
  * @param {readonly string[]} queryParts command query token一覧。
  * @returns {RecentBookmarksCommand} Recent command。
+ * @example
+ * ```ts
+ * const result = parseRecentBookmarksCommand(["--limit", "5"]);
+ * // { kind: "recent", limit: 5 }
+ * ```
  */
 export const parseRecentBookmarksCommand = (
   queryParts: readonly string[],
@@ -118,6 +123,11 @@ export const parseRecentBookmarksCommand = (
  * Freq commandを解析。
  * @param {readonly string[]} queryParts command query token一覧。
  * @returns {FrequentBookmarksCommand} Freq command。
+ * @example
+ * ```ts
+ * const result = parseFrequentBookmarksCommand(["--limit", "5"]);
+ * // { kind: "freq", limit: 5 }
+ * ```
  */
 export const parseFrequentBookmarksCommand = (
   queryParts: readonly string[],
@@ -127,6 +137,11 @@ export const parseFrequentBookmarksCommand = (
  * History commandを解析。
  * @param {readonly string[]} queryParts command query token一覧。
  * @returns {BrowserHistoryCommand} History command。
+ * @example
+ * ```ts
+ * const result = parseBrowserHistoryCommand(["--limit", "5", "Stripe"]);
+ * // { kind: "history", limit: 5, query: "Stripe" }
+ * ```
  */
 export const parseBrowserHistoryCommand = (queryParts: readonly string[]): BrowserHistoryCommand =>
   applyLimitOption(

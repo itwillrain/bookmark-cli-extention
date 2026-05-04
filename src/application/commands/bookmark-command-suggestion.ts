@@ -199,6 +199,10 @@ const canStartCommandSuggestion = (commandPrefix: string): boolean => commandPre
  * @param {string} inputValue CLI入力値。
  * @param {readonly CommandAlias[]} aliases command alias一覧。
  * @returns {readonly BookmarkCommandSuggestion[]} Command suggestion一覧。
+ * @example
+ * ```ts
+ * const result = suggestBookmarkCommands(inputValue, aliases);
+ * ```
  */
 export const suggestBookmarkCommands = (
   inputValue: string,

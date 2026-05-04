@@ -119,6 +119,10 @@ const normalizeBrowserHistoryItem = (
  * Chrome History API item一覧をCLI entry一覧へ正規化。
  * @param {readonly RawBrowserHistoryItem[]} items Chrome History API item一覧。
  * @returns {readonly BrowserHistoryEntry[]} 正規化済みChrome履歴entry一覧。
+ * @example
+ * ```ts
+ * const result = normalizeBrowserHistoryItems(items);
+ * ```
  */
 export const normalizeBrowserHistoryItems = (
   items: readonly RawBrowserHistoryItem[],

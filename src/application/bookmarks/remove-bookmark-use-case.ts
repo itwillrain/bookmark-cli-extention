@@ -23,6 +23,17 @@ export interface RemoveBookmarkInput extends OrganizeBookmarkBaseInput {
  * Bookmarkを削除または確認待ち結果を返す。
  * @param {RemoveBookmarkInput} input Bookmark削除use case入力。
  * @returns {Promise<OrganizeBookmarkResult>} Bookmark削除結果。
+ * @example
+ * ```ts
+ * const result = await removeBookmark({
+ *   currentDirectory: "/Work",
+ *   force: false,
+ *   lastResultEntries,
+ *   organizer,
+ *   repository,
+ *   targetInput: "1",
+ * });
+ * ```
  */
 export const removeBookmark = async (
   input: RemoveBookmarkInput,

@@ -142,6 +142,15 @@ const getOpenCount = (currentUsage: BookmarkUsage | undefined): number => {
  * Bookmarkを開いた利用統計を記録。
  * @param {RecordBookmarkOpenedInput} input Bookmark利用統計記録入力。
  * @returns {UsageByBookmarkId} 更新後の利用統計。
+ * @example
+ * ```ts
+ * const result = recordBookmarkOpened({
+ *   bookmarkId: "bookmark-1",
+ *   openedAt: "2026-05-05T00:00:00.000Z",
+ *   usageByBookmarkId: {},
+ * });
+ * // { "bookmark-1": { openCount: 1, lastOpenedAt: "2026-05-05T00:00:00.000Z" } }
+ * ```
  */
 export const recordBookmarkOpened = (input: RecordBookmarkOpenedInput): UsageByBookmarkId => {
   const currentUsage = input.usageByBookmarkId[input.bookmarkId];
@@ -160,6 +169,14 @@ export const recordBookmarkOpened = (input: RecordBookmarkOpenedInput): UsageByB
  * 最近開いたBookmarkを取得。
  * @param {ListUsageBookmarksInput} input Bookmark利用統計一覧入力。
  * @returns {readonly BookmarkEntry[]} 最近開いたBookmark一覧。
+ * @example
+ * ```ts
+ * const result = listRecentlyOpenedBookmarks({
+ *   bookmarks,
+ *   resultLimit: 5,
+ *   usageByBookmarkId,
+ * });
+ * ```
  */
 export const listRecentlyOpenedBookmarks = (
   input: ListUsageBookmarksInput,
@@ -173,6 +190,14 @@ export const listRecentlyOpenedBookmarks = (
  * よく開くBookmarkを取得。
  * @param {ListUsageBookmarksInput} input Bookmark利用統計一覧入力。
  * @returns {readonly BookmarkEntry[]} よく開くBookmark一覧。
+ * @example
+ * ```ts
+ * const result = listFrequentlyOpenedBookmarks({
+ *   bookmarks,
+ *   resultLimit: 5,
+ *   usageByBookmarkId,
+ * });
+ * ```
  */
 export const listFrequentlyOpenedBookmarks = (
   input: ListUsageBookmarksInput,

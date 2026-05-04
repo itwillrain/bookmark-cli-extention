@@ -170,6 +170,10 @@ const normalizeHelpTopicInput = (topicInput: string): string => topicInput.trim(
 /**
  * Bookmark CLI help topic一覧を返す。
  * @returns {readonly BookmarkCliHelpTopic[]} Help topic一覧。
+ * @example
+ * ```ts
+ * const result = listBookmarkCliHelpTopics();
+ * ```
  */
 export const listBookmarkCliHelpTopics = (): readonly BookmarkCliHelpTopic[] =>
   bookmarkCliHelpTopics;
@@ -178,6 +182,10 @@ export const listBookmarkCliHelpTopics = (): readonly BookmarkCliHelpTopic[] =>
  * Command名に対応するhelp topicを探す。
  * @param {string} topicInput Help topic入力。
  * @returns {BookmarkCliHelpTopic | false} Help topic。未検出ならfalse。
+ * @example
+ * ```ts
+ * const result = findBookmarkCliHelpTopic(topicInput);
+ * ```
  */
 export const findBookmarkCliHelpTopic = (
   topicInput: string,

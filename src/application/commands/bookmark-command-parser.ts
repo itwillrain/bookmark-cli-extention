@@ -248,6 +248,11 @@ const parsePipeBookmarkCommand = (normalizedInput: string): ParsedBookmarkComman
  * Bookmark command入力を解析します。
  * @param {string} input CLIに入力された文字列です。
  * @returns {ParsedBookmarkCommand} 解析済みBookmark commandです。
+ * @example
+ * ```ts
+ * const result = parseBookmarkCommand("ls -l /Work | grep Stripe");
+ * // result.kind === "pipe"
+ * ```
  */
 export const parseBookmarkCommand = (input: string): ParsedBookmarkCommand => {
   const normalizedInput = normalizeCommandInput(input);

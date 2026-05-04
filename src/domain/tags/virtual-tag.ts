@@ -1,3 +1,5 @@
+/* oxlint-disable max-lines -- 仮想タグの正規化、保存、検索の仕様例を同じdomain fileに集約するため。 */
+
 import type { ExtensionState, VirtualTagsByBookmarkId } from "../storage/extension-state";
 import type { BookmarkEntry } from "../bookmarks/bookmark-tree";
 
@@ -43,6 +45,11 @@ export interface VirtualTagSearchQuery {
  * 仮想タグ名を正規化。
  * @param {string} tagInput 入力された仮想タグ名。
  * @returns {VirtualTag} 正規化済み仮想タグ名。
+ * @example
+ * ```ts
+ * const result = normalizeVirtualTag("#Prod");
+ * // "prod"
+ * ```
  */
 export const normalizeVirtualTag = (tagInput: string): VirtualTag =>
   tagInput.trim().replace(leadingVirtualTagPrefixPattern, emptyString).toLowerCase();
@@ -67,6 +74,11 @@ const uniqueVirtualTags = (tags: readonly VirtualTag[]): readonly VirtualTag[] =
  * 仮想タグ入力一覧を正規化。
  * @param {readonly string[]} tagInputs 入力された仮想タグ一覧。
  * @returns {readonly VirtualTag[]} 正規化済み仮想タグ一覧。
+ * @example
+ * ```ts
+ * const result = normalizeVirtualTags(["#Prod", "prod", " finance "]);
+ * // ["prod", "finance"]
+ * ```
  */
 export const normalizeVirtualTags = (tagInputs: readonly string[]): readonly VirtualTag[] =>
   uniqueVirtualTags(tagInputs.map((tagInput) => normalizeVirtualTag(tagInput))).filter((tag) =>
@@ -78,6 +90,11 @@ export const normalizeVirtualTags = (tagInputs: readonly string[]): readonly Vir
  * @param {VirtualTagsByBookmarkId} virtualTagsByBookmarkId Bookmark ID別仮想タグ。
  * @param {string} bookmarkId Bookmark ID。
  * @returns {readonly VirtualTag[]} Bookmarkの仮想タグ一覧。
+ * @example
+ * ```ts
+ * const result = getVirtualTagsForBookmark({ "bookmark-1": ["prod"] }, "bookmark-1");
+ * // ["prod"]
+ * ```
  */
 export const getVirtualTagsForBookmark = (
   virtualTagsByBookmarkId: VirtualTagsByBookmarkId,
@@ -111,6 +128,10 @@ const removeVirtualTagsRecordKey = (
  * @param {string} bookmarkId 対象Bookmark ID。
  * @param {readonly string[]} tagInputs 追加する仮想タグ入力。
  * @returns {ExtensionState} 仮想タグ追加後の拡張状態。
+ * @example
+ * ```ts
+ * const result = addVirtualTagsToBookmark(state, "bookmark-1", ["#prod", "finance"]);
+ * ```
  */
 export const addVirtualTagsToBookmark = (
   state: ExtensionState,
@@ -141,6 +162,10 @@ export const addVirtualTagsToBookmark = (
  * @param {string} bookmarkId 対象Bookmark ID。
  * @param {readonly string[]} tagInputs 削除する仮想タグ入力。
  * @returns {ExtensionState} 仮想タグ削除後の拡張状態。
+ * @example
+ * ```ts
+ * const result = removeVirtualTagsFromBookmark(state, "bookmark-1", ["#prod"]);
+ * ```
  */
 export const removeVirtualTagsFromBookmark = (
   state: ExtensionState,
@@ -193,6 +218,11 @@ const tokenizeSearchQuery = (query: string): readonly string[] =>
  * 仮想タグ検索queryを解析。
  * @param {string} query 検索query。
  * @returns {VirtualTagSearchQuery} 仮想タグ検索query。
+ * @example
+ * ```ts
+ * const result = parseVirtualTagSearchQuery("Stripe #finance #prod");
+ * // { textQuery: "Stripe", tags: ["finance", "prod"] }
+ * ```
  */
 export const parseVirtualTagSearchQuery = (query: string): VirtualTagSearchQuery => {
   const tokens = tokenizeSearchQuery(query);
@@ -207,6 +237,11 @@ export const parseVirtualTagSearchQuery = (query: string): VirtualTagSearchQuery
  * 仮想タグ検索条件を持つかを判定。
  * @param {VirtualTagSearchQuery} query 仮想タグ検索query。
  * @returns {boolean} 仮想タグ条件があればtrue。
+ * @example
+ * ```ts
+ * const result = hasVirtualTagFilters({ textQuery: "Stripe", tags: ["finance"] });
+ * // true
+ * ```
  */
 export const hasVirtualTagFilters = (query: VirtualTagSearchQuery): boolean =>
   query.tags.length > emptyCount;
@@ -217,6 +252,11 @@ export const hasVirtualTagFilters = (query: VirtualTagSearchQuery): boolean =>
  * @param {VirtualTagsByBookmarkId} virtualTagsByBookmarkId Bookmark ID別仮想タグ。
  * @param {readonly VirtualTag[]} tags 必須仮想タグ一覧。
  * @returns {boolean} すべて持っていればtrue。
+ * @example
+ * ```ts
+ * const result = entryMatchesVirtualTags(entry, { [entry.id]: ["finance"] }, ["finance"]);
+ * // true
+ * ```
  */
 export const entryMatchesVirtualTags = (
   entry: BookmarkEntry,
@@ -242,6 +282,10 @@ export const entryMatchesVirtualTags = (
  * @param {VirtualTagsByBookmarkId} virtualTagsByBookmarkId Bookmark ID別仮想タグ。
  * @param {readonly VirtualTag[]} tags 必須仮想タグ一覧。
  * @returns {readonly BookmarkEntry[]} 絞り込み後のBookmark Entry一覧。
+ * @example
+ * ```ts
+ * const result = filterEntriesByVirtualTags(entries, virtualTagsByBookmarkId, ["finance"]);
+ * ```
  */
 export const filterEntriesByVirtualTags = (
   entries: readonly BookmarkEntry[],
@@ -254,6 +298,11 @@ export const filterEntriesByVirtualTags = (
  * 未指定の仮想タグrecordを空recordへ補正。
  * @param {VirtualTagsByBookmarkId | undefined} virtualTagsByBookmarkId Bookmark ID別仮想タグ。
  * @returns {VirtualTagsByBookmarkId} Bookmark ID別仮想タグ。
+ * @example
+ * ```ts
+ * const result = normalizeVirtualTagsByBookmarkId(undefined);
+ * // {}
+ * ```
  */
 export const normalizeVirtualTagsByBookmarkId = (
   virtualTagsByBookmarkId?: VirtualTagsByBookmarkId,

@@ -337,6 +337,10 @@ const hasHelpOption = (queryParts: readonly string[]): boolean =>
  * Command parse contextに対応するfactoryを取得します。
  * @param {CommandParseContext} context Command parse contextです。
  * @returns {BookmarkCommandFactory} Command factoryです。
+ * @example
+ * ```ts
+ * const result = getBookmarkCommandFactory(context);
+ * ```
  */
 export const getBookmarkCommandFactory = (context: CommandParseContext): BookmarkCommandFactory => {
   if (hasHelpOption(context.queryParts)) {

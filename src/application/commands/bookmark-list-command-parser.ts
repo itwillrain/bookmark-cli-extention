@@ -174,6 +174,11 @@ const joinPathParts = (pathParts: readonly string[]): string =>
  * @param {string} commandName 入力されたcommand名です。
  * @param {readonly string[]} queryParts command名を除いたtoken一覧です。
  * @returns {ListDirectoryCommand} Ls commandです。
+ * @example
+ * ```ts
+ * const result = parseListDirectoryCommand("ll", ["-a", "./Work"]);
+ * // { kind: "ls", options: { all: true, long: true }, pathInput: "./Work" }
+ * ```
  */
 export const parseListDirectoryCommand = (
   commandName: string,

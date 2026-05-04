@@ -116,6 +116,10 @@ const listDirectoryTreeViewEntries = (
  * @param {FolderPath} directoryPath 起点directory pathです。
  * @param {number} maxDepth 表示する最大depthです。
  * @returns {readonly BookmarkTreeViewEntry[]} Tree表示用flat listです。
+ * @example
+ * ```ts
+ * const result = listBookmarkTreeViewEntries(bookmarkTree, "/Work", 2);
+ * ```
  */
 export const listBookmarkTreeViewEntries = (
   bookmarkTree: BookmarkTree,

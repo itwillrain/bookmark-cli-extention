@@ -121,6 +121,11 @@ const getTreePathParts = (
  * Tree commandを作ります。
  * @param {readonly string[]} queryParts command名を除いたtoken一覧です。
  * @returns {ShowDirectoryTreeCommand} Tree commandです。
+ * @example
+ * ```ts
+ * const result = parseShowDirectoryTreeCommand(["--depth", "2", "./Work"]);
+ * // { kind: "tree", depth: 2, pathInput: "./Work" }
+ * ```
  */
 export const parseShowDirectoryTreeCommand = (
   queryParts: readonly string[],

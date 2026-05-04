@@ -78,6 +78,17 @@ const createRenameExecutionContext = (
  * Bookmark名を変更。
  * @param {RenameBookmarkInput} input Bookmark名称変更use case入力。
  * @returns {Promise<OrganizeBookmarkResult>} Bookmark名称変更結果。
+ * @example
+ * ```ts
+ * const result = await renameBookmark({
+ *   currentDirectory: "/Work",
+ *   lastResultEntries,
+ *   organizer,
+ *   repository,
+ *   targetInput: "1",
+ *   titleInput: "Stripe Dashboard",
+ * });
+ * ```
  */
 export const renameBookmark = async (
   input: RenameBookmarkInput,

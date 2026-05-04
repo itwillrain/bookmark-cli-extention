@@ -221,6 +221,15 @@ const changeDirectoryByPath = async (
  * 現在ディレクトリまたは指定pathのentry一覧を返します。
  * @param {ListDirectoryInput} input Directory listの入力です。
  * @returns {Promise<BookmarkCommandResult<ListDirectoryValue>>} Directory listの実行結果です。
+ * @example
+ * ```ts
+ * const result = await listDirectory({
+ *   all: false,
+ *   currentDirectory: "/Work",
+ *   pathInput: "./Admin",
+ *   repository,
+ * });
+ * ```
  */
 export const listDirectory = async (
   input: ListDirectoryInput,
@@ -242,6 +251,11 @@ export const listDirectory = async (
  * 現在ディレクトリを返します。
  * @param {PrintWorkingDirectoryInput} input Pwdの入力です。
  * @returns {BookmarkCommandResult<PrintWorkingDirectoryValue>} Pwdの実行結果です。
+ * @example
+ * ```ts
+ * const result = printWorkingDirectory({ currentDirectory: "/Work/Admin" });
+ * // { ok: true, value: { currentDirectory: "/Work/Admin" } }
+ * ```
  */
 export const printWorkingDirectory = (
   input: PrintWorkingDirectoryInput,
@@ -252,6 +266,15 @@ export const printWorkingDirectory = (
  * 現在ディレクトリを移動します。
  * @param {ChangeDirectoryInput} input Change directoryの入力です。
  * @returns {Promise<BookmarkCommandResult<ChangeDirectoryValue>>} Change directoryの実行結果です。
+ * @example
+ * ```ts
+ * const result = await changeDirectory({
+ *   currentDirectory: "/Work",
+ *   lastResultEntries: [],
+ *   pathInput: "../Finance",
+ *   repository,
+ * });
+ * ```
  */
 export const changeDirectory = async (
   input: ChangeDirectoryInput,

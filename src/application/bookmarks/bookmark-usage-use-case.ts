@@ -49,6 +49,14 @@ const getUsageResultLimit = (input: UsageBookmarksInput): number =>
  * 最近開いたBookmarkを取得。
  * @param {UsageBookmarksInput} input 利用統計Bookmark一覧入力。
  * @returns {Promise<BookmarkCommandResult<UsageBookmarksValue>>} 最近開いたBookmark一覧結果。
+ * @example
+ * ```ts
+ * const result = await listRecentBookmarks({
+ *   limit: 10,
+ *   repository,
+ *   usageByBookmarkId,
+ * });
+ * ```
  */
 export const listRecentBookmarks = async (
   input: UsageBookmarksInput,
@@ -67,6 +75,14 @@ export const listRecentBookmarks = async (
  * よく開くBookmarkを取得。
  * @param {UsageBookmarksInput} input 利用統計Bookmark一覧入力。
  * @returns {Promise<BookmarkCommandResult<UsageBookmarksValue>>} よく開くBookmark一覧結果。
+ * @example
+ * ```ts
+ * const result = await listFrequentBookmarks({
+ *   limit: 10,
+ *   repository,
+ *   usageByBookmarkId,
+ * });
+ * ```
  */
 export const listFrequentBookmarks = async (
   input: UsageBookmarksInput,

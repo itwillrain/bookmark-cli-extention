@@ -159,6 +159,10 @@ const shouldIncludeDirectoryEntry = (
  * @param {BookmarkTree} bookmarkTree 判定対象のBookmark Treeです。
  * @param {FolderPath} folderPath 判定するfolder pathです。
  * @returns {boolean} folder pathが存在すればtrueです。
+ * @example
+ * ```ts
+ * const result = doesFolderPathExist(bookmarkTree, "/Work/Admin");
+ * ```
  */
 export const doesFolderPathExist = (
   bookmarkTree: BookmarkTree,
@@ -177,6 +181,10 @@ export const doesFolderPathExist = (
  * @param {FolderPath} directoryPath directory pathです。
  * @param {ListDirectoryEntriesOptions} options Directory entry表示optionです。
  * @returns {readonly BookmarkEntry[]} directory直下のentry一覧です。
+ * @example
+ * ```ts
+ * const result = listDirectoryEntries(bookmarkTree, "/Work", { all: false });
+ * ```
  */
 export const listDirectoryEntries = (
   bookmarkTree: BookmarkTree,

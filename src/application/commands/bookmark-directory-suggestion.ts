@@ -188,6 +188,10 @@ const createDirectoryPathCompletionContext = (
  * Directory path suggestion対象入力かを判定。
  * @param {string} inputValue CLI入力値。
  * @returns {boolean} Directory path suggestion対象ならtrue。
+ * @example
+ * ```ts
+ * const result = canSuggestBookmarkDirectoryPaths(inputValue);
+ * ```
  */
 export const canSuggestBookmarkDirectoryPaths = (inputValue: string): boolean =>
   createDirectoryPathCompletionContext(inputValue) !== false;
@@ -258,6 +262,10 @@ const createDirectorySuggestion = (
  * Bookmark Treeからdirectory path suggestionを返す。
  * @param {SuggestBookmarkDirectoryPathsInput} input Directory path suggestion入力。
  * @returns {readonly BookmarkDirectorySuggestion[]} Directory path suggestion一覧。
+ * @example
+ * ```ts
+ * const result = suggestBookmarkDirectoryPaths({ bookmarkTree, currentDirectory: "/Work", inputValue: "cd ./Ad" });
+ * ```
  */
 export const suggestBookmarkDirectoryPaths = (
   input: SuggestBookmarkDirectoryPathsInput,

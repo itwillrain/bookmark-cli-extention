@@ -35,6 +35,26 @@ Codexなどの自動作業者は、作業前にこの方針と関連する仕様
 - 仕様ファイルはdocs配下に置き、Starlightのページとして読める状態にする
 - 純粋関数にロジックを置く場合は、テスト観点も合わせて整理する
 
+## TypeDoc
+
+TypeDocは、公開APIを読むための補助ドキュメントとして扱います。
+
+`src/domain` と `src/application` のexported関数は、呼び出し方が分かるように `@example` を追加します。
+
+説明文は、その関数が担う境界、成功時の結果、失敗時の扱いを短く書きます。
+
+`@remarks` は、単純な説明文だけでは伝わりにくい判断理由や副作用の境界を補足する場合に使います。
+
+`@example` は、`foo(input)` のようなplaceholderではなく、実際のcommand、path、tag、またはobject literalを使います。
+
+返り値の形が読み取りにくい純粋関数では、example内に期待結果をcommentで添えます。
+
+ただし、単純な文字列定数、index定数、separator定数には機械的に `@example` を追加しません。
+
+React componentはTypeDocの `@example` よりStorybookを正とします。
+
+`@example` の不足とplaceholder exampleはESLintでerrorとして検出します。
+
 ## 実装時の確認手順
 
 1. 変更対象に関係するdocsを先に読む

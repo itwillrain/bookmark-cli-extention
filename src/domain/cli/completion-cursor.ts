@@ -101,6 +101,11 @@ const completionCursorMovers = {
  * Completion cursorを指定方向の候補へ移動。
  * @param {MoveCompletionCursorInput} input Completion cursor移動入力。
  * @returns {CompletionCursorIndex} 移動後cursor index。
+ * @example
+ * ```ts
+ * const result = moveCompletionCursor({ currentIndex: 2, direction: "next", itemCount: 3 });
+ * // 0
+ * ```
  */
 export const moveCompletionCursor = (input: MoveCompletionCursorInput): CompletionCursorIndex => {
   if (!hasCompletionItems(input.itemCount)) {
@@ -119,6 +124,11 @@ export const moveCompletionCursor = (input: MoveCompletionCursorInput): Completi
  * @param {CompletionCursorIndex} currentIndex 現在のcursor index。
  * @param {number} itemCount Completion item件数。
  * @returns {CompletionCursorIndex} 正規化後cursor index。
+ * @example
+ * ```ts
+ * const result = normalizeCompletionCursor(5, 3);
+ * // false
+ * ```
  */
 export const normalizeCompletionCursor = (
   currentIndex: CompletionCursorIndex,

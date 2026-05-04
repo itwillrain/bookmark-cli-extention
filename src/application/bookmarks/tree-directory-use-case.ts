@@ -77,6 +77,15 @@ const createFolderNotFoundFailure = (folderPath: CurrentDirectory): BookmarkComm
  * 指定directory配下のBookmark Treeをtree表示用entry一覧にします。
  * @param {ShowDirectoryTreeInput} input Directory tree表示の入力です。
  * @returns {Promise<BookmarkCommandResult<ShowDirectoryTreeValue>>} Directory tree表示の実行結果です。
+ * @example
+ * ```ts
+ * const result = await showDirectoryTree({
+ *   currentDirectory: "/Work",
+ *   depth: 2,
+ *   pathInput: "./Admin",
+ *   repository,
+ * });
+ * ```
  */
 export const showDirectoryTree = async (
   input: ShowDirectoryTreeInput,

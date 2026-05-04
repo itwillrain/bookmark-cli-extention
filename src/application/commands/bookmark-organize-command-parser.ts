@@ -71,6 +71,11 @@ const hasForceOption = (queryParts: readonly string[]): boolean =>
  * Mkdir commandを解析。
  * @param {readonly string[]} queryParts command名を除いたtoken一覧。
  * @returns {MakeDirectoryCommand} Mkdir command。
+ * @example
+ * ```ts
+ * const result = parseMakeDirectoryCommand(["./Work/Admin"]);
+ * // { kind: "mkdir", pathInput: "./Work/Admin" }
+ * ```
  */
 export const parseMakeDirectoryCommand = (queryParts: readonly string[]): MakeDirectoryCommand => ({
   kind: "mkdir",
@@ -81,6 +86,11 @@ export const parseMakeDirectoryCommand = (queryParts: readonly string[]): MakeDi
  * Mv commandを解析。
  * @param {readonly string[]} queryParts command名を除いたtoken一覧。
  * @returns {MoveBookmarkCommand} Mv command。
+ * @example
+ * ```ts
+ * const result = parseMoveBookmarkCommand(["2", "../Finance"]);
+ * // { kind: "mv", targetInput: "2", targetFolderPathInput: "../Finance" }
+ * ```
  */
 export const parseMoveBookmarkCommand = (queryParts: readonly string[]): MoveBookmarkCommand => {
   const [targetInput = emptyString, ...targetFolderPathTokens] =
@@ -97,6 +107,11 @@ export const parseMoveBookmarkCommand = (queryParts: readonly string[]): MoveBoo
  * Rm commandを解析。
  * @param {readonly string[]} queryParts command名を除いたtoken一覧。
  * @returns {RemoveBookmarkCommand} Rm command。
+ * @example
+ * ```ts
+ * const result = parseRemoveBookmarkCommand(["-f", "3"]);
+ * // { kind: "rm", force: true, targetInput: "3" }
+ * ```
  */
 export const parseRemoveBookmarkCommand = (
   queryParts: readonly string[],
@@ -114,6 +129,11 @@ export const parseRemoveBookmarkCommand = (
  * Rename commandを解析。
  * @param {readonly string[]} queryParts command名を除いたtoken一覧。
  * @returns {RenameBookmarkCommand} Rename command。
+ * @example
+ * ```ts
+ * const result = parseRenameBookmarkCommand(["1", "Stripe", "Dashboard"]);
+ * // { kind: "rename", targetInput: "1", titleInput: "Stripe Dashboard" }
+ * ```
  */
 export const parseRenameBookmarkCommand = (
   queryParts: readonly string[],
