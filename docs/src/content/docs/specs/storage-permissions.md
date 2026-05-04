@@ -308,7 +308,11 @@ hot keyは `commands` manifest keyで定義します。
 
 Popupは `chrome.commands.getAll()` で現在のshortcutを読み取ります。
 
-Chrome Extensions Commands APIはshortcutを直接変更するAPIを提供しないため、変更操作は `chrome://extensions/shortcuts` を新しいtabで開く導線として扱います。
+Chrome Extensions Commands APIはshortcutを直接変更するAPIを提供しません。
+
+そのため、Chromeでは変更操作を `chrome://extensions/shortcuts` を新しいtabで開く導線として扱います。
+
+Firefoxでは `browser.commands.openShortcutSettings()` を使い、Firefox標準のManage Extension Shortcutsを開きます。
 
 ```json
 {
@@ -324,7 +328,7 @@ Chrome Extensions Commands APIはshortcutを直接変更するAPIを提供しな
 }
 ```
 
-ユーザーは `chrome://extensions/shortcuts` からhot keyを変更できます。
+ユーザーはChromeでは `chrome://extensions/shortcuts`、FirefoxではManage Extension Shortcutsからhot keyを変更できます。
 
 ## v1で要求しない権限
 

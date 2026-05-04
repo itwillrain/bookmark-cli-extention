@@ -107,11 +107,16 @@ Firefox向けmanifestには `browser_specific_settings.gecko.id` と `data_colle
 
 Toolbar action clickは、Chrome MV3の `browser.action` を優先し、Firefox MV2では `browser.browserAction` へfallbackします。
 
+Popupのshortcut変更導線は、Firefoxでは `browser.commands.openShortcutSettings()` を優先します。
+
+Chromeでは `chrome://extensions/shortcuts` をtabで開きます。
+
 実装対象は次のとおりです。
 
 - toolbar action clickの互換adapter
 - `browser.action` の存在判定
 - `browser.browserAction` へのfallback
+- shortcut設定画面を開くbrowser差分adapter
 - Firefox MV2 backgroundでの起動確認
 - adapterの単体テスト
 
@@ -119,6 +124,8 @@ Toolbar action clickは、Chrome MV3の `browser.action` を優先し、Firefox 
 
 - Chromeでは `browser.action.onClicked` を使う
 - Firefox MV2では `browser.browserAction.onClicked` を使う
+- Firefoxでは `browser.commands.openShortcutSettings()` でshortcut設定画面を開く
+- Chromeでは `chrome://extensions/shortcuts` をtabで開く
 - background初期化で存在しないAPIを直接参照しない
 - action clickからDedicated extension pageを開ける
 

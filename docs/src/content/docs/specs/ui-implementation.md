@@ -114,7 +114,11 @@ PopupはDedicated extension page本体ではなく、設定画面として扱い
 
 Popupでは現在のhot keyを表示します。
 
-Chrome Extensions Commands APIにはshortcutを書き換えるAPIがないため、Popupの変更buttonは `chrome://extensions/shortcuts` を開きます。
+Chrome Extensions Commands APIにはshortcutを書き換えるAPIがないため、Popupの変更buttonはブラウザ標準のshortcut管理UIを開きます。
+
+Chromeでは `chrome://extensions/shortcuts` を新しいtabで開きます。
+
+Firefoxでは `browser.commands.openShortcutSettings()` でManage Extension Shortcutsを開きます。
 
 PopupからCLIを開くbuttonを提供し、backgroundへruntime messageを送ってDedicated extension pageを開きます。
 
