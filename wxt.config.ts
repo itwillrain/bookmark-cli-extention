@@ -15,7 +15,7 @@ const extensionName = "Bookmark CLI Extension";
 /**
  * 拡張機能の説明文です。
  */
-const extensionDescription = "Bookmark CLI browser extension built with WXT.";
+const extensionDescription = "ChromeのブックマークをCLI感覚で検索、起動、保存、整理できます。";
 
 /**
  * WXT のbuild成果物を配置するディレクトリ。
