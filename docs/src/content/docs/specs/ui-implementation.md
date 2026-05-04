@@ -197,7 +197,7 @@ Dedicated extension pageは、次のcomponentへ分ける想定です。
 
 `CommandPrompt` は `bookmark-cli $` のpromptを組み立てます。
 
-Command入力はHTML上は `form` と `input` で実装し、Enter submitとaccessibilityを保ちます。
+Command入力はHTML上で `form` と `input` を使い、Enter submitとaccessibilityを保ちます。
 
 ただし操作感はterminalへ寄せるため、terminal surfaceをクリックした場合はcommand inputへfocusを戻します。
 
@@ -211,7 +211,7 @@ Powerline風表示は `CommandPrompt` の装飾として扱います。
 
 faviconは実拡張ページ上でだけChrome拡張の `/_favicon/` endpointから解決します。
 
-Storybookやlocal表示のように `chrome-extension:` originではない環境では、faviconを表示せずplain text labelだけで読める状態を保ちます。
+Storybookやlocal表示など `chrome-extension:` origin以外の環境では、faviconを表示せずplain text labelだけで読める状態を保ちます。
 
 faviconはtitle行の左ではなく、titleとurlを積んだtext stackの左に置き、text stack全体の縦中央に揃えます。
 
@@ -300,7 +300,9 @@ Command suggestionはfish shellの補完に近い操作感を目指します。
 
 現在のprompt直下にfloating候補を表示し、`Tab` で候補選択を進め、`Enter` で選択中のfloating候補を入力へ確定します。
 
-`Tab` による候補選択中もkeyboard focusはcommand inputに残し、選択中候補を `scrollIntoView({ block: "nearest", inline: "nearest" })` で表示範囲へ追従させます。
+`Tab` による候補選択中もkeyboard focusはcommand inputに残します。
+
+選択中候補は `scrollIntoView({ block: "nearest", inline: "nearest" })` で表示範囲へ追従させます。
 
 結果一覧をTab選択する場合も同じ方針で、DOM focusはcommand inputに残し、選択中result itemだけを表示範囲へ追従させます。
 

@@ -200,6 +200,20 @@ export interface RenameBookmarkCommand {
 }
 
 /**
+ * Grep pipe stage commandです。
+ */
+export interface GrepPipeStageCommand {
+  /**
+   * Pipe stage種別です。
+   */
+  readonly kind: "grep";
+  /**
+   * 絞り込みquery入力です。
+   */
+  readonly queryInput: string;
+}
+
+/**
  * 空入力commandです。
  */
 export interface EmptyBookmarkCommand {
@@ -252,6 +266,35 @@ export interface UnknownBookmarkCommand {
 }
 
 /**
+ * Pipe sourceとして許可する読み取りcommandです。
+ */
+export type PipeSourceBookmarkCommand =
+  | FindBookmarkCommand
+  | FrequentBookmarksCommand
+  | HelpBookmarkCommand
+  | ListDirectoryCommand
+  | RecentBookmarksCommand
+  | ShowDirectoryTreeCommand;
+
+/**
+ * Pipe commandです。
+ */
+export interface PipeBookmarkCommand {
+  /**
+   * Command種別です。
+   */
+  readonly kind: "pipe";
+  /**
+   * Pipe元の読み取りcommandです。
+   */
+  readonly source: PipeSourceBookmarkCommand;
+  /**
+   * Pipe stage一覧です。
+   */
+  readonly stages: readonly GrepPipeStageCommand[];
+}
+
+/**
  * 解析済みBookmark commandです。
  */
 export type ParsedBookmarkCommand =
@@ -265,6 +308,7 @@ export type ParsedBookmarkCommand =
   | MakeDirectoryCommand
   | MarkBookmarkCommand
   | MoveBookmarkCommand
+  | PipeBookmarkCommand
   | PrintWorkingDirectoryCommand
   | FrequentBookmarksCommand
   | RecentBookmarksCommand

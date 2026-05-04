@@ -20,7 +20,7 @@ Popupは疑似CLI本体ではなく、設定画面として扱います。
 - 入力欄は1行のcommand promptとして扱う
 - HTML実装上はsubmit可能な `form` と `input` を使う
 - Dedicated extension pageを開いたら入力欄へ自動フォーカスする
-- terminal surfaceをクリックした場合はcommand inputへfocusを戻し、CLI操作中にfocusが外れたままにならないようにする
+- terminal surfaceをクリックしたときはcommand inputへfocusを戻し、CLI操作中にfocusが外れたままになる状態を防ぐ
 - Dedicated extension pageは別windowで開くため、画面内にはwindow風headerやtraffic light装飾を描画しない
 - 実行済みcommandと実行結果はscrollback transcriptとして上から下へ積む
 - 結果一覧を持たないstatusやerrorは、実行済みcommand行の右側ではなく次のoutput行に表示する
@@ -114,6 +114,7 @@ Bookmark行の既定アクションは `go <result-number>` です。
 - `mark` で現在のタブを現在のディレクトリへ保存する
 - `ls`、`cd`、`pwd`、`tree` でBookmark Treeの現在地を扱う
 - `help`、`man <command>`、`<command> --help`、`<command> -h` でCLI内から使い方を確認できるようにする
+- `ls | grep hoge` のように結果一覧をpipeで絞り込めるようにする
 - `mkdir`、`mv`、`rename` は対象と変更先を解決できたら即時実行する
 - `rm` は対話確認または `-f` / `--force` で実行する
 - 人間が読む番号付き一覧と、機械が読むJSON形式を切り替えられるようにする
@@ -262,7 +263,7 @@ cd 2
 
 候補はscrollback内の通常outputとして描画せず、terminal body直下のoverlayとして描画します。
 
-overlay位置は現在promptの位置を基準にし、scrollbackのスクロールやoverflowに巻き込まれないようにします。
+overlayは現在promptを基準として配置し、scrollbackのスクロールやoverflowへ巻き込まれない状態を保ちます。
 
 `ls` や `cd ./` のような入力中補完候補は、現在promptより上に出しません。
 
@@ -331,6 +332,37 @@ Work/Research
 補完候補が複数ある場合、Tabキーは候補選択を次へ進めます。
 
 末尾候補の次は先頭候補へ循環します。
+
+## pipeとgrep
+
+v1では、結果一覧を出す読み取りcommandに対して `grep` pipe stageを使えます。
+
+```bash
+ls | grep stripe
+ls Work | grep admin
+find docs | grep github
+tree Work | grep dashboard
+recent | grep stripe
+help | grep history
+```
+
+`grep` はtitle、folder path、url、description、details、result種別を大文字小文字を区別せずに部分一致で検索します。
+
+`grep` は表示中のresult rowsを絞り込み、表示番号も絞り込み後の一覧で振り直します。
+
+そのため、`ls | grep stripe` の後に `go 1` や `cd 1` を実行した場合、絞り込み後の1件目を参照します。
+
+複数stageのgrepも左から順に適用します。
+
+```bash
+find stripe | grep dashboard | grep work
+```
+
+v1でpipe sourceにできるcommandは `ls`、`ll`、`find`、`tree`、`recent`、`freq`、`help` です。
+
+`mv`、`rm`、`rename`、`mkdir`、`mark`、`tag` のような書き込み系commandは、意図しない副作用を避けるためpipe sourceにしません。
+
+`grep` はpipe stageとして扱い、standalone commandとしては扱いません。
 
 ## 整理操作と確認
 

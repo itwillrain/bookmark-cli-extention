@@ -6,6 +6,7 @@ import type {
 } from "./bookmark-cli-command-state";
 import {
   type ParsedBookmarkCommand,
+  type PipeSourceBookmarkCommand,
   parseBookmarkCommand,
 } from "../../application/commands/bookmark-command-parser";
 import {
@@ -24,6 +25,7 @@ import {
 } from "./bookmark-cli-command-executors";
 import { executeParsedOrganizeCommand } from "./bookmark-cli-organize-command-router";
 import { executeParsedUsageCommand } from "./bookmark-cli-usage-command-router";
+import { executePipeCommand } from "./bookmark-cli-pipe-command-executors";
 
 export type {
   BookmarkCliCommandDependencies,
@@ -260,6 +262,53 @@ const executeParsedTagCommand = async (
 };
 
 /**
+ * Pipe source kindごとのexecutorです。
+ */
+const pipeSourceCommandExecutors = {
+  find: executeParsedFindCommand,
+  freq: executeParsedUsageCommand,
+  help: executeParsedHelpCommand,
+  ls: executeParsedListDirectoryCommand,
+  recent: executeParsedUsageCommand,
+  tree: executeParsedShowDirectoryTreeCommand,
+} satisfies Readonly<Record<PipeSourceBookmarkCommand["kind"], ParsedBookmarkCommandExecutor>>;
+
+/**
+ * Pipe source commandを実行します。
+ * @param {PipeSourceBookmarkCommand} command pipe source commandです。
+ * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存です。
+ * @returns {Promise<BookmarkCliCommandState>} 画面に反映する状態です。
+ */
+const executePipeSourceCommand = async (
+  command: PipeSourceBookmarkCommand,
+  dependencies: BookmarkCliCommandDependencies,
+): Promise<BookmarkCliCommandState> => {
+  const executor = pipeSourceCommandExecutors[command.kind];
+  const state = await executor(command, dependencies);
+
+  return state;
+};
+
+/**
+ * Pipe command executor adapterです。
+ * @param {ParsedBookmarkCommand} command Parsed commandです。
+ * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存です。
+ * @returns {Promise<BookmarkCliCommandState>} 画面に反映する状態です。
+ */
+const executeParsedPipeCommand = async (
+  command: ParsedBookmarkCommand,
+  dependencies: BookmarkCliCommandDependencies,
+): Promise<BookmarkCliCommandState> => {
+  if (command.kind === "pipe") {
+    return executePipeCommand(command, dependencies, executePipeSourceCommand);
+  }
+
+  await Promise.resolve();
+
+  return executeEmptyCommand(dependencies);
+};
+
+/**
  * Command kindごとのexecutorです。
  */
 const parsedBookmarkCommandExecutors = {
@@ -274,6 +323,7 @@ const parsedBookmarkCommandExecutors = {
   mark: executeParsedMarkCommand,
   mkdir: executeParsedOrganizeCommand,
   mv: executeParsedOrganizeCommand,
+  pipe: executeParsedPipeCommand,
   pwd: executeParsedPrintWorkingDirectoryCommand,
   recent: executeParsedUsageCommand,
   rename: executeParsedOrganizeCommand,

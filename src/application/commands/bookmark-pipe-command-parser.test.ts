@@ -1,0 +1,93 @@
+import { describe, expect, it } from "vitest";
+import { parseBookmarkCommand } from "./bookmark-command-parser";
+
+/** Pipe付きLs commandの入力です。 */
+const pipeListGrepCommandInput = "ls Work | grep stripe";
+
+/** 複数grep stage付きPipe commandの入力です。 */
+const multipleGrepPipeCommandInput = "find stripe | grep dashboard | grep work";
+
+/** 未対応pipe stage付きcommandの入力です。 */
+const unsupportedPipeStageCommandInput = "ls Work | sort";
+
+/** 書き込みcommandをpipe sourceにした入力です。 */
+const unsupportedPipeSourceCommandInput = "mv 1 Archive | grep stripe";
+
+/**
+ * Bookmark pipe command parserの正常系テストスイートです。
+ */
+describe("parseBookmarkCommand pipe commands", (): void => {
+  /**
+   * Ls commandとgrep stageをpipe commandとして解析できることを検証します。
+   */
+  it("parses ls piped to grep", (): void => {
+    expect(parseBookmarkCommand(pipeListGrepCommandInput)).toStrictEqual({
+      kind: "pipe",
+      source: {
+        kind: "ls",
+        options: {
+          all: false,
+          long: false,
+        },
+        pathInput: "Work",
+      },
+      stages: [
+        {
+          kind: "grep",
+          queryInput: "stripe",
+        },
+      ],
+    });
+  });
+
+  /**
+   * 複数grep stageを順番どおりに解析できることを検証します。
+   */
+  it("parses multiple grep stages", (): void => {
+    expect(parseBookmarkCommand(multipleGrepPipeCommandInput)).toStrictEqual({
+      kind: "pipe",
+      source: {
+        debug: false,
+        kind: "find",
+        query: "stripe",
+      },
+      stages: [
+        {
+          kind: "grep",
+          queryInput: "dashboard",
+        },
+        {
+          kind: "grep",
+          queryInput: "work",
+        },
+      ],
+    });
+  });
+});
+
+/**
+ * Bookmark pipe command parserの異常系テストスイートです。
+ */
+describe("parseBookmarkCommand invalid pipe commands", (): void => {
+  /**
+   * 未対応pipe stageをunknown commandとして扱うことを検証します。
+   */
+  it("parses unsupported pipe stage as unknown command", (): void => {
+    expect(parseBookmarkCommand(unsupportedPipeStageCommandInput)).toStrictEqual({
+      commandName: "sort",
+      kind: "unknown",
+      rawInput: "ls Work | sort",
+    });
+  });
+
+  /**
+   * 書き込みcommandをpipe sourceにしないことを検証します。
+   */
+  it("parses unsupported pipe source as unknown command", (): void => {
+    expect(parseBookmarkCommand(unsupportedPipeSourceCommandInput)).toStrictEqual({
+      commandName: "mv",
+      kind: "unknown",
+      rawInput: "mv 1 Archive | grep stripe",
+    });
+  });
+});

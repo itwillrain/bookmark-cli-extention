@@ -250,7 +250,7 @@ Chrome履歴は `find` と `go` の検索対象として参照します。
 
 ユーザーはキーボード中心で疑似CLIを操作します。
 
-対象はhot key、コマンド履歴、readline風入力編集、候補補完、結果表示です。
+対象はhot key、コマンド履歴、readline風入力編集、候補補完、結果表示、pipe filterです。
 
 基本フローは次のとおりです。
 
@@ -263,8 +263,9 @@ Chrome履歴は `find` と `go` の検索対象として参照します。
 7. `Enter` で選択中候補を入力へ確定する
 8. `Esc` で候補選択を解除する
 9. 実行したpromptと結果がtranscriptに追加される
-10. 必要に応じて `clear` でscrollback transcriptを消す
-11. Powerline風promptとplainな結果一覧で実行結果を読む
+10. `ls | grep stripe` のように結果一覧を絞り込む
+11. 必要に応じて `clear` でscrollback transcriptを消す
+12. Powerline風promptとplainな結果一覧で実行結果を読む
 
 完了条件は、マウス操作なしで主要な検索、移動、保存、整理ができることです。
 

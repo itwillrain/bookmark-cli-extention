@@ -7,6 +7,9 @@ const goHelpTopicName = "go";
 /** History help topic名です。 */
 const historyHelpTopicName = "history";
 
+/** Grep help topic名です。 */
+const grepHelpTopicName = "grep";
+
 /** Unknown help topic名です。 */
 const unknownHelpTopicName = "missing";
 
@@ -29,6 +32,15 @@ describe("bookmark CLI help catalog", (): void => {
   it("lists history help topic", (): void => {
     expect(listBookmarkCliHelpTopics().map((topic) => topic.commandName)).toContain(
       historyHelpTopicName,
+    );
+  });
+
+  /**
+   * Help topic一覧にgrep topicを含むことを検証します。
+   */
+  it("lists grep help topic", (): void => {
+    expect(listBookmarkCliHelpTopics().map((topic) => topic.commandName)).toContain(
+      grepHelpTopicName,
     );
   });
 

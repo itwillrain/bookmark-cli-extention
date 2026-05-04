@@ -39,6 +39,7 @@ JSON出力は `--format json` で指定します。
 | `pwd`    | 現在ディレクトリを表示する             | 対象 |
 | `tree`   | Bookmark Treeを階層表示する            | 対象 |
 | `help`   | ヘルプを表示する                       | 対象 |
+| `grep`   | pipeで結果一覧を絞り込む               | 対象 |
 | `clear`  | 画面上のscrollback transcriptを消す    | 対象 |
 | `recent` | 最近開いたBookmarkを表示する           | 対象 |
 | `freq`   | よく開くBookmarkを表示する             | 対象 |
@@ -250,6 +251,32 @@ ls -h
 `history` topicでは、Chrome履歴が `find` / `go` の検索候補として扱われること、`HIST` result、`#tag` 検索では履歴を含めないことを確認できます。
 
 代表的なエラーは `not_found` です。
+
+## `grep`
+
+結果一覧を出す読み取りcommandの出力を絞り込みます。
+
+```bash
+<result-command> | grep <query>
+<result-command> | grep <query> | grep <query>
+```
+
+```bash
+ls | grep stripe
+ls Work | grep admin
+find docs | grep github
+recent | grep stripe
+```
+
+v1でpipe sourceにできるcommandは `ls`、`ll`、`find`、`tree`、`recent`、`freq`、`help` です。
+
+`grep` はtitle、folder path、url、description、details、result種別を大文字小文字を区別せずに部分一致で検索します。
+
+絞り込み後の結果一覧は番号を振り直し、直前結果一覧も絞り込み後の結果へ更新します。
+
+`grep` はpipe stageとして扱い、standalone commandとしては扱いません。
+
+未対応のpipe stageや書き込み系commandをpipe sourceにした場合は、未対応commandとして扱います。
 
 ## `clear`
 
