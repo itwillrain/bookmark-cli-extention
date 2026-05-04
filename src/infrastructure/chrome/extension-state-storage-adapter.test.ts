@@ -10,10 +10,21 @@ import { describe, expect, it } from "vitest";
 
 /** 無効なstorage payload fixture。 */
 const invalidStoragePayload = {
-  schemaVersion: 1,
+  schemaVersion: 2,
   settings: {
     preferNerdFont: "yes",
     promptStyle: "powerline",
+  },
+};
+
+/** Version one storage payload fixture。 */
+const versionOneStoragePayload = {
+  ...createInitialExtensionState(),
+  commandHistory: [{ executedAt: "2026-05-02T00:00:00.000Z", input: "find stripe" }],
+  schemaVersion: 1,
+  settings: {
+    preferNerdFont: true,
+    promptStyle: "plain",
   },
 };
 
@@ -123,5 +134,25 @@ describe("createChromeExtensionStateStorage", (): void => {
     await storage.writeExtensionState(state);
 
     expect(recordingStorage.writtenPayloads).toStrictEqual([state]);
+  });
+});
+
+/** Chrome extension state storage migrationのテストスイート。 */
+describe("createChromeExtensionStateStorage migration", (): void => {
+  /** Version one保存状態をalias対応schemaへmigrationできることを検証。 */
+  it("migrates version one extension state", async (): Promise<void> => {
+    const storage = createChromeExtensionStateStorage(
+      createReadonlyStorageArea(versionOneStoragePayload),
+    );
+
+    await expect(storage.readExtensionState()).resolves.toStrictEqual({
+      ...versionOneStoragePayload,
+      schemaVersion: 2,
+      settings: {
+        commandAliases: [],
+        preferNerdFont: true,
+        promptStyle: "plain",
+      },
+    });
   });
 });

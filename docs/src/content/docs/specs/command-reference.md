@@ -167,6 +167,17 @@ folderを先に表示し、その後にBookmarkを表示します。
 
 `ll` は `ls -l` のaliasです。
 
+ユーザー定義aliasはPopupの設定画面で追加、削除、保存します。
+
+aliasは先頭command tokenだけを1回展開します。
+
+```bash
+g stripe
+la /Work
+```
+
+`g = go`、`la = ls -la` と設定している場合、上の入力はそれぞれ `go stripe`、`ls -la /Work` として実行します。
+
 代表的なエラーは `folder_not_found`、`chrome_bookmarks_failed` です。
 
 ## `cd`

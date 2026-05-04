@@ -172,3 +172,31 @@ describe("persistCommandExecutionState", (): void => {
     expect(recordingStorage.writtenStates).toHaveLength(expectedWrittenStateCount);
   });
 });
+
+/** Extension state settings保存保護use caseのテストスイート。 */
+describe("persistCommandExecutionState latest settings", (): void => {
+  /** 保存直前にstorage側で更新されたsettingsを保持できることを検証。 */
+  it("keeps latest persisted settings", async (): Promise<void> => {
+    const persistedState = {
+      ...createInitialExtensionState(),
+      settings: {
+        ...createInitialExtensionState().settings,
+        commandAliases: [{ command: "go", name: "g" }],
+      },
+    };
+    const recordingStorage = createRecordingStorage(persistedState);
+
+    const result = await persistCommandExecutionState({
+      commandInput: "ls",
+      currentDirectory: "/",
+      extensionState: createInitialExtensionState(),
+      now,
+      repository: createBookmarkRepository(),
+      storage: recordingStorage.storage,
+    });
+
+    expect(result.ok && result.value.settings.commandAliases).toStrictEqual([
+      { command: "go", name: "g" },
+    ]);
+  });
+});

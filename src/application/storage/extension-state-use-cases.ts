@@ -68,6 +68,24 @@ const createStorageFailedFailure = (): BookmarkCommandFailure => ({
 });
 
 /**
+ * 最新保存状態のsettingsを反映します。
+ * @param {ExtensionStateStoragePort} storage Extension state storage port。
+ * @param {ExtensionState} state 保存前の拡張状態。
+ * @returns {Promise<ExtensionState>} 最新settingsを反映した拡張状態。
+ */
+const mergeLatestPersistedSettings = async (
+  storage: ExtensionStateStoragePort,
+  state: ExtensionState,
+): Promise<ExtensionState> => {
+  const latestState = await storage.readExtensionState();
+
+  return {
+    ...state,
+    settings: latestState.settings,
+  };
+};
+
+/**
  * 起動時の拡張状態を読み込み、Bookmark Treeと照合。
  * @param {LoadExtensionStateInput} input 拡張状態読み込み入力。
  * @returns {Promise<BookmarkCommandResult<ExtensionState>>} 拡張状態読み込み結果。
@@ -116,10 +134,14 @@ export const persistCommandExecutionState = async (
       input.commandInput,
       executedAt,
     );
+    const stateWithLatestSettings = await mergeLatestPersistedSettings(
+      input.storage,
+      stateWithHistory,
+    );
 
-    await input.storage.writeExtensionState(stateWithHistory);
+    await input.storage.writeExtensionState(stateWithLatestSettings);
 
-    return createSuccess(stateWithHistory);
+    return createSuccess(stateWithLatestSettings);
   } catch {
     return createStorageFailedFailure();
   }

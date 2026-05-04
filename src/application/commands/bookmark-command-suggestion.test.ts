@@ -71,6 +71,25 @@ describe("suggestBookmarkCommands prefix", (): void => {
   });
 });
 
+/** Bookmark command suggestionのaliasテストスイート。 */
+describe("suggestBookmarkCommands aliases", (): void => {
+  /** 設定済みaliasをcommand suggestionへ出すことを検証。 */
+  it("suggests configured command aliases", (): void => {
+    expect(suggestBookmarkCommands("g", [{ command: "go", name: "g" }])).toStrictEqual([
+      {
+        commandName: "g",
+        completion: "g ",
+        description: "alias: go",
+      },
+      {
+        commandName: "go",
+        completion: "go ",
+        description: "検索上位のBookmarkを開く",
+      },
+    ]);
+  });
+});
+
 /**
  * Bookmark help command suggestionのprefixテストスイート。
  */

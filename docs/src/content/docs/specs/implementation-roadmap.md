@@ -96,6 +96,7 @@ Chrome APIに依存する処理はPortの外側へ閉じ込めます。
 - `currentDirectory`
 - `commandHistory`
 - `settings`
+- `settings.commandAliases`
 - 起動時の保存データ読み込み
 - 保存済みcurrent directoryが消えていた場合のfallback
 

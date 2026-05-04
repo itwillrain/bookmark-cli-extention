@@ -5,6 +5,7 @@ import {
 import { useEffect, useState } from "react";
 import type { BookmarkCliSuggestionItem } from "../../presentation/cli/components/bookmark-cli-suggestion-list";
 import type { BookmarkRepositoryPort } from "../../application/bookmarks/bookmark-use-cases";
+import type { CommandAlias } from "../../domain/cli/command-alias";
 import type { CurrentDirectory } from "../../domain/bookmarks/current-directory";
 import { suggestBookmarkCommands } from "../../application/commands/bookmark-command-suggestion";
 
@@ -13,6 +14,8 @@ const emptySuggestionItems = [] as const satisfies readonly BookmarkCliSuggestio
 
 /** Bookmark CLI suggestion hook入力。 */
 export interface UseBookmarkCliSuggestionsInput {
+  /** Command alias一覧。 */
+  readonly commandAliases: readonly CommandAlias[];
   /** 現在ディレクトリ。 */
   readonly currentDirectory: CurrentDirectory;
   /** 現在のCLI入力値。 */
@@ -132,7 +135,7 @@ const useDirectorySuggestionItems = (
 export const useBookmarkCliSuggestions = (
   input: UseBookmarkCliSuggestionsInput,
 ): readonly BookmarkCliSuggestionItem[] => {
-  const commandSuggestionItems = suggestBookmarkCommands(input.inputValue);
+  const commandSuggestionItems = suggestBookmarkCommands(input.inputValue, input.commandAliases);
   const directorySuggestionItems = useDirectorySuggestionItems(input, commandSuggestionItems);
 
   if (hasSuggestionItems(commandSuggestionItems)) {

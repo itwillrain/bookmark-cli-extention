@@ -1,3 +1,5 @@
+import { type CommandAlias, normalizeCommandAliases } from "../../domain/cli/command-alias";
+
 /**
  * Bookmark CLI command suggestion。
  */
@@ -12,6 +14,9 @@ export interface BookmarkCommandSuggestion {
 
 /** Bookmark CLI command catalog item。 */
 type BookmarkCommandCatalogItem = Omit<BookmarkCommandSuggestion, "completion">;
+
+/** Bookmark CLI command suggestion source。 */
+type BookmarkCommandSuggestionSource = BookmarkCommandCatalogItem | CommandAlias;
 
 /** 空文字。 */
 const emptyString = "";
@@ -107,6 +112,31 @@ const bookmarkCommandCatalog = [
 ] as const satisfies readonly BookmarkCommandCatalogItem[];
 
 /**
+ * Command aliasをcommand suggestion catalog itemへ変換。
+ * @param {CommandAlias} alias command alias。
+ * @returns {BookmarkCommandCatalogItem} Command suggestion catalog item。
+ */
+const createAliasCommandCatalogItem = (alias: CommandAlias): BookmarkCommandCatalogItem => ({
+  commandName: alias.name,
+  description: `alias: ${alias.command}`,
+});
+
+/**
+ * Command suggestion sourceをcatalog itemへ変換。
+ * @param {BookmarkCommandSuggestionSource} source command suggestion source。
+ * @returns {BookmarkCommandCatalogItem} Command suggestion catalog item。
+ */
+const createBookmarkCommandCatalogItem = (
+  source: BookmarkCommandSuggestionSource,
+): BookmarkCommandCatalogItem => {
+  if ("name" in source) {
+    return createAliasCommandCatalogItem(source);
+  }
+
+  return source;
+};
+
+/**
  * Command catalog itemをsuggestionへ変換。
  * @param {BookmarkCommandCatalogItem} item command catalog item。
  * @returns {BookmarkCommandSuggestion} Command suggestion。
@@ -155,10 +185,12 @@ const canStartCommandSuggestion = (commandPrefix: string): boolean => commandPre
 /**
  * Bookmark CLI command suggestionを返す。
  * @param {string} inputValue CLI入力値。
+ * @param {readonly CommandAlias[]} aliases command alias一覧。
  * @returns {readonly BookmarkCommandSuggestion[]} Command suggestion一覧。
  */
 export const suggestBookmarkCommands = (
   inputValue: string,
+  aliases: readonly CommandAlias[] = [],
 ): readonly BookmarkCommandSuggestion[] => {
   if (hasCommandArgumentInput(inputValue)) {
     return [];
@@ -170,7 +202,8 @@ export const suggestBookmarkCommands = (
     return [];
   }
 
-  return bookmarkCommandCatalog
+  return [...normalizeCommandAliases(aliases), ...bookmarkCommandCatalog]
+    .map((source) => createBookmarkCommandCatalogItem(source))
     .map((item) => createBookmarkCommandSuggestion(item))
     .filter((suggestion) => commandSuggestionMatchesPrefix(suggestion, commandPrefix))
     .slice(sliceStartIndex, maxSuggestionCount);

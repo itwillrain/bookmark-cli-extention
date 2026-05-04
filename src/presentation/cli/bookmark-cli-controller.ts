@@ -26,6 +26,7 @@ import {
 import { executeParsedOrganizeCommand } from "./bookmark-cli-organize-command-router";
 import { executeParsedUsageCommand } from "./bookmark-cli-usage-command-router";
 import { executePipeCommand } from "./bookmark-cli-pipe-command-executors";
+import { expandCommandAlias } from "../../domain/cli/command-alias";
 
 export type {
   BookmarkCliCommandDependencies,
@@ -356,7 +357,11 @@ export const executeBookmarkCliCommand = async (
     return executePendingConfirmationCommand(input, dependencies);
   }
 
-  const command = parseBookmarkCommand(input);
+  const expandedInput = expandCommandAlias(
+    input,
+    dependencies.extensionState.settings.commandAliases,
+  );
+  const command = parseBookmarkCommand(expandedInput);
   const executor = getParsedBookmarkCommandExecutor(command);
   const state = await executor(command, dependencies);
 

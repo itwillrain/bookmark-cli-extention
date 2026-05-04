@@ -118,6 +118,14 @@ Chrome Extensions Commands APIにはshortcutを書き換えるAPIがないため
 
 PopupからCLIを開くbuttonを提供し、backgroundへruntime messageを送ってDedicated extension pageを開きます。
 
+Popupではcommand aliasの追加、削除、保存も扱います。
+
+alias設定は `chrome.storage.local` の `settings.commandAliases` に保存します。
+
+CLI windowがすでに開いている状態でPopupからaliasを保存した場合、開いているCLI windowの入力解決へ即時反映することはv1の必須要件にしません。
+
+ただしCLI command実行後の永続化では、保存直前にstorageの最新settingsを読み直し、Popupで保存したaliasを古い画面状態で上書きしないようにします。
+
 Popup UIはTailwindとReact componentで実装し、表示componentとChrome API adapterを分けます。
 
 現在入力中のpromptはtranscript末尾に置き、実行後はその入力と結果をtranscript entryへ固定します。
@@ -240,6 +248,7 @@ popupは設定画面として扱います。
 - `PopupApp`
 - `OpenCliButton`
 - `ShortcutHint`
+- `AliasSettings`
 - `DisplaySettings`
 - `FontPreferenceToggle`
 - `SettingsSection`
