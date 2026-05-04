@@ -31,6 +31,11 @@ const emptyResultItemCount = 0;
 const resultContentClassName = "flex min-w-0 items-center gap-2";
 
 /**
+ * Tree resultでtitle/url stackとfaviconを横並びにするclassNameです。
+ */
+const treeResultContentClassName = "flex min-w-0 items-center gap-2";
+
+/**
  * TitleとURLを左揃えで積むclassNameです。
  */
 const resultTextStackClassName = "min-w-0 flex-1";
@@ -44,6 +49,14 @@ const resultTitleTextClassName = "block min-w-0 truncate text-zinc-100";
  * Tree guide文字列のclassNameです。
  */
 const treePrefixTextClassName = "mr-1 whitespace-pre text-zinc-600";
+
+/**
+ * Result itemがtree表示かを判定します。
+ * @param {BookmarkCliResultItem} item 判定対象のresult itemです。
+ * @returns {boolean} tree表示ならtrueです。
+ */
+const isTreeResultItem = (item: BookmarkCliResultItem): boolean =>
+  typeof item.treePrefix === "string";
 
 /**
  * Result itemのtree prefixを描画します。
@@ -116,18 +129,63 @@ const renderResultTitle = (item: BookmarkCliResultItem): ReactElement => (
 );
 
 /**
+ * Result itemのtext stackを描画します。
+ * @param {BookmarkCliResultItem} item 描画するresult itemです。
+ * @returns {ReactElement} text stack elementです。
+ */
+const renderResultTextStack = (item: BookmarkCliResultItem): ReactElement => (
+  <span className={resultTextStackClassName} data-layout="result-title-url-stack">
+    {renderResultTitle(item)}
+    {renderResultDescription(item)}
+    {renderResultDetails(item)}
+    {renderResultUrl(item)}
+  </span>
+);
+
+/**
+ * Tree result itemのfavicon slotを描画します。
+ * @param {BookmarkCliResultItem} item favicon表示対象のresult itemです。
+ * @returns {ReactElement} favicon slot elementです。
+ */
+const renderTreeFaviconSlot = (item: BookmarkCliResultItem): ReactElement => (
+  <span className="flex-none" data-layout="result-tree-favicon-slot">
+    <BookmarkCliResultFavicon item={item} />
+  </span>
+);
+
+/**
+ * Tree result itemを描画します。
+ * @param {BookmarkCliResultContentProps} props Result content propsです。
+ * @returns {ReactElement} Tree result content elementです。
+ */
+const renderTreeResultContent = (props: BookmarkCliResultContentProps): ReactElement => (
+  <span className={treeResultContentClassName} data-layout="result-tree-text-and-favicon">
+    {renderResultTextStack(props.item)}
+    {renderTreeFaviconSlot(props.item)}
+  </span>
+);
+
+/**
+ * 通常result itemを描画します。
+ * @param {BookmarkCliResultContentProps} props Result content propsです。
+ * @returns {ReactElement} 通常result content elementです。
+ */
+const renderDefaultResultContent = (props: BookmarkCliResultContentProps): ReactElement => (
+  <span className={resultContentClassName} data-layout="result-favicon-and-text">
+    <BookmarkCliResultFavicon item={props.item} />
+    {renderResultTextStack(props.item)}
+  </span>
+);
+
+/**
  * Result itemのfaviconとtext stackを描画します。
  * @param {BookmarkCliResultContentProps} props Result content propsです。
  * @returns {ReactElement} Result content elementです。
  */
-export const BookmarkCliResultContent = (props: BookmarkCliResultContentProps): ReactElement => (
-  <span className={resultContentClassName} data-layout="result-favicon-and-text">
-    <BookmarkCliResultFavicon item={props.item} />
-    <span className={resultTextStackClassName} data-layout="result-title-url-stack">
-      {renderResultTitle(props.item)}
-      {renderResultDescription(props.item)}
-      {renderResultDetails(props.item)}
-      {renderResultUrl(props.item)}
-    </span>
-  </span>
-);
+export const BookmarkCliResultContent = (props: BookmarkCliResultContentProps): ReactElement => {
+  if (isTreeResultItem(props.item)) {
+    return renderTreeResultContent(props);
+  }
+
+  return renderDefaultResultContent(props);
+};

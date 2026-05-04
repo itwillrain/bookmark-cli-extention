@@ -21,6 +21,21 @@ const treeResultItem = {
   treePrefix: treeGuideText,
 } satisfies BookmarkCliResultItem;
 
+/** URL付きTree result item fixture。 */
+const treeBookmarkResultItem = {
+  folderPath: "/Work/Admin",
+  kind: "bookmark",
+  title: treeTitleText,
+  treePrefix: treeGuideText,
+  url: "https://dashboard.stripe.com/",
+} satisfies BookmarkCliResultItem;
+
+/** Tree result layout属性。 */
+const treeLayoutAttribute = 'data-layout="result-tree-text-and-favicon"';
+
+/** Tree result favicon slot layout属性。 */
+const treeFaviconSlotLayoutAttribute = 'data-layout="result-tree-favicon-slot"';
+
 /**
  * Result content表示テストスイート。
  */
@@ -36,5 +51,19 @@ describe("BookmarkCliResultContent", (): void => {
 
     expect(treeGuideIndex).toBeGreaterThan(missingIndex);
     expect(treeGuideIndex).toBeLessThan(html.indexOf(treeTitleText));
+  });
+
+  /**
+   * Tree resultではURLがあってもiconをtitleの後ろに描画することを検証。
+   */
+  it("renders tree result icon after the title", (): void => {
+    const html = renderToStaticMarkup(
+      createElement(BookmarkCliResultContent, { item: treeBookmarkResultItem }),
+    );
+    const titleIndex = html.indexOf(treeTitleText);
+    const faviconSlotIndex = html.indexOf(treeFaviconSlotLayoutAttribute);
+
+    expect(html).toContain(treeLayoutAttribute);
+    expect(faviconSlotIndex).toBeGreaterThan(titleIndex);
   });
 });
