@@ -156,7 +156,7 @@ Chrome APIに依存する処理はPortの外側へ閉じ込めます。
 
 ## Slice 6: 整理系コマンドを安全に実装する
 
-目的は、Bookmarkの移動、削除、名称変更を確認付きで扱える状態にすることです。
+目的は、Bookmarkの移動、削除、名称変更、folder作成をCLIから扱える状態にすることです。
 
 実装対象は次のとおりです。
 
@@ -164,24 +164,19 @@ Chrome APIに依存する処理はPortの外側へ閉じ込めます。
 - `mv`
 - `rm`
 - `rename`
-- `--preview`
-- `--yes`
 - `rm -f`
-- preview表示
-- `confirmation_required`
 - rm確認待ち
 
 完了条件は次のとおりです。
 
-- `mv 3 Archive --preview` で変更内容だけが表示される
-- `mv 3 Archive --yes` でBookmarkを移動できる
+- `mv 3 Archive` でBookmarkを移動できる
 - `rm 5` は削除せず確認待ちに入る
 - 確認待ちで `y` または `yes` を入力するとBookmarkを削除できる
 - `rm -f 5` で確認なしにBookmarkを削除できる
 - 確認待ちで `n`、`no`、空入力、またはそれ以外の入力をすると削除せず確認待ちを解除する
-- `rename 3 "GitHub Pull Requests"` は確認不足として `confirmation_required` を返す
-- `rename 3 "GitHub Pull Requests" --preview` は変更内容だけを表示する
-- preview生成にテストがある
+- `rename 3 "GitHub Pull Requests"` でtitleを変更できる
+- `mkdir Tools` でfolderを作成できる
+- 整理系use caseの対象解決と書き込み分岐にテストがある
 
 ## Slice 7: 利用統計と表示体験を磨く
 
@@ -274,7 +269,7 @@ v1は、次の状態を満たしたら完了とします。
 - Bookmark Treeをfilesystemとして移動できる
 - 現在タブを指定ディレクトリへ保存できる
 - 仮想タグでBookmarkを分類できる
-- 移動、削除、名称変更がpreviewまたは確認付きで実行できる
+- 移動、名称変更、folder作成が即時実行でき、削除は確認またはforce指定で実行できる
 - 結果一覧を番号指定で再利用できる
 - Chrome履歴URLを検索して開ける
 - Domain層の主要な純粋関数にテストがある

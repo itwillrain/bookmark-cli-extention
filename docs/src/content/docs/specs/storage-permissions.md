@@ -37,7 +37,7 @@ migrationは拡張機能側の保存データだけを対象にし、Chrome Book
 
 Bookmark IDは端末間で同じとは限らず、`storage.sync` に同期すると仮想タグや利用統計が別端末のBookmarkへ誤って紐づく可能性があるためです。
 
-直前の結果一覧やpreview表示は、画面内メモリまたは `chrome.storage.session` に保持します。
+直前の結果一覧や確認待ち状態は、画面内メモリまたは `chrome.storage.session` に保持します。
 
 これらの一時データは、ブラウザ再起動、拡張のreload、Dedicated extension pageの再作成で失われてよいものとして扱います。
 
@@ -172,7 +172,7 @@ v1ではpromptの表示スタイルとNerd Font利用方針を保存対象にし
 
 初期値は `false` とし、Nerd Font未導入環境でtofu文字が出ないことを優先します。
 
-v1の標準表示では、結果種別は `URL`、`DIR`、`PREV` のplain text labelで表示します。
+v1の標準表示では、結果種別は `URL`、`DIR`、`HIST`、`HELP` のplain text labelで表示します。
 
 Powerline風promptの区切りはfont glyphではなくCSS shapeで描画します。
 

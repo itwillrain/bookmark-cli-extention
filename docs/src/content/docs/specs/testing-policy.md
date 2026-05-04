@@ -67,7 +67,7 @@ Domain層はもっとも厚くテストします。
 - fuzzy検索
 - 仮想タグ正規化
 - Result Listの番号解決
-- preview生成
+- 結果選択
 - 利用統計の並び順
 
 同じ入力に対して同じ出力を返すことを確認します。
@@ -234,6 +234,6 @@ Storybookで確認できる状態は、component testで重複して確認しま
 
 - Domain層の主要な純粋関数にテストがある
 - Application層の主要use caseにPort mockのテストがある
-- 書き込み操作のpreviewと確認不足をテストしている
+- `mkdir`、`mv`、`rename` の即時実行と `rm` の確認待ちをテストしている
 - storage migration、schema検証、初期化をテストしている
 - E2Eは主要sliceに絞っている

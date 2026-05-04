@@ -203,7 +203,7 @@ go #finance stripe
 
 ```bash
 mkdir Tools
-mv 3 Archive --preview
+mv 3 Archive
 rm 5
 rm -f 5
 rename 3 "GitHub Pull Requests"
@@ -213,19 +213,16 @@ rename 3 "GitHub Pull Requests"
 
 1. ユーザーが整理系コマンドを入力する
 2. Application層が対象と変更先を解決する
-3. Domain層がpreviewを生成する
-4. `--preview` の場合は書き込みを行わない
-5. `--yes` の場合はChrome Bookmarks APIへ書き込む
-6. `rm` は通常実行で確認待ちに入る
-7. `rm` 確認待ちで `y` または `yes` を入力した場合、Chrome Bookmarks APIへ書き込む
-8. `rm -f` または `rm --force` の場合、確認なしにChrome Bookmarks APIへ書き込む
-9. `mv`、`rename` で確認が必要な場合は `confirmation_required` とpreview内容を返す
+3. `mkdir`、`mv`、`rename` はChrome Bookmarks APIへ即時に書き込む
+4. `rm` は通常実行で確認待ちに入る
+5. `rm` 確認待ちで `y` または `yes` を入力した場合、Chrome Bookmarks APIへ書き込む
+6. `rm -f` または `rm --force` の場合、確認なしにChrome Bookmarks APIへ書き込む
 
-完了条件は、破壊的操作がpreviewまたは確認付きで実行されることです。
+完了条件は、`mkdir`、`mv`、`rename` が即時実行され、`rm` が確認またはforce指定で実行されることです。
 
-`mv`、`rename` で確認が不足している場合は `confirmation_required` を返します。
+`mv`、`rename` は確認不足エラーを返しません。
 
-`rm` は `confirmation_required` を返さず、CLI上の確認待ち状態として扱います。
+`rm` はCLI上の確認待ち状態として扱います。
 
 ## UC-08: 利用頻度から再訪する
 

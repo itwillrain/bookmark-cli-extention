@@ -100,9 +100,7 @@ describe("makeDirectory", (): void => {
       currentDirectory,
       organizer: recordingOrganizer.organizer,
       pathInput: createFolderPathInput,
-      preview: false,
       repository: createBookmarkRepository(),
-      yes: false,
     });
 
     expect(result.ok).toBe(true);
@@ -113,47 +111,18 @@ describe("makeDirectory", (): void => {
 /** Move use caseのテストスイート。 */
 describe("moveBookmark", (): void => {
   /**
-   * Mv previewで書き込みせずpreviewを返すことを検証。
+   * MvでBookmarkを移動できることを検証。
    */
-  it("previews move without writing", async (): Promise<void> => {
+  it("moves bookmark", async (): Promise<void> => {
     const recordingOrganizer = createRecordingOrganizer();
 
     const result = await moveBookmark({
       currentDirectory,
       lastResultEntries,
       organizer: recordingOrganizer.organizer,
-      preview: true,
       repository: createBookmarkRepository(),
       targetFolderPathInput,
       targetInput,
-      yes: false,
-    });
-
-    expect(result.ok).toBe(true);
-    expect(recordingOrganizer.movedEntries).toStrictEqual([]);
-
-    if (result.ok) {
-      expect(result.value.preview.description).toBe(
-        "move Stripe Dashboard: /Work/Admin -> /Work/Archive",
-      );
-    }
-  });
-
-  /**
-   * Mvを確認済みoptionで実行できることを検証。
-   */
-  it("moves bookmark when confirmed", async (): Promise<void> => {
-    const recordingOrganizer = createRecordingOrganizer();
-
-    const result = await moveBookmark({
-      currentDirectory,
-      lastResultEntries,
-      organizer: recordingOrganizer.organizer,
-      preview: false,
-      repository: createBookmarkRepository(),
-      targetFolderPathInput,
-      targetInput,
-      yes: true,
     });
 
     expect(result.ok).toBe(true);
@@ -205,23 +174,23 @@ describe("removeBookmark", (): void => {
 /** Rename use caseのテストスイート。 */
 describe("renameBookmark", (): void => {
   /**
-   * Renameが確認なしではconfirmation_requiredを返すことを検証。
+   * RenameでBookmark名を変更できることを検証。
    */
-  it("requires confirmation for rename", async (): Promise<void> => {
+  it("renames bookmark", async (): Promise<void> => {
     const recordingOrganizer = createRecordingOrganizer();
 
     const result = await renameBookmark({
       currentDirectory,
       lastResultEntries,
       organizer: recordingOrganizer.organizer,
-      preview: false,
       repository: createBookmarkRepository(),
       targetInput,
       titleInput: renamedTitleInput,
-      yes: false,
     });
 
-    expect(result).toMatchObject({ errorCode: "confirmation_required", ok: false });
-    expect(recordingOrganizer.renamedEntries).toStrictEqual([]);
+    expect(result.ok).toBe(true);
+    expect(recordingOrganizer.renamedEntries).toStrictEqual([
+      { id: "42", title: renamedTitleInput },
+    ]);
   });
 });

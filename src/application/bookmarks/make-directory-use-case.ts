@@ -10,7 +10,6 @@ import {
   getFolderName,
 } from "./bookmark-organization-use-case-helpers";
 import { getParentFolderPath, resolveFolderPath } from "../../domain/bookmarks/current-directory";
-import { createBookmarkOrganizationPreview } from "../../domain/bookmarks/bookmark-organization-preview";
 import { doesFolderPathExist } from "../../domain/bookmarks/bookmark-directory";
 
 /** Folder作成use case入力。 */
@@ -64,35 +63,15 @@ const isMakeDirectoryContextValid = (context: MakeDirectoryContext): boolean =>
   context.folderName !== emptyString;
 
 /**
- * Folder作成previewを作成。
- * @param {MakeDirectoryContext} context Folder作成context。
- * @returns {ReturnType<typeof createBookmarkOrganizationPreview>} Folder作成preview。
- */
-const createMakeDirectoryPreview = (
-  context: MakeDirectoryContext,
-): ReturnType<typeof createBookmarkOrganizationPreview> =>
-  createBookmarkOrganizationPreview({
-    action: "mkdir",
-    after: context.folderPath,
-    before: context.parentFolderPath,
-    title: context.folderName,
-  });
-
-/**
- * Folderを作成またはpreview。
+ * Folderを作成。
  * @param {MakeDirectoryInput} input Folder作成use case入力。
  * @returns {Promise<OrganizeBookmarkResult>} Folder作成結果。
  */
 export const makeDirectory = async (input: MakeDirectoryInput): Promise<OrganizeBookmarkResult> => {
   const context = await createMakeDirectoryContext(input);
-  const preview = createMakeDirectoryPreview(context);
 
   if (!isMakeDirectoryContextValid(context)) {
     return createFolderNotFoundFailure(context.parentFolderPath);
-  }
-
-  if (input.preview) {
-    return createSuccess(createOrganizeBookmarkValue(false, [], preview));
   }
 
   const entry = await input.organizer.createFolder({
@@ -100,5 +79,5 @@ export const makeDirectory = async (input: MakeDirectoryInput): Promise<Organize
     title: context.folderName,
   });
 
-  return createSuccess(createOrganizeBookmarkValue(true, [entry], preview));
+  return createSuccess(createOrganizeBookmarkValue(true, [entry]));
 };

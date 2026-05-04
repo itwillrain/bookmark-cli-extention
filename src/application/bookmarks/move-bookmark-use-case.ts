@@ -6,14 +6,11 @@ import {
   createFolderNotFoundFailure,
   createOrganizeBookmarkValue,
   createParentId,
-  createPreviewOnlyResult,
   createSuccess,
-  requireConfirmation,
   resolveTargetBookmark,
 } from "./bookmark-organization-use-case-helpers";
 import type { BookmarkCliEntry } from "../../domain/cli/bookmark-cli-entry";
 import type { BookmarkEntry } from "../../domain/bookmarks/bookmark-tree";
-import { createBookmarkOrganizationPreview } from "../../domain/bookmarks/bookmark-organization-preview";
 import { doesFolderPathExist } from "../../domain/bookmarks/bookmark-directory";
 import { resolveFolderPath } from "../../domain/bookmarks/current-directory";
 
@@ -35,64 +32,22 @@ interface MoveExecutionContext {
   readonly entry: BookmarkEntry;
   /** Bookmark移動use case入力。 */
   readonly input: MoveBookmarkInput;
-  /** Move preview。 */
-  readonly preview: ReturnType<typeof createMovePreview>;
   /** 移動先folder path。 */
   readonly targetFolderPath: ReturnType<typeof resolveFolderPath>;
 }
 
 /**
- * Move previewを作成。
- * @param {BookmarkEntry} entry 移動対象entry。
- * @param {ReturnType<typeof resolveFolderPath>} targetFolderPath 移動先folder path。
- * @returns {ReturnType<typeof createBookmarkOrganizationPreview>} Move preview。
- */
-const createMovePreview = (
-  entry: BookmarkEntry,
-  targetFolderPath: ReturnType<typeof resolveFolderPath>,
-): ReturnType<typeof createBookmarkOrganizationPreview> =>
-  createBookmarkOrganizationPreview({
-    action: "move",
-    after: targetFolderPath,
-    before: entry.folderPath,
-    title: entry.title,
-  });
-
-/**
- * Move previewまたは確認不足を解決。
- * @param {MoveBookmarkInput} input Bookmark移動use case入力。
- * @param {BookmarkEntry} entry 移動対象entry。
- * @param {ReturnType<typeof createMovePreview>} preview Move preview。
- * @returns {OrganizeBookmarkResult | false} Previewまたは確認不足の結果。
- */
-const resolveMovePreviewResult = (
-  input: MoveBookmarkInput,
-  entry: BookmarkEntry,
-  preview: ReturnType<typeof createMovePreview>,
-): OrganizeBookmarkResult | false => {
-  const confirmationFailure = requireConfirmation(input.preview, input.yes, preview);
-
-  if (confirmationFailure !== false) {
-    return confirmationFailure;
-  }
-
-  return createPreviewOnlyResult(input.preview, entry, preview);
-};
-
-/**
- * 確認済みMoveを実行。
+ * Moveを実行。
  * @param {MoveExecutionContext} context Move実行context。
  * @returns {Promise<OrganizeBookmarkResult>} Move実行結果。
  */
-const executeConfirmedMove = async (
-  context: MoveExecutionContext,
-): Promise<OrganizeBookmarkResult> => {
+const executeMove = async (context: MoveExecutionContext): Promise<OrganizeBookmarkResult> => {
   const movedEntry = await context.input.organizer.moveEntry({
     id: context.entry.id,
     parentId: createParentId(context.bookmarkTree, context.targetFolderPath),
   });
 
-  return createSuccess(createOrganizeBookmarkValue(true, [movedEntry], context.preview));
+  return createSuccess(createOrganizeBookmarkValue(true, [movedEntry]));
 };
 
 /**
@@ -116,13 +71,12 @@ const createMoveExecutionContext = async (
     bookmarkTree,
     entry,
     input,
-    preview: createMovePreview(entry, targetFolderPath),
     targetFolderPath,
   };
 };
 
 /**
- * Bookmarkを移動またはpreview。
+ * Bookmarkを移動。
  * @param {MoveBookmarkInput} input Bookmark移動use case入力。
  * @returns {Promise<OrganizeBookmarkResult>} Bookmark移動結果。
  */
@@ -139,11 +93,5 @@ export const moveBookmark = async (input: MoveBookmarkInput): Promise<OrganizeBo
     return context;
   }
 
-  const previewResult = resolveMovePreviewResult(input, context.entry, context.preview);
-
-  if (previewResult !== false) {
-    return previewResult;
-  }
-
-  return executeConfirmedMove(context);
+  return executeMove(context);
 };

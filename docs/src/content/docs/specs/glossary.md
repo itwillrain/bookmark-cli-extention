@@ -153,17 +153,9 @@ Domain層にはCommand ASTではなく、意味づけ済みの値を渡します
 
 use caseの実行結果です。
 
-成功結果、番号付き一覧、preview、error codeなどを表します。
+成功結果、番号付き一覧、確認待ち状態、error codeなどを表します。
 
 Presentation層はCommand Resultを画面表示へ変換します。
-
-## Preview
-
-書き込み操作の実行前に表示する変更予定です。
-
-`mv`、`rm`、`rename` で使います。
-
-Preview生成はDomain層の純粋関数として扱います。
 
 ## Use Case
 

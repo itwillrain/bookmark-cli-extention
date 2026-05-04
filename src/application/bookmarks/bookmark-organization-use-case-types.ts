@@ -1,6 +1,5 @@
 import type { BookmarkCommandResult, BookmarkRepositoryPort } from "./bookmark-use-cases";
 import type { BookmarkEntry } from "../../domain/bookmarks/bookmark-tree";
-import type { BookmarkOrganizationPreview } from "../../domain/bookmarks/bookmark-organization-preview";
 import type { CurrentDirectory } from "../../domain/bookmarks/current-directory";
 
 /** Folder作成入力。 */
@@ -51,12 +50,8 @@ export interface OrganizeBookmarkBaseInput {
   readonly currentDirectory: CurrentDirectory;
   /** Bookmark整理port。 */
   readonly organizer: BookmarkOrganizerPort;
-  /** Previewだけ表示するか。 */
-  readonly preview: boolean;
   /** Bookmark Tree repository port。 */
   readonly repository: BookmarkRepositoryPort;
-  /** 確認済みとして実行するか。 */
-  readonly yes: boolean;
 }
 
 /** Bookmark整理成功値。 */
@@ -65,8 +60,6 @@ export interface OrganizeBookmarkValue {
   readonly executed: boolean;
   /** 表示対象entry一覧。 */
   readonly entries: readonly BookmarkEntry[];
-  /** 整理操作preview。 */
-  readonly preview: BookmarkOrganizationPreview;
 }
 
 /** Bookmark整理use case実行結果。 */

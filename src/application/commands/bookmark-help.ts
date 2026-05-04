@@ -107,14 +107,14 @@ const bookmarkCliHelpTopics = [
   {
     commandName: "mkdir",
     description: "Folderを追加する",
-    examples: ["mkdir Work/Admin", "mkdir --preview Archive"],
-    usage: ["mkdir [--preview] [--yes] <path>"],
+    examples: ["mkdir Work/Admin", "mkdir Archive"],
+    usage: ["mkdir <path>"],
   },
   {
     commandName: "mv",
     description: "Bookmarkまたはfolderを移動する",
-    examples: ["mv 3 Archive", "mv --preview 3 Archive", "mv --yes 3 Archive"],
-    usage: ["mv [--preview] [--yes] <result-number> <target-folder-path>"],
+    examples: ["mv 3 Archive", "mv 3 Work/Admin"],
+    usage: ["mv <result-number> <target-folder-path>"],
   },
   {
     commandName: "rm",
@@ -125,8 +125,8 @@ const bookmarkCliHelpTopics = [
   {
     commandName: "rename",
     description: "Bookmarkまたはfolderのtitleを変更する",
-    examples: ['rename 3 "Stripe Billing"', 'rename --preview 3 "Stripe Billing"'],
-    usage: ["rename [--preview] [--yes] <result-number> <new-title>"],
+    examples: ['rename 3 "Stripe Billing"', 'rename 3 "GitHub Pull Requests"'],
+    usage: ["rename <result-number> <new-title>"],
   },
   {
     commandName: "recent",

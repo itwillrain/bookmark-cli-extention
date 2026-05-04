@@ -5,14 +5,11 @@ import type {
 import {
   createNotFoundFailure,
   createOrganizeBookmarkValue,
-  createPreviewOnlyResult,
   createSuccess,
-  requireConfirmation,
   resolveTargetBookmark,
 } from "./bookmark-organization-use-case-helpers";
 import type { BookmarkCliEntry } from "../../domain/cli/bookmark-cli-entry";
 import type { BookmarkEntry } from "../../domain/bookmarks/bookmark-tree";
-import { createBookmarkOrganizationPreview } from "../../domain/bookmarks/bookmark-organization-preview";
 
 /** Bookmark名称変更use case入力。 */
 export interface RenameBookmarkInput extends OrganizeBookmarkBaseInput {
@@ -33,64 +30,22 @@ interface RenameExecutionContext {
   readonly entry: BookmarkEntry;
   /** Bookmark名称変更use case入力。 */
   readonly input: RenameBookmarkInput;
-  /** Rename preview。 */
-  readonly preview: ReturnType<typeof createRenamePreview>;
   /** 変更後title。 */
   readonly title: string;
 }
 
 /**
- * Rename previewを作成。
- * @param {BookmarkEntry} entry 名称変更対象entry。
- * @param {string} title 変更後title。
- * @returns {ReturnType<typeof createBookmarkOrganizationPreview>} Rename preview。
- */
-const createRenamePreview = (
-  entry: BookmarkEntry,
-  title: string,
-): ReturnType<typeof createBookmarkOrganizationPreview> =>
-  createBookmarkOrganizationPreview({
-    action: "rename",
-    after: title,
-    before: entry.title,
-    title: entry.title,
-  });
-
-/**
- * Rename previewまたは確認不足を解決。
- * @param {RenameBookmarkInput} input Bookmark名称変更use case入力。
- * @param {BookmarkEntry} entry 名称変更対象entry。
- * @param {ReturnType<typeof createRenamePreview>} preview Rename preview。
- * @returns {OrganizeBookmarkResult | false} Previewまたは確認不足の結果。
- */
-const resolveRenamePreviewResult = (
-  input: RenameBookmarkInput,
-  entry: BookmarkEntry,
-  preview: ReturnType<typeof createRenamePreview>,
-): OrganizeBookmarkResult | false => {
-  const confirmationFailure = requireConfirmation(input.preview, input.yes, preview);
-
-  if (confirmationFailure !== false) {
-    return confirmationFailure;
-  }
-
-  return createPreviewOnlyResult(input.preview, entry, preview);
-};
-
-/**
- * 確認済みRenameを実行。
+ * Renameを実行。
  * @param {RenameExecutionContext} context Rename実行context。
  * @returns {Promise<OrganizeBookmarkResult>} Rename実行結果。
  */
-const executeConfirmedRename = async (
-  context: RenameExecutionContext,
-): Promise<OrganizeBookmarkResult> => {
+const executeRename = async (context: RenameExecutionContext): Promise<OrganizeBookmarkResult> => {
   const renamedEntry = await context.input.organizer.renameEntry({
     id: context.entry.id,
     title: context.title,
   });
 
-  return createSuccess(createOrganizeBookmarkValue(true, [renamedEntry], context.preview));
+  return createSuccess(createOrganizeBookmarkValue(true, [renamedEntry]));
 };
 
 /**
@@ -115,13 +70,12 @@ const createRenameExecutionContext = (
   return {
     entry: targetResolution.value,
     input,
-    preview: createRenamePreview(targetResolution.value, title),
     title,
   };
 };
 
 /**
- * Bookmark名を変更またはpreview。
+ * Bookmark名を変更。
  * @param {RenameBookmarkInput} input Bookmark名称変更use case入力。
  * @returns {Promise<OrganizeBookmarkResult>} Bookmark名称変更結果。
  */
@@ -134,13 +88,7 @@ export const renameBookmark = async (
     return context;
   }
 
-  const previewResult = resolveRenamePreviewResult(input, context.entry, context.preview);
-
-  if (previewResult !== false) {
-    return previewResult;
-  }
-
-  const result = await executeConfirmedRename(context);
+  const result = await executeRename(context);
 
   return result;
 };

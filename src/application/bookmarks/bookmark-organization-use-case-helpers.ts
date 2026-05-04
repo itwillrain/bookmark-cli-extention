@@ -5,7 +5,6 @@ import type {
 } from "./bookmark-use-cases";
 import type { BookmarkEntry, BookmarkTree } from "../../domain/bookmarks/bookmark-tree";
 import type { BookmarkCliEntry } from "../../domain/cli/bookmark-cli-entry";
-import type { BookmarkOrganizationPreview } from "../../domain/bookmarks/bookmark-organization-preview";
 import type { CurrentDirectory } from "../../domain/bookmarks/current-directory";
 import type { OrganizeBookmarkValue } from "./bookmark-organization-use-case-types";
 import { resolveEntryByResultNumber } from "../../domain/bookmarks/result-selection";
@@ -15,9 +14,6 @@ const folderNotFoundErrorCode = "folder_not_found";
 
 /** 候補未検出のエラーcode。 */
 const notFoundErrorCode = "not_found";
-
-/** 確認不足のエラーcode。 */
-const confirmationRequiredErrorCode = "confirmation_required";
 
 /** 空文字。 */
 const emptyString = "";
@@ -71,16 +67,6 @@ export const createFolderNotFoundFailure = (folderPath: CurrentDirectory): Bookm
  */
 export const createNotFoundFailure = (targetInput: string): BookmarkCommandFailure =>
   createFailure(notFoundErrorCode, `Bookmark target was not found: ${targetInput}`);
-
-/**
- * 確認不足の失敗結果を作成。
- * @param {BookmarkOrganizationPreview} preview 実行予定preview。
- * @returns {BookmarkCommandFailure} 確認不足の失敗結果。
- */
-export const createConfirmationRequiredFailure = (
-  preview: BookmarkOrganizationPreview,
-): BookmarkCommandFailure =>
-  createFailure(confirmationRequiredErrorCode, `Confirmation required: ${preview.description}`);
 
 /**
  * EntryがBookmarkかを判定。
@@ -144,52 +130,12 @@ export const resolveTargetBookmark = (
 };
 
 /**
- * 確認が必要な操作をpreviewまたは実行へ分岐。
- * @param {boolean} preview Previewだけ表示するか。
- * @param {boolean} yes 確認済みとして実行するか。
- * @param {BookmarkOrganizationPreview} organizationPreview 整理操作preview。
- * @returns {BookmarkCommandFailure | false} 確認不足なら失敗結果。
- */
-export const requireConfirmation = (
-  preview: boolean,
-  yes: boolean,
-  organizationPreview: BookmarkOrganizationPreview,
-): BookmarkCommandFailure | false => {
-  if (preview || yes) {
-    return false;
-  }
-
-  return createConfirmationRequiredFailure(organizationPreview);
-};
-
-/**
  * Bookmark整理成功値を作成。
  * @param {boolean} executed 書き込み済みならtrue。
  * @param {readonly BookmarkEntry[]} entries 表示対象entry一覧。
- * @param {BookmarkOrganizationPreview} preview 整理操作preview。
  * @returns {OrganizeBookmarkValue} Bookmark整理成功値。
  */
 export const createOrganizeBookmarkValue = (
   executed: boolean,
   entries: readonly BookmarkEntry[],
-  preview: BookmarkOrganizationPreview,
-): OrganizeBookmarkValue => ({ entries, executed, preview });
-
-/**
- * Previewだけの場合は書き込みを省略して成功値を返す。
- * @param {boolean} preview Previewだけ表示するか。
- * @param {BookmarkEntry} entry 対象entry。
- * @param {BookmarkOrganizationPreview} organizationPreview 整理操作preview。
- * @returns {BookmarkCommandResult<OrganizeBookmarkValue> | false} Preview結果。
- */
-export const createPreviewOnlyResult = (
-  preview: boolean,
-  entry: BookmarkEntry,
-  organizationPreview: BookmarkOrganizationPreview,
-): BookmarkCommandResult<OrganizeBookmarkValue> | false => {
-  if (!preview) {
-    return false;
-  }
-
-  return createSuccess(createOrganizeBookmarkValue(false, [entry], organizationPreview));
-};
+): OrganizeBookmarkValue => ({ entries, executed });

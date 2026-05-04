@@ -16,9 +16,6 @@ const helpKindLabel = "HELP";
 /** History label。 */
 const historyKindLabel = "HIST";
 
-/** Preview label。 */
-const previewKindLabel = "PREV";
-
 /** Result segment props。 */
 export interface BookmarkCliResultSegmentsProps {
   /** Folder path。 */
@@ -37,10 +34,6 @@ export interface BookmarkCliResultSegmentsProps {
 const formatKindLabel = (kind: BookmarkCliResultKind): string => {
   if (kind === "bookmark") {
     return bookmarkKindLabel;
-  }
-
-  if (kind === "preview") {
-    return previewKindLabel;
   }
 
   if (kind === "help") {

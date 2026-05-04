@@ -58,7 +58,7 @@ mark "Production Admin"
 - 重複検出
 - JSONエクスポート
 - インポート
-- preview付きの一括整理
+- 一括整理
 - OSターミナルから利用できるローカルCLI
 
 ## 非スコープ
@@ -72,5 +72,5 @@ mark "Production Admin"
 - 拡張機能内の疑似CLIからChromeのBookmark Treeを読める
 - `go` と `find` の検索結果がChrome Bookmark ManagerとChrome履歴の内容を反映する
 - `mark` で現在のタブを現在のディレクトリへ保存できる
-- 書き込み操作はpreviewまたは確認を通してから実行される
+- `mkdir`、`mv`、`rename` は解決できたら即時実行され、`rm` は確認またはforce指定で実行される
 - ドメインロジックは純粋関数として切り出され、テストで保証される

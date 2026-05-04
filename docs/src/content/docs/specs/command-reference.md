@@ -23,7 +23,7 @@ description: Bookmark CLI Extension v1 の疑似 CLI コマンド、引数、例
 
 JSON出力は `--format json` で指定します。
 
-破壊的操作はpreviewまたは確認を挟みます。
+`mkdir`、`mv`、`rename` は対象と変更先を解決できたら即時実行します。
 
 `rm` はUnix commandの操作感に寄せ、通常実行では対話確認を挟み、`-f` または `--force` で確認なしに削除します。
 
@@ -325,23 +325,17 @@ mkdir Admin --to Work
 Bookmarkまたはfolderを移動します。
 
 ```bash
-mv <item> <path> [--preview] [--yes]
+mv <item> <path>
 ```
 
 ```bash
 mv 3 Archive
-mv 3 Archive --preview
-mv 3 Archive --yes
 mv "GitHub" Work/DevTools
 ```
 
-`--preview` は変更内容だけを表示します。
+対象と移動先folderを解決できた場合は、確認を挟まずChrome Bookmarks APIへ書き込みます。
 
-`--yes` は確認を省略して移動します。
-
-`--preview` と `--yes` がない場合は書き込みを行わず、`confirmation_required` を返します。
-
-代表的なエラーは `not_found`、`folder_not_found`、`confirmation_required` です。
+代表的なエラーは `not_found`、`folder_not_found` です。
 
 ## `rm`
 
@@ -379,22 +373,16 @@ v1ではfolder削除を扱いません。
 Bookmarkまたはfolderのtitleを変更します。
 
 ```bash
-rename <item> <title> [--preview] [--yes]
+rename <item> <title>
 ```
 
 ```bash
 rename 3 "GitHub Pull Requests"
-rename 3 "GitHub Pull Requests" --preview
-rename 3 "GitHub Pull Requests" --yes
 ```
 
-`--preview` は変更内容だけを表示します。
+対象を解決できた場合は、確認を挟まずChrome Bookmarks APIへ書き込みます。
 
-`--yes` は確認を省略して変更します。
-
-`--preview` と `--yes` がない場合は書き込みを行わず、`confirmation_required` を返します。
-
-代表的なエラーは `not_found`、`confirmation_required` です。
+代表的なエラーは `not_found` です。
 
 ## `tag`
 
