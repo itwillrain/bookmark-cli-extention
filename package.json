@@ -1,6 +1,6 @@
 {
   "name": "bookmark-cli-extention",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Bookmark CLI browser extension built with WXT.",
   "type": "module",
   "private": true,
