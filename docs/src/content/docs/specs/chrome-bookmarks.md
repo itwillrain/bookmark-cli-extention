@@ -68,6 +68,12 @@ Chrome Bookmarks APIのtree nodeは階層構造です。
 - `folderPath`
 - `childrenCount`
 
+ChromeとFirefoxでroot node IDやroot直下containerのIDは異なります。
+
+疑似CLIではbrowser root nodeと、その直下にあるブラウザ管理containerをCLI上のfolderとして表示しません。
+
+ブラウザ管理containerの子folderとBookmarkをCLI root `/` の直下entryとして扱い、ChromeとFirefoxで同じpath表現へ正規化します。
+
 ## 責務境界
 
 Chrome連携層はChrome Bookmarks APIへのアクセスを担当します。

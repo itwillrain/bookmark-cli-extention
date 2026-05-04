@@ -177,6 +177,7 @@ Firefox版ではfaviconなしのplain text result表示を正とします。
 完了条件は次のとおりです。
 
 - FirefoxでBookmark Treeを取得できる
+- Firefoxのroot直下containerをCLI上のfolderとして表示せず、Chromeと同じ仮想root `/` として扱える
 - FirefoxでBookmark URLを新しいtabで開ける
 - Firefoxで現在tabをBookmarkへ保存できる
 - FirefoxでHistoryを検索できる
