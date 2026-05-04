@@ -13,6 +13,11 @@ import {
   createChromeBookmarkRepository,
 } from "../../infrastructure/chrome/bookmarks-adapter";
 import {
+  createCurrentInputChangeHandler,
+  createSelectedResultClearHandler,
+  createSelectedSuggestionClearHandler,
+} from "./current-input-change-handler";
+import {
   loadExtensionState,
   persistCommandExecutionState,
 } from "../../application/storage/extension-state-use-cases";
@@ -325,10 +330,16 @@ export const App = (): ReactElement => {
       commandState={commandState}
       inputValue={inputValue}
       keyboard={keyboardState.keyboard}
+      onInputChange={createCurrentInputChangeHandler({
+        clearSelectedResultIndex: createSelectedResultClearHandler(cursors.setSelectedResultIndex),
+        clearSelectedSuggestionIndex: createSelectedSuggestionClearHandler(
+          cursors.setSelectedSuggestionIndex,
+        ),
+        setInputValue,
+      })}
       onSubmit={commandRuntime.submitCommand}
       selectedResultIndex={cursors.selectedResultIndex}
       selectedSuggestionIndex={cursors.selectedSuggestionIndex}
-      setInputValue={setInputValue}
       suggestionItems={keyboardState.suggestionItems}
       transcriptEntries={transcript.transcriptEntries}
     />

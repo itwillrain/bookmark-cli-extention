@@ -357,6 +357,10 @@ Command suggestionはfish shellの補完に近い操作感を目指します。
 
 結果一覧をTabまたはShift+Tabで選択する場合も同じ方針で、DOM focusはcommand inputに残し、選択中result itemだけを表示範囲へ追従させます。
 
+ユーザーがcommand inputを手で編集した場合は、選択中のsuggestion cursorとresult cursorを解除します。
+
+手入力したcommandの `Enter` が古い選択状態に奪われず、通常のsubmitとして実行されるようにします。
+
 空のpromptで結果一覧を選択している場合、`Enter` は選択行の既定アクションを実行します。
 
 folder行は `cd <result-number>`、Bookmark行は `go <result-number>` として扱います。

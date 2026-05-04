@@ -75,6 +75,10 @@ Bookmark行の既定アクションは `go <result-number>` です。
 
 `Esc` は候補の選択状態を解除します。
 
+ユーザーが入力欄を手で変更した場合、選択中の補完候補と結果行は解除します。
+
+これにより、`mkdir /project` のような入力済みcommandの `Enter` は補完確定ではなくcommand実行として扱います。
+
 `Ctrl+r` はCLI入力履歴のfloating一覧を表示します。
 
 履歴一覧はChrome閲覧履歴ではなく、疑似CLIで実行したcommand inputを対象にします。
