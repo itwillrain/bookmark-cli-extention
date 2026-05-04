@@ -55,6 +55,13 @@ const createBookmarkSearchResultFromEntry = (entry: SearchableEntry): BookmarkSe
  * 直前結果番号からBookmark検索結果を解決します。
  * @param {ResolveBookmarkSearchResultByResultNumberInput} input 直前結果番号解決入力です。
  * @returns {BookmarkSearchResultByResultNumber} Bookmark検索結果。解決できない場合はfalseです。
+ * @example
+ * ```ts
+ * const result = resolveBookmarkSearchResultByResultNumber({
+ *   lastResultEntries,
+ *   query: "2",
+ * });
+ * ```
  */
 export const resolveBookmarkSearchResultByResultNumber = (
   input: ResolveBookmarkSearchResultByResultNumberInput,

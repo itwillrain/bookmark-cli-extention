@@ -77,6 +77,13 @@ const createHistorySuggestion = (
  * Command historyをfloating suggestion向けに変換。
  * @param {SuggestBookmarkCommandHistoryInput} input Command history suggestion入力。
  * @returns {readonly BookmarkCommandSuggestion[]} Command history suggestion一覧。
+ * @example
+ * ```ts
+ * const result = suggestBookmarkCommandHistory({
+ *   commandHistory: [{ input: "go Stripe", executedAt: "2026-05-05T00:00:00.000Z" }],
+ *   inputValue: "stripe",
+ * });
+ * ```
  */
 export const suggestBookmarkCommandHistory = (
   input: SuggestBookmarkCommandHistoryInput,

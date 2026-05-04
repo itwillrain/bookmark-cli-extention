@@ -51,6 +51,13 @@ const isValidCommandAlias = (alias: CommandAlias): boolean =>
  * @param {readonly CommandAlias[]} aliases 追加前alias一覧です。
  * @param {CommandAlias} alias 追加するaliasです。
  * @returns {readonly CommandAlias[]} 追加後alias一覧です。
+ * @example
+ * ```ts
+ * const result = upsertCommandAlias([{ name: "c", command: "clear" }], {
+ *   name: "c",
+ *   command: "cd /Work",
+ * });
+ * ```
  */
 export const upsertCommandAlias = (
   aliases: readonly CommandAlias[],
@@ -65,6 +72,11 @@ export const upsertCommandAlias = (
  * @param {readonly CommandAlias[]} aliases 削除前alias一覧です。
  * @param {string} aliasName 削除対象alias名です。
  * @returns {readonly CommandAlias[]} 削除後alias一覧です。
+ * @example
+ * ```ts
+ * const result = removeCommandAlias([{ name: "c", command: "clear" }], "c");
+ * // []
+ * ```
  */
 export const removeCommandAlias = (
   aliases: readonly CommandAlias[],
@@ -75,6 +87,11 @@ export const removeCommandAlias = (
  * Command alias一覧を保存可能な形へ正規化します。
  * @param {readonly CommandAlias[]} aliases 正規化対象alias一覧です。
  * @returns {readonly CommandAlias[]} 正規化済みalias一覧です。
+ * @example
+ * ```ts
+ * const result = normalizeCommandAliases([{ name: " c ", command: " clear " }]);
+ * // [{ name: "c", command: "clear" }]
+ * ```
  */
 export const normalizeCommandAliases = (
   aliases: readonly CommandAlias[],
@@ -136,6 +153,11 @@ const appendAliasArgumentInput = (alias: CommandAlias, argumentInput: string): s
  * @param {string} input CLI入力です。
  * @param {readonly CommandAlias[]} aliases alias一覧です。
  * @returns {string} alias展開後入力です。該当aliasがなければ元入力です。
+ * @example
+ * ```ts
+ * const result = expandCommandAlias("c ./Admin", [{ name: "c", command: "cd" }]);
+ * // "cd ./Admin"
+ * ```
  */
 export const expandCommandAlias = (input: string, aliases: readonly CommandAlias[]): string => {
   const splitInput = splitCommandInput(input);

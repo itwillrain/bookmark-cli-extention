@@ -70,6 +70,11 @@ const moveClearedCursor = (
  * Command history cursorを移動。
  * @param {MoveCommandHistoryCursorInput} input Command history cursor移動入力。
  * @returns {CommandHistoryCursorIndex} 移動後cursor index。
+ * @example
+ * ```ts
+ * const result = moveCommandHistoryCursor({ currentIndex: false, direction: "previous", itemCount: 3 });
+ * // 2
+ * ```
  */
 export const moveCommandHistoryCursor = (
   input: MoveCommandHistoryCursorInput,
@@ -94,6 +99,11 @@ export const moveCommandHistoryCursor = (
  * @param {CommandHistoryCursorIndex} currentIndex 現在のcursor index。
  * @param {number} itemCount Command history件数。
  * @returns {CommandHistoryCursorIndex} 正規化後cursor index。
+ * @example
+ * ```ts
+ * const result = normalizeCommandHistoryCursor(3, 2);
+ * // false
+ * ```
  */
 export const normalizeCommandHistoryCursor = (
   currentIndex: CommandHistoryCursorIndex,

@@ -38,6 +38,11 @@ const createCursorState = (value: string, cursorIndex: number): CommandLineEditS
  * Cursorを行頭へ移動。
  * @param {CommandLineEditState} state 現在の編集状態。
  * @returns {CommandLineEditState} 行頭へ移動した編集状態。
+ * @example
+ * ```ts
+ * const result = moveCommandLineCursorToStart({ value: "go Stripe", selectionStart: 9, selectionEnd: 9 });
+ * // { value: "go Stripe", selectionStart: 0, selectionEnd: 0 }
+ * ```
  */
 export const moveCommandLineCursorToStart = (state: CommandLineEditState): CommandLineEditState =>
   createCursorState(state.value, firstCharacterIndex);
@@ -46,6 +51,11 @@ export const moveCommandLineCursorToStart = (state: CommandLineEditState): Comma
  * Cursorを行末へ移動。
  * @param {CommandLineEditState} state 現在の編集状態。
  * @returns {CommandLineEditState} 行末へ移動した編集状態。
+ * @example
+ * ```ts
+ * const result = moveCommandLineCursorToEnd({ value: "go Stripe", selectionStart: 0, selectionEnd: 0 });
+ * // { value: "go Stripe", selectionStart: 9, selectionEnd: 9 }
+ * ```
  */
 export const moveCommandLineCursorToEnd = (state: CommandLineEditState): CommandLineEditState =>
   createCursorState(state.value, state.value.length);
@@ -54,6 +64,11 @@ export const moveCommandLineCursorToEnd = (state: CommandLineEditState): Command
  * Cursor以前の入力を削除。
  * @param {CommandLineEditState} state 現在の編集状態。
  * @returns {CommandLineEditState} Cursor以前を削除した編集状態。
+ * @example
+ * ```ts
+ * const result = killCommandLineBeforeCursor({ value: "go Stripe", selectionStart: 3, selectionEnd: 3 });
+ * // { value: "Stripe", selectionStart: 0, selectionEnd: 0 }
+ * ```
  */
 export const killCommandLineBeforeCursor = (state: CommandLineEditState): CommandLineEditState =>
   createCursorState(state.value.slice(state.selectionEnd), firstCharacterIndex);
@@ -62,6 +77,11 @@ export const killCommandLineBeforeCursor = (state: CommandLineEditState): Comman
  * Cursor以後の入力を削除。
  * @param {CommandLineEditState} state 現在の編集状態。
  * @returns {CommandLineEditState} Cursor以後を削除した編集状態。
+ * @example
+ * ```ts
+ * const result = killCommandLineAfterCursor({ value: "go Stripe", selectionStart: 2, selectionEnd: 2 });
+ * // { value: "go", selectionStart: 2, selectionEnd: 2 }
+ * ```
  */
 export const killCommandLineAfterCursor = (state: CommandLineEditState): CommandLineEditState =>
   createCursorState(
@@ -73,6 +93,11 @@ export const killCommandLineAfterCursor = (state: CommandLineEditState): Command
  * Cursor前方の単語を削除。
  * @param {CommandLineEditState} state 現在の編集状態。
  * @returns {CommandLineEditState} 前方単語を削除した編集状態。
+ * @example
+ * ```ts
+ * const result = deleteCommandLinePreviousWord({ value: "go Stripe", selectionStart: 9, selectionEnd: 9 });
+ * // { value: "go ", selectionStart: 3, selectionEnd: 3 }
+ * ```
  */
 export const deleteCommandLinePreviousWord = (
   state: CommandLineEditState,

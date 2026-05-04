@@ -85,6 +85,11 @@ export type ResultEntryResolution<TEntry> = ResultEntryFound<TEntry> | ResultEnt
  * 入力が直前結果の番号指定かを判定します。
  * @param {string} input CLI path-or-index入力です。
  * @returns {boolean} 数字だけの入力ならtrueです。
+ * @example
+ * ```ts
+ * const result = isResultNumberInput("12");
+ * // true
+ * ```
  */
 export const isResultNumberInput = (input: string): boolean => resultNumberPattern.test(input);
 
@@ -136,6 +141,11 @@ const getResultEntryAtIndex = <TEntry>(
  * @param {readonly TEntry[]} resultEntries 直前結果のentry一覧です。
  * @param {string} resultNumberInput CLIに入力された1-based result numberです。
  * @returns {ResultEntryResolution<TEntry>} entry解決結果です。
+ * @example
+ * ```ts
+ * const result = resolveEntryByResultNumber(["alpha", "beta"], "2");
+ * // { ok: true, entry: "beta" }
+ * ```
  */
 export const resolveEntryByResultNumber = <TEntry>(
   resultEntries: readonly TEntry[],

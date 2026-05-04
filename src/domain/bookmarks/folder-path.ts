@@ -29,6 +29,11 @@ const startsWithRootSeparator = (input: string): boolean => input.startsWith(fol
  * Folder path入力を絶対pathへ正規化します。
  * @param {string} input ユーザー入力または内部生成されたfolder pathです。
  * @returns {FolderPath} 絶対folder pathです。
+ * @example
+ * ```ts
+ * const result = normalizeFolderPathInput("Work/Admin");
+ * // "/Work/Admin"
+ * ```
  */
 export const normalizeFolderPathInput = (input: string): FolderPath => {
   if (input === rootFolderPathAlias) {
@@ -47,6 +52,11 @@ export const normalizeFolderPathInput = (input: string): FolderPath => {
  * @param {FolderPath} parentFolderPath 親folder pathです。
  * @param {string} folderTitle 追加するfolder titleです。
  * @returns {FolderPath} 追加後のfolder pathです。
+ * @example
+ * ```ts
+ * const result = joinFolderPath("/Work", "Admin");
+ * // "/Work/Admin"
+ * ```
  */
 export const joinFolderPath = (parentFolderPath: FolderPath, folderTitle: string): FolderPath => {
   if (parentFolderPath === rootFolderPath) {

@@ -58,6 +58,11 @@ const parseSearchCommand = (queryParts: readonly string[]): SearchCommandParseVa
  * Find commandを解析。
  * @param {readonly string[]} queryParts command名を除いたtoken一覧。
  * @returns {FindBookmarkCommand} Find command。
+ * @example
+ * ```ts
+ * const result = parseFindBookmarkCommand(["-l", "Stripe", "#finance"]);
+ * // { kind: "find", long: true, query: "Stripe #finance" }
+ * ```
  */
 export const parseFindBookmarkCommand = (queryParts: readonly string[]): FindBookmarkCommand => ({
   kind: "find",
@@ -68,6 +73,11 @@ export const parseFindBookmarkCommand = (queryParts: readonly string[]): FindBoo
  * Go commandを解析。
  * @param {readonly string[]} queryParts command名を除いたtoken一覧。
  * @returns {GoBookmarkCommand} Go command。
+ * @example
+ * ```ts
+ * const result = parseGoBookmarkCommand(["Stripe", "Dashboard"]);
+ * // { kind: "go", long: false, query: "Stripe Dashboard" }
+ * ```
  */
 export const parseGoBookmarkCommand = (queryParts: readonly string[]): GoBookmarkCommand => ({
   kind: "go",

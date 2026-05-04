@@ -31,6 +31,10 @@ const lastItemOffset = 1;
  * 成功結果を作成。
  * @param {TValue} value 成功値。
  * @returns {BookmarkCommandSuccess<TValue>} 成功結果。
+ * @example
+ * ```ts
+ * const result = createSuccess(value);
+ * ```
  */
 export const createSuccess = <TValue>(value: TValue): BookmarkCommandSuccess<TValue> => ({
   ok: true,
@@ -42,6 +46,10 @@ export const createSuccess = <TValue>(value: TValue): BookmarkCommandSuccess<TVa
  * @param {BookmarkCommandFailure["errorCode"]} errorCode エラーcode。
  * @param {string} message 表示message。
  * @returns {BookmarkCommandFailure} 失敗結果。
+ * @example
+ * ```ts
+ * const result = createFailure(errorCode, message);
+ * ```
  */
 export const createFailure = (
   errorCode: BookmarkCommandFailure["errorCode"],
@@ -56,6 +64,10 @@ export const createFailure = (
  * Folder未検出の失敗結果を作成。
  * @param {CurrentDirectory} folderPath 見つからなかったfolder path。
  * @returns {BookmarkCommandFailure} Folder未検出の失敗結果。
+ * @example
+ * ```ts
+ * const result = createFolderNotFoundFailure(folderPath);
+ * ```
  */
 export const createFolderNotFoundFailure = (folderPath: CurrentDirectory): BookmarkCommandFailure =>
   createFailure(folderNotFoundErrorCode, `Folder was not found: ${folderPath}`);
@@ -64,6 +76,10 @@ export const createFolderNotFoundFailure = (folderPath: CurrentDirectory): Bookm
  * 対象未検出の失敗結果を作成。
  * @param {string} targetInput 対象入力。
  * @returns {BookmarkCommandFailure} 対象未検出の失敗結果。
+ * @example
+ * ```ts
+ * const result = createNotFoundFailure(targetInput);
+ * ```
  */
 export const createNotFoundFailure = (targetInput: string): BookmarkCommandFailure =>
   createFailure(notFoundErrorCode, `Bookmark target was not found: ${targetInput}`);
@@ -93,6 +109,10 @@ const findFolderId = (
  * @param {BookmarkTree} bookmarkTree Bookmark Tree。
  * @param {CurrentDirectory} folderPath folder path。
  * @returns {string | undefined} parent ID。
+ * @example
+ * ```ts
+ * const result = createParentId(bookmarkTree, folderPath);
+ * ```
  */
 export const createParentId = (bookmarkTree: BookmarkTree, folderPath: CurrentDirectory): string =>
   findFolderId(bookmarkTree, folderPath) ?? rootParentId;
@@ -101,6 +121,10 @@ export const createParentId = (bookmarkTree: BookmarkTree, folderPath: CurrentDi
  * Folder pathから最後のsegmentを取得。
  * @param {CurrentDirectory} folderPath folder path。
  * @returns {string} 最後のpath segment。
+ * @example
+ * ```ts
+ * const result = getFolderName(folderPath);
+ * ```
  */
 export const getFolderName = (folderPath: CurrentDirectory): string => {
   const segments = folderPath
@@ -115,6 +139,10 @@ export const getFolderName = (folderPath: CurrentDirectory): string => {
  * @param {readonly BookmarkCliEntry[]} lastResultEntries 直前結果一覧。
  * @param {string} targetInput 対象番号入力。
  * @returns {BookmarkCommandResult<BookmarkEntry>} Bookmark解決結果。
+ * @example
+ * ```ts
+ * const result = resolveTargetBookmark(lastResultEntries, targetInput);
+ * ```
  */
 export const resolveTargetBookmark = (
   lastResultEntries: readonly BookmarkCliEntry[],
@@ -134,6 +162,10 @@ export const resolveTargetBookmark = (
  * @param {boolean} executed 書き込み済みならtrue。
  * @param {readonly BookmarkEntry[]} entries 表示対象entry一覧。
  * @returns {OrganizeBookmarkValue} Bookmark整理成功値。
+ * @example
+ * ```ts
+ * const result = createOrganizeBookmarkValue(executed, entries);
+ * ```
  */
 export const createOrganizeBookmarkValue = (
   executed: boolean,

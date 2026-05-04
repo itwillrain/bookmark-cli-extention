@@ -166,6 +166,11 @@ const createBaseSegments = (
  * @param {CurrentDirectory} currentDirectory 現在ディレクトリです。
  * @param {string} pathInput 入力pathです。
  * @returns {FolderPath} 解決済みfolder pathです。
+ * @example
+ * ```ts
+ * const result = resolveFolderPath("/Work", "../Finance");
+ * // "/Finance"
+ * ```
  */
 export const resolveFolderPath = (
   currentDirectory: CurrentDirectory,
@@ -183,6 +188,11 @@ export const resolveFolderPath = (
  * Folder pathの親pathを取得します。
  * @param {FolderPath} folderPath 親pathを取得するfolder pathです。
  * @returns {FolderPath} 親folder pathです。
+ * @example
+ * ```ts
+ * const result = getParentFolderPath("/Work/Admin");
+ * // "/Work"
+ * ```
  */
 export const getParentFolderPath = (folderPath: FolderPath): FolderPath => {
   const segments = splitFolderPath(folderPath);

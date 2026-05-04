@@ -66,6 +66,15 @@ const isMakeDirectoryContextValid = (context: MakeDirectoryContext): boolean =>
  * Folderを作成。
  * @param {MakeDirectoryInput} input Folder作成use case入力。
  * @returns {Promise<OrganizeBookmarkResult>} Folder作成結果。
+ * @example
+ * ```ts
+ * const result = await makeDirectory({
+ *   currentDirectory: "/Work",
+ *   organizer,
+ *   pathInput: "./Admin",
+ *   repository,
+ * });
+ * ```
  */
 export const makeDirectory = async (input: MakeDirectoryInput): Promise<OrganizeBookmarkResult> => {
   const context = await createMakeDirectoryContext(input);

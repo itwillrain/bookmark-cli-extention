@@ -70,6 +70,17 @@ const createGoBookmarkSuggestion = (
  * Go command向けBookmark path suggestionを作成。
  * @param {CreateGoBookmarkPathSuggestionsInput} input Go bookmark suggestion入力。
  * @returns {readonly BookmarkDirectorySuggestion[]} Bookmark suggestion一覧。
+ * @example
+ * ```ts
+ * const result = createGoBookmarkPathSuggestions({
+ *   bookmarks,
+ *   commandName: "go",
+ *   commandPrefix: "go ./",
+ *   parentPath: "/Work",
+ *   pathCompletionBase: "./",
+ *   titlePrefix: "Str",
+ * });
+ * ```
  */
 export const createGoBookmarkPathSuggestions = (
   input: CreateGoBookmarkPathSuggestionsInput,

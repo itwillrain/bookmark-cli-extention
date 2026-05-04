@@ -25,6 +25,11 @@ const createTagCommandValueTokens = (queryParts: readonly string[]): readonly st
  * Tag commandを解析。
  * @param {readonly string[]} queryParts command名を除いたtoken一覧。
  * @returns {TagBookmarkCommand} Tag command。
+ * @example
+ * ```ts
+ * const result = parseTagBookmarkCommand(["--remove", "2", "#prod"]);
+ * // { kind: "tag", remove: true, targetInput: "2", tagInputs: ["#prod"] }
+ * ```
  */
 export const parseTagBookmarkCommand = (queryParts: readonly string[]): TagBookmarkCommand => {
   const valueTokens = createTagCommandValueTokens(queryParts);

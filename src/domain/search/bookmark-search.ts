@@ -235,6 +235,10 @@ const createBookmarkSearchDocument = (entry: SearchableBookmarkEntry): BookmarkS
  * Bookmark Entry一覧からFuse.js検索document一覧を作ります。
  * @param {readonly BookmarkEntry[]} entries 変換するBookmark Entry一覧です。
  * @returns {readonly BookmarkSearchDocument[]} Fuse.jsへ渡す検索document一覧です。
+ * @example
+ * ```ts
+ * const result = createBookmarkSearchDocuments(bookmarkTree.entries);
+ * ```
  */
 export const createBookmarkSearchDocuments = (
   entries: readonly BookmarkEntry[],
@@ -247,6 +251,11 @@ export const createBookmarkSearchDocuments = (
  * Fuse.js scoreをCLI表示用scoreへ変換します。
  * @param {number} fuseScore Fuse.jsが返したscoreです。
  * @returns {number} 1に近いほど一致度が高いCLI用scoreです。
+ * @example
+ * ```ts
+ * const result = convertFuseScoreToCommandScore(0.2);
+ * // 0.8
+ * ```
  */
 export const convertFuseScoreToCommandScore = (fuseScore: number): number =>
   worstFuseScore - fuseScore;
@@ -255,6 +264,10 @@ export const convertFuseScoreToCommandScore = (fuseScore: number): number =>
  * Bookmark Entry一覧を完全一致相当の検索結果へ変換します。
  * @param {readonly BookmarkEntry[]} entries 検索結果として扱うBookmark Entry一覧です。
  * @returns {readonly BookmarkSearchResult[]} 検索結果一覧です。
+ * @example
+ * ```ts
+ * const result = createBookmarkSearchResultsFromEntries(bookmarkTree.bookmarks);
+ * ```
  */
 export const createBookmarkSearchResultsFromEntries = (
   entries: readonly BookmarkEntry[],
@@ -401,6 +414,10 @@ const compareSearchResults = (left: BookmarkSearchResult, right: BookmarkSearchR
  * @param {readonly BookmarkEntry[]} entries 検索対象のBookmark Entry一覧です。
  * @param {string} query 検索queryです。
  * @returns {readonly BookmarkSearchResult[]} 検索結果一覧です。
+ * @example
+ * ```ts
+ * const result = searchBookmarks(bookmarkTree.entries, "Stripe #finance");
+ * ```
  */
 export const searchBookmarks = (
   entries: readonly BookmarkEntry[],
@@ -428,6 +445,13 @@ export const searchBookmarks = (
  * @param {readonly BookmarkSearchResult[]} input.bookmarkResults Bookmark検索結果一覧です。
  * @param {readonly BrowserHistoryEntry[]} input.historyEntries Chrome履歴entry一覧です。
  * @returns {readonly BookmarkSearchResult[]} merge済み検索結果一覧です。
+ * @example
+ * ```ts
+ * const result = mergeBookmarkSearchResultsWithHistory({
+ *   bookmarkResults,
+ *   historyEntries,
+ * });
+ * ```
  */
 export const mergeBookmarkSearchResultsWithHistory = (input: {
   readonly bookmarkResults: readonly BookmarkSearchResult[];

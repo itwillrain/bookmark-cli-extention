@@ -79,6 +79,17 @@ const createMoveExecutionContext = async (
  * Bookmarkを移動。
  * @param {MoveBookmarkInput} input Bookmark移動use case入力。
  * @returns {Promise<OrganizeBookmarkResult>} Bookmark移動結果。
+ * @example
+ * ```ts
+ * const result = await moveBookmark({
+ *   currentDirectory: "/Work",
+ *   lastResultEntries,
+ *   organizer,
+ *   repository,
+ *   targetFolderPathInput: "../Finance",
+ *   targetInput: "1",
+ * });
+ * ```
  */
 export const moveBookmark = async (input: MoveBookmarkInput): Promise<OrganizeBookmarkResult> => {
   const targetResolution = resolveTargetBookmark(input.lastResultEntries, input.targetInput);

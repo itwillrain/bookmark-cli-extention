@@ -97,6 +97,14 @@ const mergeLatestPersistedSettings = async (
  * 起動時の拡張状態を読み込み、Bookmark Treeと照合。
  * @param {LoadExtensionStateInput} input 拡張状態読み込み入力。
  * @returns {Promise<BookmarkCommandResult<ExtensionState>>} 拡張状態読み込み結果。
+ * @example
+ * ```ts
+ * const result = await loadExtensionState({
+ *   now,
+ *   repository,
+ *   storage,
+ * });
+ * ```
  */
 export const loadExtensionState = async (
   input: LoadExtensionStateInput,
@@ -124,6 +132,18 @@ export const loadExtensionState = async (
  * Command実行後の現在ディレクトリと入力履歴を保存。
  * @param {PersistCommandExecutionStateInput} input 拡張状態保存入力。
  * @returns {Promise<BookmarkCommandResult<ExtensionState>>} 拡張状態保存結果。
+ * @example
+ * ```ts
+ * const result = await persistCommandExecutionState({
+ *   commandInput: "go Stripe",
+ *   currentDirectory: "/Work",
+ *   extensionState,
+ *   now,
+ *   preserveExtensionSettings: true,
+ *   repository,
+ *   storage,
+ * });
+ * ```
  */
 export const persistCommandExecutionState = async (
   input: PersistCommandExecutionStateInput,

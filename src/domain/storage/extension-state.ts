@@ -92,6 +92,10 @@ export interface ExtensionState {
  * @param {CurrentDirectory} folderPath folder path。
  * @param {string} updatedAt 更新日時ISO文字列。
  * @returns {PersistedCurrentDirectory} 保存済み現在ディレクトリ。
+ * @example
+ * ```ts
+ * const result = createPersistedCurrentDirectory(bookmarkId, folderPath, updatedAt);
+ * ```
  */
 export const createPersistedCurrentDirectory = (
   bookmarkId: string,
@@ -106,6 +110,10 @@ export const createPersistedCurrentDirectory = (
 /**
  * 初期拡張状態を作成。
  * @returns {ExtensionState} 初期拡張状態。
+ * @example
+ * ```ts
+ * const result = createInitialExtensionState();
+ * ```
  */
 export const createInitialExtensionState = (): ExtensionState => ({
   commandHistory: [],
@@ -167,6 +175,10 @@ const trimCommandHistory = (
  * @param {string} input 入力文字列。
  * @param {string} executedAt 実行日時ISO文字列。
  * @returns {ExtensionState} command history更新後の拡張状態。
+ * @example
+ * ```ts
+ * const result = appendCommandHistory(state, input, executedAt);
+ * ```
  */
 export const appendCommandHistory = (
   state: ExtensionState,
@@ -196,6 +208,10 @@ export const appendCommandHistory = (
  * @param {ExtensionState} state 更新前の拡張状態です。
  * @param {readonly CommandAlias[]} commandAliases 保存するcommand alias一覧です。
  * @returns {ExtensionState} command alias更新後の拡張状態です。
+ * @example
+ * ```ts
+ * const result = updateCommandAliases(state, commandAliases);
+ * ```
  */
 export const updateCommandAliases = (
   state: ExtensionState,

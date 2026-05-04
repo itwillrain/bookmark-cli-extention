@@ -57,6 +57,13 @@ const jsdocStylePluginName = "bookmark-jsdoc-style";
 /** JSDoc文体lint rule名。 */
 const noDesuEndingJsdocRuleName = "no-desu-ending";
 
+/** Placeholder example検出lint rule名。 */
+const noPlaceholderExampleRuleName = "no-placeholder-example";
+
+/** Placeholder exampleの関数呼び出しに一致する正規表現。 */
+const placeholderExampleCallPattern =
+  /\bconst\s+result\s*=\s*(?:await\s+)?[A-Za-z_$][\w$]*\(\s*input\s*\)\s*;/u;
+
 /** ESLint comment tokenの位置情報。 */
 interface EslintCommentLocation {
   /** Comment開始位置。 */
@@ -111,6 +118,14 @@ const normalizeJsdocCommentLines = (comment: EslintCommentToken): readonly strin
 const hasDesuEndingJsdocLine = (comment: EslintCommentToken): boolean =>
   normalizeJsdocCommentLines(comment).some((line) => line.endsWith(desuSentenceEnding));
 
+/**
+ * JSDoc commentがplaceholder exampleを持つかを判定。
+ * @param {EslintCommentToken} comment ESLint comment token。
+ * @returns {boolean} placeholder exampleを持つならtrue。
+ */
+const hasPlaceholderExampleJsdocLine = (comment: EslintCommentToken): boolean =>
+  normalizeJsdocCommentLines(comment).some((line) => placeholderExampleCallPattern.test(line));
+
 /** JSDocの「です。」終わりを検出するESLint rule。 */
 const noDesuEndingJsdocRule: Rule.RuleModule = {
   /**
@@ -151,10 +166,51 @@ const noDesuEndingJsdocRule: Rule.RuleModule = {
   },
 };
 
+/** JSDocのplaceholder exampleを検出するESLint rule。 */
+const noPlaceholderExampleRule: Rule.RuleModule = {
+  /**
+   * Placeholder example lintのvisitorを作成。
+   * @param {Rule.RuleContext} context ESLint rule context。
+   * @returns {Rule.RuleListener} ESLint visitor。
+   */
+  // oxlint-disable-next-line typescript-eslint/prefer-readonly-parameter-types -- ESLint rule APIのcontext型に合わせる。
+  create(context) {
+    return {
+      /**
+       * Program全体のJSDoc commentを検査。
+       * @returns {void} 返り値はありません。
+       */
+      // oxlint-disable-next-line typescript-eslint/prefer-readonly-parameter-types -- ESLint visitor APIのnode型に合わせる。
+      Program(): void {
+        for (const comment of context.sourceCode.getAllComments()) {
+          if (comment.loc && isJsdocComment(comment) && hasPlaceholderExampleJsdocLine(comment)) {
+            context.report({
+              loc: comment.loc,
+              messageId: "avoidPlaceholderExample",
+            });
+          }
+        }
+      },
+    };
+  },
+  meta: {
+    docs: {
+      description: "JSDocのexampleにplaceholder呼び出しだけを書くことを避ける",
+    },
+    messages: {
+      avoidPlaceholderExample:
+        "JSDocの@exampleがplaceholder呼び出しだけになっています。具体値や期待結果を含めてください。",
+    },
+    schema: [],
+    type: "suggestion",
+  },
+};
+
 /** Bookmark CLI固有のESLint plugin。 */
 const bookmarkCliEslintPlugin: ESLint.Plugin = {
   rules: {
     [noDesuEndingJsdocRuleName]: noDesuEndingJsdocRule,
+    [noPlaceholderExampleRuleName]: noPlaceholderExampleRule,
   },
 };
 
@@ -228,7 +284,7 @@ export default defineConfig(
     ignores: ["**/*.test.ts", "**/*test-helper.ts"],
     rules: {
       "jsdoc/require-example": [
-        "warn",
+        "error",
         {
           contexts: requiredTypedocExampleContexts,
           enableFixer: false,
@@ -236,6 +292,7 @@ export default defineConfig(
           exemptedBy: ["inheritdoc", "internal"],
         },
       ],
+      [`${jsdocStylePluginName}/${noPlaceholderExampleRuleName}`]: "error",
     },
   },
 );

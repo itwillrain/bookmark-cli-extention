@@ -53,6 +53,15 @@ const resolveCurrentDirectoryBookmarkId = (
  * 現在ディレクトリを保存状態へ反映。
  * @param {UpdateCurrentDirectoryInput} input 現在ディレクトリ更新入力。
  * @returns {ExtensionState} 現在ディレクトリ更新後の拡張状態。
+ * @example
+ * ```ts
+ * const result = updateCurrentDirectory({
+ *   bookmarkTree,
+ *   currentDirectory: "/Work",
+ *   state,
+ *   updatedAt: "2026-05-05T00:00:00.000Z",
+ * });
+ * ```
  */
 export const updateCurrentDirectory = (input: UpdateCurrentDirectoryInput): ExtensionState => ({
   ...input.state,
@@ -140,6 +149,14 @@ const keepExistingBookmarkRecordEntries = <TValue>(
  * Bookmark Treeと照合して拡張状態を掃除。
  * @param {SanitizeExtensionStateInput} input 拡張状態掃除入力。
  * @returns {ExtensionState} 掃除後の拡張状態。
+ * @example
+ * ```ts
+ * const result = sanitizeExtensionStateForBookmarkTree({
+ *   bookmarkTree,
+ *   state,
+ *   updatedAt: "2026-05-05T00:00:00.000Z",
+ * });
+ * ```
  */
 export const sanitizeExtensionStateForBookmarkTree = (
   input: SanitizeExtensionStateInput,

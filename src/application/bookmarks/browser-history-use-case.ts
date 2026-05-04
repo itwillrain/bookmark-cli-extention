@@ -49,6 +49,14 @@ const getBrowserHistoryResultLimit = (input: ListBrowserHistoryInput): number =>
  * Chrome閲覧履歴を取得。
  * @param {ListBrowserHistoryInput} input Chrome閲覧履歴一覧入力。
  * @returns {Promise<BookmarkCommandResult<ListBrowserHistoryValue>>} Chrome閲覧履歴一覧結果。
+ * @example
+ * ```ts
+ * const result = await listBrowserHistory({
+ *   historyRepository,
+ *   limit: 25,
+ *   query: "Stripe",
+ * });
+ * ```
  */
 export const listBrowserHistory = async (
   input: ListBrowserHistoryInput,

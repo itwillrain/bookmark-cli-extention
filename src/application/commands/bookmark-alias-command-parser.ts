@@ -90,6 +90,11 @@ const createAliasSetCommand = (assignmentInput: string): AliasBookmarkCommand =>
  * Alias commandを解析します。
  * @param {string} query command名を除いた入力です。
  * @returns {AliasBookmarkCommand} Alias commandです。
+ * @example
+ * ```ts
+ * const result = parseAliasBookmarkCommand("c=clear");
+ * // { kind: "alias", operation: "set", aliasName: "c", commandInput: "clear" }
+ * ```
  */
 export const parseAliasBookmarkCommand = (query: string): AliasBookmarkCommand => {
   const assignmentInput = query.trim();
@@ -105,6 +110,11 @@ export const parseAliasBookmarkCommand = (query: string): AliasBookmarkCommand =
  * Unalias commandを解析します。
  * @param {readonly string[]} queryParts command名を除いたtoken一覧です。
  * @returns {UnaliasBookmarkCommand} Unalias commandです。
+ * @example
+ * ```ts
+ * const result = parseUnaliasBookmarkCommand(["c"]);
+ * // { kind: "unalias", aliasName: "c" }
+ * ```
  */
 export const parseUnaliasBookmarkCommand = (
   queryParts: readonly string[],
