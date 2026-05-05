@@ -66,11 +66,17 @@ jobs:
       - name: Run tests
         run: pnpm test
 
-      - name: Build extension
+      - name: Build Chrome extension
         run: pnpm run build
 
-      - name: Zip extension
+      - name: Build Firefox extension
+        run: pnpm run build:firefox
+
+      - name: Zip Chrome extension
         run: pnpm run zip
+
+      - name: Zip Firefox extension
+        run: pnpm run zip:firefox
 
       - name: Collect release assets
         run: |
