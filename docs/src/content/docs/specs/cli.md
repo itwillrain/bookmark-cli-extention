@@ -369,6 +369,8 @@ Work/Research
 
 `rm` は `-r` や `-f` などのoptionを除いた残り全体をpathとして扱い、spaceを含むBookmark titleでも候補を絞り込みます。
 
+`rm` はrecursive指定がない場合はBookmarkだけを候補にし、`-r`、`-R`、`--recursive` を指定した場合はfolderだけを候補にします。
+
 候補一覧が表示領域を超える場合でも候補自体は全件を保持し、TabキーやShift+Tabキーで全候補を巡回します。
 
 `cd ../` は親ディレクトリ直下のfolderを候補にします。

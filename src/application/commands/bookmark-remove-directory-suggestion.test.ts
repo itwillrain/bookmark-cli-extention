@@ -56,9 +56,9 @@ const bookmarkTree = {
  */
 describe("suggestBookmarkDirectoryPaths for rm full candidate list", (): void => {
   /**
-   * Folder候補が多い場合でもBookmark候補をTab巡回対象に含めることを検証。
+   * RecursiveなしではFolder候補が多い場合でもBookmark候補だけをTab巡回対象にすることを検証。
    */
-  it("keeps bookmark candidates selectable when rm has many folder candidates", (): void => {
+  it("keeps only bookmark candidates selectable without recursive option", (): void => {
     const suggestions = suggestBookmarkDirectoryPaths({
       bookmarkTree,
       currentDirectory: "/Work",
@@ -66,15 +66,47 @@ describe("suggestBookmarkDirectoryPaths for rm full candidate list", (): void =>
     });
 
     expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual([
-      "rm ./A",
-      "rm ./B",
-      "rm ./C",
-      "rm ./D",
-      "rm ./E",
-      "rm ./F",
-      "rm ./G",
-      "rm ./H",
       "rm ./Stripe Dashboard",
     ]);
+  });
+
+  /**
+   * RecursiveありではBookmark候補を混ぜずFolder候補だけをTab巡回対象にすることを検証。
+   */
+  it("keeps only folder candidates selectable with recursive option", (): void => {
+    const suggestions = suggestBookmarkDirectoryPaths({
+      bookmarkTree,
+      currentDirectory: "/Work",
+      inputValue: "rm -r ./",
+    });
+
+    expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual([
+      "rm -r ./A",
+      "rm -r ./B",
+      "rm -r ./C",
+      "rm -r ./D",
+      "rm -r ./E",
+      "rm -r ./F",
+      "rm -r ./G",
+      "rm -r ./H",
+    ]);
+  });
+});
+
+/**
+ * Rm command向けcombined option suggestionのテストスイート。
+ */
+describe("suggestBookmarkDirectoryPaths for rm combined option", (): void => {
+  /**
+   * Recursive force optionでもFolder候補だけをTab巡回対象にすることを検証。
+   */
+  it("keeps only folder candidates selectable with recursive force option", (): void => {
+    const suggestions = suggestBookmarkDirectoryPaths({
+      bookmarkTree,
+      currentDirectory: "/Work",
+      inputValue: "rm -rf ./A",
+    });
+
+    expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual(["rm -rf ./A"]);
   });
 });

@@ -226,26 +226,22 @@ describe("suggestBookmarkDirectoryPaths for go", (): void => {
  */
 describe("suggestBookmarkDirectoryPaths for rm", (): void => {
   /**
-   * Rm commandでも現在ディレクトリ直下のentry候補を返すことを検証。
+   * Rm commandではrecursiveなしで現在ディレクトリ直下のBookmark候補だけを返すことを検証。
    */
-  it("suggests entry paths for rm path prefix", (): void => {
+  it("suggests bookmark paths for rm path prefix", (): void => {
     const suggestions = suggestBookmarkDirectoryPaths({
       bookmarkTree,
       currentDirectory: "/Work",
       inputValue: "rm ./",
     });
 
-    expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual([
-      "rm ./Admin",
-      "rm ./Research",
-      "rm ./eza",
-    ]);
+    expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual(["rm ./eza"]);
   });
 
   /**
-   * Rm commandのoption後でもpath候補を返すことを検証。
+   * Rm commandのrecursive option後ではfolder候補だけを返すことを検証。
    */
-  it("suggests entry paths for rm recursive option path prefix", (): void => {
+  it("suggests folder paths for rm recursive option path prefix", (): void => {
     const suggestions = suggestBookmarkDirectoryPaths({
       bookmarkTree,
       currentDirectory: "/Work",
