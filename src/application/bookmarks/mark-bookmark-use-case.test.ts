@@ -33,6 +33,7 @@ const bookmarkTree = {
   bookmarks: [stripeBookmarkEntry],
   entries: [workFolderEntry, stripeBookmarkEntry],
   folders: [workFolderEntry],
+  rootBookmarkParentId: "1",
 } satisfies BookmarkTree;
 
 /** CLI起動元タブfixture。 */
@@ -121,6 +122,35 @@ describe("markCurrentTab creation", (): void => {
     expect(recordingCreator.createdBookmarks).toStrictEqual([
       {
         parentId: "10",
+        title: "Production Admin",
+        url: "https://admin.example.com/",
+      },
+    ]);
+  });
+});
+
+/** Mark current tab root保存のテストスイート。 */
+describe("markCurrentTab root creation", (): void => {
+  /**
+   * Root保存時にbrowser root直下の既定containerを明示することを検証。
+   */
+  it("creates root bookmark with root bookmark parent id", async (): Promise<void> => {
+    const recordingCreator = createRecordingBookmarkCreator();
+
+    const result = await markCurrentTab({
+      allowDuplicate: false,
+      creator: recordingCreator.creator,
+      currentDirectory: "/",
+      launchContext,
+      repository: createBookmarkRepository(),
+      targetFolderPathInput: "",
+      titleInput: "",
+    });
+
+    expect(result.ok).toBe(true);
+    expect(recordingCreator.createdBookmarks).toStrictEqual([
+      {
+        parentId: "1",
         title: "Production Admin",
         url: "https://admin.example.com/",
       },

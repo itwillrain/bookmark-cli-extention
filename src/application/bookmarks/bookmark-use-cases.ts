@@ -28,6 +28,7 @@ export type BookmarkCommandErrorCode =
   | "invalid_argument"
   | "invalid_tag"
   | "not_found"
+  | "permission_denied"
   | "storage_failed"
   | "unsupported_tab";
 

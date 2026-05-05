@@ -1,3 +1,5 @@
+/* oxlint-disable max-lines -- Directory補完のpath解析とsuggestion生成を同じmoduleに保つため。 */
+
 import type { BookmarkEntry, BookmarkTree } from "../../domain/bookmarks/bookmark-tree";
 import {
   type CurrentDirectory,
@@ -39,6 +41,9 @@ const commandArgumentInputPattern = /\S+\s/u;
 
 /** Folder path separator。 */
 const folderPathSeparator = "/";
+
+/** Root直下pathのseparator index。 */
+const rootPathSeparatorIndex = 0;
 
 /** 空文字。 */
 const emptyString = "";
@@ -209,6 +214,14 @@ const createPathCompletionParts = (pathInput: string): PathCompletionParts => {
       parentPathInput: emptyString,
       pathCompletionBase: emptyString,
       titlePrefix: pathInput,
+    };
+  }
+
+  if (separatorIndex === rootPathSeparatorIndex) {
+    return {
+      parentPathInput: folderPathSeparator,
+      pathCompletionBase: folderPathSeparator,
+      titlePrefix: pathInput.slice(separatorIndex + nextIndexOffset),
     };
   }
 

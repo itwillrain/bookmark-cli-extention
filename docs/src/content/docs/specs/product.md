@@ -11,7 +11,7 @@ Bookmark CLI Extensionは、Chrome Bookmark Managerを拡張機能内の疑似CL
 
 Chromeに保存されたBookmarkをフォルダ階層として扱い、`go` で素早く開き、`find` で候補を絞り、`mark` で現在のタブを保存します。
 
-v1.1.0以降はFirefox desktopにも対応し、v1.2.0候補ではChromeとFirefoxのBookmark同期を扱います。
+v1.2.0では、Bookmarks BarをCLI root `/` として扱い、Other Bookmarksなどのbrowser root直下containerをCLI root直下のfolderとして扱います。
 
 ## 解きたい課題
 
@@ -53,6 +53,7 @@ mark "Production Admin"
 - Bookmarkまたはfolderの名称変更
 - Bookmarkの仮想タグ付け
 - 疑似CLI出力向けのBookmark Tree正規化
+- Other Bookmarksなどのbrowser root直下container表示
 - コマンド入力、解析、実行、結果表示の責務整理
 
 ## 後続スコープ
@@ -70,7 +71,7 @@ v1では、複数ブラウザ対応、クラウド同期、チーム共有機能
 
 まずChromeのBookmark Managerを対象に、拡張機能内で安全に操作できる体験へ集中します。
 
-ChromeとFirefox間のBookmark同期は、v1.2.0候補として [ChromeとFirefoxのBookmark同期ロードマップ](../cross-browser-sync/) で管理します。
+ChromeとFirefox間のBookmark同期は、後続候補として [ChromeとFirefoxのBookmark同期ロードマップ](../cross-browser-sync/) で管理します。
 
 ## 成功条件
 

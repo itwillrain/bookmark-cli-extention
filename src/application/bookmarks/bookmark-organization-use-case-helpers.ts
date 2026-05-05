@@ -4,8 +4,11 @@ import type {
   BookmarkCommandSuccess,
 } from "./bookmark-use-cases";
 import type { BookmarkEntry, BookmarkTree } from "../../domain/bookmarks/bookmark-tree";
+import {
+  type CurrentDirectory,
+  currentDirectoryRoot,
+} from "../../domain/bookmarks/current-directory";
 import type { BookmarkCliEntry } from "../../domain/cli/bookmark-cli-entry";
-import type { CurrentDirectory } from "../../domain/bookmarks/current-directory";
 import type { OrganizeBookmarkValue } from "./bookmark-organization-use-case-types";
 import { resolveEntryByResultNumber } from "../../domain/bookmarks/result-selection";
 
@@ -110,10 +113,18 @@ const findFolderId = (
   bookmarkTree.folders.find((folder) => folder.folderPath === folderPath)?.id;
 
 /**
+ * Folder pathが疑似CLI rootかを判定。
+ * @param {CurrentDirectory} folderPath 判定対象folder path。
+ * @returns {boolean} 疑似CLI rootならtrue。
+ */
+const isRootFolderPath = (folderPath: CurrentDirectory): boolean =>
+  folderPath === currentDirectoryRoot;
+
+/**
  * Chrome mutationへ渡すparentIdを作成。
  * @param {BookmarkTree} bookmarkTree Bookmark Tree。
  * @param {CurrentDirectory} folderPath folder path。
- * @returns {string | undefined} parent ID。CLI rootではブラウザ既定の保存先に委ねる。
+ * @returns {string | undefined} parent ID。CLI rootではroot保存用container IDを返す。
  * @example
  * ```ts
  * const result = createParentId(bookmarkTree, folderPath);
@@ -122,7 +133,13 @@ const findFolderId = (
 export const createParentId = (
   bookmarkTree: BookmarkTree,
   folderPath: CurrentDirectory,
-): string | undefined => findFolderId(bookmarkTree, folderPath);
+): string | undefined => {
+  if (isRootFolderPath(folderPath)) {
+    return bookmarkTree.rootBookmarkParentId;
+  }
+
+  return findFolderId(bookmarkTree, folderPath);
+};
 
 /**
  * Folder pathから最後のsegmentを取得。

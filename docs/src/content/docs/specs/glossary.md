@@ -41,9 +41,9 @@ Chrome Bookmarks APIでは、`url` を持たないnodeとして扱います。
 
 Bookmark Treeの起点になるfolderです。
 
-v1では `/` をBookmark Barとして扱います。
+Chromeでは `/` をBookmark Barとして扱います。
 
-`Other Bookmarks` はv1に含めず、後続で扱います。
+`Other Bookmarks`、`Mobile Bookmarks` などの他のbrowser root直下containerは、`/` 直下のfolderとして扱います。
 
 ## Bookmark Tree
 

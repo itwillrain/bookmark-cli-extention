@@ -24,6 +24,17 @@ const archiveFolderEntry = {
   title: "Archive",
 } satisfies BookmarkEntry;
 
+/** Other Bookmarks folder entry fixture。 */
+const otherBookmarksFolderEntry = {
+  childrenCount: 0,
+  folderPath: "/Other Bookmarks",
+  folderType: "other",
+  id: "2",
+  kind: "folder",
+  parentId: "0",
+  title: "Other Bookmarks",
+} satisfies BookmarkEntry;
+
 /** Stripe bookmark entry fixture。 */
 const stripeBookmarkEntry = {
   childrenCount: 0,
@@ -44,6 +55,9 @@ const bookmarkTree = {
 
 /** Folderを含む直前結果一覧fixture。 */
 const folderLastResultEntries = [workFolderEntry] as const;
+
+/** Browser管理folderを含む直前結果一覧fixture。 */
+const browserManagedFolderLastResultEntries = [otherBookmarksFolderEntry] as const;
 
 /** 対象result number入力。 */
 const targetInput = "1";
@@ -140,5 +154,31 @@ describe("removeBookmark recursive folder", (): void => {
 
     expect(result.ok).toBe(true);
     expect(recordingOrganizer.removedFolderTrees).toStrictEqual([{ id: "10" }]);
+  });
+});
+
+/** Browser管理folder削除guard use caseのテストスイート。 */
+describe("removeBookmark browser managed folder guard", (): void => {
+  /**
+   * Rm -rfがbrowser管理folderを削除せず理由を返すことを検証。
+   */
+  it("rejects browser managed folder remove with permission_denied", async (): Promise<void> => {
+    const recordingOrganizer = createRecordingOrganizer();
+
+    const result = await removeBookmark({
+      currentDirectory,
+      force: true,
+      lastResultEntries: browserManagedFolderLastResultEntries,
+      organizer: recordingOrganizer.organizer,
+      recursive: true,
+      repository: createBookmarkRepository(),
+      targetInput,
+    });
+
+    expect(result).toMatchObject({
+      errorCode: "permission_denied",
+      ok: false,
+    });
+    expect(recordingOrganizer.removedFolderTrees).toStrictEqual([]);
   });
 });

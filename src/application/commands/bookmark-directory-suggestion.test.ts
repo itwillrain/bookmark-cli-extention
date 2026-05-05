@@ -35,6 +35,16 @@ const researchFolderEntry = {
   title: "Research",
 } satisfies BookmarkEntry;
 
+/** その他のブックマークfolder entry。 */
+const otherBookmarksFolderEntry = {
+  childrenCount: 0,
+  folderPath: "/その他のブックマーク",
+  id: "2",
+  kind: "folder",
+  parentId: "0",
+  title: "その他のブックマーク",
+} satisfies BookmarkEntry;
+
 /** Eza bookmark entry。 */
 const ezaBookmarkEntry = {
   childrenCount: 0,
@@ -65,9 +75,10 @@ const bookmarkTree = {
     adminFolderEntry,
     stripeBookmarkEntry,
     researchFolderEntry,
+    otherBookmarksFolderEntry,
     ezaBookmarkEntry,
   ],
-  folders: [workFolderEntry, adminFolderEntry, researchFolderEntry],
+  folders: [workFolderEntry, adminFolderEntry, researchFolderEntry, otherBookmarksFolderEntry],
 } satisfies BookmarkTree;
 
 /**
@@ -121,6 +132,42 @@ describe("suggestBookmarkDirectoryPaths", (): void => {
     });
 
     expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual(["ll -a Admin"]);
+  });
+});
+
+/**
+ * Root絶対path suggestionのテストスイート。
+ */
+describe("suggestBookmarkDirectoryPaths root absolute path", (): void => {
+  /**
+   * Cd / でroot直下のfolder候補を返すことを検証。
+   */
+  it("suggests root children for cd absolute root input", (): void => {
+    const suggestions = suggestBookmarkDirectoryPaths({
+      bookmarkTree,
+      currentDirectory: "/Work",
+      inputValue: "cd /",
+    });
+
+    expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual([
+      "cd /Work",
+      "cd /その他のブックマーク",
+    ]);
+  });
+
+  /**
+   * Cd /そ でroot直下のbrowser container folderをprefix filterすることを検証。
+   */
+  it("suggests root container folder by absolute path prefix", (): void => {
+    const suggestions = suggestBookmarkDirectoryPaths({
+      bookmarkTree,
+      currentDirectory: "/Work",
+      inputValue: "cd /そ",
+    });
+
+    expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual([
+      "cd /その他のブックマーク",
+    ]);
   });
 });
 

@@ -22,6 +22,11 @@ const historyCommandInput = "history github docs --limit 20";
 const changeDirectoryCommandInput = "cd ../Research";
 
 /**
+ * Spaceを含むpathのCd command入力です。
+ */
+const changeDirectoryWithSpacedPathCommandInput = "cd /Other Bookmarks";
+
+/**
  * Path省略Cd commandの入力です。
  */
 const changeDirectoryToRootCommandInput = "cd";
@@ -130,6 +135,16 @@ describe("parseBookmarkCommand directory commands", (): void => {
     expect(parseBookmarkCommand(changeDirectoryCommandInput)).toStrictEqual({
       kind: "cd",
       pathInput: "../Research",
+    });
+  });
+
+  /**
+   * Spaceを含むpathのCd commandを解析できることを検証します。
+   */
+  it("parses cd command with spaced path", (): void => {
+    expect(parseBookmarkCommand(changeDirectoryWithSpacedPathCommandInput)).toStrictEqual({
+      kind: "cd",
+      pathInput: "/Other Bookmarks",
     });
   });
 
