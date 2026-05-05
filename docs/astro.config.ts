@@ -139,6 +139,7 @@ export default defineConfig({
             { label: "Issue運用", slug: "development/issues" },
             { label: "リリース運用", slug: "development/release" },
             { label: "Security運用", slug: "development/security" },
+            { label: "GitHub初期設定", slug: "development/github-bootstrap" },
           ],
           label: "開発",
         },

@@ -1,0 +1,39 @@
+# name	color	description
+bug	d73a4a	Something is broken.
+fix	d73a4a	Fix a broken behavior.
+enhancement	a2eeef	Improve an existing behavior.
+feature	a2eeef	Add a new user-facing behavior.
+documentation	0075ca	Improve documentation.
+docs	0075ca	Improve documentation.
+question	d876e3	Question or clarification.
+chore	cfd3d7	Maintenance work.
+refactor	cfd3d7	Internal refactoring.
+dependencies	0366d6	Dependency updates.
+github_actions	000000	GitHub Actions updates.
+automerge	0e8a16	Auto merge candidate.
+skip-changelog	ffffff	Exclude from generated release notes.
+major	b60205	Major release change.
+minor	5319e7	Minor release change.
+patch	0e8a16	Patch release change.
+needs-triage	fbca04	Needs initial triage.
+needs-info	fbca04	Needs more information.
+accepted	0e8a16	Accepted for implementation.
+duplicate	cfd3d7	Duplicate issue or pull request.
+wontfix	ffffff	Will not be worked on.
+browser: chrome	1d76db	Chrome-specific behavior.
+browser: firefox	ff7139	Firefox-specific behavior.
+browser: all	5319e7	Browser-agnostic behavior.
+area: cli	0052cc	CLI behavior.
+area: search	0052cc	Search and ranking behavior.
+area: bookmark-tree	0052cc	Bookmark tree behavior.
+area: history	0052cc	Browser history integration.
+area: tags	0052cc	Tag behavior.
+area: aliases	0052cc	Alias behavior.
+area: popup	0052cc	Popup settings.
+area: hotkey	0052cc	Hotkey and window behavior.
+area: release	0052cc	Release or store operation.
+area: docs	0052cc	Documentation area.
+priority: p0	b60205	Critical and urgent.
+priority: p1	d93f0b	High priority.
+priority: p2	fbca04	Normal priority.
+priority: p3	cfd3d7	Low priority.

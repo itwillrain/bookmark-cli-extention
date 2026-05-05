@@ -21,6 +21,7 @@
     "docs:preview": "pnpm --dir docs run preview",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
+    "github:bootstrap": "scripts/github/bootstrap-repository.sh",
     "lint": "pnpm run lint:secrets && pnpm run lint:oxlint && pnpm run lint:docs",
     "lint:docs": "eslint \"**/*.{ts,tsx}\"",
     "lint:jsdoc-style": "eslint \"**/*.{ts,tsx}\" --rule \"bookmark-jsdoc-style/no-desu-ending:error\"",

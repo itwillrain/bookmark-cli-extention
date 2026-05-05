@@ -21,6 +21,8 @@ description: GitHub security settings、Dependabot、CodeQL、secret scanningの
 
 Dependabot alertsはdependency graphと合わせて動作し、default branch上の依存関係を対象にします。
 
+新しいrepositoryのGitHub側設定は、[GitHub初期設定](../github-bootstrap/)のbootstrap scriptで反映します。
+
 ## Dependabot更新方針
 
 `.github/dependabot.yml` では、root package、docs package、GitHub Actionsを対象にします。
