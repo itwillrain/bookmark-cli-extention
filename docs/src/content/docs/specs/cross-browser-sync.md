@@ -1,15 +1,15 @@
 ---
 title: ChromeとFirefoxのBookmark同期ロードマップ
-description: Bookmark CLI Extension v1.2.0でChromeとFirefoxのBookmarkを同期するための方針、制約、実装順序です。
+description: Bookmark CLI ExtensionでChromeとFirefoxのBookmarkを同期するための方針、制約、実装順序です。
 ---
 
 # ChromeとFirefoxのBookmark同期ロードマップ
 
-このページでは、v1.2.0候補としてChromeとFirefoxのBookmarkを同期するための方針を定義します。
+このページでは、後続候補としてChromeとFirefoxのBookmarkを同期するための方針を定義します。
 
 v1.1.0はFirefox desktopでBookmark CLIを動かすことを目的にします。
 
-v1.2.0では、Chrome版とFirefox版のあいだで同じBookmark Treeを保てる状態を目標にします。
+同期実装では、Chrome版とFirefox版のあいだで同じBookmark Treeを保てる状態を目標にします。
 
 ## 結論
 
@@ -41,9 +41,9 @@ Bookmarkの作成、更新、移動、削除は、まず差分として検出し
 
 その後、同期先の状態と突き合わせて、各ブラウザのBookmarks APIへ反映します。
 
-## v1.2.0で扱う同期先
+## 初期同期で扱う同期先
 
-v1.2.0では、同期先を1つに絞って実装します。
+初期同期では、同期先を1つに絞って実装します。
 
 最初の候補は、手動ファイル同期です。
 
@@ -55,9 +55,9 @@ v1.2.0では、同期先を1つに絞って実装します。
 
 クラウド同期先を扱う場合は、後続versionで別途決めます。
 
-## v1.2.0で扱わない同期先
+## 初期同期で扱わない同期先
 
-v1.2.0では、次の同期先を扱いません。
+初期同期では、次の同期先を扱いません。
 
 - 独自cloud backend
 - Google Drive
@@ -151,7 +151,7 @@ conflictは自動解決しません。
 
 ユーザーが `sync resolve` で採用する側を選びます。
 
-v1.2.0では、次の解決だけを扱います。
+初期同期では、次の解決だけを扱います。
 
 - Chrome側を採用する
 - Firefox側を採用する
@@ -160,7 +160,7 @@ v1.2.0では、次の解決だけを扱います。
 
 ## CLIコマンド
 
-v1.2.0では、次の同期コマンドを候補にします。
+初期同期では、次の同期コマンドを候補にします。
 
 ```bash
 sync status

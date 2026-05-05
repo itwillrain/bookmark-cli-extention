@@ -8,6 +8,12 @@ import { type FolderPath, joinFolderPath, rootFolderPath } from "./folder-path";
 export type BookmarkEntryKind = "bookmark" | "folder";
 
 /**
+ * Browserが管理するtop-level bookmark folderの種別です。
+ * @see https://developer.chrome.com/docs/extensions/reference/api/bookmarks#type-FolderType
+ */
+export type BookmarkFolderType = "bookmarks-bar" | "managed" | "mobile" | "other";
+
+/**
  * Chrome Bookmarks APIから受け取るnodeのうち、Domain層が必要とする最小shapeです。
  */
 export interface RawBookmarkTreeNode {
@@ -31,6 +37,11 @@ export interface RawBookmarkTreeNode {
    * 子node一覧です。
    */
   readonly children?: readonly RawBookmarkTreeNode[];
+  /**
+   * Browserが付与するtop-level folder種別です。
+   * @see https://developer.chrome.com/docs/extensions/reference/api/bookmarks#type-FolderType
+   */
+  readonly folderType?: BookmarkFolderType;
 }
 
 /**
@@ -84,6 +95,10 @@ export interface BookmarkEntry {
  */
 export interface BookmarkTree {
   /**
+   * 疑似CLI rootへ新規作成または移動するときに使うbrowser root直下container IDです。
+   */
+  readonly rootBookmarkParentId?: string;
+  /**
    * Bookmarkとfolderを巡回順に並べた一覧です。
    */
   readonly entries: readonly BookmarkEntry[];
@@ -106,6 +121,16 @@ const missingParentId = "";
  * Children未定義時に使う空配列です。
  */
 const emptyChildren = [] as const satisfies readonly RawBookmarkTreeNode[];
+
+/**
+ * 先頭要素のindexです。
+ */
+const firstElementIndex = 0;
+
+/**
+ * Browserのbookmark bar folder typeです。
+ */
+const bookmarksBarFolderType = "bookmarks-bar" satisfies BookmarkFolderType;
 
 /**
  * NodeがBookmarkかを判定します。
@@ -149,15 +174,23 @@ const isBrowserRootChildContainer = (
 ): boolean => typeof node.parentId === "string" && rootNodeIds.includes(node.parentId);
 
 /**
- * NodeがCLI上のfolderとして表示しないbrowser root containerかを判定します。
+ * NodeがCLI rootとして扱うbrowser root直下containerかを判定します。
  * @param {RawBookmarkTreeNode} node 判定対象nodeです。
- * @param {readonly string[]} rootNodeIds Browser root node ID一覧です。
- * @returns {boolean} Browser root containerならtrueです。
+ * @param {string | undefined} rootBookmarkParentId CLI rootとして扱うcontainer IDです。
+ * @returns {boolean} CLI rootとして扱うcontainerならtrueです。
  */
-const isBrowserRootContainer = (
+const isCliRootContainer = (
   node: RawBookmarkTreeNode,
-  rootNodeIds: readonly string[],
-): boolean => isBrowserRootNode(node) || isBrowserRootChildContainer(node, rootNodeIds);
+  rootBookmarkParentId: string | undefined,
+): boolean => typeof rootBookmarkParentId === "string" && node.id === rootBookmarkParentId;
+
+/**
+ * NodeがBookmarks Bar containerかを判定します。
+ * @param {RawBookmarkTreeNode} node 判定対象nodeです。
+ * @returns {boolean} Bookmarks Bar containerならtrueです。
+ */
+const isBookmarksBarContainer = (node: RawBookmarkTreeNode): boolean =>
+  node.folderType === bookmarksBarFolderType;
 
 /**
  * Folder entryを作ります。
@@ -225,9 +258,13 @@ const normalizeFolderNode = (
 /**
  * Node正規化関数を作成します。
  * @param {readonly string[]} rootNodeIds Browser root node ID一覧です。
+ * @param {string | undefined} rootBookmarkParentId CLI rootとして扱うcontainer IDです。
  * @returns {NodeNormalizer} Node正規化関数です。
  */
-const createNodeNormalizer = (rootNodeIds: readonly string[]): NodeNormalizer => {
+const createNodeNormalizer = (
+  rootNodeIds: readonly string[],
+  rootBookmarkParentId: string | undefined,
+): NodeNormalizer => {
   /**
    * 単一nodeを正規化します。
    * @param {RawBookmarkTreeNode} node 正規化するnodeです。
@@ -238,8 +275,12 @@ const createNodeNormalizer = (rootNodeIds: readonly string[]): NodeNormalizer =>
     node: RawBookmarkTreeNode,
     folderPath: FolderPath,
   ): readonly BookmarkEntry[] => {
-    if (isBrowserRootContainer(node, rootNodeIds)) {
+    if (isBrowserRootNode(node) || isCliRootContainer(node, rootBookmarkParentId)) {
       return normalizeChildren(getChildren(node), rootFolderPath, normalizeNode);
+    }
+
+    if (isBrowserRootChildContainer(node, rootNodeIds)) {
+      return normalizeFolderNode(node, rootFolderPath, normalizeNode);
     }
 
     if (isBookmarkNode(node)) {
@@ -261,12 +302,56 @@ const createRootNodeIds = (nodes: readonly RawBookmarkTreeNode[]): readonly stri
   nodes.filter((node) => isBrowserRootNode(node)).map((node) => node.id);
 
 /**
+ * Browser root直下のcontainer一覧を取得します。
+ * @param {readonly RawBookmarkTreeNode[]} nodes 正規化するroot node一覧です。
+ * @returns {readonly RawBookmarkTreeNode[]} Browser root直下のcontainer一覧です。
+ */
+const listBrowserRootChildContainers = (
+  nodes: readonly RawBookmarkTreeNode[],
+): readonly RawBookmarkTreeNode[] =>
+  nodes.flatMap((node) => {
+    if (isBrowserRootNode(node)) {
+      return getChildren(node);
+    }
+
+    return emptyChildren;
+  });
+
+/**
+ * 疑似CLI rootとして扱うbrowser root直下containerを取得します。
+ * @param {readonly RawBookmarkTreeNode[]} nodes 正規化するroot node一覧です。
+ * @returns {RawBookmarkTreeNode | undefined} CLI rootとして扱うcontainerです。
+ */
+const findRootBookmarkParentContainer = (
+  nodes: readonly RawBookmarkTreeNode[],
+): RawBookmarkTreeNode | undefined => {
+  const containers = listBrowserRootChildContainers(nodes);
+
+  return (
+    containers.find((container) => isBookmarksBarContainer(container)) ??
+    containers[firstElementIndex]
+  );
+};
+
+/**
+ * 疑似CLI rootへBookmarkを保存するときのparent IDを解決します。
+ * @param {readonly RawBookmarkTreeNode[]} nodes 正規化するroot node一覧です。
+ * @returns {string | undefined} root保存時に使うparent IDです。
+ */
+const resolveRootBookmarkParentId = (nodes: readonly RawBookmarkTreeNode[]): string | undefined =>
+  findRootBookmarkParentContainer(nodes)?.id;
+
+/**
  * Root node一覧を正規化します。
  * @param {readonly RawBookmarkTreeNode[]} nodes 正規化するroot node一覧です。
+ * @param {string | undefined} rootBookmarkParentId CLI rootとして扱うcontainer IDです。
  * @returns {readonly BookmarkEntry[]} 正規化済みentry一覧です。
  */
-const normalizeRootNodes = (nodes: readonly RawBookmarkTreeNode[]): readonly BookmarkEntry[] => {
-  const normalizeNode = createNodeNormalizer(createRootNodeIds(nodes));
+const normalizeRootNodes = (
+  nodes: readonly RawBookmarkTreeNode[],
+  rootBookmarkParentId: string | undefined,
+): readonly BookmarkEntry[] => {
+  const normalizeNode = createNodeNormalizer(createRootNodeIds(nodes), rootBookmarkParentId);
 
   return nodes.flatMap((node) => normalizeNode(node, rootFolderPath));
 };
@@ -292,11 +377,20 @@ const filterEntriesByKind = (
  * ```
  */
 export const normalizeBookmarkTree = (nodes: readonly RawBookmarkTreeNode[]): BookmarkTree => {
-  const entries = normalizeRootNodes(nodes);
-
-  return {
+  const rootBookmarkParentId = resolveRootBookmarkParentId(nodes);
+  const entries = normalizeRootNodes(nodes, rootBookmarkParentId);
+  const bookmarkTree = {
     bookmarks: filterEntriesByKind(entries, "bookmark"),
     entries,
     folders: filterEntriesByKind(entries, "folder"),
+  } satisfies BookmarkTree;
+
+  if (typeof rootBookmarkParentId !== "string") {
+    return bookmarkTree;
+  }
+
+  return {
+    ...bookmarkTree,
+    rootBookmarkParentId,
   };
 };

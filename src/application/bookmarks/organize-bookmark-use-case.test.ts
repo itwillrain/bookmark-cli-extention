@@ -45,6 +45,7 @@ const bookmarkTree = {
   bookmarks: [stripeBookmarkEntry],
   entries: [workFolderEntry, archiveFolderEntry, stripeBookmarkEntry],
   folders: [workFolderEntry, archiveFolderEntry],
+  rootBookmarkParentId: "1",
 } satisfies BookmarkTree;
 
 /** 直前結果一覧fixture。 */
@@ -55,6 +56,9 @@ const targetInput = "1";
 
 /** 移動先folder path入力。 */
 const targetFolderPathInput = "Archive";
+
+/** Root移動先folder path入力。 */
+const rootTargetFolderPathInput = "/";
 
 /** 作成するfolder path入力。 */
 const createFolderPathInput = "Tools";
@@ -111,9 +115,9 @@ describe("makeDirectory", (): void => {
   });
 
   /**
-   * Mkdirでroot直下のfolderをブラウザ既定の保存先へ作成することを検証。
+   * Mkdirでroot直下のfolderをroot保存用containerへ作成することを検証。
    */
-  it("creates root folder without root parent id", async (): Promise<void> => {
+  it("creates root folder with root bookmark parent id", async (): Promise<void> => {
     const recordingOrganizer = createRecordingOrganizer();
 
     const result = await makeDirectory({
@@ -124,7 +128,7 @@ describe("makeDirectory", (): void => {
     });
 
     expect(result.ok).toBe(true);
-    expect(recordingOrganizer.createdFolders).toStrictEqual([{ title: "Project" }]);
+    expect(recordingOrganizer.createdFolders).toStrictEqual([{ parentId: "1", title: "Project" }]);
   });
 });
 
@@ -147,6 +151,25 @@ describe("moveBookmark", (): void => {
 
     expect(result.ok).toBe(true);
     expect(recordingOrganizer.movedEntries).toStrictEqual([{ id: "42", parentId: "11" }]);
+  });
+
+  /**
+   * MvでBookmarkをroot保存用containerへ移動できることを検証。
+   */
+  it("moves bookmark to root bookmark parent id", async (): Promise<void> => {
+    const recordingOrganizer = createRecordingOrganizer();
+
+    const result = await moveBookmark({
+      currentDirectory,
+      lastResultEntries,
+      organizer: recordingOrganizer.organizer,
+      repository: createBookmarkRepository(),
+      targetFolderPathInput: rootTargetFolderPathInput,
+      targetInput,
+    });
+
+    expect(result.ok).toBe(true);
+    expect(recordingOrganizer.movedEntries).toStrictEqual([{ id: "42", parentId: "1" }]);
   });
 });
 

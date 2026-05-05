@@ -1,3 +1,5 @@
+/* oxlint-disable max-lines -- Browser root container正規化のfixtureを同じテストで比較するため。 */
+
 import {
   type BookmarkEntry,
   type RawBookmarkTreeNode,
@@ -19,6 +21,16 @@ const githubPullRequestsUrl = "https://github.com/pulls";
  * Firefox Release NotesのURLです。
  */
 const firefoxReleaseNotesUrl = "https://www.mozilla.org/firefox/releases/";
+
+/**
+ * Chrome Extensions DocsのURLです。
+ */
+const chromeExtensionsDocsUrl = "https://developer.chrome.com/docs/extensions/";
+
+/**
+ * Mobile SearchのURLです。
+ */
+const mobileSearchUrl = "https://www.google.com/search?q=mobile";
 
 /**
  * Chrome Bookmarks APIが返すroot nodeを含むBookmark Tree fixtureです。
@@ -55,15 +67,38 @@ const chromeBookmarkTree = [
             url: githubPullRequestsUrl,
           },
         ],
+        folderType: "bookmarks-bar",
         id: "1",
         parentId: "0",
         title: "Bookmarks Bar",
       },
       {
-        children: [],
+        children: [
+          {
+            id: "44",
+            parentId: "2",
+            title: "Chrome Extensions Docs",
+            url: chromeExtensionsDocsUrl,
+          },
+        ],
+        folderType: "other",
         id: "2",
         parentId: "0",
         title: "Other Bookmarks",
+      },
+      {
+        children: [
+          {
+            id: "50",
+            parentId: "3",
+            title: "Mobile Search",
+            url: mobileSearchUrl,
+          },
+        ],
+        folderType: "mobile",
+        id: "3",
+        parentId: "0",
+        title: "Mobile Bookmarks",
       },
     ],
     id: "0",
@@ -160,6 +195,40 @@ const expectedEntries = [
     title: "GitHub Pull Requests",
     url: githubPullRequestsUrl,
   },
+  {
+    childrenCount: 1,
+    folderPath: "/Other Bookmarks",
+    id: "2",
+    kind: "folder",
+    parentId: "0",
+    title: "Other Bookmarks",
+  },
+  {
+    childrenCount: 0,
+    folderPath: "/Other Bookmarks",
+    id: "44",
+    kind: "bookmark",
+    parentId: "2",
+    title: "Chrome Extensions Docs",
+    url: chromeExtensionsDocsUrl,
+  },
+  {
+    childrenCount: 1,
+    folderPath: "/Mobile Bookmarks",
+    id: "3",
+    kind: "folder",
+    parentId: "0",
+    title: "Mobile Bookmarks",
+  },
+  {
+    childrenCount: 0,
+    folderPath: "/Mobile Bookmarks",
+    id: "50",
+    kind: "bookmark",
+    parentId: "3",
+    title: "Mobile Search",
+    url: mobileSearchUrl,
+  },
 ] satisfies readonly BookmarkEntry[];
 
 /**
@@ -185,7 +254,23 @@ const expectedFirefoxEntries = [
   },
   {
     childrenCount: 0,
-    folderPath: "/",
+    folderPath: "/ブックマークツールバー",
+    id: "toolbar_____",
+    kind: "folder",
+    parentId: "root________",
+    title: "ブックマークツールバー",
+  },
+  {
+    childrenCount: 1,
+    folderPath: "/他のブックマーク",
+    id: "unfiled_____",
+    kind: "folder",
+    parentId: "root________",
+    title: "他のブックマーク",
+  },
+  {
+    childrenCount: 0,
+    folderPath: "/他のブックマーク",
     id: "300",
     kind: "bookmark",
     parentId: "unfiled_____",
@@ -207,7 +292,7 @@ const getEntryIds = (entries: readonly BookmarkEntry[]): readonly string[] =>
  */
 describe("normalizeBookmarkTree", (): void => {
   /**
-   * Chromeのroot containerをCLIのfolderから除外し、folderとBookmarkを平坦化できることを検証します。
+   * ChromeのBookmarks BarをCLI rootへ割り当て、他のroot containerをfolderとして正規化できることを検証します。
    */
   it("normalizes bookmark tree nodes into CLI entries", (): void => {
     const bookmarkTree = normalizeBookmarkTree(chromeBookmarkTree);
@@ -216,9 +301,9 @@ describe("normalizeBookmarkTree", (): void => {
   });
 
   /**
-   * Firefoxのroot containerをCLIのfolderから除外し、Chromeと同じroot表現へ正規化できることを検証します。
+   * Firefoxの先頭root containerをCLI rootへ割り当て、他のroot containerをfolderとして正規化できることを検証します。
    */
-  it("normalizes Firefox root containers into CLI root entries", (): void => {
+  it("normalizes Firefox root containers into explicit CLI folders", (): void => {
     const bookmarkTree = normalizeBookmarkTree(firefoxBookmarkTree);
 
     expect(bookmarkTree.entries).toStrictEqual(expectedFirefoxEntries);
@@ -230,7 +315,16 @@ describe("normalizeBookmarkTree", (): void => {
   it("exposes folders and bookmarks separately", (): void => {
     const bookmarkTree = normalizeBookmarkTree(chromeBookmarkTree);
 
-    expect(getEntryIds(bookmarkTree.folders)).toStrictEqual(["10", "11"]);
-    expect(getEntryIds(bookmarkTree.bookmarks)).toStrictEqual(["42", "43"]);
+    expect(getEntryIds(bookmarkTree.folders)).toStrictEqual(["10", "11", "2", "3"]);
+    expect(getEntryIds(bookmarkTree.bookmarks)).toStrictEqual(["42", "43", "44", "50"]);
+  });
+
+  /**
+   * CLI root保存時に使うbrowser root直下container IDを参照できることを検証します。
+   */
+  it("exposes root bookmark parent id", (): void => {
+    const bookmarkTree = normalizeBookmarkTree(chromeBookmarkTree);
+
+    expect(bookmarkTree.rootBookmarkParentId).toBe("1");
   });
 });

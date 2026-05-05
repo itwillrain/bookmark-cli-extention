@@ -5,7 +5,11 @@ import type {
   BookmarkRepositoryPort,
 } from "./bookmark-use-cases";
 import type { BookmarkEntry, BookmarkTree } from "../../domain/bookmarks/bookmark-tree";
-import { type CurrentDirectory, resolveFolderPath } from "../../domain/bookmarks/current-directory";
+import {
+  type CurrentDirectory,
+  currentDirectoryRoot,
+  resolveFolderPath,
+} from "../../domain/bookmarks/current-directory";
 import { doesFolderPathExist } from "../../domain/bookmarks/bookmark-directory";
 
 /** CLI起動元タブcontext。 */
@@ -143,6 +147,14 @@ const findTargetFolderEntry = (
   bookmarkTree.folders.find((folder) => folder.folderPath === folderPath);
 
 /**
+ * 保存先folder pathが疑似CLI rootかを判定。
+ * @param {CurrentDirectory} folderPath 保存先folder path。
+ * @returns {boolean} 疑似CLI rootならtrue。
+ */
+const isRootTargetFolderPath = (folderPath: CurrentDirectory): boolean =>
+  folderPath === currentDirectoryRoot;
+
+/**
  * Bookmark作成時のparentIdを解決。
  * @param {BookmarkTree} bookmarkTree Bookmark Tree。
  * @param {CurrentDirectory} folderPath 保存先folder path。
@@ -151,7 +163,13 @@ const findTargetFolderEntry = (
 const resolveParentId = (
   bookmarkTree: BookmarkTree,
   folderPath: CurrentDirectory,
-): string | undefined => findTargetFolderEntry(bookmarkTree, folderPath)?.id;
+): string | undefined => {
+  if (isRootTargetFolderPath(folderPath)) {
+    return bookmarkTree.rootBookmarkParentId;
+  }
+
+  return findTargetFolderEntry(bookmarkTree, folderPath)?.id;
+};
 
 /**
  * 保存先folder pathを解決。

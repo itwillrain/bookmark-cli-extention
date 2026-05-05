@@ -19,15 +19,23 @@ const chromeBookmarkTreeNodes = [
       {
         children: [
           {
-            id: "42",
-            parentId: "10",
-            title: "Stripe Dashboard",
-            url: "https://dashboard.stripe.com/",
+            children: [
+              {
+                id: "42",
+                parentId: "10",
+                title: "Stripe Dashboard",
+                url: "https://dashboard.stripe.com/",
+              },
+            ],
+            id: "10",
+            parentId: "1",
+            title: "Work",
           },
         ],
-        id: "10",
-        parentId: "1",
-        title: "Work",
+        folderType: "bookmarks-bar",
+        id: "1",
+        parentId: "0",
+        title: "Bookmarks Bar",
       },
     ],
     id: "0",

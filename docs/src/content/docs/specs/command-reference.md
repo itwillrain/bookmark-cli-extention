@@ -159,6 +159,8 @@ mark --allow-duplicate
 
 保存先を省略した場合は、現在ディレクトリへ保存します。
 
+保存先がCLI root `/` の場合は、browser root nodeではなくroot保存用containerへ保存します。
+
 `title` を省略した場合は、CLI起動元タブのtitleを使います。
 
 保存先に同じURLがある場合は保存せず、`already_marked` を返します。
@@ -451,7 +453,7 @@ mkdir /Project
 mkdir Admin --to Work
 ```
 
-CLI root直下へ作成する場合は、Bookmarks APIへroot node IDを渡さず、ブラウザ既定の書き込み可能な保存先へ作成します。
+CLI root直下へ作成する場合は、Bookmarks APIへroot node IDを渡さず、root保存用containerへ作成します。
 
 同じ親folderに同名folderが存在する場合は `already_exists` を返します。
 
