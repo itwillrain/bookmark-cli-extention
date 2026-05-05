@@ -1,0 +1,96 @@
+name: Bug report
+description: CLI, browser integration, data, UI, or packaging behavior is broken.
+title: "[Bug]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a bug. Please include enough context to reproduce the issue without access to your private bookmarks.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-checks
+      options:
+        - label: I checked the latest release or main branch notes.
+          required: true
+        - label: This is not a security-sensitive report.
+          required: true
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browser
+      options:
+        - Chrome
+        - Firefox
+        - Both Chrome and Firefox
+        - Unknown
+    validations:
+      required: true
+  - type: input
+    id: extension-version
+    attributes:
+      label: Extension version
+      placeholder: "1.1.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - CLI command
+        - Search or go
+        - Bookmark tree or folder operation
+        - History integration
+        - Tags or aliases
+        - Popup settings
+        - Hotkey or window behavior
+        - Build, release, or store submission
+        - Documentation
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: current-behavior
+    attributes:
+      label: Current behavior
+      description: What happened?
+      placeholder: "Example: `rm -r /Work` asks for confirmation but does not delete the folder."
+    validations:
+      required: true
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected behavior
+      description: What should have happened?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction steps
+      description: Use fake bookmark names and URLs if needed.
+      placeholder: |
+        1. Open Bookmark CLI
+        2. Run `tree`
+        3. Press `Tab`
+        4. See ...
+    validations:
+      required: true
+  - type: textarea
+    id: sample-data
+    attributes:
+      label: Minimal sample data
+      description: Optional. Provide a small fake bookmark tree or command transcript.
+      render: text
+  - type: textarea
+    id: logs
+    attributes:
+      label: Console logs or screenshots
+      description: Optional. Paste logs, validator warnings, screenshots, or screen recordings.
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional notes
+      description: Anything else that helps triage the bug.
