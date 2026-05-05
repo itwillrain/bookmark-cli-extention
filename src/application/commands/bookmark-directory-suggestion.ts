@@ -33,6 +33,9 @@ const longListDirectoryCommandName = "ll";
 /** Tree command名。 */
 const showDirectoryTreeCommandName = "tree";
 
+/** Rm command名。 */
+const removeBookmarkCommandName = "rm";
+
 /** Command token separator。 */
 const commandTokenSeparator = " ";
 
@@ -66,6 +69,7 @@ const directoryCompletionCommandNames = new Set<string>([
   goBookmarkCommandName,
   listDirectoryCommandName,
   longListDirectoryCommandName,
+  removeBookmarkCommandName,
   showDirectoryTreeCommandName,
 ]);
 

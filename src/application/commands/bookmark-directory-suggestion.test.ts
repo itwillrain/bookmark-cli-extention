@@ -220,3 +220,38 @@ describe("suggestBookmarkDirectoryPaths for go", (): void => {
     ]);
   });
 });
+
+/**
+ * Rm command向けpath suggestionのテストスイート。
+ */
+describe("suggestBookmarkDirectoryPaths for rm", (): void => {
+  /**
+   * Rm commandでも現在ディレクトリ直下のentry候補を返すことを検証。
+   */
+  it("suggests entry paths for rm path prefix", (): void => {
+    const suggestions = suggestBookmarkDirectoryPaths({
+      bookmarkTree,
+      currentDirectory: "/Work",
+      inputValue: "rm ./",
+    });
+
+    expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual([
+      "rm ./Admin",
+      "rm ./Research",
+      "rm ./eza",
+    ]);
+  });
+
+  /**
+   * Rm commandのoption後でもpath候補を返すことを検証。
+   */
+  it("suggests entry paths for rm recursive option path prefix", (): void => {
+    const suggestions = suggestBookmarkDirectoryPaths({
+      bookmarkTree,
+      currentDirectory: "/Work",
+      inputValue: "rm -r ./A",
+    });
+
+    expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual(["rm -r ./Admin"]);
+  });
+});

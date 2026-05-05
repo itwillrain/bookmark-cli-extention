@@ -22,6 +22,9 @@ const recursiveRemoveBookmarkCommandInput = "rm -r 2";
 /** Force付きrecursive rm commandの入力です。 */
 const forceRecursiveRemoveBookmarkCommandInput = "rm -rf 2";
 
+/** Path対象のrm commandの入力です。 */
+const removeBookmarkPathCommandInput = "rm -rf ./Admin/Stripe Dashboard";
+
 /** Long option付きrecursive rm commandの入力です。 */
 const longRecursiveRemoveBookmarkCommandInput = "rm --recursive --force 2";
 
@@ -136,6 +139,18 @@ describe("parseBookmarkCommand recursive remove command", (): void => {
       kind: "rm",
       recursive: true,
       targetInput: "2",
+    });
+  });
+
+  /**
+   * Rm commandをpath対象で解析できることを検証します。
+   */
+  it("parses rm command with path target", (): void => {
+    expect(parseBookmarkCommand(removeBookmarkPathCommandInput)).toStrictEqual({
+      force: true,
+      kind: "rm",
+      recursive: true,
+      targetInput: "./Admin/Stripe Dashboard",
     });
   });
 

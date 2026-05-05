@@ -62,6 +62,12 @@ const browserManagedFolderLastResultEntries = [otherBookmarksFolderEntry] as con
 /** 対象result number入力。 */
 const targetInput = "1";
 
+/** Folder path対象入力。 */
+const targetFolderPathInput = "./Archive";
+
+/** Browser管理folder path対象入力。 */
+const browserManagedFolderPathInput = "/Other Bookmarks";
+
 /** 現在ディレクトリfixture。 */
 const currentDirectory = "/Work";
 
@@ -78,6 +84,26 @@ const createBookmarkRepository = (): BookmarkRepositoryPort => ({
     await Promise.resolve();
 
     return bookmarkTree;
+  },
+});
+
+/**
+ * Browser管理folderを含むBookmark Tree repository fixtureを作成。
+ * @returns {BookmarkRepositoryPort} Bookmark repository port。
+ */
+const createBrowserManagedFolderBookmarkRepository = (): BookmarkRepositoryPort => ({
+  /**
+   * Browser管理folderを含むBookmark Tree fixtureを返す。
+   * @returns {Promise<BookmarkTree>} Bookmark Tree fixture。
+   */
+  getBookmarkTree: async (): Promise<BookmarkTree> => {
+    await Promise.resolve();
+
+    return {
+      ...bookmarkTree,
+      entries: [...bookmarkTree.entries, otherBookmarksFolderEntry],
+      folders: [...bookmarkTree.folders, otherBookmarksFolderEntry],
+    };
   },
 });
 
@@ -157,6 +183,29 @@ describe("removeBookmark recursive folder", (): void => {
   });
 });
 
+/** Folder path recursive削除use caseのテストスイート。 */
+describe("removeBookmark recursive folder by path", (): void => {
+  /**
+   * Rm -rfがfolder path対象でsubtreeを削除することを検証。
+   */
+  it("removes folder tree by path when forced recursively", async (): Promise<void> => {
+    const recordingOrganizer = createRecordingOrganizer();
+
+    const result = await removeBookmark({
+      currentDirectory,
+      force: true,
+      lastResultEntries: [],
+      organizer: recordingOrganizer.organizer,
+      recursive: true,
+      repository: createBookmarkRepository(),
+      targetInput: targetFolderPathInput,
+    });
+
+    expect(result.ok).toBe(true);
+    expect(recordingOrganizer.removedFolderTrees).toStrictEqual([{ id: "11" }]);
+  });
+});
+
 /** Browser管理folder削除guard use caseのテストスイート。 */
 describe("removeBookmark browser managed folder guard", (): void => {
   /**
@@ -173,6 +222,32 @@ describe("removeBookmark browser managed folder guard", (): void => {
       recursive: true,
       repository: createBookmarkRepository(),
       targetInput,
+    });
+
+    expect(result).toMatchObject({
+      errorCode: "permission_denied",
+      ok: false,
+    });
+    expect(recordingOrganizer.removedFolderTrees).toStrictEqual([]);
+  });
+});
+
+/** Browser管理folder path削除guard use caseのテストスイート。 */
+describe("removeBookmark browser managed folder path guard", (): void => {
+  /**
+   * Rm -rfがbrowser管理folder path対象でも削除せず理由を返すことを検証。
+   */
+  it("rejects browser managed folder path remove with permission_denied", async (): Promise<void> => {
+    const recordingOrganizer = createRecordingOrganizer();
+
+    const result = await removeBookmark({
+      currentDirectory,
+      force: true,
+      lastResultEntries: [],
+      organizer: recordingOrganizer.organizer,
+      recursive: true,
+      repository: createBrowserManagedFolderBookmarkRepository(),
+      targetInput: browserManagedFolderPathInput,
     });
 
     expect(result).toMatchObject({
