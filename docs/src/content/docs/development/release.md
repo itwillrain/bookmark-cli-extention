@@ -35,6 +35,40 @@ package versionはtagから `v` を除いた値と一致させます。
 
 docsの `package.json` も同じ公開単位で扱う場合は、同じversionへ更新します。
 
+## docs version
+
+docsサイトは `starlight-versions` でversion selectorを提供します。
+
+`docs/src/content/docs/` は内部的な最新原稿として扱います。
+
+公開サイトでは、rootや未version URLを最新の公開済みversionへredirectします。
+
+version selectorには、`main` などのbranch名ではなく公開済みversionだけを表示します。
+
+リリース済みversionのsnapshotは、`docs/src/content/docs/<version>/` と `docs/src/content/versions/<version>.json` に保持します。
+
+新しいversionをarchiveする場合は、release workflowが `docs:archive` scriptを実行します。
+
+同じ処理を手元で確認する場合は、次のcommandで対象versionを指定します。
+
+```bash
+pnpm run docs:archive -- 1.2.0
+```
+
+このscriptは `docs/src/data/archived-documentation-versions.json` にversionを追加します。
+
+このJSONの先頭versionを最新の公開済みversionとして扱います。
+
+続けて、`starlight-versions` でsnapshotとversion sidebar設定を生成します。
+
+release workflowは生成されたsnapshotをmainへcommitしてからtagとGitHub Release draftを作ります。
+
+main branch保護でGitHub Actionsのpushを許可しない場合は、version更新PRでsnapshotを事前生成します。
+
+その場合は `pnpm run docs:archive -- X.Y.Z` を実行し、snapshotをreviewしてからmergeします。
+
+公開済みversionのsnapshotは、仕様変更ではなくリンク切れや誤字の修正だけを行います。
+
 ## Release Drafter
 
 Release Drafterは、`main` へmergeされたPRから次のGitHub Release draftを更新します。
@@ -81,15 +115,19 @@ workflowは次の順番で実行します。
 2. 入力versionがSemVerか確認する
 3. `package.json` のversionと入力versionが一致するか確認する
 4. dependencyをinstallする
-5. `pnpm run check` を実行する
-6. `pnpm test` を実行する
-7. `pnpm run build` を実行する
-8. Firefox対応後は `pnpm run build:firefox` を実行する
-9. `pnpm run zip` を実行する
-10. Firefox対応後は `pnpm run zip:firefox` を実行する
-11. `dist` のうち入力versionと一致するzipをrelease assetとして集める
-12. `vX.Y.Z` のtagがなければ作成してpushする
-13. `vX.Y.Z` のGitHub Release draftを作成または更新する
+5. docs dependencyをinstallする
+6. `pnpm run docs:archive -- X.Y.Z` を実行する
+7. `pnpm run check` を実行する
+8. `pnpm test` を実行する
+9. `pnpm run build` を実行する
+10. Firefox対応後は `pnpm run build:firefox` を実行する
+11. `pnpm run zip` を実行する
+12. Firefox対応後は `pnpm run zip:firefox` を実行する
+13. `dist` のうち入力versionと一致するzipをrelease assetとして集める
+14. docs archiveの差分があればmainへcommitしてpushする
+15. release対象commitを解決する
+16. `vX.Y.Z` のtagがなければ作成してpushする
+17. `vX.Y.Z` のGitHub Release draftを作成または更新する
 
 既存のrelease draftがある場合は、zip assetを上書きuploadします。
 
@@ -104,7 +142,7 @@ release draftがない場合は、`vX.Y.Z` のrelease draftを作成します。
 3. version更新PRを `main` へmergeする
 4. GitHub Actionsから `Release` workflowを手動実行する
 5. `version` に `1.1.0` のような値を入力する
-6. workflowが作ったGitHub Release draftを確認する
+6. workflowが作ったdocs archive commit、GitHub Release draftを確認する
 7. release noteとassetを確認する
 8. 問題なければGitHub Releaseをpublishする
 

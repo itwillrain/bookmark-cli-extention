@@ -1,0 +1,27 @@
+---
+editUrl: false
+next: false
+prev: false
+title: BookmarkCliResultList
+slug: 1.2.0/api/presentation/cli/components/bookmark-cli-result-list/functions/bookmarkcliresultlist
+---
+
+> **BookmarkCliResultList**(`props`): `ReactElement`
+
+Defined in: [presentation/cli/components/bookmark-cli-result-list.tsx:243](https://github.com/itwillrain/bookmark-cli-extention/blob/0d414df9117fa466c941851ee64c2b9060cc0990/src/presentation/cli/components/bookmark-cli-result-list.tsx#L243)
+
+Dedicated extension page向けBookmark CLI result listを描画します。
+
+## Parameters
+
+### props
+
+[`BookmarkCliResultListProps`](/1.2.0/api/presentation/cli/components/bookmark-cli-result-list-types/interfaces/bookmarkcliresultlistprops/)
+
+Bookmark CLI result listのpropsです。
+
+## Returns
+
+`ReactElement`
+
+Result listのReact elementです。

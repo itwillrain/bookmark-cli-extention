@@ -1,7 +1,15 @@
 import starlight from "@astrojs/starlight";
 import starlightThemeSix from "@six-tech/starlight-theme-six";
 import { defineConfig } from "astro/config";
+import { readdirSync, readFileSync } from "node:fs";
 import starlightTypeDoc, { typeDocSidebarGroup } from "starlight-typedoc";
+import starlightVersions, { type StarlightVersionsUserConfig } from "starlight-versions";
+
+/** starlight-versionsへ渡す公開済みdocs version設定です。 */
+type ArchivedDocumentationVersionConfig = NonNullable<StarlightVersionsUserConfig["versions"]>[number];
+
+/** Astro redirect設定です。 */
+type DocumentationRedirects = NonNullable<Parameters<typeof defineConfig>[0]["redirects"]>;
 
 /** ドキュメントサイトのタイトルです。 */
 const documentationTitle = "Bookmark CLI Extension";
@@ -57,6 +65,141 @@ const typeDocTsconfig = "../tsconfig.json";
 /** TypeDoc が生成する Starlight content 配下の出力先です。 */
 const typeDocOutputDirectory = "api";
 
+/** Markdown fileの拡張子です。 */
+const markdownFileExtension = ".md";
+
+/** Directory index pageを表すMarkdown file名です。 */
+const indexMarkdownFileName = "index.md";
+
+/** archived docs version listを保持するJSON fileです。 */
+const archivedDocumentationVersionsPath = new URL(
+  "./src/data/archived-documentation-versions.json",
+  import.meta.url,
+);
+
+/** Starlight docs content directoryです。 */
+const documentationContentDirectory = new URL("./src/content/docs/", import.meta.url);
+
+/**
+ * archived docs version listを読み込む。
+ * @returns {StarlightVersionsUserConfig["versions"]} starlight-versionsへ渡すversion設定。
+ */
+const readArchivedDocumentationVersions = (): StarlightVersionsUserConfig["versions"] =>
+  JSON.parse(readFileSync(archivedDocumentationVersionsPath, "utf8")) as StarlightVersionsUserConfig["versions"];
+
+/** 公開済みdocs versionの一覧です。 */
+const archivedDocumentationVersions = readArchivedDocumentationVersions();
+
+/**
+ * 最新の公開済みdocs versionを解決する。
+ * @param {StarlightVersionsUserConfig["versions"]} versions 公開済みdocs version一覧。
+ * @returns {ArchivedDocumentationVersionConfig} 最新の公開済みdocs version。
+ * @throws {Error} 公開済みdocs versionが未設定の場合。
+ */
+const resolveLatestArchivedDocumentationVersion = (
+  versions: StarlightVersionsUserConfig["versions"],
+): ArchivedDocumentationVersionConfig => {
+  const latestVersion = versions?.[0];
+
+  if (!latestVersion) {
+    throw new Error("At least one archived documentation version is required.");
+  }
+
+  return latestVersion;
+};
+
+/** 最新の公開済みdocs versionです。 */
+const latestArchivedDocumentationVersion = resolveLatestArchivedDocumentationVersion(archivedDocumentationVersions);
+
+/** 最新の公開済みdocs version URL prefixです。 */
+const latestArchivedDocumentationVersionPath = `/${latestArchivedDocumentationVersion.slug}`;
+
+/** Current docs route redirectから除外するroot directory名です。 */
+const currentDocumentationRedirectExcludedRootDirectoryNames = new Set([
+  typeDocOutputDirectory,
+  ...archivedDocumentationVersions.map((version) => version.slug),
+]);
+
+/**
+ * Markdown file名からroute segmentを作る。
+ * @param {string} fileName Markdown file名。
+ * @returns {string} route segment。
+ */
+const createMarkdownRouteSegment = (fileName: string): string => fileName.slice(0, -markdownFileExtension.length);
+
+/**
+ * Markdown route segment listからAstro route pathを作る。
+ * @param {readonly string[]} routeSegments route segment list。
+ * @returns {string} Astro route path。
+ */
+const createDocumentationRoutePath = (routeSegments: readonly string[]): string =>
+  routeSegments.length === 0 ? "/" : `/${routeSegments.join("/")}`;
+
+/**
+ * Current docs contentからredirect元route一覧を作る。
+ * @param {URL} directoryUrl 探索するdirectory URL。
+ * @param {readonly string[]} routeSegments 現在のroute segment list。
+ * @returns {readonly string[]} redirect元route一覧。
+ */
+const listCurrentDocumentationRoutePaths = (
+  directoryUrl: URL,
+  routeSegments: readonly string[] = [],
+): readonly string[] =>
+  readdirSync(directoryUrl, { withFileTypes: true }).flatMap((entry) => {
+    if (entry.isDirectory()) {
+      if (
+        routeSegments.length === 0 &&
+        currentDocumentationRedirectExcludedRootDirectoryNames.has(entry.name)
+      ) {
+        return [];
+      }
+
+      return listCurrentDocumentationRoutePaths(new URL(`${entry.name}/`, directoryUrl), [...routeSegments, entry.name]);
+    }
+
+    if (!entry.isFile() || !entry.name.endsWith(markdownFileExtension)) {
+      return [];
+    }
+
+    return [
+      createDocumentationRoutePath(
+        entry.name === indexMarkdownFileName
+          ? routeSegments
+          : [...routeSegments, createMarkdownRouteSegment(entry.name)],
+      ),
+    ];
+  });
+
+/**
+ * Current docs routeのredirect先を作る。
+ * @param {string} routePath redirect元route path。
+ * @returns {string} 最新公開versionのroute path。
+ */
+const createLatestVersionRedirectDestination = (routePath: string): string =>
+  routePath === "/"
+    ? `${latestArchivedDocumentationVersionPath}/`
+    : `${latestArchivedDocumentationVersionPath}${routePath}/`;
+
+/**
+ * 公開URLからcurrent docs routeを隠すためのredirect設定を作る。
+ * @returns {DocumentationRedirects} current docs route redirect設定。
+ */
+const createCurrentDocumentationRedirects = (): DocumentationRedirects =>
+  Object.fromEntries(
+    listCurrentDocumentationRoutePaths(documentationContentDirectory).map((routePath) => [
+      routePath,
+      createLatestVersionRedirectDestination(routePath),
+    ]),
+  );
+
+/** 公開URLからcurrent docs routeを隠すためのredirect設定です。 */
+const currentDocumentationRedirects = createCurrentDocumentationRedirects();
+
+/** 現在編集中のdocs version表示名です。公開UIでは表示しません。 */
+const currentDocumentationVersion = {
+  label: "main",
+};
+
 /** Astro と Starlight のドキュメントサイト設定です。
  *
  * @see https://docs.astro.build/en/reference/configuration-reference/
@@ -71,11 +214,18 @@ export default defineConfig({
         site: documentationSiteUrl,
       }
     : {}),
+  redirects: currentDocumentationRedirects,
   integrations: [
     starlight({
       customCss: ["./src/styles/fonts.css"],
       description: documentationDescription,
       favicon: "/favicon.png",
+      components: {
+        Banner: "./src/components/starlight/VersionBanner.astro",
+        Header: "./src/components/starlight/Header.astro",
+        PageTitle: "./src/components/starlight/PageTitle.astro",
+        Search: "./src/components/starlight/VersionSearch.astro",
+      },
       plugins: [
         starlightTypeDoc({
           entryPoints: typeDocEntryPoints,
@@ -88,6 +238,10 @@ export default defineConfig({
             entryPointStrategy: typeDocEntryPointStrategy,
             exclude: typeDocExcludePatterns,
           },
+        }),
+        starlightVersions({
+          current: currentDocumentationVersion,
+          versions: archivedDocumentationVersions,
         }),
         starlightThemeSix({
           footerText,
