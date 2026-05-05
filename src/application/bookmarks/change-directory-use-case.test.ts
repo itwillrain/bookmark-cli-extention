@@ -37,6 +37,18 @@ const adminFolderEntry = {
 } satisfies BookmarkEntry;
 
 /**
+ * その他のブックマークfolderのentryです。
+ */
+const otherBookmarksFolderEntry = {
+  childrenCount: 0,
+  folderPath: "/その他のブックマーク",
+  id: "2",
+  kind: "folder",
+  parentId: "0",
+  title: "その他のブックマーク",
+} satisfies BookmarkEntry;
+
+/**
  * Stripe bookmarkのentryです。
  */
 const stripeBookmarkEntry = {
@@ -54,8 +66,8 @@ const stripeBookmarkEntry = {
  */
 const bookmarkTree = {
   bookmarks: [stripeBookmarkEntry],
-  entries: [workFolderEntry, adminFolderEntry, stripeBookmarkEntry],
-  folders: [workFolderEntry, adminFolderEntry],
+  entries: [workFolderEntry, adminFolderEntry, otherBookmarksFolderEntry, stripeBookmarkEntry],
+  folders: [workFolderEntry, adminFolderEntry, otherBookmarksFolderEntry],
 } satisfies BookmarkTree;
 
 /**
@@ -67,6 +79,11 @@ const workCurrentDirectory = "/Work";
  * Admin path入力です。
  */
 const adminPathInput = "Admin";
+
+/**
+ * その他のブックマークpath入力です。
+ */
+const otherBookmarksPathInput = "/その他のブックマーク";
 
 /**
  * Missing path入力です。
@@ -145,6 +162,30 @@ describe("changeDirectory path input", (): void => {
     if (!result.ok) {
       expect(result.errorCode).toBe("folder_not_found");
     }
+  });
+});
+
+/**
+ * Cd root container path指定のuse caseテストスイートです。
+ */
+describe("changeDirectory root container path input", (): void => {
+  /**
+   * Root直下のbrowser container folderへ移動できることを検証します。
+   */
+  it("changes current directory to root container folder", async (): Promise<void> => {
+    const result = await changeDirectory({
+      currentDirectory: workCurrentDirectory,
+      lastResultEntries,
+      pathInput: otherBookmarksPathInput,
+      repository: createBookmarkRepository(),
+    });
+
+    expect(result).toStrictEqual({
+      ok: true,
+      value: {
+        currentDirectory: "/その他のブックマーク",
+      },
+    });
   });
 });
 
