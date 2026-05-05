@@ -32,3 +32,9 @@ pnpm docs:build
 pnpm check
 pnpm docs:build
 ```
+
+`pnpm check` は、TypeScriptの型検査、機微情報検出、コードlint、format確認をまとめて実行します。
+
+機微情報検出は `secretlint` と `@secretlint/secretlint-rule-preset-recommend` で実行します。
+
+生成物、依存関係、lockfile、画像は `.secretlintignore` で検査対象から外します。
