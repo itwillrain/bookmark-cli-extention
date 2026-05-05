@@ -514,6 +514,8 @@ Bookmark削除はChrome Bookmarks APIの `remove` を使います。
 
 Folder削除はChrome Bookmarks APIの `removeTree` を使い、対象folder配下のsubtreeを削除します。
 
+`Other Bookmarks` などのbrowser管理folderは、`-rf` 指定でも削除せず理由を表示します。
+
 代表的なエラーは `not_found`、`permission_denied` です。
 
 ## `rename`

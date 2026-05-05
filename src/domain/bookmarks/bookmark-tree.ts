@@ -77,6 +77,10 @@ export interface BookmarkEntry {
    */
   readonly kind: BookmarkEntryKind;
   /**
+   * Browserが付与するtop-level folder種別です。
+   */
+  readonly folderType?: BookmarkFolderType;
+  /**
    * Bookmark URLです。
    */
   readonly url?: string;
@@ -198,14 +202,25 @@ const isBookmarksBarContainer = (node: RawBookmarkTreeNode): boolean =>
  * @param {FolderPath} folderPath folder自身のpathです。
  * @returns {BookmarkEntry} 正規化済みfolder entryです。
  */
-const createFolderEntry = (node: RawBookmarkTreeNode, folderPath: FolderPath): BookmarkEntry => ({
-  childrenCount: getChildren(node).length,
-  folderPath,
-  id: node.id,
-  kind: "folder",
-  parentId: getParentId(node),
-  title: node.title,
-});
+const createFolderEntry = (node: RawBookmarkTreeNode, folderPath: FolderPath): BookmarkEntry => {
+  const entry = {
+    childrenCount: getChildren(node).length,
+    folderPath,
+    id: node.id,
+    kind: "folder",
+    parentId: getParentId(node),
+    title: node.title,
+  } satisfies BookmarkEntry;
+
+  if (typeof node.folderType !== "string") {
+    return entry;
+  }
+
+  return {
+    ...entry,
+    folderType: node.folderType,
+  };
+};
 
 /**
  * Bookmark entryを作ります。

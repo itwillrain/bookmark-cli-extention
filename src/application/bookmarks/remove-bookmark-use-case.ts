@@ -15,6 +15,9 @@ import type { BookmarkEntry } from "../../domain/bookmarks/bookmark-tree";
 /** Recursive必須error code。 */
 const recursiveRequiredErrorCode = "invalid_argument";
 
+/** 権限不足error code。 */
+const permissionDeniedErrorCode = "permission_denied";
+
 /** Folder kind。 */
 const folderKind = "folder";
 
@@ -37,6 +40,25 @@ const createRecursiveRequiredFailure = (entry: BookmarkEntry): OrganizeBookmarkR
   );
 
 /**
+ * Browser管理folder削除の失敗結果を作成。
+ * @param {BookmarkEntry} entry 削除対象folder entry。
+ * @returns {OrganizeBookmarkResult} Browser管理folder削除失敗結果。
+ */
+const createBrowserManagedFolderFailure = (entry: BookmarkEntry): OrganizeBookmarkResult =>
+  createFailure(
+    permissionDeniedErrorCode,
+    `rm: cannot remove '${entry.title}': browser managed folder cannot be removed`,
+  );
+
+/**
+ * EntryがBrowser管理folderかを判定。
+ * @param {BookmarkEntry} entry 判定対象entry。
+ * @returns {boolean} Browser管理folderならtrue。
+ */
+const isBrowserManagedFolderEntry = (entry: BookmarkEntry): boolean =>
+  isFolderEntry(entry) && typeof entry.folderType === "string";
+
+/**
  * Entry種別に応じた削除を実行。
  * @param {BookmarkOrganizerPort} organizer Bookmark整理port。
  * @param {BookmarkEntry} entry 削除対象entry。
@@ -53,6 +75,31 @@ const executeRemoveEntry = async (
   }
 
   await organizer.removeEntry({ id: entry.id });
+};
+
+/**
+ * 削除前に失敗または確認待ち結果を作成。
+ * @param {RemoveBookmarkInput} input Bookmark削除use case入力。
+ * @param {BookmarkEntry} entry 削除対象entry。
+ * @returns {OrganizeBookmarkResult | false} 失敗または確認待ち結果。
+ */
+const createPreRemoveResult = (
+  input: RemoveBookmarkInput,
+  entry: BookmarkEntry,
+): OrganizeBookmarkResult | false => {
+  if (isFolderEntry(entry) && !input.recursive) {
+    return createRecursiveRequiredFailure(entry);
+  }
+
+  if (isBrowserManagedFolderEntry(entry)) {
+    return createBrowserManagedFolderFailure(entry);
+  }
+
+  if (!input.force) {
+    return createSuccess(createOrganizeBookmarkValue(false, [entry]));
+  }
+
+  return false;
 };
 
 /** Bookmark削除use case入力。 */
@@ -93,12 +140,10 @@ export const removeBookmark = async (
     return targetResolution;
   }
 
-  if (isFolderEntry(targetResolution.value) && !input.recursive) {
-    return createRecursiveRequiredFailure(targetResolution.value);
-  }
+  const preRemoveResult = createPreRemoveResult(input, targetResolution.value);
 
-  if (!input.force) {
-    return createSuccess(createOrganizeBookmarkValue(false, [targetResolution.value]));
+  if (preRemoveResult !== false) {
+    return preRemoveResult;
   }
 
   await executeRemoveEntry(input.organizer, targetResolution.value);

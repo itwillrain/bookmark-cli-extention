@@ -137,6 +137,8 @@ Chrome APIの権限が不足している場合に返します。
 
 manifestの権限不足、runtime permissionの拒否、Chrome側の制約が該当します。
 
+`Other Bookmarks` などのbrowser管理folderを削除しようとした場合も、このコードを返します。
+
 v1では `bookmarks`、`storage`、`activeTab` を必須権限とします。
 
 ## `chrome_bookmarks_failed`

@@ -198,6 +198,7 @@ const expectedEntries = [
   {
     childrenCount: 1,
     folderPath: "/Other Bookmarks",
+    folderType: "other",
     id: "2",
     kind: "folder",
     parentId: "0",
@@ -215,6 +216,7 @@ const expectedEntries = [
   {
     childrenCount: 1,
     folderPath: "/Mobile Bookmarks",
+    folderType: "mobile",
     id: "3",
     kind: "folder",
     parentId: "0",
