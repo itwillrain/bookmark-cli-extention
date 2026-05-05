@@ -1,0 +1,31 @@
+name: Question
+description: Ask a usage, command, setup, or contribution question.
+title: "[Question]: "
+labels: ["question", "needs-triage"]
+body:
+  - type: dropdown
+    id: topic
+    attributes:
+      label: Topic
+      options:
+        - Usage
+        - Command behavior
+        - Setup
+        - Browser compatibility
+        - Contribution
+        - Release or store
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: What do you want to know?
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: Optional. Browser, version, command, docs page, or related issue.

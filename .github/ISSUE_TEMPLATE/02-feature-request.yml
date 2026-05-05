@@ -1,0 +1,67 @@
+name: Feature request
+description: Propose a new command, workflow, UI behavior, or browser support change.
+title: "[Feature]: "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please describe the user workflow first. Implementation ideas are welcome, but the problem and expected CLI feel matter most.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or workflow
+      description: What job should Bookmark CLI help with?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Include command examples when relevant.
+      placeholder: |
+        Example:
+        `find stripe -l`
+        `go #finance`
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - CLI command
+        - Search ranking
+        - Bookmark organization
+        - History integration
+        - Tags or aliases
+        - UI or terminal interaction
+        - Popup settings
+        - Browser compatibility
+        - Release or store operation
+        - Documentation
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Target browser
+      options:
+        - Chrome
+        - Firefox
+        - Both Chrome and Firefox
+        - Browser-agnostic
+        - Unknown
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Optional. What simpler behavior would also solve this?
+  - type: textarea
+    id: docs-impact
+    attributes:
+      label: Documentation impact
+      description: Which docs or command references would need to change?

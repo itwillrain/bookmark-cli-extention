@@ -1,0 +1,47 @@
+name: Release or store submission issue
+description: Report GitHub Release, Chrome Web Store, AMO, signing, validator, or package issues.
+title: "[Release]: "
+labels: ["chore", "needs-triage"]
+body:
+  - type: dropdown
+    id: channel
+    attributes:
+      label: Channel
+      options:
+        - GitHub Release
+        - Chrome Web Store
+        - Firefox Add-ons
+        - Local package
+        - CI or workflow
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      placeholder: "1.1.0"
+    validations:
+      required: true
+  - type: textarea
+    id: issue
+    attributes:
+      label: Issue
+      description: What failed or what warning appeared?
+      placeholder: "Example: AMO validator reports `Unsafe assignment to innerHTML`."
+    validations:
+      required: true
+  - type: textarea
+    id: artifact
+    attributes:
+      label: Artifact or workflow
+      description: Link the release, workflow run, asset name, or validator output.
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected release/store behavior
+  - type: textarea
+    id: notes
+    attributes:
+      label: Reviewer or store notes
+      description: Optional. Paste any store reviewer feedback here.
