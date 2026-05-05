@@ -9,11 +9,16 @@ updates:
       interval: weekly
     groups:
       npm-minor-and-patch:
+        applies-to: version-updates
         patterns:
           - "*"
         update-types:
           - minor
           - patch
+      npm-security:
+        applies-to: security-updates
+        patterns:
+          - "*"
     open-pull-requests-limit: 5
 
   - package-ecosystem: npm
@@ -25,11 +30,16 @@ updates:
       interval: weekly
     groups:
       docs-npm-minor-and-patch:
+        applies-to: version-updates
         patterns:
           - "*"
         update-types:
           - minor
           - patch
+      docs-npm-security:
+        applies-to: security-updates
+        patterns:
+          - "*"
     open-pull-requests-limit: 5
 
   - package-ecosystem: github-actions
@@ -41,9 +51,14 @@ updates:
       interval: weekly
     groups:
       github-actions-minor-and-patch:
+        applies-to: version-updates
         patterns:
           - "*"
         update-types:
           - minor
           - patch
+      github-actions-security:
+        applies-to: security-updates
+        patterns:
+          - "*"
     open-pull-requests-limit: 5

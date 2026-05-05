@@ -138,6 +138,7 @@ export default defineConfig({
             { label: "開発環境", slug: "development/environment" },
             { label: "Issue運用", slug: "development/issues" },
             { label: "リリース運用", slug: "development/release" },
+            { label: "Security運用", slug: "development/security" },
           ],
           label: "開発",
         },
