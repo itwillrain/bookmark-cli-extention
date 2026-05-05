@@ -4,7 +4,7 @@ import typiaVitePlugin from "@typia/unplugin/vite";
 /**
  * Vitest がテスト対象として扱うファイルの glob です。
  */
-const testIncludePatterns = ["test/**/*.test.ts", "src/**/*.test.ts"];
+const testIncludePatterns = ["test/**/*.test.ts", "src/**/*.test.ts", "tools/**/*.test.ts"];
 
 /**
  * Coverage の対象から除外するファイルの glob です。

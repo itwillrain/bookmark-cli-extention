@@ -22,6 +22,7 @@
     "@astrojs/starlight": "^0.38.4",
     "@fontsource/inter": "^5.1.1",
     "@fontsource/jetbrains-mono": "^5.1.1",
+    "@pagefind/default-ui": "^1.5.2",
     "@six-tech/starlight-theme-six": "^1.0.13",
     "astro": "^6.2.1",
     "starlight-versions": "^0.8.2",

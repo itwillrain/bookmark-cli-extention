@@ -10,6 +10,12 @@ slug: 1.2.0/guides/documentation-policy
 
 docs配下をBookmark CLI ExtensionのSSOTとして扱います。
 
+`docs/src/content/docs/` は内部的な最新原稿です。
+
+公開サイトでは、rootや未version URLを最新の公開済みversionへredirectします。
+
+version selectorには、公開済みversionだけを表示します。
+
 仕様、振る舞い、UI、データ構造、権限、テスト方針に影響する変更は、コードだけで完結させません。
 
 実装を変える場合は、対応するdocsを同じ変更単位で更新します。

@@ -22,7 +22,7 @@ concurrency:
 
 jobs:
   create-release:
-    name: Check, build, zip, and create release
+    name: Check, archive docs, build, zip, and create release
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -55,10 +55,21 @@ jobs:
         uses: actions/setup-node@v6
         with:
           cache: pnpm
+          cache-dependency-path: |
+            pnpm-lock.yaml
+            docs/pnpm-lock.yaml
           node-version: 24
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Install docs dependencies
+        run: pnpm --dir docs install --frozen-lockfile
+
+      - name: Archive docs version
+        run: pnpm run docs:archive -- "${RELEASE_VERSION}"
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
 
       - name: Run checks
         run: pnpm run check
@@ -92,6 +103,25 @@ jobs:
         env:
           RELEASE_VERSION: ${{ inputs.version }}
 
+      - name: Commit docs archive
+        run: |
+          if [ -z "$(git status --porcelain -- docs/src/data docs/src/content/docs docs/src/content/versions)" ]; then
+            echo "Docs archive is already up to date."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/src/data docs/src/content/docs docs/src/content/versions
+          git commit -m "📚 docs v${RELEASE_VERSION} archiveを生成" -m "Release workflowでversioned docs snapshotを生成する"
+          git push origin "HEAD:main"
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+
+      - name: Resolve release target
+        id: release-target
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
       - name: Ensure release tag
         run: |
           TAG_NAME="v${RELEASE_VERSION}"
@@ -103,7 +133,7 @@ jobs:
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag -a "${TAG_NAME}" "${GITHUB_SHA}" -m "${TAG_NAME}"
+          git tag -a "${TAG_NAME}" HEAD -m "${TAG_NAME}"
           git push origin "refs/tags/${TAG_NAME}"
         env:
           RELEASE_VERSION: ${{ inputs.version }}
@@ -111,7 +141,7 @@ jobs:
       - name: Create or update draft release
         run: |
           TAG_NAME="v${RELEASE_VERSION}"
-          RELEASE_FLAGS=(--draft --target "${GITHUB_SHA}" --title "${TAG_NAME}")
+          RELEASE_FLAGS=(--draft --target "${RELEASE_TARGET_SHA}" --title "${TAG_NAME}")
 
           if [ "${IS_PRERELEASE}" = "true" ]; then
             RELEASE_FLAGS+=(--prerelease)
@@ -125,4 +155,5 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           IS_PRERELEASE: ${{ inputs.prerelease }}
+          RELEASE_TARGET_SHA: ${{ steps.release-target.outputs.sha }}
           RELEASE_VERSION: ${{ inputs.version }}

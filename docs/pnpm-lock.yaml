@@ -20,6 +20,9 @@ importers:
       '@fontsource/jetbrains-mono':
         specifier: ^5.1.1
         version: 5.2.8
+      '@pagefind/default-ui':
+        specifier: ^1.5.2
+        version: 1.5.2
       '@six-tech/starlight-theme-six':
         specifier: ^1.0.13
         version: 1.0.16(@astrojs/starlight@0.38.4(astro@6.2.1(@types/node@24.12.2)(rollup@4.60.2)(typescript@5.9.3)(yaml@2.8.4)))(@fontsource/inter@5.2.8)(@fontsource/jetbrains-mono@5.2.8)(sharp@0.34.5)

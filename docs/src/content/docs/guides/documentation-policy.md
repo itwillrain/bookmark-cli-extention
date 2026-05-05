@@ -9,7 +9,11 @@ description: ドキュメントを更新するときの基本方針です。
 
 docs配下をBookmark CLI ExtensionのSSOTとして扱います。
 
-`docs/src/content/docs/` は現在のmain向け仕様です。
+`docs/src/content/docs/` は内部的な最新原稿です。
+
+公開サイトでは、rootや未version URLを最新の公開済みversionへredirectします。
+
+version selectorには、公開済みversionだけを表示します。
 
 公開済みversionのsnapshotは `docs/src/content/docs/<version>/` と `docs/src/content/versions/<version>.json` で保持します。
 
