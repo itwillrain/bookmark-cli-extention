@@ -6,7 +6,7 @@ import type {
 } from "./bookmark-use-cases";
 import {
   type BookmarkTreeViewEntry,
-  listBookmarkTreeViewEntries,
+  listBookmarkTreeViewEntriesWithOptions,
 } from "../../domain/bookmarks/bookmark-tree-view";
 import { type CurrentDirectory, resolveFolderPath } from "../../domain/bookmarks/current-directory";
 import { doesFolderPathExist } from "../../domain/bookmarks/bookmark-directory";
@@ -23,6 +23,10 @@ export interface ShowDirectoryTreeInput {
    * 表示する最大depthです。
    */
   readonly depth: number;
+  /**
+   * Directoryだけを表示するかです。
+   */
+  readonly directoriesOnly: boolean;
   /**
    * 表示対象path入力です。
    */
@@ -99,6 +103,11 @@ export const showDirectoryTree = async (
 
   return createSuccess({
     directoryPath,
-    entries: listBookmarkTreeViewEntries(bookmarkTree, directoryPath, input.depth),
+    entries: listBookmarkTreeViewEntriesWithOptions({
+      bookmarkTree,
+      directoryPath,
+      maxDepth: input.depth,
+      options: { directoriesOnly: input.directoriesOnly },
+    }),
   });
 };

@@ -301,12 +301,13 @@ pwd
 現在ディレクトリ、または指定したpath配下のBookmark Treeを表示します。
 
 ```bash
-tree [path] [--depth <number>] [--format json]
+tree [-d] [path] [--depth <number>] [--format json]
 ```
 
 ```bash
 tree
 tree Work
+tree -d Work
 tree --depth 3
 tree Work --depth 3
 ```
@@ -314,6 +315,8 @@ tree Work --depth 3
 初期表示の深さは2階層です。
 
 `--depth` で表示する深さを指定します。
+
+`-d` を指定した場合は、Bookmarkを表示せずfolderだけを表示します。
 
 表示は結果番号とkind列を揃え、title列にtree guideを表示します。
 

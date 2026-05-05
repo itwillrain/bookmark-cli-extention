@@ -162,6 +162,7 @@ describe("showDirectoryTree valid input", (): void => {
     const result = await showDirectoryTree({
       currentDirectory: rootCurrentDirectory,
       depth: twoLevelDepth,
+      directoriesOnly: false,
       pathInput: workPathInput,
       repository: createBookmarkRepository(),
     });
@@ -182,6 +183,7 @@ describe("showDirectoryTree valid input", (): void => {
     const result = await showDirectoryTree({
       currentDirectory: rootCurrentDirectory,
       depth: threeLevelDepth,
+      directoriesOnly: false,
       pathInput: workPathInput,
       repository: createBookmarkRepository(),
     });
@@ -200,6 +202,28 @@ describe("showDirectoryTree valid input", (): void => {
 });
 
 /**
+ * Directory tree use caseのdirectory限定テストスイートです。
+ */
+describe("showDirectoryTree directories only input", (): void => {
+  /** Directory限定ではBookmarkを含めずfolderだけを返すことを検証します。 */
+  it("returns folder entries only for directories only tree", async (): Promise<void> => {
+    const result = await showDirectoryTree({
+      currentDirectory: rootCurrentDirectory,
+      depth: threeLevelDepth,
+      directoriesOnly: true,
+      pathInput: workPathInput,
+      repository: createBookmarkRepository(),
+    });
+
+    expect(result.ok).toBe(true);
+
+    if (result.ok) {
+      expect(result.value.entries.map((item) => item.entry.id)).toStrictEqual(["11", "12"]);
+    }
+  });
+});
+
+/**
  * Directory tree use caseの異常系テストスイートです。
  */
 describe("showDirectoryTree missing folder", (): void => {
@@ -210,6 +234,7 @@ describe("showDirectoryTree missing folder", (): void => {
     const result = await showDirectoryTree({
       currentDirectory: rootCurrentDirectory,
       depth: twoLevelDepth,
+      directoriesOnly: false,
       pathInput: missingPathInput,
       repository: createBookmarkRepository(),
     });
