@@ -1,5 +1,5 @@
-name: Question
-description: Ask a usage, command, setup, or contribution question.
+name: Question or documentation
+description: Ask a usage, setup, contribution, or documentation question.
 title: "[Question]: "
 labels: ["question", "needs-triage"]
 body:
@@ -13,6 +13,7 @@ body:
         - Setup
         - Browser compatibility
         - Contribution
+        - Documentation
         - Release or store
         - Other
     validations:
@@ -21,7 +22,7 @@ body:
     id: question
     attributes:
       label: Question
-      description: What do you want to know?
+      description: What do you want to know or clarify?
     validations:
       required: true
   - type: textarea
