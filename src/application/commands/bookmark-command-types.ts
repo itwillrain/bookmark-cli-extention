@@ -80,6 +80,10 @@ export interface ShowDirectoryTreeCommand {
    */
   readonly depth: number;
   /**
+   * Directoryだけを表示するかです。
+   */
+  readonly directoriesOnly: boolean;
+  /**
    * Command種別です。
    */
   readonly kind: "tree";

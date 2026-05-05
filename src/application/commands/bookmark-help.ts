@@ -95,8 +95,8 @@ const bookmarkCliHelpTopics = [
   {
     commandName: "tree",
     description: "Bookmark Treeを階層表示する",
-    examples: ["tree", "tree Work", "tree --depth 3"],
-    usage: ["tree [path] [--depth <number>]"],
+    examples: ["tree", "tree Work", "tree -d Work", "tree --depth 3"],
+    usage: ["tree [-d] [path] [--depth <number>]"],
   },
   {
     commandName: "help",

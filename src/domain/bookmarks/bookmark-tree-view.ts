@@ -1,4 +1,8 @@
 import type { BookmarkEntry, BookmarkTree } from "./bookmark-tree";
+import type {
+  BookmarkTreeViewOptions,
+  ListBookmarkTreeViewEntriesInput,
+} from "./bookmark-tree-view-options";
 import type { FolderPath } from "./folder-path";
 import { listDirectoryEntries } from "./bookmark-directory";
 
@@ -82,6 +86,10 @@ interface BookmarkTreeViewTraversalContext {
    * 表示する最大depthです。
    */
   readonly maxDepth: number;
+  /**
+   * Tree表示optionです。
+   */
+  readonly options: BookmarkTreeViewOptions;
 }
 
 /**
@@ -112,6 +120,23 @@ interface BookmarkTreeViewDirectoryInput {
  * @returns {boolean} folderならtrueです。
  */
 const isFolderEntry = (entry: BookmarkEntry): boolean => entry.kind === "folder";
+
+/**
+ * Tree viewにentryを表示するかを判定します。
+ * @param {BookmarkEntry} entry 判定対象のentryです。
+ * @param {BookmarkTreeViewOptions} options Tree表示optionです。
+ * @returns {boolean} 表示するならtrueです。
+ */
+const shouldIncludeTreeViewEntry = (
+  entry: BookmarkEntry,
+  options: BookmarkTreeViewOptions,
+): boolean => {
+  if (options.directoriesOnly) {
+    return isFolderEntry(entry);
+  }
+
+  return true;
+};
 
 /**
  * Ancestorの継続有無をguide文字列へ変換します。
@@ -183,7 +208,9 @@ const listDirectoryTreeViewEntries = (
     return emptyTreeViewEntries;
   }
 
-  const entries = listDirectoryEntries(input.context.bookmarkTree, input.directoryPath);
+  const entries = listDirectoryEntries(input.context.bookmarkTree, input.directoryPath).filter(
+    (entry) => shouldIncludeTreeViewEntry(entry, input.context.options),
+  );
 
   return entries.flatMap((entry, entryIndex) => {
     const isLastSibling = entryIndex + entryIndexOffset === entries.length;
@@ -211,6 +238,39 @@ const listDirectoryTreeViewEntries = (
 
 /**
  * 指定directory配下のBookmark Treeをtree表示用flat listにします。
+ * @param {ListBookmarkTreeViewEntriesInput} input Bookmark Tree表示入力です。
+ * @returns {readonly BookmarkTreeViewEntry[]} Tree表示用flat listです。
+ * @example
+ * ```ts
+ * const result = listBookmarkTreeViewEntriesWithOptions({
+ *   bookmarkTree,
+ *   directoryPath: "/Work",
+ *   maxDepth: 2,
+ *   options: { directoriesOnly: false },
+ * });
+ * ```
+ */
+export const listBookmarkTreeViewEntriesWithOptions = (
+  input: ListBookmarkTreeViewEntriesInput,
+): readonly BookmarkTreeViewEntry[] => {
+  if (input.maxDepth < minimumBookmarkTreeDepth) {
+    return emptyTreeViewEntries;
+  }
+
+  return listDirectoryTreeViewEntries({
+    ancestorHasNextSiblings: [],
+    context: {
+      bookmarkTree: input.bookmarkTree,
+      maxDepth: input.maxDepth,
+      options: input.options,
+    },
+    depth: rootChildTreeDepth,
+    directoryPath: input.directoryPath,
+  });
+};
+
+/**
+ * 指定directory配下のBookmark Treeを標準optionでtree表示用flat listにします。
  * @param {BookmarkTree} bookmarkTree 対象のBookmark Treeです。
  * @param {FolderPath} directoryPath 起点directory pathです。
  * @param {number} maxDepth 表示する最大depthです。
@@ -224,15 +284,10 @@ export const listBookmarkTreeViewEntries = (
   bookmarkTree: BookmarkTree,
   directoryPath: FolderPath,
   maxDepth: number,
-): readonly BookmarkTreeViewEntry[] => {
-  if (maxDepth < minimumBookmarkTreeDepth) {
-    return emptyTreeViewEntries;
-  }
-
-  return listDirectoryTreeViewEntries({
-    ancestorHasNextSiblings: [],
-    context: { bookmarkTree, maxDepth },
-    depth: rootChildTreeDepth,
+): readonly BookmarkTreeViewEntry[] =>
+  listBookmarkTreeViewEntriesWithOptions({
+    bookmarkTree,
     directoryPath,
+    maxDepth,
+    options: { directoriesOnly: false },
   });
-};

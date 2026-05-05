@@ -1,6 +1,9 @@
 import type { BookmarkEntry, BookmarkTree } from "./bookmark-tree";
 import { describe, expect, it } from "vitest";
-import { listBookmarkTreeViewEntries } from "./bookmark-tree-view";
+import {
+  listBookmarkTreeViewEntries,
+  listBookmarkTreeViewEntriesWithOptions,
+} from "./bookmark-tree-view";
 
 /**
  * Work folderのentryです。
@@ -160,6 +163,11 @@ const threeLevelExpectedDepths = [
 const threeLevelExpectedGuides = ["├── ", "│   ├── ", "│   │   └── ", "│   └── ", "└── "] as const;
 
 /**
+ * Directoryだけを表示する2階層treeの期待guide一覧です。
+ */
+const foldersOnlyExpectedGuides = ["└── ", "    └── "] as const;
+
+/**
  * Tree view entry一覧からid一覧を取り出します。
  * @param {ReturnType<typeof listBookmarkTreeViewEntries>} entries Tree view entry一覧です。
  * @returns {readonly string[]} entry id一覧です。
@@ -192,6 +200,21 @@ describe("listBookmarkTreeViewEntries", (): void => {
     expect(getTreeViewEntryIds(entries)).toStrictEqual(["11", "12", "44", "43", "42"]);
     expect(entries.map((item) => item.depth)).toStrictEqual(threeLevelExpectedDepths);
     expect(entries.map((item) => item.guide)).toStrictEqual(threeLevelExpectedGuides);
+  });
+
+  /**
+   * Directory限定ではbookmarkを除外してguideを作り直すことを検証します。
+   */
+  it("lists folder entries only with directory guides", (): void => {
+    const entries = listBookmarkTreeViewEntriesWithOptions({
+      bookmarkTree,
+      directoryPath: workFolderPath,
+      maxDepth: twoLevelDepth,
+      options: { directoriesOnly: true },
+    });
+
+    expect(getTreeViewEntryIds(entries)).toStrictEqual(["11", "12"]);
+    expect(entries.map((item) => item.guide)).toStrictEqual(foldersOnlyExpectedGuides);
   });
 
   /**

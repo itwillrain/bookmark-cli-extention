@@ -150,6 +150,7 @@ export const executeShowDirectoryTreeCommand = async (
   const result = await showDirectoryTree({
     currentDirectory: dependencies.currentDirectory,
     depth: command.depth,
+    directoriesOnly: command.directoriesOnly,
     pathInput: command.pathInput,
     repository: dependencies.repository,
   });

@@ -187,6 +187,7 @@ describe("parseBookmarkCommand tree commands", (): void => {
   it("parses tree command with path and depth", (): void => {
     expect(parseBookmarkCommand(showDirectoryTreeCommandInput)).toStrictEqual({
       depth: expectedTreeDepth,
+      directoriesOnly: false,
       kind: "tree",
       pathInput: "Work",
     });
@@ -198,8 +199,19 @@ describe("parseBookmarkCommand tree commands", (): void => {
   it("parses tree command with depth only", (): void => {
     expect(parseBookmarkCommand(showCurrentDirectoryTreeCommandInput)).toStrictEqual({
       depth: expectedTreeDepth,
+      directoriesOnly: false,
       kind: "tree",
       pathInput: "",
+    });
+  });
+
+  /** Tree commandをdirectory限定option付きで解析できることを検証します。 */
+  it("parses tree command with directories only option", (): void => {
+    expect(parseBookmarkCommand("tree Work -d --depth 3")).toStrictEqual({
+      depth: expectedTreeDepth,
+      directoriesOnly: true,
+      kind: "tree",
+      pathInput: "Work",
     });
   });
 });

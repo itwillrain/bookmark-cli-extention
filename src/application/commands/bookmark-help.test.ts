@@ -10,6 +10,9 @@ const historyHelpTopicName = "history";
 /** Grep help topic名です。 */
 const grepHelpTopicName = "grep";
 
+/** Tree help topic名です。 */
+const treeHelpTopicName = "tree";
+
 /** Unknown help topic名です。 */
 const unknownHelpTopicName = "missing";
 
@@ -63,6 +66,25 @@ describe("bookmark CLI help catalog", (): void => {
    */
   it("returns false for unknown help topic", (): void => {
     expect(findBookmarkCliHelpTopic(unknownHelpTopicName)).toBe(false);
+  });
+});
+
+/**
+ * Bookmark CLI tree help catalogのテストスイートです。
+ */
+describe("bookmark CLI tree help catalog", (): void => {
+  /**
+   * Tree topicからdirectory限定表示のoptionを確認できることを検証します。
+   */
+  it("finds tree help topic with directories only option", (): void => {
+    const topic = findBookmarkCliHelpTopic(treeHelpTopicName);
+
+    expect(topic).not.toBe(false);
+
+    if (topic !== false) {
+      expect(topic.usage).toContain("tree [-d] [path] [--depth <number>]");
+      expect(topic.examples).toContain("tree -d Work");
+    }
   });
 });
 

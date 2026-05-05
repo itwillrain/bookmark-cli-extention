@@ -72,6 +72,11 @@ const initialExtensionState = createInitialExtensionState();
 const showDirectoryTreeInput = "tree Work --depth 2";
 
 /**
+ * Directoryだけを表示するTree commandの入力です。
+ */
+const showDirectoryFoldersOnlyTreeInput = "tree Work -d --depth 2";
+
+/**
  * Tree result itemのdepth期待値です。
  */
 const expectedTreeResultDepth = 1;
@@ -150,6 +155,34 @@ describe("executeBookmarkCliCommand tree commands", (): void => {
         title: "Stripe Dashboard",
         treePrefix: "└── ",
         url: "https://dashboard.stripe.com/",
+      },
+    ]);
+  });
+});
+
+/**
+ * Bookmark tree CLI controllerのdirectory限定テストスイートです。
+ */
+describe("executeBookmarkCliCommand tree directories only commands", (): void => {
+  /** Tree commandの-dでfolder result itemだけを返すことを検証します。 */
+  it("returns folder result items for tree directories only command", async (): Promise<void> => {
+    const state = await executeBookmarkCliCommand(showDirectoryFoldersOnlyTreeInput, {
+      creator: bookmarkCreator,
+      currentDirectory: rootCurrentDirectory,
+      extensionState: initialExtensionState,
+      lastResultEntries: emptyLastResultEntries,
+      opener: { openBookmarkUrl },
+      repository: createBookmarkRepository(),
+    });
+
+    expect(state.statusText).toBe("1 entries");
+    expect(state.resultItems).toStrictEqual([
+      {
+        depth: expectedTreeResultDepth,
+        folderPath: "/Work/Admin",
+        kind: "folder",
+        title: "Admin",
+        treePrefix: "└── ",
       },
     ]);
   });

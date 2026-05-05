@@ -672,6 +672,8 @@ pwd
 
 `--depth` で表示する深さを指定できます。
 
+`-d` を指定した場合は、Bookmarkを表示せずfolderだけを表示します。
+
 表示は結果番号とkind列を揃え、title列にtree guideを表示します。
 
 Faviconやiconは、`tree` を含むすべての結果行でtitleやURLの前に表示します。
@@ -690,6 +692,7 @@ Directory行のtitleはURL色のcyanとは分けたblue accentで表示し、Boo
 ```bash
 tree
 tree Work
+tree -d Work
 tree --depth 3
 tree Work --depth 3
 ```
@@ -813,6 +816,8 @@ Bookmarkの仮想タグは種別ではなく、行の補足情報として表示
 `tree` は初期状態で2階層まで表示します。
 
 `tree --depth <number>` を指定した場合は、その深さまで表示します。
+
+`tree -d` を指定した場合は、Bookmarkを表示せずfolderだけを表示します。
 
 `recent` と `freq` は初期状態で10件まで表示します。
 

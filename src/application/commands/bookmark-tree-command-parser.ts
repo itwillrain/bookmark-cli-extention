@@ -17,6 +17,11 @@ const commandTokenSeparator = " ";
 const treeDepthOptionName = "--depth";
 
 /**
+ * Directoryだけを表示するtree option名です。
+ */
+const treeDirectoriesOnlyOptionName = "-d";
+
+/**
  * 見つからなかったindex値です。
  */
 const missingIndex = -1;
@@ -56,6 +61,22 @@ const joinQueryParts = (queryParts: readonly string[]): string =>
  */
 const findTreeDepthOptionIndex = (queryParts: readonly string[]): number =>
   queryParts.indexOf(treeDepthOptionName);
+
+/**
+ * Directoryだけを表示するtree optionかを判定します。
+ * @param {string} queryPart command名を除いたtokenです。
+ * @returns {boolean} Directoryだけを表示するtree optionならtrueです。
+ */
+const isTreeDirectoriesOnlyOption = (queryPart: string): boolean =>
+  queryPart === treeDirectoriesOnlyOptionName;
+
+/**
+ * Directoryだけを表示するtree optionが指定されているかを判定します。
+ * @param {readonly string[]} queryParts command名を除いたtoken一覧です。
+ * @returns {boolean} 指定されていればtrueです。
+ */
+const hasTreeDirectoriesOnlyOption = (queryParts: readonly string[]): boolean =>
+  queryParts.some((queryPart) => isTreeDirectoriesOnlyOption(queryPart));
 
 /**
  * 入力を有効なtree depthへ変換できるかを判定します。
@@ -111,10 +132,12 @@ const getTreePathParts = (
   depthOptionIndex: number,
 ): readonly string[] => {
   if (depthOptionIndex === missingIndex) {
-    return queryParts;
+    return queryParts.filter((queryPart) => !isTreeDirectoriesOnlyOption(queryPart));
   }
 
-  return queryParts.slice(missingIndex + nextTokenOffset, depthOptionIndex);
+  return queryParts
+    .slice(missingIndex + nextTokenOffset, depthOptionIndex)
+    .filter((queryPart) => !isTreeDirectoriesOnlyOption(queryPart));
 };
 
 /**
@@ -132,10 +155,12 @@ export const parseShowDirectoryTreeCommand = (
 ): ShowDirectoryTreeCommand => {
   const depthOptionIndex = findTreeDepthOptionIndex(queryParts);
   const depth = resolveTreeDepth(queryParts, depthOptionIndex);
+  const directoriesOnly = hasTreeDirectoriesOnlyOption(queryParts);
   const pathParts = getTreePathParts(queryParts, depthOptionIndex);
 
   return {
     depth,
+    directoriesOnly,
     kind: "tree",
     pathInput: joinQueryParts(pathParts),
   };
