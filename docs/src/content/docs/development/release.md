@@ -43,6 +43,10 @@ docsサイトは `starlight-versions` でversion selectorを提供します。
 
 公開サイトでは、rootや未version URLを最新の公開済みversionへredirectします。
 
+GitHub Pagesはproject siteとして公開するため、公開URLには `/bookmark-cli-extention/` base pathを含めます。
+
+GitHub Actions上のdocs buildでは、rootや未version URLのredirect先にもこのbase pathを含めます。
+
 version selectorには、`main` などのbranch名ではなく公開済みversionだけを表示します。
 
 リリース済みversionのsnapshotは、`docs/src/content/docs/<version>/` と `docs/src/content/versions/<version>.json` に保持します。

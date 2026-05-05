@@ -114,6 +114,9 @@ const latestArchivedDocumentationVersion = resolveLatestArchivedDocumentationVer
 /** 最新の公開済みdocs version URL prefixです。 */
 const latestArchivedDocumentationVersionPath = `/${latestArchivedDocumentationVersion.slug}`;
 
+/** Redirect先へ付与するbase pathです。 */
+const documentationRedirectBasePath = isGitHubPagesBuild ? documentationBasePath : "";
+
 /** Current docs route redirectから除外するroot directory名です。 */
 const currentDocumentationRedirectExcludedRootDirectoryNames = new Set([
   typeDocOutputDirectory,
@@ -177,8 +180,8 @@ const listCurrentDocumentationRoutePaths = (
  */
 const createLatestVersionRedirectDestination = (routePath: string): string =>
   routePath === "/"
-    ? `${latestArchivedDocumentationVersionPath}/`
-    : `${latestArchivedDocumentationVersionPath}${routePath}/`;
+    ? `${documentationRedirectBasePath}${latestArchivedDocumentationVersionPath}/`
+    : `${documentationRedirectBasePath}${latestArchivedDocumentationVersionPath}${routePath}/`;
 
 /**
  * 公開URLからcurrent docs routeを隠すためのredirect設定を作る。
