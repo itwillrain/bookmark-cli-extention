@@ -326,6 +326,43 @@ const testSelectsPreviousCommandSuggestionBeforeResultItem = (): void => {
 };
 
 /**
+ * 入力済みcommandでTabした場合、suggestionが空でも古いresult選択へ戻らないことを検証。
+ * @returns {void} 返り値なし。
+ */
+const testKeepsResultUnselectedForNonEmptyInputWithoutSuggestions = (): void => {
+  let resultIndex: ResultCursorIndex = selectedResultIndex;
+  let suggestionIndex: CompletionCursorIndex = completionCursorCleared;
+
+  const handled = executeSelectNextCompletionKeyboardAction({
+    commandState: createCommandState(),
+    event: createCommandInputKeyEvent(),
+    executeInputValue: recordExecutedInputValue,
+    handleCommandExecutionError: recordCommandExecutionError,
+    inputValue: activeInputValue,
+    selectedResultIndex: resultIndex,
+    selectedSuggestionIndex: suggestionIndex,
+    setInputValue: ignoreStateAction,
+    setSelectedResultIndex: createResultCursorSetter(
+      () => resultIndex,
+      (value) => {
+        resultIndex = value;
+      },
+    ),
+    setSelectedSuggestionIndex: createCompletionCursorSetter(
+      () => suggestionIndex,
+      (value) => {
+        suggestionIndex = value;
+      },
+    ),
+    suggestionItems: [],
+  });
+
+  expect(handled).toBe(true);
+  expect(resultIndex).toBe(resultCursorCleared);
+  expect(suggestionIndex).toBe(completionCursorCleared);
+};
+
+/**
  * 入力済みcommandでEnterした場合、古いresult選択があってもsubmitへ委ねることを検証。
  * @returns {void} 返り値なし。
  */
@@ -409,6 +446,10 @@ describe("completion keyboard actions", (): void => {
   it(
     "selects previous command suggestion before result item",
     testSelectsPreviousCommandSuggestionBeforeResultItem,
+  );
+  it(
+    "keeps result unselected for non-empty input without suggestions",
+    testKeepsResultUnselectedForNonEmptyInputWithoutSuggestions,
   );
   it(
     "leaves non-empty input unhandled when result is selected",
