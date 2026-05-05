@@ -36,6 +36,33 @@ const showDirectoryTreeCommandName = "tree";
 /** Rm command名。 */
 const removeBookmarkCommandName = "rm";
 
+/** Rm force option名。 */
+const removeForceOptionName = "-f";
+
+/** Rm long force option名。 */
+const removeLongForceOptionName = "--force";
+
+/** Rm recursive option名。 */
+const removeRecursiveOptionName = "-r";
+
+/** Rm upper recursive option名。 */
+const removeUpperRecursiveOptionName = "-R";
+
+/** Rm long recursive option名。 */
+const removeLongRecursiveOptionName = "--recursive";
+
+/** Rm combined option prefix。 */
+const removeCombinedOptionPrefix = "-";
+
+/** Rm force option文字。 */
+const removeForceOptionCharacter = "f";
+
+/** Rm recursive option文字。 */
+const removeRecursiveOptionCharacter = "r";
+
+/** Rm upper recursive option文字。 */
+const removeUpperRecursiveOptionCharacter = "R";
+
 /** Command token separator。 */
 const commandTokenSeparator = " ";
 
@@ -59,9 +86,6 @@ const firstIndex = 0;
 
 /** 次indexへのoffset。 */
 const nextIndexOffset = 1;
-
-/** Directory suggestion最大件数。 */
-const maxDirectorySuggestionCount = 8;
 
 /** 補完対象directory command名一覧。 */
 const directoryCompletionCommandNames = new Set<string>([
@@ -91,6 +115,16 @@ interface DirectoryPathCompletionContext {
   readonly commandPrefix: string;
   /** 補完対象path入力。 */
   readonly pathInput: string;
+}
+
+/** 入力tokenと入力文字列上の位置。 */
+interface InputToken {
+  /** Token文字列。 */
+  readonly text: string;
+  /** Token開始index。 */
+  readonly startIndex: number;
+  /** Token終了index。 */
+  readonly endIndex: number;
 }
 
 /** Path補完対象の分解結果。 */
@@ -143,6 +177,192 @@ const getPathInput = (tokens: readonly string[]): string =>
   tokens[tokens.length - nextIndexOffset] ?? emptyString;
 
 /**
+ * Rm option tokenかを判定。
+ * @param {string} token 判定対象token。
+ * @returns {boolean} Rm optionならtrue。
+ */
+const isRemoveOptionToken = (token: string): boolean =>
+  token === removeForceOptionName ||
+  token === removeLongForceOptionName ||
+  token === removeRecursiveOptionName ||
+  token === removeUpperRecursiveOptionName ||
+  token === removeLongRecursiveOptionName ||
+  (token.startsWith(removeCombinedOptionPrefix) &&
+    token
+      .slice(removeCombinedOptionPrefix.length)
+      .split(emptyString)
+      .every(
+        (optionCharacter) =>
+          optionCharacter === removeForceOptionCharacter ||
+          optionCharacter === removeRecursiveOptionCharacter ||
+          optionCharacter === removeUpperRecursiveOptionCharacter,
+      ));
+
+/**
+ * Command名の開始indexを取得。
+ * @param {string} inputValue CLI入力値。
+ * @param {string} commandName command名。
+ * @returns {number} command名の開始index。
+ */
+const findCommandNameStartIndex = (inputValue: string, commandName: string): number =>
+  inputValue.indexOf(commandName);
+
+/**
+ * Command引数の開始indexを取得。
+ * @param {string} inputValue CLI入力値。
+ * @param {string} commandName command名。
+ * @returns {number} command引数の開始index。
+ */
+const findCommandArgumentStartIndex = (inputValue: string, commandName: string): number => {
+  const commandNameStartIndex = findCommandNameStartIndex(inputValue, commandName);
+
+  if (commandNameStartIndex === notFoundIndex) {
+    return inputValue.length;
+  }
+
+  return commandNameStartIndex + commandName.length;
+};
+
+/**
+ * Command token separator文字かを判定。
+ * @param {string} character 判定対象文字。
+ * @returns {boolean} separatorならtrue。
+ */
+const isCommandTokenSeparatorCharacter = (character: string): boolean =>
+  character === commandTokenSeparator;
+
+/**
+ * Command token separatorを読み飛ばす。
+ * @param {string} inputValue CLI入力値。
+ * @param {number} startIndex 読み飛ばし開始index。
+ * @returns {number} token開始index。
+ */
+const skipCommandTokenSeparators = (inputValue: string, startIndex: number): number => {
+  let currentIndex = startIndex;
+
+  while (isCommandTokenSeparatorCharacter(inputValue[currentIndex] ?? emptyString)) {
+    currentIndex += nextIndexOffset;
+  }
+
+  return currentIndex;
+};
+
+/**
+ * Token終端indexを取得。
+ * @param {string} inputValue CLI入力値。
+ * @param {number} startIndex token開始index。
+ * @returns {number} token終端index。
+ */
+const findTokenEndIndex = (inputValue: string, startIndex: number): number => {
+  let currentIndex = startIndex;
+
+  while (
+    currentIndex < inputValue.length &&
+    !isCommandTokenSeparatorCharacter(inputValue[currentIndex] ?? emptyString)
+  ) {
+    currentIndex += nextIndexOffset;
+  }
+
+  return currentIndex;
+};
+
+/**
+ * 次の入力tokenを読む。
+ * @param {string} inputValue CLI入力値。
+ * @param {number} startIndex 読み取り開始index。
+ * @returns {InputToken | false} 次の入力token。
+ */
+const readNextInputToken = (inputValue: string, startIndex: number): InputToken | false => {
+  const tokenStartIndex = skipCommandTokenSeparators(inputValue, startIndex);
+
+  if (tokenStartIndex >= inputValue.length) {
+    return false;
+  }
+
+  const tokenEndIndex = findTokenEndIndex(inputValue, tokenStartIndex);
+
+  return {
+    endIndex: tokenEndIndex,
+    startIndex: tokenStartIndex,
+    text: inputValue.slice(tokenStartIndex, tokenEndIndex),
+  };
+};
+
+/**
+ * Rm commandのpath開始indexを取得。
+ * @param {string} inputValue CLI入力値。
+ * @param {string} commandName command名。
+ * @returns {number | false} path開始index。
+ */
+const findRemovePathStartIndex = (inputValue: string, commandName: string): number | false => {
+  let currentIndex = findCommandArgumentStartIndex(inputValue, commandName);
+
+  while (currentIndex < inputValue.length) {
+    const token = readNextInputToken(inputValue, currentIndex);
+
+    if (token === false) {
+      return false;
+    }
+
+    if (!isRemoveOptionToken(token.text)) {
+      return token.startIndex;
+    }
+
+    currentIndex = token.endIndex;
+  }
+
+  return false;
+};
+
+/**
+ * 入力末尾が空白かを判定。
+ * @param {string} inputValue CLI入力値。
+ * @returns {boolean} 空白で終わるならtrue。
+ */
+const endsWithCommandTokenSeparator = (inputValue: string): boolean =>
+  inputValue.endsWith(commandTokenSeparator);
+
+/**
+ * Path未入力時のcommand prefixを作成。
+ * @param {string} inputValue CLI入力値。
+ * @returns {string} path未入力時のcommand prefix。
+ */
+const createEmptyPathCommandPrefix = (inputValue: string): string => {
+  if (endsWithCommandTokenSeparator(inputValue)) {
+    return inputValue;
+  }
+
+  return `${inputValue}${commandTokenSeparator}`;
+};
+
+/**
+ * Rm command向けdirectory path completion contextを作成。
+ * @param {string} commandName command名。
+ * @param {string} inputValue CLI入力値。
+ * @returns {DirectoryPathCompletionContext} context。
+ */
+const createRemoveDirectoryPathCompletionContext = (
+  commandName: string,
+  inputValue: string,
+): DirectoryPathCompletionContext => {
+  const pathStartIndex = findRemovePathStartIndex(inputValue, commandName);
+
+  if (pathStartIndex === false) {
+    return {
+      commandName,
+      commandPrefix: createEmptyPathCommandPrefix(inputValue),
+      pathInput: emptyString,
+    };
+  }
+
+  return {
+    commandName,
+    commandPrefix: inputValue.slice(firstIndex, pathStartIndex),
+    pathInput: inputValue.slice(pathStartIndex),
+  };
+};
+
+/**
  * Path入力からdirectory path completion contextを作成。
  * @param {string} commandName command名。
  * @param {string} inputValue CLI入力値。
@@ -184,6 +404,10 @@ const createDirectoryPathCompletionContext = (
 
   if (!isDirectoryCompletionCommandName(commandName)) {
     return false;
+  }
+
+  if (commandName === removeBookmarkCommandName) {
+    return createRemoveDirectoryPathCompletionContext(commandName, inputValue);
   }
 
   return createDirectoryPathCompletionContextFromPathInput(
@@ -308,8 +532,5 @@ export const suggestBookmarkDirectoryPaths = (
     titlePrefix: parts.titlePrefix,
   });
 
-  return [...folderSuggestions, ...bookmarkSuggestions].slice(
-    firstIndex,
-    maxDirectorySuggestionCount,
-  );
+  return [...folderSuggestions, ...bookmarkSuggestions];
 };

@@ -255,3 +255,38 @@ describe("suggestBookmarkDirectoryPaths for rm", (): void => {
     expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual(["rm -r ./Admin"]);
   });
 });
+
+/**
+ * Rm command向けnested path suggestionのテストスイート。
+ */
+describe("suggestBookmarkDirectoryPaths for rm nested path", (): void => {
+  /**
+   * Rm commandではfolder配下のBookmarkをpath prefixで返すことを検証。
+   */
+  it("suggests bookmark paths under a child folder for rm path prefix", (): void => {
+    const suggestions = suggestBookmarkDirectoryPaths({
+      bookmarkTree,
+      currentDirectory: "/Work",
+      inputValue: "rm ./Admin/S",
+    });
+
+    expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual([
+      "rm ./Admin/Stripe Dashboard",
+    ]);
+  });
+
+  /**
+   * Rm commandではspaceを含むBookmark title prefixをpathとして扱うことを検証。
+   */
+  it("keeps spaced bookmark path prefix for rm suggestions", (): void => {
+    const suggestions = suggestBookmarkDirectoryPaths({
+      bookmarkTree,
+      currentDirectory: "/Work",
+      inputValue: "rm ./Admin/Stripe D",
+    });
+
+    expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual([
+      "rm ./Admin/Stripe Dashboard",
+    ]);
+  });
+});
