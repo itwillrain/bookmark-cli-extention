@@ -72,7 +72,9 @@ ChromeとFirefoxでroot node IDやroot直下containerのIDは異なります。
 
 疑似CLIではbrowser root nodeを表示しません。
 
-Chromeでは `Bookmarks Bar` をCLI root `/` として扱い、`Other Bookmarks`、`Mobile Bookmarks`、`Managed Bookmarks` などの他のbrowser root直下containerはCLI root直下のfolderとして表示します。
+Chromeでは `Bookmarks Bar` をCLI root `/` として扱います。
+
+`Other Bookmarks`、`Mobile Bookmarks`、`Managed Bookmarks` などの他のbrowser root直下containerは、CLI root直下のfolderとして表示します。
 
 Chrome 134以降で取得できる `folderType` がある場合は、`bookmarks-bar` をCLI rootへ割り当てます。
 

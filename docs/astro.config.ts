@@ -2,6 +2,7 @@ import starlight from "@astrojs/starlight";
 import starlightThemeSix from "@six-tech/starlight-theme-six";
 import { defineConfig } from "astro/config";
 import starlightTypeDoc, { typeDocSidebarGroup } from "starlight-typedoc";
+import starlightVersions from "starlight-versions";
 
 /** ドキュメントサイトのタイトルです。 */
 const documentationTitle = "Bookmark CLI Extension";
@@ -57,6 +58,19 @@ const typeDocTsconfig = "../tsconfig.json";
 /** TypeDoc が生成する Starlight content 配下の出力先です。 */
 const typeDocOutputDirectory = "api";
 
+/** 公開済みdocs versionの一覧です。 */
+const archivedDocumentationVersions = [
+  {
+    label: "v1.2.0",
+    slug: "1.2.0",
+  },
+];
+
+/** 現在編集中のdocs version表示名です。 */
+const currentDocumentationVersion = {
+  label: "main",
+};
+
 /** Astro と Starlight のドキュメントサイト設定です。
  *
  * @see https://docs.astro.build/en/reference/configuration-reference/
@@ -76,6 +90,10 @@ export default defineConfig({
       customCss: ["./src/styles/fonts.css"],
       description: documentationDescription,
       favicon: "/favicon.png",
+      components: {
+        Header: "./src/components/starlight/Header.astro",
+        PageTitle: "./src/components/starlight/PageTitle.astro",
+      },
       plugins: [
         starlightTypeDoc({
           entryPoints: typeDocEntryPoints,
@@ -88,6 +106,10 @@ export default defineConfig({
             entryPointStrategy: typeDocEntryPointStrategy,
             exclude: typeDocExcludePatterns,
           },
+        }),
+        starlightVersions({
+          current: currentDocumentationVersion,
+          versions: archivedDocumentationVersions,
         }),
         starlightThemeSix({
           footerText,

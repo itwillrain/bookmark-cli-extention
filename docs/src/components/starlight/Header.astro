@@ -1,0 +1,175 @@
+---
+import LanguageSelect from "@astrojs/starlight/components/LanguageSelect.astro";
+import { getRelativeLocaleUrl } from "astro:i18n";
+import { AstroError } from "astro/errors";
+import VersionSearch from "starlight-versions/components/VersionSearch.astro";
+import VersionSelect from "starlight-versions/components/VersionSelect.astro";
+import SocialIcons from "@six-tech/starlight-theme-six/overrides/SocialIcons.astro";
+import SiteTitle from "@six-tech/starlight-theme-six/overrides/SiteTitle.astro";
+import ThemeSelect from "@six-tech/starlight-theme-six/overrides/ThemeSelect.astro";
+import starlightConfig from "virtual:starlight/user-config";
+import sixThemeConfig from "virtual:starlight-theme-six-config";
+
+/** 現在表示中ページのpathです。 */
+const currentPath = Astro.url.pathname;
+
+/** Six theme nav labelのfallback localeです。 */
+const defaultLanguage = starlightConfig.defaultLocale?.lang ?? starlightConfig.defaultLocale?.locale ?? "en";
+
+/** 外部URL判定用の正規表現です。 */
+const absoluteUrlPattern = /^https?:\/\//;
+
+/**
+ * Locale別labelから現在locale向けの表示名を解決します。
+ * @param {Record<string, string>} translations Locale別labelです。
+ * @param {string} link Nav link先です。
+ * @returns {string} 表示するlabelです。
+ */
+const resolveLocalizedLabel = (translations: Record<string, string>, link: string): string => {
+  const fallbackLabel = translations[defaultLanguage];
+
+  if (!fallbackLabel) {
+    throw new AstroError(
+      `The nav label for "${link}" must include the default language "${defaultLanguage}".`,
+      "Update the Starlight Six navLinks config to include a label for the default language.",
+    );
+  }
+
+  return Astro.currentLocale ? translations[Astro.currentLocale] ?? fallbackLabel : fallbackLabel;
+};
+
+/**
+ * Six theme nav labelを解決します。
+ * @param {string | Record<string, string>} label Nav link label設定です。
+ * @param {string} link Nav link先です。
+ * @returns {string} 表示するlabelです。
+ */
+const resolveNavLabel = (label: string | Record<string, string>, link: string): string =>
+  typeof label === "string" ? label : resolveLocalizedLabel(label, link);
+
+/**
+ * Locale設定を考慮したnav link hrefを解決します。
+ * @param {string} link Nav link設定です。
+ * @returns {string} 表示するhrefです。
+ */
+const resolveNavHref = (link: string): string =>
+  !absoluteUrlPattern.test(link) && Astro.currentLocale ? getRelativeLocaleUrl(Astro.currentLocale, link) : link;
+---
+
+<div class="site-title-wrapper">
+  <SiteTitle />
+  <nav class="nav-bar">
+    {
+      sixThemeConfig.navLinks?.map((nav) => {
+        const href = resolveNavHref(nav.link);
+        const label = resolveNavLabel(nav.label, nav.link);
+
+        return (
+          <a class:list={[{ active: currentPath === href }]} href={href} {...nav.attrs}>
+            {label}
+            {nav.badge && <span class="badge">{nav.badge}</span>}
+          </a>
+        );
+      })
+    }
+  </nav>
+</div>
+
+<button class="show-modal" popovertargetaction="toggle" popovertarget="drawer">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9h16.5m-16.5 6.75h16.5"></path>
+  </svg>
+  <span class="sr-only">Toggle Menu</span>
+</button>
+
+<div class="header-right">
+  <VersionSearch />
+
+  <nav class="header-nav">
+    <div>
+      <VersionSelect />
+    </div>
+    <div>
+      <SocialIcons />
+    </div>
+    <div>
+      <ThemeSelect />
+    </div>
+    <div>
+      <LanguageSelect />
+    </div>
+  </nav>
+</div>
+
+<style>
+  .site-title-wrapper {
+    display: none;
+    margin-right: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .site-title-wrapper {
+      display: flex;
+    }
+  }
+
+  .nav-bar {
+    font-size: 1rem;
+    line-height: 1.25rem;
+    gap: 1rem;
+    align-items: center;
+    display: flex;
+  }
+
+  @media (min-width: 1280px) {
+    .nav-bar {
+      gap: 1.5rem;
+    }
+  }
+
+  .header-right {
+    gap: 0.5rem;
+    justify-content: space-between;
+    align-items: center;
+    flex: 1 1 0;
+    display: flex;
+  }
+
+  @media (min-width: 768px) {
+    .header-right {
+      justify-content: flex-end;
+    }
+  }
+
+  .header-nav {
+    gap: 0.125rem;
+    align-items: center;
+    display: flex;
+  }
+
+  button {
+    all: unset;
+    display: inline-flex;
+    margin-right: 0.5rem;
+    margin-left: -0.5rem;
+    height: 2rem;
+    width: 2rem;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 0.5rem;
+    padding-top: 0.5rem;
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    button {
+      display: none;
+    }
+  }
+
+  button > svg {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+</style>

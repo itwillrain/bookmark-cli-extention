@@ -1,0 +1,51 @@
+---
+editUrl: false
+next: false
+prev: false
+title: ShowDirectoryTreeInput
+slug: 1.2.0/api/application/bookmarks/tree-directory-use-case/interfaces/showdirectorytreeinput
+---
+
+Defined in: [application/bookmarks/tree-directory-use-case.ts:17](https://github.com/itwillrain/bookmark-cli-extention/blob/0d414df9117fa466c941851ee64c2b9060cc0990/src/application/bookmarks/tree-directory-use-case.ts#L17)
+
+Directory tree表示の入力です。
+
+## Properties
+
+### currentDirectory
+
+> `readonly` **currentDirectory**: `string`
+
+Defined in: [application/bookmarks/tree-directory-use-case.ts:21](https://github.com/itwillrain/bookmark-cli-extention/blob/0d414df9117fa466c941851ee64c2b9060cc0990/src/application/bookmarks/tree-directory-use-case.ts#L21)
+
+現在ディレクトリです。
+
+***
+
+### depth
+
+> `readonly` **depth**: `number`
+
+Defined in: [application/bookmarks/tree-directory-use-case.ts:25](https://github.com/itwillrain/bookmark-cli-extention/blob/0d414df9117fa466c941851ee64c2b9060cc0990/src/application/bookmarks/tree-directory-use-case.ts#L25)
+
+表示する最大depthです。
+
+***
+
+### pathInput
+
+> `readonly` **pathInput**: `string`
+
+Defined in: [application/bookmarks/tree-directory-use-case.ts:29](https://github.com/itwillrain/bookmark-cli-extention/blob/0d414df9117fa466c941851ee64c2b9060cc0990/src/application/bookmarks/tree-directory-use-case.ts#L29)
+
+表示対象path入力です。
+
+***
+
+### repository
+
+> `readonly` **repository**: [`BookmarkRepositoryPort`](/1.2.0/api/application/bookmarks/bookmark-use-cases/interfaces/bookmarkrepositoryport/)
+
+Defined in: [application/bookmarks/tree-directory-use-case.ts:33](https://github.com/itwillrain/bookmark-cli-extention/blob/0d414df9117fa466c941851ee64c2b9060cc0990/src/application/bookmarks/tree-directory-use-case.ts#L33)
+
+Bookmark Tree取得portです。

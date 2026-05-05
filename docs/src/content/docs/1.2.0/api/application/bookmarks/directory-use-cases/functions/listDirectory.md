@@ -1,0 +1,38 @@
+---
+editUrl: false
+next: false
+prev: false
+title: listDirectory
+slug: 1.2.0/api/application/bookmarks/directory-use-cases/functions/listdirectory
+---
+
+> **listDirectory**(`input`): `Promise`\<[`BookmarkCommandResult`](/1.2.0/api/application/bookmarks/bookmark-use-cases/type-aliases/bookmarkcommandresult/)\<[`ListDirectoryValue`](/1.2.0/api/application/bookmarks/directory-use-cases/interfaces/listdirectoryvalue/)>>
+
+Defined in: [application/bookmarks/directory-use-cases.ts:234](https://github.com/itwillrain/bookmark-cli-extention/blob/0d414df9117fa466c941851ee64c2b9060cc0990/src/application/bookmarks/directory-use-cases.ts#L234)
+
+現在ディレクトリまたは指定pathのentry一覧を返します。
+
+## Parameters
+
+### input
+
+[`ListDirectoryInput`](/1.2.0/api/application/bookmarks/directory-use-cases/interfaces/listdirectoryinput/)
+
+Directory listの入力です。
+
+## Returns
+
+`Promise`\<[`BookmarkCommandResult`](/1.2.0/api/application/bookmarks/bookmark-use-cases/type-aliases/bookmarkcommandresult/)\<[`ListDirectoryValue`](/1.2.0/api/application/bookmarks/directory-use-cases/interfaces/listdirectoryvalue/)>>
+
+Directory listの実行結果です。
+
+## Example
+
+```ts
+const result = await listDirectory({
+  all: false,
+  currentDirectory: "/Work",
+  pathInput: "./Admin",
+  repository,
+});
+```

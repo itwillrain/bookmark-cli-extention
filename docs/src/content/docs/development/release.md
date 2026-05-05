@@ -35,6 +35,26 @@ package versionはtagから `v` を除いた値と一致させます。
 
 docsの `package.json` も同じ公開単位で扱う場合は、同じversionへ更新します。
 
+## docs version
+
+docsサイトは `starlight-versions` でversion selectorを提供します。
+
+`docs/src/content/docs/` は現在のmain向けdocsとして扱います。
+
+リリース済みversionのsnapshotは、`docs/src/content/docs/<version>/` と `docs/src/content/versions/<version>.json` に保持します。
+
+新しいversionをarchiveする場合は、`docs/astro.config.ts` の `archivedDocumentationVersions` に対象versionを追加します。
+
+その後、次のcommandでsnapshotとversion sidebar設定を生成します。
+
+```bash
+pnpm --dir docs astro build
+```
+
+生成されたsnapshotはPRでreviewし、対象releaseの仕様と一致していることを確認します。
+
+公開済みversionのsnapshotは、仕様変更ではなくリンク切れや誤字の修正だけを行います。
+
 ## Release Drafter
 
 Release Drafterは、`main` へmergeされたPRから次のGitHub Release draftを更新します。
@@ -102,11 +122,12 @@ release draftがない場合は、`vX.Y.Z` のrelease draftを作成します。
 1. リリース対象のPRを `main` へmergeする
 2. 必要であれば `release/vX.Y.Z` branchでversionだけを更新する
 3. version更新PRを `main` へmergeする
-4. GitHub Actionsから `Release` workflowを手動実行する
-5. `version` に `1.1.0` のような値を入力する
-6. workflowが作ったGitHub Release draftを確認する
-7. release noteとassetを確認する
-8. 問題なければGitHub Releaseをpublishする
+4. docs version snapshotが必要であれば `archivedDocumentationVersions` に対象versionを追加し、docs archive PRを `main` へmergeする
+5. GitHub Actionsから `Release` workflowを手動実行する
+6. `version` に `1.1.0` のような値を入力する
+7. workflowが作ったGitHub Release draftを確認する
+8. release noteとassetを確認する
+9. 問題なければGitHub Releaseをpublishする
 
 ## branch方針
 
