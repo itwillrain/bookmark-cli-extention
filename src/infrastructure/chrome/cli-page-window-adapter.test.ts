@@ -6,6 +6,7 @@ import {
   type ChromeWindowGetAllQuery,
   type ChromeWindowUpdateProperties,
   type ChromeWindowsApi,
+  type CliPageWindowIdStoragePort,
   createChromeCliPageWindowLauncher,
   createCliPageWindowCreateProperties,
   createCliPageWindowFocusProperties,
@@ -39,6 +40,15 @@ const unrelatedWindowId = 301;
 /** 別URL fixtureです。 */
 const unrelatedUrl = "https://example.com/";
 
+/** CLI page window ID未保存状態です。 */
+const cliPageWindowIdMissing = false;
+
+/** 1回分のcount増分です。 */
+const countIncrement = 1;
+
+/** 1回呼び出し済みを表す期待値です。 */
+const expectedSingleCallCount = 1;
+
 /** Chrome windows APIの記録fixtureです。 */
 interface RecordingWindowsApi {
   /** 作成されたwindow入力一覧です。 */
@@ -61,6 +71,18 @@ interface RecordingWindowsApiOptions {
   readonly failNextUpdate?: boolean;
 }
 
+/** CLI page window ID storageの記録fixtureです。 */
+interface RecordingWindowIdStorage {
+  /** 削除回数です。 */
+  readonly clearCount: number;
+  /** 読み込み回数です。 */
+  readonly readCount: number;
+  /** CLI page window ID storage fixtureです。 */
+  readonly storage: CliPageWindowIdStoragePort;
+  /** 書き込まれたwindow ID一覧です。 */
+  readonly writtenWindowIds: readonly number[];
+}
+
 /**
  * Chrome window fixtureを作ります。
  * @param {number} windowId window IDです。
@@ -73,6 +95,84 @@ const createChromeWindow = (windowId: number, tabUrl: string, focused = false): 
   id: windowId,
   tabs: [{ url: tabUrl }],
 });
+
+/**
+ * Tab URLを取得できないChrome window fixtureを作ります。
+ * @param {number} windowId window IDです。
+ * @param {boolean} focused windowがfocus中かです。
+ * @returns {ChromeWindow} Chrome window fixtureです。
+ */
+const createChromeWindowWithoutTabUrl = (windowId: number, focused = false): ChromeWindow => ({
+  focused,
+  id: windowId,
+  tabs: [{}],
+});
+
+/**
+ * CLI page window ID storage fixtureを作ります。
+ * @param {number | false} initialWindowId 初期保存window IDです。
+ * @returns {RecordingWindowIdStorage} CLI page window ID storage fixtureです。
+ */
+// oxlint-disable-next-line max-lines-per-function -- storage fixtureのclosureとgetterを同じ場所に置くため。
+const createRecordingWindowIdStorage = (
+  initialWindowId: number | false = cliPageWindowIdMissing,
+): RecordingWindowIdStorage => {
+  let storedWindowId = initialWindowId;
+  let readCount = 0;
+  let clearCount = 0;
+  const writtenWindowIds: number[] = [];
+
+  /**
+   * 保存済みCLI page window IDを読み込みます。
+   * @returns {Promise<number | false>} 保存済みwindow IDです。
+   */
+  const readCliPageWindowId = async (): Promise<number | false> => {
+    readCount += countIncrement;
+    await Promise.resolve();
+
+    return storedWindowId;
+  };
+
+  /**
+   * CLI page window IDを保存します。
+   * @param {number} windowId CLI page window IDです。
+   * @returns {Promise<void>} 保存完了Promiseです。
+   */
+  const writeCliPageWindowId = async (windowId: number): Promise<void> => {
+    writtenWindowIds.push(windowId);
+    storedWindowId = windowId;
+    await Promise.resolve();
+  };
+
+  /**
+   * 保存済みCLI page window IDを削除します。
+   * @returns {Promise<void>} 削除完了Promiseです。
+   */
+  const clearCliPageWindowId = async (): Promise<void> => {
+    clearCount += countIncrement;
+    storedWindowId = cliPageWindowIdMissing;
+    await Promise.resolve();
+  };
+
+  return {
+    /**
+     * 削除回数を返します。
+     * @returns {number} 削除回数です。
+     */
+    get clearCount(): number {
+      return clearCount;
+    },
+    /**
+     * 読み込み回数を返します。
+     * @returns {number} 読み込み回数です。
+     */
+    get readCount(): number {
+      return readCount;
+    },
+    storage: { clearCliPageWindowId, readCliPageWindowId, writeCliPageWindowId },
+    writtenWindowIds,
+  };
+};
 
 /**
  * Window作成入力を記録するChrome windows API fixtureを作ります。
@@ -147,7 +247,12 @@ const createRecordingWindowsApi = (
   ): Promise<ChromeWindow> => {
     if (shouldFailNextUpdate) {
       shouldFailNextUpdate = false;
+      existingWindows = existingWindows.filter((window) => window.id !== windowId);
 
+      throw new Error("window closed");
+    }
+
+    if (!existingWindows.some((window) => window.id === windowId)) {
       throw new Error("window closed");
     }
 
@@ -282,6 +387,63 @@ describe("createChromeCliPageWindowLauncher discovery", (): void => {
     expect(recordingWindowsApi.updatedWindows).toStrictEqual([
       [existingWindowId, createCliPageWindowFocusProperties()],
     ]);
+  });
+});
+
+/** Chrome CLI page window launcher保存ID復元のテストスイートです。 */
+// oxlint-disable-next-line max-lines-per-function -- 保存IDのfocus、close、writeを同じ仕様群で確認するため。
+describe("createChromeCliPageWindowLauncher stored window id", (): void => {
+  /** Tab URLを取得できない場合も保存済みwindow IDで既存CLI windowを前面へ戻すことを検証します。 */
+  it("focuses stored CLI page window when tab URL is unavailable", async (): Promise<void> => {
+    const recordingWindowsApi = createRecordingWindowsApi({
+      existingWindows: [createChromeWindowWithoutTabUrl(existingWindowId)],
+    });
+    const recordingWindowIdStorage = createRecordingWindowIdStorage(existingWindowId);
+    const launcher = createChromeCliPageWindowLauncher(
+      recordingWindowsApi.windowsApi,
+      recordingWindowIdStorage.storage,
+    );
+
+    await launcher.openCliPageWindow(cliPageUrl);
+
+    expect(recordingWindowIdStorage.readCount).toBe(expectedSingleCallCount);
+    expect(recordingWindowsApi.createdWindows).toStrictEqual([]);
+    expect(recordingWindowsApi.updatedWindows).toStrictEqual([
+      [existingWindowId, createCliPageWindowFocusProperties()],
+    ]);
+  });
+
+  /** Tab URLを取得できないfocus中windowも保存済みwindow IDで閉じることを検証します。 */
+  it("closes focused stored CLI page window when tab URL is unavailable", async (): Promise<void> => {
+    const recordingWindowsApi = createRecordingWindowsApi({
+      existingWindows: [createChromeWindowWithoutTabUrl(existingWindowId, true)],
+    });
+    const recordingWindowIdStorage = createRecordingWindowIdStorage(existingWindowId);
+    const launcher = createChromeCliPageWindowLauncher(
+      recordingWindowsApi.windowsApi,
+      recordingWindowIdStorage.storage,
+    );
+
+    const closed = await launcher.closeFocusedCliPageWindow(cliPageUrl);
+
+    expect(closed).toBe(true);
+    expect(recordingWindowsApi.createdWindows).toStrictEqual([]);
+    expect(recordingWindowsApi.removedWindowIds).toStrictEqual([existingWindowId]);
+    expect(recordingWindowIdStorage.clearCount).toBe(expectedSingleCallCount);
+  });
+
+  /** 新規作成したCLI window IDを保存することを検証します。 */
+  it("stores created CLI page window id", async (): Promise<void> => {
+    const recordingWindowsApi = createRecordingWindowsApi();
+    const recordingWindowIdStorage = createRecordingWindowIdStorage();
+    const launcher = createChromeCliPageWindowLauncher(
+      recordingWindowsApi.windowsApi,
+      recordingWindowIdStorage.storage,
+    );
+
+    await launcher.openCliPageWindow(cliPageUrl);
+
+    expect(recordingWindowIdStorage.writtenWindowIds).toStrictEqual([createdWindowId]);
   });
 });
 

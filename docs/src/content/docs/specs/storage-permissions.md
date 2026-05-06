@@ -250,15 +250,21 @@ CLI起動元タブのURLまたはtitleを取得できない場合は `unsupporte
 
 Dedicated extension pageは単一のpopup windowとして扱います。
 
+Dedicated extension pageのwindow IDは `chrome.storage.session` に保存します。
+
+これにより、background service workerが停止、再起動した後でも、hot keyで既存windowを前面へ戻せます。
+
 hot keyまたは拡張actionで起動するたびに `chrome.windows.getAll({ populate: true })` で既存のCLI windowを探します。
 
 既存のCLI windowが残っており、focusされていない場合は新規作成しません。
 
-この場合は `chrome.windows.update(windowId, { focused: true })` で前面へ戻します。
+この場合、または保存済みwindow IDで既存windowを特定できた場合は、`chrome.windows.update(windowId, { focused: true })` で前面へ戻します。
 
 hot key再押下時にCLI window自身がfocus中の場合は、`chrome.windows.remove(windowId)` でCLI windowを閉じます。
 
 このとき `launchContext` は更新しません。
+
+閉じたCLI windowの保存済みwindow IDは削除します。
 
 再度hot keyで開いた場合は、新しいpopup windowを作り、保存済みの `currentDirectory`、`settings`、`commandHistory` を復元します。
 
