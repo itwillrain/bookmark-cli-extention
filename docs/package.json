@@ -1,6 +1,6 @@
 {
   "name": "bookmark-cli-extension-docs",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Documentation site for Bookmark CLI Extension.",
   "type": "module",
   "private": true,

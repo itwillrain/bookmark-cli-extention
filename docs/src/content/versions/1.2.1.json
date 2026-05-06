@@ -1,0 +1,3238 @@
+{
+  "sidebar": [
+    {
+      "items": [
+        {
+          "label": "概要",
+          "slug": "guides/overview"
+        },
+        {
+          "label": "プライバシーポリシー",
+          "slug": "guides/privacy-policy"
+        },
+        {
+          "label": "ドキュメント方針",
+          "slug": "guides/documentation-policy"
+        }
+      ],
+      "label": "はじめに"
+    },
+    {
+      "items": [
+        {
+          "label": "仕様トップ",
+          "slug": "specs"
+        },
+        {
+          "label": "プロダクト仕様",
+          "slug": "specs/product"
+        },
+        {
+          "label": "用語集",
+          "slug": "specs/glossary"
+        },
+        {
+          "label": "CLI仕様",
+          "slug": "specs/cli"
+        },
+        {
+          "label": "コマンドリファレンス",
+          "slug": "specs/command-reference"
+        },
+        {
+          "label": "エラーコード一覧",
+          "slug": "specs/error-codes"
+        },
+        {
+          "label": "Chrome連携仕様",
+          "slug": "specs/chrome-bookmarks"
+        },
+        {
+          "label": "保存データ構造と権限",
+          "slug": "specs/storage-permissions"
+        },
+        {
+          "label": "アーキテクチャと責務境界",
+          "slug": "specs/architecture"
+        },
+        {
+          "label": "UI実装方針",
+          "slug": "specs/ui-implementation"
+        },
+        {
+          "label": "実装ロードマップ",
+          "slug": "specs/implementation-roadmap"
+        },
+        {
+          "label": "ユースケース",
+          "slug": "specs/use-cases"
+        },
+        {
+          "label": "テスト方針",
+          "slug": "specs/testing-policy"
+        },
+        {
+          "label": "未決事項",
+          "slug": "specs/open-questions"
+        }
+      ],
+      "label": "仕様"
+    },
+    {
+      "items": [
+        {
+          "label": "開発環境",
+          "slug": "development/environment"
+        },
+        {
+          "label": "Issue運用",
+          "slug": "development/issues"
+        },
+        {
+          "label": "リリース運用",
+          "slug": "development/release"
+        },
+        {
+          "label": "Security運用",
+          "slug": "development/security"
+        }
+      ],
+      "label": "開発"
+    },
+    {
+      "label": "APIリファレンス",
+      "collapsed": false,
+      "items": [
+        {
+          "label": "application/bookmarks/bookmark-organization-use-case-helpers",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/bookmarks/bookmark-organization-use-case-helpers/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "application/bookmarks/bookmark-organization-use-case-types",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/bookmarks/bookmark-organization-use-case-types/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Type Aliases",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/bookmarks/bookmark-organization-use-case-types/type-aliases"
+              }
+            }
+          ]
+        },
+        {
+          "label": "application/bookmarks/bookmark-usage-use-case",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/bookmarks/bookmark-usage-use-case/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/bookmarks/bookmark-usage-use-case/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "application/bookmarks/bookmark-use-cases",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/bookmarks/bookmark-use-cases/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Type Aliases",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/bookmarks/bookmark-use-cases/type-aliases"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/bookmarks/bookmark-use-cases/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "application/bookmarks/browser-history-use-case",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/bookmarks/browser-history-use-case/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Variables",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/bookmarks/browser-history-use-case/variables"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/bookmarks/browser-history-use-case/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "application/bookmarks/directory-use-cases",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/bookmarks/directory-use-cases/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/bookmarks/directory-use-cases/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "application/bookmarks/go-bookmark-result-number",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/bookmarks/go-bookmark-result-number/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Type Aliases",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/bookmarks/go-bookmark-result-number/type-aliases"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/bookmarks/go-bookmark-result-number/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "application/bookmarks/make-directory-use-case",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/bookmarks/make-directory-use-case/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/bookmarks/make-directory-use-case/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "application/bookmarks/mark-bookmark-use-case",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/bookmarks/mark-bookmark-use-case/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/bookmarks/mark-bookmark-use-case/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "application/bookmarks/move-bookmark-use-case",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/bookmarks/move-bookmark-use-case/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/bookmarks/move-bookmark-use-case/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "application/bookmarks/organize-bookmark-use-case",
+          "collapsed": true,
+          "items": [
+            {
+              "label": "References",
+              "items": [
+                {
+                  "label": "BookmarkOrganizerPort",
+                  "link": "/api/application/bookmarks/bookmark-organization-use-case-types/interfaces/bookmarkorganizerport/"
+                },
+                {
+                  "label": "CreateFolderInput",
+                  "link": "/api/application/bookmarks/bookmark-organization-use-case-types/interfaces/createfolderinput/"
+                },
+                {
+                  "label": "makeDirectory",
+                  "link": "/api/application/bookmarks/make-directory-use-case/functions/makedirectory/"
+                },
+                {
+                  "label": "moveBookmark",
+                  "link": "/api/application/bookmarks/move-bookmark-use-case/functions/movebookmark/"
+                },
+                {
+                  "label": "MoveEntryInput",
+                  "link": "/api/application/bookmarks/bookmark-organization-use-case-types/interfaces/moveentryinput/"
+                },
+                {
+                  "label": "OrganizeBookmarkResult",
+                  "link": "/api/application/bookmarks/bookmark-organization-use-case-types/type-aliases/organizebookmarkresult/"
+                },
+                {
+                  "label": "OrganizeBookmarkValue",
+                  "link": "/api/application/bookmarks/bookmark-organization-use-case-types/interfaces/organizebookmarkvalue/"
+                },
+                {
+                  "label": "removeBookmark",
+                  "link": "/api/application/bookmarks/remove-bookmark-use-case/functions/removebookmark/"
+                },
+                {
+                  "label": "RemoveEntryInput",
+                  "link": "/api/application/bookmarks/bookmark-organization-use-case-types/interfaces/removeentryinput/"
+                },
+                {
+                  "label": "RemoveFolderTreeInput",
+                  "link": "/api/application/bookmarks/bookmark-organization-use-case-types/interfaces/removefoldertreeinput/"
+                },
+                {
+                  "label": "renameBookmark",
+                  "link": "/api/application/bookmarks/rename-bookmark-use-case/functions/renamebookmark/"
+                },
+                {
+                  "label": "RenameEntryInput",
+                  "link": "/api/application/bookmarks/bookmark-organization-use-case-types/interfaces/renameentryinput/"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "label": "application/bookmarks/organize-bookmark-use-case-test-helper",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/bookmarks/organize-bookmark-use-case-test-helper/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/bookmarks/organize-bookmark-use-case-test-helper/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "application/bookmarks/remove-bookmark-use-case",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/bookmarks/remove-bookmark-use-case/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/bookmarks/remove-bookmark-use-case/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "application/bookmarks/rename-bookmark-use-case",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/bookmarks/rename-bookmark-use-case/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/bookmarks/rename-bookmark-use-case/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "application/bookmarks/tag-bookmark-use-case",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/bookmarks/tag-bookmark-use-case/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/bookmarks/tag-bookmark-use-case/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "application/bookmarks/tree-directory-use-case",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/bookmarks/tree-directory-use-case/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/bookmarks/tree-directory-use-case/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "application/commands/bookmark-alias-command-parser",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/commands/bookmark-alias-command-parser/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "application/commands/bookmark-command-factory",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/commands/bookmark-command-factory/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Type Aliases",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/commands/bookmark-command-factory/type-aliases"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/commands/bookmark-command-factory/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "application/commands/bookmark-command-history-suggestion",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/commands/bookmark-command-history-suggestion/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/commands/bookmark-command-history-suggestion/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "application/commands/bookmark-command-parser",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/commands/bookmark-command-parser/functions"
+              }
+            },
+            {
+              "label": "References",
+              "items": [
+                {
+                  "label": "AliasBookmarkCommand",
+                  "link": "/api/application/commands/bookmark-command-types/interfaces/aliasbookmarkcommand/"
+                },
+                {
+                  "label": "BrowserHistoryCommand",
+                  "link": "/api/application/commands/bookmark-usage-command-types/interfaces/browserhistorycommand/"
+                },
+                {
+                  "label": "ChangeDirectoryCommand",
+                  "link": "/api/application/commands/bookmark-command-types/interfaces/changedirectorycommand/"
+                },
+                {
+                  "label": "ClearBookmarkCommand",
+                  "link": "/api/application/commands/bookmark-command-types/interfaces/clearbookmarkcommand/"
+                },
+                {
+                  "label": "EmptyBookmarkCommand",
+                  "link": "/api/application/commands/bookmark-command-types/interfaces/emptybookmarkcommand/"
+                },
+                {
+                  "label": "FindBookmarkCommand",
+                  "link": "/api/application/commands/bookmark-search-command-types/interfaces/findbookmarkcommand/"
+                },
+                {
+                  "label": "FrequentBookmarksCommand",
+                  "link": "/api/application/commands/bookmark-usage-command-types/interfaces/frequentbookmarkscommand/"
+                },
+                {
+                  "label": "GoBookmarkCommand",
+                  "link": "/api/application/commands/bookmark-search-command-types/interfaces/gobookmarkcommand/"
+                },
+                {
+                  "label": "HelpBookmarkCommand",
+                  "link": "/api/application/commands/bookmark-command-types/interfaces/helpbookmarkcommand/"
+                },
+                {
+                  "label": "ListDirectoryCommand",
+                  "link": "/api/application/commands/bookmark-command-types/interfaces/listdirectorycommand/"
+                },
+                {
+                  "label": "MakeDirectoryCommand",
+                  "link": "/api/application/commands/bookmark-command-types/interfaces/makedirectorycommand/"
+                },
+                {
+                  "label": "MarkBookmarkCommand",
+                  "link": "/api/application/commands/bookmark-command-types/interfaces/markbookmarkcommand/"
+                },
+                {
+                  "label": "MoveBookmarkCommand",
+                  "link": "/api/application/commands/bookmark-command-types/interfaces/movebookmarkcommand/"
+                },
+                {
+                  "label": "ParsedBookmarkCommand",
+                  "link": "/api/application/commands/bookmark-command-types/type-aliases/parsedbookmarkcommand/"
+                },
+                {
+                  "label": "PipeBookmarkCommand",
+                  "link": "/api/application/commands/bookmark-command-types/interfaces/pipebookmarkcommand/"
+                },
+                {
+                  "label": "PipeSourceBookmarkCommand",
+                  "link": "/api/application/commands/bookmark-command-types/type-aliases/pipesourcebookmarkcommand/"
+                },
+                {
+                  "label": "PrintWorkingDirectoryCommand",
+                  "link": "/api/application/commands/bookmark-command-types/interfaces/printworkingdirectorycommand/"
+                },
+                {
+                  "label": "RecentBookmarksCommand",
+                  "link": "/api/application/commands/bookmark-usage-command-types/interfaces/recentbookmarkscommand/"
+                },
+                {
+                  "label": "RemoveBookmarkCommand",
+                  "link": "/api/application/commands/bookmark-command-types/interfaces/removebookmarkcommand/"
+                },
+                {
+                  "label": "RenameBookmarkCommand",
+                  "link": "/api/application/commands/bookmark-command-types/interfaces/renamebookmarkcommand/"
+                },
+                {
+                  "label": "ShowDirectoryTreeCommand",
+                  "link": "/api/application/commands/bookmark-command-types/interfaces/showdirectorytreecommand/"
+                },
+                {
+                  "label": "TagBookmarkCommand",
+                  "link": "/api/application/commands/bookmark-command-types/interfaces/tagbookmarkcommand/"
+                },
+                {
+                  "label": "UnaliasBookmarkCommand",
+                  "link": "/api/application/commands/bookmark-command-types/interfaces/unaliasbookmarkcommand/"
+                },
+                {
+                  "label": "UnknownBookmarkCommand",
+                  "link": "/api/application/commands/bookmark-command-types/interfaces/unknownbookmarkcommand/"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "label": "application/commands/bookmark-command-suggestion",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/commands/bookmark-command-suggestion/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/commands/bookmark-command-suggestion/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "application/commands/bookmark-command-types",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/commands/bookmark-command-types/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Type Aliases",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/commands/bookmark-command-types/type-aliases"
+              }
+            },
+            {
+              "label": "References",
+              "items": [
+                {
+                  "label": "BrowserHistoryCommand",
+                  "link": "/api/application/commands/bookmark-usage-command-types/interfaces/browserhistorycommand/"
+                },
+                {
+                  "label": "FindBookmarkCommand",
+                  "link": "/api/application/commands/bookmark-search-command-types/interfaces/findbookmarkcommand/"
+                },
+                {
+                  "label": "FrequentBookmarksCommand",
+                  "link": "/api/application/commands/bookmark-usage-command-types/interfaces/frequentbookmarkscommand/"
+                },
+                {
+                  "label": "GoBookmarkCommand",
+                  "link": "/api/application/commands/bookmark-search-command-types/interfaces/gobookmarkcommand/"
+                },
+                {
+                  "label": "RecentBookmarksCommand",
+                  "link": "/api/application/commands/bookmark-usage-command-types/interfaces/recentbookmarkscommand/"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "label": "application/commands/bookmark-directory-suggestion",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/commands/bookmark-directory-suggestion/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/commands/bookmark-directory-suggestion/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "application/commands/bookmark-go-path-suggestion",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/commands/bookmark-go-path-suggestion/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/commands/bookmark-go-path-suggestion/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "application/commands/bookmark-help",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/commands/bookmark-help/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/commands/bookmark-help/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "application/commands/bookmark-list-command-parser",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/commands/bookmark-list-command-parser/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "application/commands/bookmark-mark-command-parser",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/commands/bookmark-mark-command-parser/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "application/commands/bookmark-organize-command-parser",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/commands/bookmark-organize-command-parser/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "application/commands/bookmark-search-command-parser",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/commands/bookmark-search-command-parser/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "application/commands/bookmark-search-command-types",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/commands/bookmark-search-command-types/interfaces"
+              }
+            }
+          ]
+        },
+        {
+          "label": "application/commands/bookmark-tag-command-parser",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/commands/bookmark-tag-command-parser/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "application/commands/bookmark-tree-command-parser",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/commands/bookmark-tree-command-parser/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "application/commands/bookmark-usage-command-parser",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/commands/bookmark-usage-command-parser/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "application/commands/bookmark-usage-command-types",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/commands/bookmark-usage-command-types/interfaces"
+              }
+            }
+          ]
+        },
+        {
+          "label": "application/storage/extension-state-ports",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/storage/extension-state-ports/interfaces"
+              }
+            }
+          ]
+        },
+        {
+          "label": "application/storage/extension-state-use-cases",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/storage/extension-state-use-cases/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Type Aliases",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/storage/extension-state-use-cases/type-aliases"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/application/storage/extension-state-use-cases/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "domain/bookmarks/bookmark-directory",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/bookmarks/bookmark-directory/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/bookmarks/bookmark-directory/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "domain/bookmarks/bookmark-tree",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/bookmarks/bookmark-tree/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Type Aliases",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/bookmarks/bookmark-tree/type-aliases"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/bookmarks/bookmark-tree/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "domain/bookmarks/bookmark-tree-view",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/bookmarks/bookmark-tree-view/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Variables",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/bookmarks/bookmark-tree-view/variables"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/bookmarks/bookmark-tree-view/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "domain/bookmarks/bookmark-tree-view-options",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/bookmarks/bookmark-tree-view-options/interfaces"
+              }
+            }
+          ]
+        },
+        {
+          "label": "domain/bookmarks/current-directory",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Type Aliases",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/bookmarks/current-directory/type-aliases"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Variables",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/bookmarks/current-directory/variables"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/bookmarks/current-directory/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "domain/bookmarks/folder-path",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Type Aliases",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/bookmarks/folder-path/type-aliases"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Variables",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/bookmarks/folder-path/variables"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/bookmarks/folder-path/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "domain/bookmarks/result-cursor",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/bookmarks/result-cursor/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Type Aliases",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/bookmarks/result-cursor/type-aliases"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Variables",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/bookmarks/result-cursor/variables"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/bookmarks/result-cursor/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "domain/bookmarks/result-selection",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/bookmarks/result-selection/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Type Aliases",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/bookmarks/result-selection/type-aliases"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/bookmarks/result-selection/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "domain/cli/bookmark-cli-entry",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Type Aliases",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/cli/bookmark-cli-entry/type-aliases"
+              }
+            }
+          ]
+        },
+        {
+          "label": "domain/cli/command-alias",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/cli/command-alias/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/cli/command-alias/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "domain/cli/command-line-editing",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/cli/command-line-editing/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/cli/command-line-editing/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "domain/cli/completion-cursor",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/cli/completion-cursor/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Type Aliases",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/cli/completion-cursor/type-aliases"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Variables",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/cli/completion-cursor/variables"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/cli/completion-cursor/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "domain/history/browser-history",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/history/browser-history/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Variables",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/history/browser-history/variables"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/history/browser-history/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "domain/search/bookmark-search",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/search/bookmark-search/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Type Aliases",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/search/bookmark-search/type-aliases"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Variables",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/search/bookmark-search/variables"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/search/bookmark-search/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "domain/storage/bookmark-usage",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/storage/bookmark-usage/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Variables",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/storage/bookmark-usage/variables"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/storage/bookmark-usage/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "domain/storage/command-history-navigation",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/storage/command-history-navigation/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Type Aliases",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/storage/command-history-navigation/type-aliases"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Variables",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/storage/command-history-navigation/variables"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/storage/command-history-navigation/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "domain/storage/extension-state",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/storage/extension-state/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Type Aliases",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/storage/extension-state/type-aliases"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Variables",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/storage/extension-state/variables"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/storage/extension-state/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "domain/storage/extension-state-cleanup",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/storage/extension-state-cleanup/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/storage/extension-state-cleanup/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "domain/tags/virtual-tag",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/tags/virtual-tag/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Type Aliases",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/tags/virtual-tag/type-aliases"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/domain/tags/virtual-tag/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "entrypoints/background",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Variables",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/background/variables"
+              }
+            }
+          ]
+        },
+        {
+          "label": "entrypoints/cli-page/app",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/cli-page/app/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "entrypoints/cli-page/app-command-handlers",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Type Aliases",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/cli-page/app-command-handlers/type-aliases"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/cli-page/app-command-handlers/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "entrypoints/cli-page/app-command-runtime",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/cli-page/app-command-runtime/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/cli-page/app-command-runtime/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "entrypoints/cli-page/bookmark-cli-app-screen",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/cli-page/bookmark-cli-app-screen/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/cli-page/bookmark-cli-app-screen/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "entrypoints/cli-page/command-history-keyboard-actions",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/cli-page/command-history-keyboard-actions/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/cli-page/command-history-keyboard-actions/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "entrypoints/cli-page/command-line-editing-keyboard",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/cli-page/command-line-editing-keyboard/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "entrypoints/cli-page/completion-keyboard",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/cli-page/completion-keyboard/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/cli-page/completion-keyboard/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "entrypoints/cli-page/current-command-executor",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/cli-page/current-command-executor/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Type Aliases",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/cli-page/current-command-executor/type-aliases"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/cli-page/current-command-executor/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "entrypoints/cli-page/current-command-submit-handler",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/cli-page/current-command-submit-handler/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/cli-page/current-command-submit-handler/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "entrypoints/cli-page/current-input-change-handler",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/cli-page/current-input-change-handler/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Type Aliases",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/cli-page/current-input-change-handler/type-aliases"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/cli-page/current-input-change-handler/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "entrypoints/cli-page/main",
+          "collapsed": true,
+          "items": []
+        },
+        {
+          "label": "entrypoints/cli-page/use-bookmark-cli-app-keyboard",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/cli-page/use-bookmark-cli-app-keyboard/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/cli-page/use-bookmark-cli-app-keyboard/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "entrypoints/cli-page/use-bookmark-cli-cursor-state",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/cli-page/use-bookmark-cli-cursor-state/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/cli-page/use-bookmark-cli-cursor-state/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "entrypoints/cli-page/use-bookmark-cli-keyboard",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/cli-page/use-bookmark-cli-keyboard/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/cli-page/use-bookmark-cli-keyboard/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "entrypoints/cli-page/use-bookmark-cli-suggestions",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/cli-page/use-bookmark-cli-suggestions/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/cli-page/use-bookmark-cli-suggestions/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "entrypoints/cli-page/use-bookmark-cli-transcript",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/cli-page/use-bookmark-cli-transcript/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/cli-page/use-bookmark-cli-transcript/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "entrypoints/cli-page/use-command-history-keyboard",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/cli-page/use-command-history-keyboard/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/cli-page/use-command-history-keyboard/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "entrypoints/cli-page/use-result-cursor-state",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/cli-page/use-result-cursor-state/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "entrypoints/popup/app",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/popup/app/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "entrypoints/popup/main",
+          "collapsed": true,
+          "items": []
+        },
+        {
+          "label": "entrypoints/popup/popup-messages",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/popup/popup-messages/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Type Aliases",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/popup/popup-messages/type-aliases"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Variables",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/popup/popup-messages/variables"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/entrypoints/popup/popup-messages/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "infrastructure/chrome/bookmarks-adapter",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/infrastructure/chrome/bookmarks-adapter/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/infrastructure/chrome/bookmarks-adapter/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "infrastructure/chrome/cli-page-window-adapter",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/infrastructure/chrome/cli-page-window-adapter/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Type Aliases",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/infrastructure/chrome/cli-page-window-adapter/type-aliases"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/infrastructure/chrome/cli-page-window-adapter/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "infrastructure/chrome/commands-adapter",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/infrastructure/chrome/commands-adapter/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/infrastructure/chrome/commands-adapter/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "infrastructure/chrome/current-window-adapter",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/infrastructure/chrome/current-window-adapter/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/infrastructure/chrome/current-window-adapter/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "infrastructure/chrome/extension-state-storage-adapter",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/infrastructure/chrome/extension-state-storage-adapter/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/infrastructure/chrome/extension-state-storage-adapter/functions"
+              }
+            },
+            {
+              "label": "References",
+              "items": [
+                {
+                  "label": "ExtensionStateStoragePort",
+                  "link": "/api/application/storage/extension-state-ports/interfaces/extensionstatestorageport/"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "label": "infrastructure/chrome/history-adapter",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/infrastructure/chrome/history-adapter/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/infrastructure/chrome/history-adapter/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "infrastructure/chrome/launch-context-storage-adapter",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/infrastructure/chrome/launch-context-storage-adapter/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Type Aliases",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/infrastructure/chrome/launch-context-storage-adapter/type-aliases"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/infrastructure/chrome/launch-context-storage-adapter/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "infrastructure/chrome/shortcut-settings-page-adapter",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/infrastructure/chrome/shortcut-settings-page-adapter/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Variables",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/infrastructure/chrome/shortcut-settings-page-adapter/variables"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/infrastructure/chrome/shortcut-settings-page-adapter/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "infrastructure/chrome/toolbar-action-adapter",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/infrastructure/chrome/toolbar-action-adapter/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Type Aliases",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/infrastructure/chrome/toolbar-action-adapter/type-aliases"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/infrastructure/chrome/toolbar-action-adapter/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/bookmark-cli-alias-command-executors",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-alias-command-executors/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/bookmark-cli-command-executors",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-command-executors/functions"
+              }
+            },
+            {
+              "label": "References",
+              "items": [
+                {
+                  "label": "executeAliasCommand",
+                  "link": "/api/presentation/cli/bookmark-cli-alias-command-executors/functions/executealiascommand/"
+                },
+                {
+                  "label": "executeBrowserHistoryCommand",
+                  "link": "/api/presentation/cli/bookmark-cli-history-command-executors/functions/executebrowserhistorycommand/"
+                },
+                {
+                  "label": "executeChangeDirectoryCommand",
+                  "link": "/api/presentation/cli/bookmark-cli-directory-command-executors/functions/executechangedirectorycommand/"
+                },
+                {
+                  "label": "executeFindCommand",
+                  "link": "/api/presentation/cli/bookmark-cli-search-command-executors/functions/executefindcommand/"
+                },
+                {
+                  "label": "executeFrequentBookmarksCommand",
+                  "link": "/api/presentation/cli/bookmark-cli-usage-command-executors/functions/executefrequentbookmarkscommand/"
+                },
+                {
+                  "label": "executeGoCommand",
+                  "link": "/api/presentation/cli/bookmark-cli-search-command-executors/functions/executegocommand/"
+                },
+                {
+                  "label": "executeHelpCommand",
+                  "link": "/api/presentation/cli/bookmark-cli-help-command-executors/functions/executehelpcommand/"
+                },
+                {
+                  "label": "executeListDirectoryCommand",
+                  "link": "/api/presentation/cli/bookmark-cli-directory-command-executors/functions/executelistdirectorycommand/"
+                },
+                {
+                  "label": "executeMakeDirectoryCommand",
+                  "link": "/api/presentation/cli/bookmark-cli-organize-command-executors/functions/executemakedirectorycommand/"
+                },
+                {
+                  "label": "executeMarkCommand",
+                  "link": "/api/presentation/cli/bookmark-cli-mark-command-executors/functions/executemarkcommand/"
+                },
+                {
+                  "label": "executeMoveBookmarkCommand",
+                  "link": "/api/presentation/cli/bookmark-cli-organize-command-executors/functions/executemovebookmarkcommand/"
+                },
+                {
+                  "label": "executePendingConfirmationCommand",
+                  "link": "/api/presentation/cli/bookmark-cli-organize-command-executors/functions/executependingconfirmationcommand/"
+                },
+                {
+                  "label": "executePrintWorkingDirectoryCommand",
+                  "link": "/api/presentation/cli/bookmark-cli-directory-command-executors/functions/executeprintworkingdirectorycommand/"
+                },
+                {
+                  "label": "executeRecentBookmarksCommand",
+                  "link": "/api/presentation/cli/bookmark-cli-usage-command-executors/functions/executerecentbookmarkscommand/"
+                },
+                {
+                  "label": "executeRemoveBookmarkCommand",
+                  "link": "/api/presentation/cli/bookmark-cli-organize-command-executors/functions/executeremovebookmarkcommand/"
+                },
+                {
+                  "label": "executeRenameBookmarkCommand",
+                  "link": "/api/presentation/cli/bookmark-cli-organize-command-executors/functions/executerenamebookmarkcommand/"
+                },
+                {
+                  "label": "executeShowDirectoryTreeCommand",
+                  "link": "/api/presentation/cli/bookmark-cli-directory-command-executors/functions/executeshowdirectorytreecommand/"
+                },
+                {
+                  "label": "executeTagCommand",
+                  "link": "/api/presentation/cli/bookmark-cli-tag-command-executors/functions/executetagcommand/"
+                },
+                {
+                  "label": "executeUnaliasCommand",
+                  "link": "/api/presentation/cli/bookmark-cli-alias-command-executors/functions/executeunaliascommand/"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/bookmark-cli-command-state",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-command-state/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Type Aliases",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-command-state/type-aliases"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/bookmark-cli-completion-input",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-completion-input/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/bookmark-cli-controller",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-controller/functions"
+              }
+            },
+            {
+              "label": "References",
+              "items": [
+                {
+                  "label": "BookmarkCliCommandDependencies",
+                  "link": "/api/presentation/cli/bookmark-cli-command-state/interfaces/bookmarkclicommanddependencies/"
+                },
+                {
+                  "label": "BookmarkCliCommandState",
+                  "link": "/api/presentation/cli/bookmark-cli-command-state/interfaces/bookmarkclicommandstate/"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/bookmark-cli-directory-command-executors",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-directory-command-executors/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/bookmark-cli-favicon-url",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-favicon-url/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-favicon-url/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/bookmark-cli-grep-filter",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-grep-filter/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-grep-filter/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/bookmark-cli-help-command-executors",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-help-command-executors/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/bookmark-cli-history-command-executors",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-history-command-executors/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/bookmark-cli-keyboard",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-keyboard/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Type Aliases",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-keyboard/type-aliases"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-keyboard/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/bookmark-cli-mark-command-executors",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-mark-command-executors/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/bookmark-cli-organize-command-executors",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-organize-command-executors/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/bookmark-cli-organize-command-router",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-organize-command-router/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/bookmark-cli-pipe-command-executors",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Type Aliases",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-pipe-command-executors/type-aliases"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-pipe-command-executors/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/bookmark-cli-result-default-command",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-result-default-command/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Type Aliases",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-result-default-command/type-aliases"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-result-default-command/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/bookmark-cli-result-details",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-result-details/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-result-details/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/bookmark-cli-result-scroll",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-result-scroll/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Type Aliases",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-result-scroll/type-aliases"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-result-scroll/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/bookmark-cli-scroll",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-scroll/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Type Aliases",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-scroll/type-aliases"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-scroll/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/bookmark-cli-search-command-executors",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-search-command-executors/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/bookmark-cli-state-builders",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Variables",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-state-builders/variables"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-state-builders/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/bookmark-cli-suggestion-overlay-position",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-suggestion-overlay-position/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-suggestion-overlay-position/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/bookmark-cli-suggestion-scroll",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-suggestion-scroll/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Type Aliases",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-suggestion-scroll/type-aliases"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-suggestion-scroll/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/bookmark-cli-tag-command-executors",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-tag-command-executors/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/bookmark-cli-transcript",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-transcript/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-transcript/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/bookmark-cli-usage-command-executors",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-usage-command-executors/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/bookmark-cli-usage-command-router",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-usage-command-router/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/bookmark-cli-view-model",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Type Aliases",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-view-model/type-aliases"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/bookmark-cli-view-model/functions"
+              }
+            },
+            {
+              "label": "References",
+              "items": [
+                {
+                  "label": "createBookmarkCliCompletionInput",
+                  "link": "/api/presentation/cli/bookmark-cli-completion-input/functions/createbookmarkclicompletioninput/"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/components/bookmark-cli-command-form",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/components/bookmark-cli-command-form/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/components/bookmark-cli-command-form/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/components/bookmark-cli-prompt",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/components/bookmark-cli-prompt/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/components/bookmark-cli-prompt/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/components/bookmark-cli-result-content",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/components/bookmark-cli-result-content/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/components/bookmark-cli-result-content/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/components/bookmark-cli-result-favicon",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/components/bookmark-cli-result-favicon/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/components/bookmark-cli-result-favicon/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/components/bookmark-cli-result-list",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/components/bookmark-cli-result-list/functions"
+              }
+            },
+            {
+              "label": "References",
+              "items": [
+                {
+                  "label": "BookmarkCliResultItem",
+                  "link": "/api/presentation/cli/components/bookmark-cli-result-list-types/interfaces/bookmarkcliresultitem/"
+                },
+                {
+                  "label": "BookmarkCliResultKind",
+                  "link": "/api/presentation/cli/components/bookmark-cli-result-list-types/type-aliases/bookmarkcliresultkind/"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/components/bookmark-cli-result-list-types",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/components/bookmark-cli-result-list-types/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Type Aliases",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/components/bookmark-cli-result-list-types/type-aliases"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/components/bookmark-cli-result-segments",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/components/bookmark-cli-result-segments/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/components/bookmark-cli-result-segments/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/components/bookmark-cli-screen",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/components/bookmark-cli-screen/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/components/bookmark-cli-screen/functions"
+              }
+            },
+            {
+              "label": "References",
+              "items": [
+                {
+                  "label": "BookmarkCliResultItem",
+                  "link": "/api/presentation/cli/components/bookmark-cli-result-list-types/interfaces/bookmarkcliresultitem/"
+                },
+                {
+                  "label": "BookmarkCliResultKind",
+                  "link": "/api/presentation/cli/components/bookmark-cli-result-list-types/type-aliases/bookmarkcliresultkind/"
+                },
+                {
+                  "label": "BookmarkCliSuggestionItem",
+                  "link": "/api/presentation/cli/components/bookmark-cli-suggestion-list/interfaces/bookmarkclisuggestionitem/"
+                },
+                {
+                  "label": "BookmarkCliTranscriptEntry",
+                  "link": "/api/presentation/cli/bookmark-cli-transcript/interfaces/bookmarkclitranscriptentry/"
+                },
+                {
+                  "label": "CommandInputElement",
+                  "link": "/api/presentation/cli/components/bookmark-cli-command-form/interfaces/commandinputelement/"
+                },
+                {
+                  "label": "CommandInputKeyEvent",
+                  "link": "/api/presentation/cli/components/bookmark-cli-command-form/interfaces/commandinputkeyevent/"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/components/bookmark-cli-screen-story-test",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Variables",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/components/bookmark-cli-screen-story-test/variables"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/components/bookmark-cli-screen-story-test/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/components/bookmark-cli-suggestion-list",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/components/bookmark-cli-suggestion-list/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/components/bookmark-cli-suggestion-list/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/components/bookmark-cli-suggestion-overlay-style",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/components/bookmark-cli-suggestion-overlay-style/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/components/bookmark-cli-suggestion-overlay-style/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/components/bookmark-cli-terminal-body",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/components/bookmark-cli-terminal-body/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/components/bookmark-cli-terminal-body/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/components/bookmark-cli-terminal-body-hooks",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/components/bookmark-cli-terminal-body-hooks/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/components/bookmark-cli-terminal-body-hooks/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/cli/components/bookmark-cli-transcript-list",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/components/bookmark-cli-transcript-list/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/cli/components/bookmark-cli-transcript-list/functions"
+              }
+            }
+          ]
+        },
+        {
+          "label": "presentation/settings/components/settings-popup",
+          "collapsed": true,
+          "items": [
+            {
+              "collapsed": true,
+              "label": "Interfaces",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/settings/components/settings-popup/interfaces"
+              }
+            },
+            {
+              "collapsed": true,
+              "label": "Functions",
+              "autogenerate": {
+                "collapsed": true,
+                "directory": "api/presentation/settings/components/settings-popup/functions"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
