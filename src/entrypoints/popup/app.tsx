@@ -24,11 +24,11 @@ const emptyCommandAlias = {
   name: "",
 } as const satisfies CommandAlias;
 
-/** Abbr保存成功messageです。 */
-const aliasSavedStatusText = "Abbrを保存しました";
+/** Alias保存成功messageです。 */
+const aliasSavedStatusText = "Aliasを保存しました";
 
-/** Abbr保存失敗messageです。 */
-const aliasSaveFailedStatusText = "Abbrを保存できませんでした";
+/** Alias保存失敗messageです。 */
+const aliasSaveFailedStatusText = "Aliasを保存できませんでした";
 
 /** Chrome commands APIを使うshortcut readerです。 */
 const shortcutReader = createChromeCommandShortcutReader(browser.commands);

@@ -130,19 +130,21 @@ Toolbar actionのiconは `public/icons/16.png`、`public/icons/24.png`、`public
 
 Docs siteのfaviconは同じ元画像から生成した `docs/public/favicon.png` を使います。
 
-Popupではcommand abbreviationの追加、削除、保存も扱います。
+Popupではcommand aliasの追加、削除、保存も扱います。
 
-疑似CLIでは `abbr` / `unabbr` commandで同じ `settings.commandAliases` を更新します。
+疑似CLIでは `alias` / `unalias` commandで同じ `settings.commandAliases` を更新します。
 
-abbreviation設定は `chrome.storage.local` の `settings.commandAliases` に保存します。
+alias設定は `chrome.storage.local` の `settings.commandAliases` に保存します。
 
-CLI windowがすでに開いている状態でPopupからabbreviationを保存した場合、開いているCLI windowの入力解決へ即時反映することはv1の必須要件にしません。
+CLI windowがすでに開いている状態でPopupからaliasを保存した場合、開いているCLI windowの入力解決へ即時反映することはv1の必須要件にしません。
 
-ただしCLI command実行後の永続化では、保存直前にstorageの最新settingsを読み直し、Popupで保存したabbreviationを古い画面状態で上書きしないようにします。
+ただしCLI command実行後の永続化では、保存直前にstorageの最新settingsを読み直し、Popupで保存したaliasを古い画面状態で上書きしないようにします。
 
-`abbr` / `unabbr` command自身がsettingsを更新した場合は、command実行結果側のsettingsを保存します。
+`alias` / `unalias` command自身がsettingsを更新した場合は、command実行結果側のsettingsを保存します。
 
-`alias` / `unalias` はv1.3.0以降も互換入力として扱います。
+疑似CLIでは `abbr` / `unabbr` commandで `settings.commandAbbreviations` を更新します。
+
+abbreviationはEnter確定時に入力欄とtranscriptの実行commandへ展開します。
 
 Popup UIはTailwindとReact componentで実装し、表示componentとChrome API adapterを分けます。
 
@@ -272,7 +274,7 @@ popupは設定画面として扱います。
 - `PopupApp`
 - `OpenCliButton`
 - `ShortcutHint`
-- `AbbrSettings`
+- `AliasSettings`
 - `DisplaySettings`
 - `FontPreferenceToggle`
 - `SettingsSection`

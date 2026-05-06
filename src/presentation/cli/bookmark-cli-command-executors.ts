@@ -5,6 +5,10 @@ import type {
 import type { UnknownBookmarkCommand } from "../../application/commands/bookmark-command-parser";
 import { createEmptyResultState } from "./bookmark-cli-state-builders";
 
+export {
+  executeAbbrCommand,
+  executeUnabbrCommand,
+} from "./bookmark-cli-abbreviation-command-executors";
 export { executeAliasCommand, executeUnaliasCommand } from "./bookmark-cli-alias-command-executors";
 export {
   executeChangeDirectoryCommand,

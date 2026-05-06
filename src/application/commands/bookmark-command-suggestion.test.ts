@@ -80,9 +80,11 @@ describe("suggestBookmarkCommands abbr commands", (): void => {
     );
   });
 
-  /** 互換用alias commandを補完候補に出さないことを検証。 */
-  it("does not suggest legacy alias command by prefix", (): void => {
-    expect(suggestBookmarkCommands("ali")).toStrictEqual([]);
+  /** Alias commandをprefixから補完候補へ出せることを検証。 */
+  it("suggests alias command by prefix", (): void => {
+    expect(
+      suggestBookmarkCommands("ali").map((suggestion) => suggestion.commandName),
+    ).toStrictEqual(["alias"]);
   });
 });
 
@@ -91,6 +93,22 @@ describe("suggestBookmarkCommands aliases", (): void => {
   /** 設定済みaliasをcommand suggestionへ出すことを検証。 */
   it("suggests configured command aliases", (): void => {
     expect(suggestBookmarkCommands("g", [{ command: "go", name: "g" }])).toStrictEqual([
+      {
+        commandName: "g",
+        completion: "g ",
+        description: "alias: go",
+      },
+      {
+        commandName: "go",
+        completion: "go ",
+        description: "検索上位のBookmarkを開く",
+      },
+    ]);
+  });
+
+  /** 設定済みabbreviationをcommand suggestionへ出すことを検証。 */
+  it("suggests configured command abbreviations", (): void => {
+    expect(suggestBookmarkCommands("g", [], [{ command: "go", name: "g" }])).toStrictEqual([
       {
         commandName: "g",
         completion: "g ",

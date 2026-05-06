@@ -13,8 +13,8 @@ const grepHelpTopicName = "grep";
 /** Abbr help topic名です。 */
 const abbrHelpTopicName = "abbr";
 
-/** 互換用Alias help topic名です。 */
-const legacyAliasHelpTopicName = "alias";
+/** Alias help topic名です。 */
+const aliasHelpTopicName = "alias";
 
 /** Tree help topic名です。 */
 const treeHelpTopicName = "tree";
@@ -38,6 +38,7 @@ describe("bookmark CLI help catalog", (): void => {
     expect(topicNames).toContain(goHelpTopicName);
     expect(topicNames).toContain(historyHelpTopicName);
     expect(topicNames).toContain(grepHelpTopicName);
+    expect(topicNames).toContain(aliasHelpTopicName);
     expect(topicNames).toContain(abbrHelpTopicName);
   });
 
@@ -80,17 +81,23 @@ describe("bookmark CLI abbr help catalog", (): void => {
       expect(topic.examples).toContain("abbr la='ls -la'");
     }
   });
+});
 
+/**
+ * Bookmark CLI alias help catalogのテストスイートです。
+ */
+describe("bookmark CLI alias help catalog", (): void => {
   /**
-   * 互換用alias topicからabbr help topicを取得できることを検証します。
+   * Alias topicから設定と一覧表示の使い方を取得できることを検証します。
    */
-  it("finds abbr help topic by legacy alias topic", (): void => {
-    const topic = findBookmarkCliHelpTopic(legacyAliasHelpTopicName);
+  it("finds alias help topic", (): void => {
+    const topic = findBookmarkCliHelpTopic(aliasHelpTopicName);
 
     expect(topic).not.toBe(false);
 
     if (topic !== false) {
-      expect(topic.commandName).toBe(abbrHelpTopicName);
+      expect(topic.usage).toContain("alias <name>=<command>");
+      expect(topic.examples).toContain("alias la='ls -la'");
     }
   });
 });

@@ -20,6 +20,9 @@ export interface ChromeStorageLocalArea {
 /** 旧schema versionです。 */
 const legacyExtensionStateSchemaVersion = 1;
 
+/** Command alias追加済みの旧schema versionです。 */
+const commandAliasExtensionStateSchemaVersion = 2;
+
 /** Unknown recordです。 */
 type UnknownRecord = Readonly<Record<string, unknown>>;
 
@@ -46,7 +49,27 @@ const migrateExtensionSettingsPayload = (payload: unknown): unknown => {
   return {
     ...initialSettings,
     ...payload,
+    commandAbbreviations: normalizeCommandAliases([]),
     commandAliases: normalizeCommandAliases([]),
+  };
+};
+
+/**
+ * Schema version 2のsettings payloadをmigrationします。
+ * @param {unknown} payload settings payloadです。
+ * @returns {unknown} migration後settingsです。
+ */
+const migrateCommandAliasExtensionSettingsPayload = (payload: unknown): unknown => {
+  const initialSettings = createInitialExtensionState().settings;
+
+  if (!isUnknownRecord(payload)) {
+    return initialSettings;
+  }
+
+  return {
+    ...initialSettings,
+    ...payload,
+    commandAbbreviations: normalizeCommandAliases([]),
   };
 };
 
@@ -63,6 +86,18 @@ const migrateLegacyExtensionStatePayload = (payload: UnknownRecord): unknown => 
 });
 
 /**
+ * Schema version 2 payloadを現在schemaへmigrationします。
+ * @param {UnknownRecord} payload storageから取得したschema version 2 payloadです。
+ * @returns {unknown} migration後payloadです。
+ */
+const migrateCommandAliasExtensionStatePayload = (payload: UnknownRecord): unknown => ({
+  ...createInitialExtensionState(),
+  ...payload,
+  schemaVersion: currentExtensionStateSchemaVersion,
+  settings: migrateCommandAliasExtensionSettingsPayload(payload["settings"]),
+});
+
+/**
  * 未対応versionまたは旧schemaを初期状態へmigration。
  * @param {unknown} payload storageから取得したraw payload。
  * @returns {unknown} migration後payload。
@@ -74,6 +109,14 @@ const migrateExtensionStatePayload = (payload: unknown): unknown => {
     payload["schemaVersion"] === currentExtensionStateSchemaVersion
   ) {
     return payload;
+  }
+
+  if (
+    isUnknownRecord(payload) &&
+    "schemaVersion" in payload &&
+    payload["schemaVersion"] === commandAliasExtensionStateSchemaVersion
+  ) {
+    return migrateCommandAliasExtensionStatePayload(payload);
   }
 
   if (

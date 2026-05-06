@@ -192,7 +192,12 @@ const createCommandDependencies = (
 const shouldPreserveExtensionSettings = (inputValue: string): boolean => {
   const command = parseBookmarkCommand(inputValue);
 
-  return command.kind === "alias" || command.kind === "unalias";
+  return (
+    command.kind === "abbr" ||
+    command.kind === "alias" ||
+    command.kind === "unabbr" ||
+    command.kind === "unalias"
+  );
 };
 
 /**

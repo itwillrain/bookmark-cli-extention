@@ -1,7 +1,9 @@
 /* oxlint-disable max-lines -- Command名からASTを作る集約地点としてfactory mapを同じfileに保つため。 */
 
 import {
+  parseAbbrBookmarkCommand,
   parseAliasBookmarkCommand,
+  parseUnabbrBookmarkCommand,
   parseUnaliasBookmarkCommand,
 } from "./bookmark-alias-command-parser";
 import {
@@ -52,14 +54,14 @@ const clearCommandName = "clear";
 /** Abbr command名です。 */
 const abbrCommandName = "abbr";
 
-/** 互換用Alias command名です。 */
-const legacyAliasCommandName = "alias";
+/** Alias command名です。 */
+const aliasCommandName = "alias";
 
 /** Unabbr command名です。 */
 const unabbrCommandName = "unabbr";
 
-/** 互換用Unalias command名です。 */
-const legacyUnaliasCommandName = "unalias";
+/** Unalias command名です。 */
+const unaliasCommandName = "unalias";
 
 /** Help command名です。 */
 const helpCommandName = "help";
@@ -194,20 +196,36 @@ const createClearCommand = (): ParsedBookmarkCommand => ({
 });
 
 /**
+ * Alias commandを作ります。
+ * @param {CommandParseContext} context Command parse contextです。
+ * @returns {ParsedBookmarkCommand} Alias commandです。
+ */
+const createAliasCommand = (context: CommandParseContext): ParsedBookmarkCommand =>
+  parseAliasBookmarkCommand(context.query);
+
+/**
+ * Unalias commandを作ります。
+ * @param {CommandParseContext} context Command parse contextです。
+ * @returns {ParsedBookmarkCommand} Unalias commandです。
+ */
+const createUnaliasCommand = (context: CommandParseContext): ParsedBookmarkCommand =>
+  parseUnaliasBookmarkCommand(context.queryParts);
+
+/**
  * Abbr commandを作ります。
  * @param {CommandParseContext} context Command parse contextです。
  * @returns {ParsedBookmarkCommand} Abbr commandです。
  */
-const createAliasCommand = (context: CommandParseContext): ParsedBookmarkCommand =>
-  parseAliasBookmarkCommand(context.query);
+const createAbbrCommand = (context: CommandParseContext): ParsedBookmarkCommand =>
+  parseAbbrBookmarkCommand(context.query);
 
 /**
  * Unabbr commandを作ります。
  * @param {CommandParseContext} context Command parse contextです。
  * @returns {ParsedBookmarkCommand} Unabbr commandです。
  */
-const createUnaliasCommand = (context: CommandParseContext): ParsedBookmarkCommand =>
-  parseUnaliasBookmarkCommand(context.queryParts);
+const createUnabbrCommand = (context: CommandParseContext): ParsedBookmarkCommand =>
+  parseUnabbrBookmarkCommand(context.queryParts);
 
 /**
  * Help commandを作ります。
@@ -308,7 +326,8 @@ const createUnknownCommand = (context: CommandParseContext): ParsedBookmarkComma
  * Command名ごとのfactoryです。
  */
 const bookmarkCommandFactories: Readonly<Record<string, BookmarkCommandFactory>> = {
-  [abbrCommandName]: createAliasCommand,
+  [abbrCommandName]: createAbbrCommand,
+  [aliasCommandName]: createAliasCommand,
   [changeDirectoryCommandName]: createChangeDirectoryCommand,
   [clearCommandName]: createClearCommand,
   [findCommandName]: createFindBookmarkCommand,
@@ -316,8 +335,6 @@ const bookmarkCommandFactories: Readonly<Record<string, BookmarkCommandFactory>>
   [goCommandName]: createGoBookmarkCommand,
   [browserHistoryCommandName]: createBrowserHistoryCommand,
   [helpCommandName]: createHelpCommand,
-  [legacyAliasCommandName]: createAliasCommand,
-  [legacyUnaliasCommandName]: createUnaliasCommand,
   [listDirectoryCommandName]: createListDirectoryCommand,
   [longListDirectoryCommandName]: createListDirectoryCommand,
   [makeDirectoryCommandName]: createMakeDirectoryCommand,
@@ -330,7 +347,8 @@ const bookmarkCommandFactories: Readonly<Record<string, BookmarkCommandFactory>>
   [renameBookmarkCommandName]: createRenameBookmarkCommand,
   [showDirectoryTreeCommandName]: createTreeCommand,
   [tagBookmarkCommandName]: createTagBookmarkCommand,
-  [unabbrCommandName]: createUnaliasCommand,
+  [unabbrCommandName]: createUnabbrCommand,
+  [unaliasCommandName]: createUnaliasCommand,
 };
 
 /**

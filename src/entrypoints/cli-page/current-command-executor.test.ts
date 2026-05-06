@@ -13,6 +13,12 @@ const clearInputValue = "clear";
 /** Clear command alias入力。 */
 const clearAliasInputValue = "c";
 
+/** Find command abbreviation入力。 */
+const findAbbreviationInputValue = "fs stripe";
+
+/** Find command abbreviation展開後入力。 */
+const expandedFindAbbreviationInputValue = "find stripe";
+
 /** Find command入力。 */
 const findInputValue = "find stripe";
 
@@ -58,6 +64,18 @@ const clearAliasedCommandState = {
     settings: {
       ...commandState.extensionState.settings,
       commandAliases: [{ command: "clear", name: "c" }],
+    },
+  },
+} satisfies BookmarkCliCommandState;
+
+/** Find abbreviation設定済みcommand state fixture。 */
+const findAbbreviatedCommandState = {
+  ...commandState,
+  extensionState: {
+    ...commandState.extensionState,
+    settings: {
+      ...commandState.extensionState.settings,
+      commandAbbreviations: [{ command: "find", name: "fs" }],
     },
   },
 } satisfies BookmarkCliCommandState;
@@ -251,6 +269,30 @@ describe("createCurrentCommandExecutor", (): void => {
     expect(recording.clearCount).toBe(singleCallCount);
     expect(recording.states).toStrictEqual([nextCommandState]);
     expect(recording.inputValues).toStrictEqual([emptyInputValue]);
+    expect(recording.resultCursorValues).toStrictEqual([resultCursorCleared]);
+  });
+});
+
+/**
+ * Current command abbreviation executorのテストスイート。
+ */
+describe("createCurrentCommandExecutor command abbreviations", (): void => {
+  /**
+   * Command abbreviationを確定時に展開してtranscriptへ追加することを検証。
+   */
+  it("expands command abbreviation before appending transcript", async (): Promise<void> => {
+    const recording = await createRecording(
+      findAbbreviationInputValue,
+      findAbbreviatedCommandState,
+    );
+
+    expect(recording.appendedInputs).toStrictEqual([expandedFindAbbreviationInputValue]);
+    expect(recording.clearCount).toBe(noCallCount);
+    expect(recording.states).toStrictEqual([nextCommandState]);
+    expect(recording.inputValues).toStrictEqual([
+      expandedFindAbbreviationInputValue,
+      emptyInputValue,
+    ]);
     expect(recording.resultCursorValues).toStrictEqual([resultCursorCleared]);
   });
 });

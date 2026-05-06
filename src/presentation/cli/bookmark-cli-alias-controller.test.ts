@@ -57,8 +57,26 @@ const aliasedExtensionState = {
   },
 };
 
+/** Abbreviation設定済み拡張状態fixture。 */
+const abbreviatedExtensionState = {
+  ...initialExtensionState,
+  settings: {
+    ...initialExtensionState.settings,
+    commandAbbreviations: [{ command: "go", name: "g" }],
+  },
+};
+
 /** Go command alias入力です。 */
 const goAliasInput = "g stripe";
+
+/** Alias一覧command入力です。 */
+const aliasListInput = "alias";
+
+/** Alias設定command入力です。 */
+const aliasSetInput = "alias la='ls -la'";
+
+/** Unalias command入力です。 */
+const unaliasInput = "unalias g";
 
 /** Abbr一覧command入力です。 */
 const abbrListInput = "abbr";
@@ -68,12 +86,6 @@ const abbrSetInput = "abbr la='ls -la'";
 
 /** Unabbr command入力です。 */
 const unabbrInput = "unabbr g";
-
-/** 互換用alias一覧command入力です。 */
-const legacyAliasListInput = "alias";
-
-/** 互換用unalias command入力です。 */
-const legacyUnaliasInput = "unalias g";
 
 /** URL記録opener fixtureです。 */
 interface RecordingBookmarkOpener {
@@ -184,7 +196,7 @@ describe("executeBookmarkCliCommand abbr settings", (): void => {
   it("lists configured command abbreviations", async (): Promise<void> => {
     const state = await executeBookmarkCliCommand(
       abbrListInput,
-      createCommandDependenciesWithState(aliasedExtensionState),
+      createCommandDependenciesWithState(abbreviatedExtensionState),
     );
 
     expect(state.statusText).toBe("1 abbreviation");
@@ -203,11 +215,11 @@ describe("executeBookmarkCliCommand abbr settings", (): void => {
   it("sets a command abbreviation", async (): Promise<void> => {
     const state = await executeBookmarkCliCommand(
       abbrSetInput,
-      createCommandDependenciesWithState(aliasedExtensionState),
+      createCommandDependenciesWithState(abbreviatedExtensionState),
     );
 
     expect(state.statusText).toBe("abbr la='ls -la'");
-    expect(state.extensionState.settings.commandAliases).toStrictEqual([
+    expect(state.extensionState.settings.commandAbbreviations).toStrictEqual([
       { command: "go", name: "g" },
       { command: "ls -la", name: "la" },
     ]);
@@ -217,34 +229,57 @@ describe("executeBookmarkCliCommand abbr settings", (): void => {
   it("removes a command abbreviation", async (): Promise<void> => {
     const state = await executeBookmarkCliCommand(
       unabbrInput,
-      createCommandDependenciesWithState(aliasedExtensionState),
+      createCommandDependenciesWithState(abbreviatedExtensionState),
     );
 
     expect(state.statusText).toBe("unabbr g");
-    expect(state.extensionState.settings.commandAliases).toStrictEqual([]);
+    expect(state.extensionState.settings.commandAbbreviations).toStrictEqual([]);
   });
 });
 
-/** Command abbreviation互換CLI controllerのテストスイートです。 */
-describe("executeBookmarkCliCommand legacy alias settings", (): void => {
-  /** 互換用alias commandを実行できることを検証します。 */
-  it("supports legacy alias command", async (): Promise<void> => {
+/** Command alias設定CLI controllerのテストスイートです。 */
+describe("executeBookmarkCliCommand alias settings", (): void => {
+  /** Alias一覧を表示できることを検証します。 */
+  it("lists configured command aliases", async (): Promise<void> => {
     const state = await executeBookmarkCliCommand(
-      legacyAliasListInput,
+      aliasListInput,
       createCommandDependenciesWithState(aliasedExtensionState),
     );
 
-    expect(state.statusText).toBe("1 abbreviation");
+    expect(state.statusText).toBe("1 aliases");
+    expect(state.resultItems).toStrictEqual([
+      {
+        description: "go",
+        details: ["alias g='go'"],
+        folderPath: "/",
+        kind: "help",
+        title: "g",
+      },
+    ]);
   });
 
-  /** 互換用unalias commandを実行できることを検証します。 */
-  it("supports legacy unalias command", async (): Promise<void> => {
+  /** Alias設定を追加できることを検証します。 */
+  it("sets a command alias", async (): Promise<void> => {
     const state = await executeBookmarkCliCommand(
-      legacyUnaliasInput,
+      aliasSetInput,
       createCommandDependenciesWithState(aliasedExtensionState),
     );
 
-    expect(state.statusText).toBe("unabbr g");
+    expect(state.statusText).toBe("alias la='ls -la'");
+    expect(state.extensionState.settings.commandAliases).toStrictEqual([
+      { command: "go", name: "g" },
+      { command: "ls -la", name: "la" },
+    ]);
+  });
+
+  /** Alias設定を削除できることを検証します。 */
+  it("removes a command alias", async (): Promise<void> => {
+    const state = await executeBookmarkCliCommand(
+      unaliasInput,
+      createCommandDependenciesWithState(aliasedExtensionState),
+    );
+
+    expect(state.statusText).toBe("unalias g");
     expect(state.extensionState.settings.commandAliases).toStrictEqual([]);
   });
 });

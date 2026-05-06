@@ -10,6 +10,7 @@ import {
   parseBookmarkCommand,
 } from "../../application/commands/bookmark-command-parser";
 import {
+  executeAbbrCommand,
   executeAliasCommand,
   executeBrowserHistoryCommand,
   executeChangeDirectoryCommand,
@@ -23,6 +24,7 @@ import {
   executePrintWorkingDirectoryCommand,
   executeShowDirectoryTreeCommand,
   executeTagCommand,
+  executeUnabbrCommand,
   executeUnaliasCommand,
   executeUnknownCommand,
 } from "./bookmark-cli-command-executors";
@@ -58,6 +60,25 @@ const executeParsedEmptyCommand = async (
 
   if (command.kind !== "empty") {
     return executeEmptyCommand(dependencies);
+  }
+
+  return executeEmptyCommand(dependencies);
+};
+
+/**
+ * Abbr command executor adapterです。
+ * @param {ParsedBookmarkCommand} command Parsed commandです。
+ * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存です。
+ * @returns {Promise<BookmarkCliCommandState>} 画面に反映する状態です。
+ */
+const executeParsedAbbrCommand = async (
+  command: ParsedBookmarkCommand,
+  dependencies: BookmarkCliCommandDependencies,
+): Promise<BookmarkCliCommandState> => {
+  await Promise.resolve();
+
+  if (command.kind === "abbr") {
+    return executeAbbrCommand(command, dependencies);
   }
 
   return executeEmptyCommand(dependencies);
@@ -373,9 +394,29 @@ const executeParsedUnaliasCommand = async (
 };
 
 /**
+ * Unabbr command executor adapterです。
+ * @param {ParsedBookmarkCommand} command Parsed commandです。
+ * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存です。
+ * @returns {Promise<BookmarkCliCommandState>} 画面に反映する状態です。
+ */
+const executeParsedUnabbrCommand = async (
+  command: ParsedBookmarkCommand,
+  dependencies: BookmarkCliCommandDependencies,
+): Promise<BookmarkCliCommandState> => {
+  await Promise.resolve();
+
+  if (command.kind === "unabbr") {
+    return executeUnabbrCommand(command, dependencies);
+  }
+
+  return executeEmptyCommand(dependencies);
+};
+
+/**
  * Command kindごとのexecutorです。
  */
 const parsedBookmarkCommandExecutors = {
+  abbr: executeParsedAbbrCommand,
   alias: executeParsedAliasCommand,
   cd: executeParsedChangeDirectoryCommand,
   clear: executeParsedEmptyCommand,
@@ -396,6 +437,7 @@ const parsedBookmarkCommandExecutors = {
   rm: executeParsedOrganizeCommand,
   tag: executeParsedTagCommand,
   tree: executeParsedShowDirectoryTreeCommand,
+  unabbr: executeParsedUnabbrCommand,
   unalias: executeParsedUnaliasCommand,
   unknown: executeParsedUnknownCommand,
 } satisfies Readonly<Record<ParsedBookmarkCommand["kind"], ParsedBookmarkCommandExecutor>>;

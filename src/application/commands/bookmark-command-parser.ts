@@ -8,6 +8,7 @@ import type {
 } from "./bookmark-command-types";
 
 export type {
+  AbbrBookmarkCommand,
   AliasBookmarkCommand,
   BrowserHistoryCommand,
   ChangeDirectoryCommand,
@@ -30,6 +31,7 @@ export type {
   RenameBookmarkCommand,
   ShowDirectoryTreeCommand,
   TagBookmarkCommand,
+  UnabbrBookmarkCommand,
   UnaliasBookmarkCommand,
   UnknownBookmarkCommand,
 } from "./bookmark-command-types";

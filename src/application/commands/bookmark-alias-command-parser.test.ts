@@ -13,20 +13,23 @@ const quotedAbbrSetInput = "abbr la='ls -la'";
 /** Unabbr command入力です。 */
 const unabbrInput = "unabbr g";
 
-/** 互換用alias一覧command入力です。 */
-const legacyAliasListInput = "alias";
+/** Alias一覧command入力です。 */
+const aliasListInput = "alias";
 
-/** 互換用unalias command入力です。 */
-const legacyUnaliasInput = "unalias g";
+/** Alias設定command入力です。 */
+const aliasSetInput = "alias g=go";
+
+/** Unalias command入力です。 */
+const unaliasInput = "unalias g";
 
 /** Command abbreviation parserのテストスイートです。 */
 describe("parseBookmarkCommand abbr commands", (): void => {
   /** Abbr一覧commandを解析できることを検証。 */
   it("parses abbr list command", (): void => {
     expect(parseBookmarkCommand(abbrListInput)).toStrictEqual({
-      aliasName: "",
+      abbreviationName: "",
       commandInput: "",
-      kind: "alias",
+      kind: "abbr",
       operation: "list",
     });
   });
@@ -34,9 +37,9 @@ describe("parseBookmarkCommand abbr commands", (): void => {
   /** Abbr設定commandを解析できることを検証。 */
   it("parses abbr set command", (): void => {
     expect(parseBookmarkCommand(abbrSetInput)).toStrictEqual({
-      aliasName: "g",
+      abbreviationName: "g",
       commandInput: "go",
-      kind: "alias",
+      kind: "abbr",
       operation: "set",
     });
   });
@@ -44,9 +47,9 @@ describe("parseBookmarkCommand abbr commands", (): void => {
   /** 引用符付きabbr設定commandを解析できることを検証。 */
   it("parses quoted abbr set command", (): void => {
     expect(parseBookmarkCommand(quotedAbbrSetInput)).toStrictEqual({
-      aliasName: "la",
+      abbreviationName: "la",
       commandInput: "ls -la",
-      kind: "alias",
+      kind: "abbr",
       operation: "set",
     });
   });
@@ -54,17 +57,17 @@ describe("parseBookmarkCommand abbr commands", (): void => {
   /** Unabbr commandを解析できることを検証。 */
   it("parses unabbr command", (): void => {
     expect(parseBookmarkCommand(unabbrInput)).toStrictEqual({
-      aliasName: "g",
-      kind: "unalias",
+      abbreviationName: "g",
+      kind: "unabbr",
     });
   });
 });
 
-/** Command abbreviation互換parserのテストスイートです。 */
-describe("parseBookmarkCommand legacy alias commands", (): void => {
-  /** 互換用alias commandを解析できることを検証。 */
-  it("parses legacy alias command", (): void => {
-    expect(parseBookmarkCommand(legacyAliasListInput)).toStrictEqual({
+/** Command alias parserのテストスイートです。 */
+describe("parseBookmarkCommand alias commands", (): void => {
+  /** Alias一覧commandを解析できることを検証。 */
+  it("parses alias list command", (): void => {
+    expect(parseBookmarkCommand(aliasListInput)).toStrictEqual({
       aliasName: "",
       commandInput: "",
       kind: "alias",
@@ -72,9 +75,19 @@ describe("parseBookmarkCommand legacy alias commands", (): void => {
     });
   });
 
-  /** 互換用unalias commandを解析できることを検証。 */
-  it("parses legacy unalias command", (): void => {
-    expect(parseBookmarkCommand(legacyUnaliasInput)).toStrictEqual({
+  /** Alias設定commandを解析できることを検証。 */
+  it("parses alias set command", (): void => {
+    expect(parseBookmarkCommand(aliasSetInput)).toStrictEqual({
+      aliasName: "g",
+      commandInput: "go",
+      kind: "alias",
+      operation: "set",
+    });
+  });
+
+  /** Unalias commandを解析できることを検証。 */
+  it("parses unalias command", (): void => {
+    expect(parseBookmarkCommand(unaliasInput)).toStrictEqual({
       aliasName: "g",
       kind: "unalias",
     });

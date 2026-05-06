@@ -83,6 +83,56 @@ const isTranscriptClearCommand = (
 ): boolean => parseBookmarkCommand(expandCommandAlias(inputValue, commandAliases)).kind === "clear";
 
 /**
+ * 確定入力をcommand abbreviationで展開。
+ * @param {string} inputValue CLI入力値。
+ * @param {readonly CommandAlias[]} commandAbbreviations command abbreviation一覧。
+ * @returns {string} abbreviation展開後の入力値。
+ */
+const expandSubmittedCommandAbbreviation = (
+  inputValue: string,
+  commandAbbreviations: BookmarkCliCommandState["extensionState"]["settings"]["commandAbbreviations"],
+): string => expandCommandAlias(inputValue, commandAbbreviations);
+
+/**
+ * Command abbreviationが展開されたか判定。
+ * @param {string} submittedInputValue 確定前の入力値。
+ * @param {string} expandedInputValue 展開後の入力値。
+ * @returns {boolean} 展開されたならtrue。
+ */
+const hasExpandedCommandAbbreviation = (
+  submittedInputValue: string,
+  expandedInputValue: string,
+): boolean => submittedInputValue !== expandedInputValue;
+
+/**
+ * Command abbreviationを展開できる状態か判定。
+ * @param {BookmarkCliCommandState} commandState 現在のcommand state。
+ * @returns {boolean} 展開できるならtrue。
+ */
+const canExpandCommandAbbreviation = (commandState: BookmarkCliCommandState): boolean =>
+  !commandState.pendingConfirmation;
+
+/**
+ * 確定入力へcommand abbreviationを適用します。
+ * @param {string} submittedInputValue 確定前の入力値。
+ * @param {BookmarkCliCommandState} commandState 現在のcommand state。
+ * @returns {string} 実行に使う入力値。
+ */
+const applySubmittedCommandAbbreviation = (
+  submittedInputValue: string,
+  commandState: BookmarkCliCommandState,
+): string => {
+  if (!canExpandCommandAbbreviation(commandState)) {
+    return submittedInputValue;
+  }
+
+  return expandSubmittedCommandAbbreviation(
+    submittedInputValue,
+    commandState.extensionState.settings.commandAbbreviations,
+  );
+};
+
+/**
  * 指定されたcommand入力を実行する関数を作成。
  * @param {CreateCommandInputExecutorInput} input Command input executor作成入力。
  * @returns {CommandInputExecutor} Command input executor。
@@ -96,8 +146,17 @@ export const createCommandInputExecutor = (
    * @returns {Promise<void>} 実行完了を表すPromise。
    */
   const executeCommandInput = async (submittedInputValue: string): Promise<void> => {
-    const nextState = await input.executeAndPersistCommand(
+    const expandedInputValue = applySubmittedCommandAbbreviation(
       submittedInputValue,
+      input.commandState,
+    );
+
+    if (hasExpandedCommandAbbreviation(submittedInputValue, expandedInputValue)) {
+      input.setInputValue(expandedInputValue);
+    }
+
+    const nextState = await input.executeAndPersistCommand(
+      expandedInputValue,
       input.commandState,
       input.launchContext,
     );
@@ -106,13 +165,13 @@ export const createCommandInputExecutor = (
 
     if (
       isTranscriptClearCommand(
-        submittedInputValue,
+        expandedInputValue,
         input.commandState.extensionState.settings.commandAliases,
       )
     ) {
       input.clearExecutedCommands();
     } else {
-      input.appendExecutedCommand(submittedInputValue, nextState, input.createEntryId());
+      input.appendExecutedCommand(expandedInputValue, nextState, input.createEntryId());
     }
 
     input.setInputValue(emptyInputValue);

@@ -249,6 +249,11 @@ export interface ClearBookmarkCommand {
 export type AliasBookmarkCommandOperation = "list" | "set";
 
 /**
+ * Command abbreviation操作種別です。
+ */
+export type AbbrBookmarkCommandOperation = "list" | "set";
+
+/**
  * Command alias設定commandです。
  */
 export interface AliasBookmarkCommand {
@@ -282,6 +287,42 @@ export interface UnaliasBookmarkCommand {
    * Command種別です。
    */
   readonly kind: "unalias";
+}
+
+/**
+ * Command abbreviation設定commandです。
+ */
+export interface AbbrBookmarkCommand {
+  /**
+   * Abbreviation名です。
+   */
+  readonly abbreviationName: string;
+  /**
+   * 展開後command入力です。
+   */
+  readonly commandInput: string;
+  /**
+   * Command種別です。
+   */
+  readonly kind: "abbr";
+  /**
+   * Abbreviation操作種別です。
+   */
+  readonly operation: AbbrBookmarkCommandOperation;
+}
+
+/**
+ * Command abbreviation削除commandです。
+ */
+export interface UnabbrBookmarkCommand {
+  /**
+   * 削除対象abbreviation名です。
+   */
+  readonly abbreviationName: string;
+  /**
+   * Command種別です。
+   */
+  readonly kind: "unabbr";
 }
 
 /**
@@ -350,6 +391,7 @@ export interface PipeBookmarkCommand {
  * 解析済みBookmark commandです。
  */
 export type ParsedBookmarkCommand =
+  | AbbrBookmarkCommand
   | AliasBookmarkCommand
   | ChangeDirectoryCommand
   | ClearBookmarkCommand
@@ -370,5 +412,6 @@ export type ParsedBookmarkCommand =
   | RenameBookmarkCommand
   | ShowDirectoryTreeCommand
   | TagBookmarkCommand
+  | UnabbrBookmarkCommand
   | UnaliasBookmarkCommand
   | UnknownBookmarkCommand;

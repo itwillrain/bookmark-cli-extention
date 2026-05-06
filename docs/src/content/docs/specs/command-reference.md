@@ -207,11 +207,11 @@ Chrome Bookmark IDとparent IDは `-l` の詳細行へ統合します。
 
 `ll` は `ls -l` の組み込み別名です。
 
-ユーザー定義command abbreviationはPopupの設定画面、または疑似CLIの `abbr` / `unabbr` で追加、削除、保存します。
+ユーザー定義aliasはPopupの設定画面、または疑似CLIの `alias` / `unalias` で追加、削除、保存します。
 
-abbreviationは先頭command tokenだけを1回展開します。
+aliasは先頭command tokenだけを実行時に1回展開します。
 
-abbreviation展開後のcommand種別は実行だけでなく、`clear` のscrollback transcript削除のようなUI副作用にも適用します。
+alias展開後のcommand種別は実行だけでなく、`clear` のscrollback transcript削除のようなUI副作用にも適用します。
 
 ```bash
 g stripe
@@ -222,9 +222,45 @@ la /Work
 
 代表的なエラーは `folder_not_found`、`chrome_bookmarks_failed` です。
 
+## `alias`
+
+command aliasを一覧表示、または設定します。
+
+```bash
+alias
+alias <name>=<command>
+```
+
+```bash
+alias
+alias g=go
+alias la='ls -la'
+```
+
+`alias` は現在のalias一覧を表示します。
+
+`alias <name>=<command>` はaliasを追加または上書きします。
+
+alias名は空白とpipe記号を含まない1 tokenに限定します。
+
+aliasは再帰的に展開しません。
+
+## `unalias`
+
+command aliasを削除します。
+
+```bash
+unalias <name>
+```
+
+```bash
+unalias g
+unalias la
+```
+
 ## `abbr`
 
-command abbreviationを一覧表示、または設定します。
+Enter確定時に展開するcommand abbreviationを一覧表示、または設定します。
 
 ```bash
 abbr
@@ -245,7 +281,9 @@ abbreviation名は空白とpipe記号を含まない1 tokenに限定します。
 
 abbreviationは再帰的に展開しません。
 
-`alias` はv1.3.0以降も互換入力として受け付けます。
+abbreviationはEnter確定時に入力欄とtranscriptの実行commandへ展開します。
+
+たとえば `g = go` と設定している場合、`g stripe` をEnterで確定すると `go stripe` として表示、実行、履歴保存します。
 
 ## `unabbr`
 
@@ -259,8 +297,6 @@ unabbr <name>
 unabbr g
 unabbr la
 ```
-
-`unalias` はv1.3.0以降も互換入力として受け付けます。
 
 ## `cd`
 

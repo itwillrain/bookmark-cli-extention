@@ -12,17 +12,17 @@ const shortcutSettingsButtonLabel = "ショートカットを変更";
 /** CLI起動button labelです。 */
 const openCliButtonLabel = "CLIを開く";
 
-/** Abbr追加button labelです。 */
-const addAliasButtonLabel = "Abbrを追加";
+/** Alias追加button labelです。 */
+const addAliasButtonLabel = "Aliasを追加";
 
-/** Abbr保存button labelです。 */
-const saveAliasesButtonLabel = "Abbrを保存";
+/** Alias保存button labelです。 */
+const saveAliasesButtonLabel = "Aliasを保存";
 
 /** Alias削除button labelです。 */
 const removeAliasButtonLabel = "削除";
 
-/** Abbr未設定表示です。 */
-const emptyAliasLabel = "Abbr未設定";
+/** Alias未設定表示です。 */
+const emptyAliasLabel = "Alias未設定";
 
 /** Alias name placeholderです。 */
 const aliasNamePlaceholder = "g";
@@ -126,7 +126,7 @@ const renderAliasRow = (input: AliasRowRenderInput): ReactElement => (
     key={`${input.alias.name}-${String(input.aliasIndex)}`}
   >
     <input
-      aria-label="Abbr name"
+      aria-label="Alias name"
       className="min-w-0 rounded border border-zinc-700 bg-zinc-900 px-2 py-1.5 font-mono text-xs text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-400"
       onChange={createAliasNameChangeHandler(input)}
       placeholder={aliasNamePlaceholder}
@@ -134,7 +134,7 @@ const renderAliasRow = (input: AliasRowRenderInput): ReactElement => (
       value={input.alias.name}
     />
     <input
-      aria-label="Abbr command"
+      aria-label="Alias command"
       className="min-w-0 rounded border border-zinc-700 bg-zinc-900 px-2 py-1.5 font-mono text-xs text-zinc-100 placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-emerald-400"
       onChange={createAliasCommandChangeHandler(input)}
       placeholder={aliasCommandPlaceholder}
@@ -241,7 +241,7 @@ const renderAliasSection = (props: SettingsPopupProps): ReactElement => (
   <section className="space-y-3 border-t border-zinc-800 pt-4" aria-labelledby="alias-heading">
     <div>
       <h2 id="alias-heading" className="text-sm font-semibold tracking-normal">
-        Abbr
+        Alias
       </h2>
       <p className="mt-1 text-xs text-zinc-400">例: g → go、la → ls -la</p>
     </div>

@@ -132,8 +132,9 @@ Bookmark行の既定アクションは `go <result-number>` です。
 - PopupからもDedicated extension pageの別windowを開ける
 - Popupは設定画面として扱い、現在のhot keyを表示する
 - Popupから `chrome://extensions/shortcuts` を開き、ユーザーがhot keyを変更できるようにする
-- Popupでcommand abbreviationを設定できる
-- 疑似CLI内でも `abbr` / `unabbr` でcommand abbreviationを設定できる
+- Popupでcommand aliasを設定できる
+- 疑似CLI内でも `alias` / `unalias` でcommand aliasを設定できる
+- 疑似CLI内でも `abbr` / `unabbr` で、Enter確定時に展開するcommand abbreviationを設定できる
 
 ## コマンド設計方針
 
@@ -621,11 +622,11 @@ ls Work/Admin
 
 `ll` は `ls -l` の組み込み別名として扱います。
 
-ユーザー定義command abbreviationはPopupの設定画面、または疑似CLIの `abbr` / `unabbr` で保存します。
+ユーザー定義aliasはPopupの設定画面、または疑似CLIの `alias` / `unalias` で保存します。
 
-abbreviationは先頭command tokenだけを1回展開します。
+aliasは先頭command tokenだけを実行時に1回展開します。
 
-abbreviation展開後のcommand種別は実行だけでなく、`clear` のscrollback transcript削除のようなUI副作用にも適用します。
+alias展開後のcommand種別は実行だけでなく、`clear` のscrollback transcript削除のようなUI副作用にも適用します。
 
 ```bash
 g stripe
@@ -634,9 +635,32 @@ la /Work
 
 たとえば `g = go`、`la = ls -la` と設定している場合、上の入力はそれぞれ `go stripe`、`ls -la /Work` として実行します。
 
+### alias
+
+command aliasを一覧表示、または設定します。
+
+```bash
+alias
+alias g=go
+alias la='ls -la'
+```
+
+`alias` は現在のalias一覧を表示します。
+
+`alias <name>=<command>` はaliasを追加または上書きします。
+
+### unalias
+
+command aliasを削除します。
+
+```bash
+unalias g
+unalias la
+```
+
 ### abbr
 
-command abbreviationを一覧表示、または設定します。
+Enter確定時に展開するcommand abbreviationを一覧表示、または設定します。
 
 ```bash
 abbr
@@ -648,7 +672,9 @@ abbr la='ls -la'
 
 `abbr <name>=<command>` はabbreviationを追加または上書きします。
 
-`alias` はv1.3.0以降も互換入力として受け付けます。
+abbreviationはEnter確定時に入力欄とtranscriptの実行commandへ展開します。
+
+たとえば `g = go` と設定している場合、`g stripe` をEnterで確定すると `go stripe` として表示、実行、履歴保存します。
 
 ### unabbr
 
@@ -658,8 +684,6 @@ command abbreviationを削除します。
 unabbr g
 unabbr la
 ```
-
-`unalias` はv1.3.0以降も互換入力として受け付けます。
 
 ### cd
 
