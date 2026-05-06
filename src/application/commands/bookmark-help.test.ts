@@ -10,6 +10,15 @@ const historyHelpTopicName = "history";
 /** Grep help topic名です。 */
 const grepHelpTopicName = "grep";
 
+/** Copy help topic名です。 */
+const copyHelpTopicName = "copy";
+
+/** Abbr help topic名です。 */
+const abbrHelpTopicName = "abbr";
+
+/** Alias help topic名です。 */
+const aliasHelpTopicName = "alias";
+
 /** Tree help topic名です。 */
 const treeHelpTopicName = "tree";
 
@@ -27,27 +36,14 @@ describe("bookmark CLI help catalog", (): void => {
    * Help topic一覧に主要commandを含むことを検証します。
    */
   it("lists command help topics", (): void => {
-    expect(listBookmarkCliHelpTopics().map((topic) => topic.commandName)).toContain(
-      goHelpTopicName,
-    );
-  });
+    const topicNames = listBookmarkCliHelpTopics().map((topic) => topic.commandName);
 
-  /**
-   * Help topic一覧にhistory topicを含むことを検証します。
-   */
-  it("lists history help topic", (): void => {
-    expect(listBookmarkCliHelpTopics().map((topic) => topic.commandName)).toContain(
-      historyHelpTopicName,
-    );
-  });
-
-  /**
-   * Help topic一覧にgrep topicを含むことを検証します。
-   */
-  it("lists grep help topic", (): void => {
-    expect(listBookmarkCliHelpTopics().map((topic) => topic.commandName)).toContain(
-      grepHelpTopicName,
-    );
+    expect(topicNames).toContain(goHelpTopicName);
+    expect(topicNames).toContain(historyHelpTopicName);
+    expect(topicNames).toContain(grepHelpTopicName);
+    expect(topicNames).toContain(copyHelpTopicName);
+    expect(topicNames).toContain(aliasHelpTopicName);
+    expect(topicNames).toContain(abbrHelpTopicName);
   });
 
   /**
@@ -69,6 +65,63 @@ describe("bookmark CLI help catalog", (): void => {
    */
   it("returns false for unknown help topic", (): void => {
     expect(findBookmarkCliHelpTopic(unknownHelpTopicName)).toBe(false);
+  });
+});
+
+/**
+ * Bookmark CLI copy help catalogのテストスイートです。
+ */
+describe("bookmark CLI copy help catalog", (): void => {
+  /**
+   * Copy topicから直前結果とpipe copyの使い方を取得できることを検証します。
+   */
+  it("finds copy help topic", (): void => {
+    const topic = findBookmarkCliHelpTopic(copyHelpTopicName);
+
+    expect(topic).not.toBe(false);
+
+    if (topic !== false) {
+      expect(topic.usage).toContain("copy [--url|--path|--title] <result-number>");
+      expect(topic.examples).toContain("pwd | copy");
+    }
+  });
+});
+
+/**
+ * Bookmark CLI abbr help catalogのテストスイートです。
+ */
+describe("bookmark CLI abbr help catalog", (): void => {
+  /**
+   * Abbr topicから設定と一覧表示の使い方を取得できることを検証します。
+   */
+  it("finds abbr help topic", (): void => {
+    const topic = findBookmarkCliHelpTopic(abbrHelpTopicName);
+
+    expect(topic).not.toBe(false);
+
+    if (topic !== false) {
+      expect(topic.usage).toContain("abbr <name>=<command>");
+      expect(topic.examples).toContain("abbr la='ls -la'");
+    }
+  });
+});
+
+/**
+ * Bookmark CLI alias help catalogのテストスイートです。
+ */
+describe("bookmark CLI alias help catalog", (): void => {
+  /**
+   * Alias topicから設定と一覧表示の使い方を取得できることを検証します。
+   */
+  it("finds alias help topic", (): void => {
+    const topic = findBookmarkCliHelpTopic(aliasHelpTopicName);
+
+    expect(topic).not.toBe(false);
+
+    if (topic !== false) {
+      expect(topic.usage).toContain("alias <name>=<command>");
+      expect(topic.examples).toContain("alias la='ls -la'");
+    }
   });
 });
 

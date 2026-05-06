@@ -1,7 +1,9 @@
 /* oxlint-disable max-lines -- Command名からASTを作る集約地点としてfactory mapを同じfileに保つため。 */
 
 import {
+  parseAbbrBookmarkCommand,
   parseAliasBookmarkCommand,
+  parseUnabbrBookmarkCommand,
   parseUnaliasBookmarkCommand,
 } from "./bookmark-alias-command-parser";
 import {
@@ -17,6 +19,7 @@ import {
   parseRenameBookmarkCommand,
 } from "./bookmark-organize-command-parser";
 import type { ParsedBookmarkCommand } from "./bookmark-command-types";
+import { parseCopyBookmarkCommand } from "./bookmark-copy-command-parser";
 import { parseListDirectoryCommand } from "./bookmark-list-command-parser";
 import { parseMarkBookmarkCommand } from "./bookmark-mark-command-parser";
 import { parseShowDirectoryTreeCommand } from "./bookmark-tree-command-parser";
@@ -49,8 +52,17 @@ const changeDirectoryCommandName = "cd";
 /** Clear command名です。 */
 const clearCommandName = "clear";
 
+/** Copy command名です。 */
+const copyCommandName = "copy";
+
+/** Abbr command名です。 */
+const abbrCommandName = "abbr";
+
 /** Alias command名です。 */
 const aliasCommandName = "alias";
+
+/** Unabbr command名です。 */
+const unabbrCommandName = "unabbr";
 
 /** Unalias command名です。 */
 const unaliasCommandName = "unalias";
@@ -188,6 +200,14 @@ const createClearCommand = (): ParsedBookmarkCommand => ({
 });
 
 /**
+ * Copy commandを作ります。
+ * @param {CommandParseContext} context Command parse contextです。
+ * @returns {ParsedBookmarkCommand} Copy commandです。
+ */
+const createCopyCommand = (context: CommandParseContext): ParsedBookmarkCommand =>
+  parseCopyBookmarkCommand(context.queryParts);
+
+/**
  * Alias commandを作ります。
  * @param {CommandParseContext} context Command parse contextです。
  * @returns {ParsedBookmarkCommand} Alias commandです。
@@ -202,6 +222,22 @@ const createAliasCommand = (context: CommandParseContext): ParsedBookmarkCommand
  */
 const createUnaliasCommand = (context: CommandParseContext): ParsedBookmarkCommand =>
   parseUnaliasBookmarkCommand(context.queryParts);
+
+/**
+ * Abbr commandを作ります。
+ * @param {CommandParseContext} context Command parse contextです。
+ * @returns {ParsedBookmarkCommand} Abbr commandです。
+ */
+const createAbbrCommand = (context: CommandParseContext): ParsedBookmarkCommand =>
+  parseAbbrBookmarkCommand(context.query);
+
+/**
+ * Unabbr commandを作ります。
+ * @param {CommandParseContext} context Command parse contextです。
+ * @returns {ParsedBookmarkCommand} Unabbr commandです。
+ */
+const createUnabbrCommand = (context: CommandParseContext): ParsedBookmarkCommand =>
+  parseUnabbrBookmarkCommand(context.queryParts);
 
 /**
  * Help commandを作ります。
@@ -302,9 +338,11 @@ const createUnknownCommand = (context: CommandParseContext): ParsedBookmarkComma
  * Command名ごとのfactoryです。
  */
 const bookmarkCommandFactories: Readonly<Record<string, BookmarkCommandFactory>> = {
+  [abbrCommandName]: createAbbrCommand,
   [aliasCommandName]: createAliasCommand,
   [changeDirectoryCommandName]: createChangeDirectoryCommand,
   [clearCommandName]: createClearCommand,
+  [copyCommandName]: createCopyCommand,
   [findCommandName]: createFindBookmarkCommand,
   [frequentBookmarksCommandName]: createFrequentBookmarksCommand,
   [goCommandName]: createGoBookmarkCommand,
@@ -322,6 +360,7 @@ const bookmarkCommandFactories: Readonly<Record<string, BookmarkCommandFactory>>
   [renameBookmarkCommandName]: createRenameBookmarkCommand,
   [showDirectoryTreeCommandName]: createTreeCommand,
   [tagBookmarkCommandName]: createTagBookmarkCommand,
+  [unabbrCommandName]: createUnabbrCommand,
   [unaliasCommandName]: createUnaliasCommand,
 };
 

@@ -176,6 +176,7 @@ export const useBookmarkCliAppKeyboard = (
   input: UseBookmarkCliAppKeyboardInput,
 ): UseBookmarkCliAppKeyboardValue => {
   const commandSuggestionItems = useBookmarkCliSuggestions({
+    commandAbbreviations: input.commandState.extensionState.settings.commandAbbreviations,
     commandAliases: input.commandState.extensionState.settings.commandAliases,
     currentDirectory: input.commandState.currentDirectory,
     inputValue: input.inputValue,

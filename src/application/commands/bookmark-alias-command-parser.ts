@@ -1,10 +1,21 @@
-import type { AliasBookmarkCommand, UnaliasBookmarkCommand } from "./bookmark-command-types";
+import type {
+  AbbrBookmarkCommand,
+  AliasBookmarkCommand,
+  UnabbrBookmarkCommand,
+  UnaliasBookmarkCommand,
+} from "./bookmark-command-types";
 
 /** Alias command kindです。 */
 const aliasCommandKind = "alias";
 
 /** Unalias command kindです。 */
 const unaliasCommandKind = "unalias";
+
+/** Abbr command kindです。 */
+const abbrCommandKind = "abbr";
+
+/** Unabbr command kindです。 */
+const unabbrCommandKind = "unabbr";
 
 /** Alias list操作です。 */
 const aliasListOperation = "list";
@@ -87,6 +98,37 @@ const createAliasSetCommand = (assignmentInput: string): AliasBookmarkCommand =>
 };
 
 /**
+ * Abbr一覧commandを作ります。
+ * @returns {AbbrBookmarkCommand} Abbr一覧commandです。
+ */
+const createAbbrListCommand = (): AbbrBookmarkCommand => ({
+  abbreviationName: emptyString,
+  commandInput: emptyString,
+  kind: abbrCommandKind,
+  operation: aliasListOperation,
+});
+
+/**
+ * Abbr設定commandを作ります。
+ * @param {string} assignmentInput abbr assignment入力です。
+ * @returns {AbbrBookmarkCommand} Abbr設定commandです。
+ */
+const createAbbrSetCommand = (assignmentInput: string): AbbrBookmarkCommand => {
+  const separatorIndex = assignmentInput.indexOf(assignmentSeparator);
+  const abbreviationName = assignmentInput.slice(firstCharacterIndex, separatorIndex).trim();
+  const commandInput = stripWrappingQuotes(
+    assignmentInput.slice(separatorIndex + nextCharacterOffset).trim(),
+  );
+
+  return {
+    abbreviationName,
+    commandInput,
+    kind: abbrCommandKind,
+    operation: aliasSetOperation,
+  };
+};
+
+/**
  * Alias commandを解析します。
  * @param {string} query command名を除いた入力です。
  * @returns {AliasBookmarkCommand} Alias commandです。
@@ -107,6 +149,26 @@ export const parseAliasBookmarkCommand = (query: string): AliasBookmarkCommand =
 };
 
 /**
+ * Abbr commandを解析します。
+ * @param {string} query command名を除いた入力です。
+ * @returns {AbbrBookmarkCommand} Abbr commandです。
+ * @example
+ * ```ts
+ * const result = parseAbbrBookmarkCommand("c=clear");
+ * // { kind: "abbr", operation: "set", abbreviationName: "c", commandInput: "clear" }
+ * ```
+ */
+export const parseAbbrBookmarkCommand = (query: string): AbbrBookmarkCommand => {
+  const assignmentInput = query.trim();
+
+  if (assignmentInput === emptyString || !assignmentInput.includes(assignmentSeparator)) {
+    return createAbbrListCommand();
+  }
+
+  return createAbbrSetCommand(assignmentInput);
+};
+
+/**
  * Unalias commandを解析します。
  * @param {readonly string[]} queryParts command名を除いたtoken一覧です。
  * @returns {UnaliasBookmarkCommand} Unalias commandです。
@@ -121,4 +183,21 @@ export const parseUnaliasBookmarkCommand = (
 ): UnaliasBookmarkCommand => ({
   aliasName: queryParts[firstCharacterIndex] ?? emptyString,
   kind: unaliasCommandKind,
+});
+
+/**
+ * Unabbr commandを解析します。
+ * @param {readonly string[]} queryParts command名を除いたtoken一覧です。
+ * @returns {UnabbrBookmarkCommand} Unabbr commandです。
+ * @example
+ * ```ts
+ * const result = parseUnabbrBookmarkCommand(["c"]);
+ * // { kind: "unabbr", abbreviationName: "c" }
+ * ```
+ */
+export const parseUnabbrBookmarkCommand = (
+  queryParts: readonly string[],
+): UnabbrBookmarkCommand => ({
+  abbreviationName: queryParts[firstCharacterIndex] ?? emptyString,
+  kind: unabbrCommandKind,
 });

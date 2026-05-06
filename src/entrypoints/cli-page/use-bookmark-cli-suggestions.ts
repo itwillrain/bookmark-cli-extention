@@ -14,6 +14,8 @@ const emptySuggestionItems = [] as const satisfies readonly BookmarkCliSuggestio
 
 /** Bookmark CLI suggestion hook入力。 */
 export interface UseBookmarkCliSuggestionsInput {
+  /** Command abbreviation一覧。 */
+  readonly commandAbbreviations: readonly CommandAlias[];
   /** Command alias一覧。 */
   readonly commandAliases: readonly CommandAlias[];
   /** 現在ディレクトリ。 */
@@ -135,7 +137,11 @@ const useDirectorySuggestionItems = (
 export const useBookmarkCliSuggestions = (
   input: UseBookmarkCliSuggestionsInput,
 ): readonly BookmarkCliSuggestionItem[] => {
-  const commandSuggestionItems = suggestBookmarkCommands(input.inputValue, input.commandAliases);
+  const commandSuggestionItems = suggestBookmarkCommands(
+    input.inputValue,
+    input.commandAliases,
+    input.commandAbbreviations,
+  );
   const directorySuggestionItems = useDirectorySuggestionItems(input, commandSuggestionItems);
 
   if (hasSuggestionItems(commandSuggestionItems)) {

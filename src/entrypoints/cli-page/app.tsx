@@ -24,6 +24,7 @@ import {
 import { BookmarkCliAppScreen } from "./bookmark-cli-app-screen";
 import type { LaunchContext } from "../../application/bookmarks/mark-bookmark-use-case";
 import { createAppCommandRuntime } from "./app-command-runtime";
+import { createBrowserClipboardWriter } from "../../infrastructure/browser/clipboard-adapter";
 import { createChromeCurrentWindowCloser } from "../../infrastructure/chrome/current-window-adapter";
 import { createChromeExtensionStateStorage } from "../../infrastructure/chrome/extension-state-storage-adapter";
 import { createChromeHistoryRepository } from "../../infrastructure/chrome/history-adapter";
@@ -97,6 +98,11 @@ const launchContextStorage = createChromeLaunchContextStorage(browser.storage.se
 const currentWindowCloser = createChromeCurrentWindowCloser(browser.windows);
 
 /**
+ * Browser Clipboard APIを使うclipboard writerです。
+ */
+const clipboardWriter = createBrowserClipboardWriter(navigator.clipboard);
+
+/**
  * 現在日時ISO文字列を返します。
  * @returns {string} 現在日時ISO文字列。
  */
@@ -147,6 +153,7 @@ const createCommandDependencies = (
   launchContext: LaunchContext | undefined,
 ): BookmarkCliCommandDependencies => {
   const dependencies = {
+    clipboard: clipboardWriter,
     creator: bookmarkCreator,
     currentDirectory: commandState.currentDirectory,
     extensionState: commandState.extensionState,
@@ -192,7 +199,12 @@ const createCommandDependencies = (
 const shouldPreserveExtensionSettings = (inputValue: string): boolean => {
   const command = parseBookmarkCommand(inputValue);
 
-  return command.kind === "alias" || command.kind === "unalias";
+  return (
+    command.kind === "abbr" ||
+    command.kind === "alias" ||
+    command.kind === "unabbr" ||
+    command.kind === "unalias"
+  );
 };
 
 /**
@@ -331,10 +343,12 @@ export const App = (): ReactElement => {
       inputValue={inputValue}
       keyboard={keyboardState.keyboard}
       onInputChange={createCurrentInputChangeHandler({
+        canExpandCommandAbbreviation: !commandState.pendingConfirmation,
         clearSelectedResultIndex: createSelectedResultClearHandler(cursors.setSelectedResultIndex),
         clearSelectedSuggestionIndex: createSelectedSuggestionClearHandler(
           cursors.setSelectedSuggestionIndex,
         ),
+        commandAbbreviations: commandState.extensionState.settings.commandAbbreviations,
         setInputValue,
       })}
       onSubmit={commandRuntime.submitCommand}

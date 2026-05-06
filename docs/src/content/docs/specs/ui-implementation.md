@@ -142,6 +142,18 @@ CLI windowがすでに開いている状態でPopupからaliasを保存した場
 
 `alias` / `unalias` command自身がsettingsを更新した場合は、command実行結果側のsettingsを保存します。
 
+疑似CLIでは `abbr` / `unabbr` commandで `settings.commandAbbreviations` を更新します。
+
+abbreviationは先頭command token後の空白入力時に、入力欄上のcommandへ展開します。
+
+未展開のままEnter確定した場合も、transcriptの実行commandと履歴へ展開後commandを保存します。
+
+`copy` commandはDedicated extension pageのClipboard adapterを通してclipboardへtextを書き込みます。
+
+`copy 1` は直前結果のURLまたはpathをcopyし、`pwd | copy` はpipe sourceのstatus textをcopyします。
+
+`ls | copy` のようにresult listを持つpipe sourceでは、表示行をplain textへ変換してcopyします。
+
 Popup UIはTailwindとReact componentで実装し、表示componentとChrome API adapterを分けます。
 
 現在入力中のpromptはtranscript末尾に置き、実行後はその入力と結果をtranscript entryへ固定します。

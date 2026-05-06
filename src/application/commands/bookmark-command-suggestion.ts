@@ -15,9 +15,6 @@ export interface BookmarkCommandSuggestion {
 /** Bookmark CLI command catalog item。 */
 type BookmarkCommandCatalogItem = Omit<BookmarkCommandSuggestion, "completion">;
 
-/** Bookmark CLI command suggestion source。 */
-type BookmarkCommandSuggestionSource = BookmarkCommandCatalogItem | CommandAlias;
-
 /** 空文字。 */
 const emptyString = "";
 
@@ -50,6 +47,14 @@ const bookmarkCommandCatalog = [
     description: "command aliasを削除",
   },
   {
+    commandName: "abbr",
+    description: "command abbreviationを表示または設定",
+  },
+  {
+    commandName: "unabbr",
+    description: "command abbreviationを削除",
+  },
+  {
     commandName: "find",
     description: "Bookmarkを検索",
   },
@@ -72,6 +77,10 @@ const bookmarkCommandCatalog = [
   {
     commandName: "pwd",
     description: "現在folderを表示",
+  },
+  {
+    commandName: "copy",
+    description: "直前結果またはpipe出力をclipboardへcopy",
   },
   {
     commandName: "tree",
@@ -134,19 +143,16 @@ const createAliasCommandCatalogItem = (alias: CommandAlias): BookmarkCommandCata
 });
 
 /**
- * Command suggestion sourceをcatalog itemへ変換。
- * @param {BookmarkCommandSuggestionSource} source command suggestion source。
+ * Command abbreviationをcommand suggestion catalog itemへ変換。
+ * @param {CommandAlias} abbreviation command abbreviation。
  * @returns {BookmarkCommandCatalogItem} Command suggestion catalog item。
  */
-const createBookmarkCommandCatalogItem = (
-  source: BookmarkCommandSuggestionSource,
-): BookmarkCommandCatalogItem => {
-  if ("name" in source) {
-    return createAliasCommandCatalogItem(source);
-  }
-
-  return source;
-};
+const createAbbreviationCommandCatalogItem = (
+  abbreviation: CommandAlias,
+): BookmarkCommandCatalogItem => ({
+  commandName: abbreviation.name,
+  description: `abbr: ${abbreviation.command}`,
+});
 
 /**
  * Command catalog itemをsuggestionへ変換。
@@ -198,15 +204,17 @@ const canStartCommandSuggestion = (commandPrefix: string): boolean => commandPre
  * Bookmark CLI command suggestionを返す。
  * @param {string} inputValue CLI入力値。
  * @param {readonly CommandAlias[]} aliases command alias一覧。
+ * @param {readonly CommandAlias[]} abbreviations command abbreviation一覧。
  * @returns {readonly BookmarkCommandSuggestion[]} Command suggestion一覧。
  * @example
  * ```ts
- * const result = suggestBookmarkCommands(inputValue, aliases);
+ * const result = suggestBookmarkCommands(inputValue, aliases, abbreviations);
  * ```
  */
 export const suggestBookmarkCommands = (
   inputValue: string,
   aliases: readonly CommandAlias[] = [],
+  abbreviations: readonly CommandAlias[] = [],
 ): readonly BookmarkCommandSuggestion[] => {
   if (hasCommandArgumentInput(inputValue)) {
     return [];
@@ -218,8 +226,13 @@ export const suggestBookmarkCommands = (
     return [];
   }
 
-  return [...normalizeCommandAliases(aliases), ...bookmarkCommandCatalog]
-    .map((source) => createBookmarkCommandCatalogItem(source))
+  return [
+    ...normalizeCommandAliases(aliases).map((alias) => createAliasCommandCatalogItem(alias)),
+    ...normalizeCommandAliases(abbreviations).map((abbreviation) =>
+      createAbbreviationCommandCatalogItem(abbreviation),
+    ),
+    ...bookmarkCommandCatalog,
+  ]
     .map((item) => createBookmarkCommandSuggestion(item))
     .filter((suggestion) => commandSuggestionMatchesPrefix(suggestion, commandPrefix))
     .slice(sliceStartIndex, maxSuggestionCount);

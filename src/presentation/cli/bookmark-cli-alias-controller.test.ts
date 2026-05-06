@@ -57,6 +57,15 @@ const aliasedExtensionState = {
   },
 };
 
+/** Abbreviation設定済み拡張状態fixture。 */
+const abbreviatedExtensionState = {
+  ...initialExtensionState,
+  settings: {
+    ...initialExtensionState.settings,
+    commandAbbreviations: [{ command: "go", name: "g" }],
+  },
+};
+
 /** Go command alias入力です。 */
 const goAliasInput = "g stripe";
 
@@ -68,6 +77,15 @@ const aliasSetInput = "alias la='ls -la'";
 
 /** Unalias command入力です。 */
 const unaliasInput = "unalias g";
+
+/** Abbr一覧command入力です。 */
+const abbrListInput = "abbr";
+
+/** Abbr設定command入力です。 */
+const abbrSetInput = "abbr la='ls -la'";
+
+/** Unabbr command入力です。 */
+const unabbrInput = "unabbr g";
 
 /** URL記録opener fixtureです。 */
 interface RecordingBookmarkOpener {
@@ -169,6 +187,53 @@ describe("executeBookmarkCliCommand command aliases", (): void => {
 
     expect(recordingOpener.openedUrls).toStrictEqual(["https://dashboard.stripe.com/"]);
     expect(state.statusText).toBe("Opened Stripe Dashboard");
+  });
+});
+
+/** Command abbreviation設定CLI controllerのテストスイートです。 */
+describe("executeBookmarkCliCommand abbr settings", (): void => {
+  /** Abbreviation一覧を表示できることを検証します。 */
+  it("lists configured command abbreviations", async (): Promise<void> => {
+    const state = await executeBookmarkCliCommand(
+      abbrListInput,
+      createCommandDependenciesWithState(abbreviatedExtensionState),
+    );
+
+    expect(state.statusText).toBe("1 abbreviation");
+    expect(state.resultItems).toStrictEqual([
+      {
+        description: "go",
+        details: ["abbr g='go'"],
+        folderPath: "/",
+        kind: "help",
+        title: "g",
+      },
+    ]);
+  });
+
+  /** Abbreviation設定を追加できることを検証します。 */
+  it("sets a command abbreviation", async (): Promise<void> => {
+    const state = await executeBookmarkCliCommand(
+      abbrSetInput,
+      createCommandDependenciesWithState(abbreviatedExtensionState),
+    );
+
+    expect(state.statusText).toBe("abbr la='ls -la'");
+    expect(state.extensionState.settings.commandAbbreviations).toStrictEqual([
+      { command: "go", name: "g" },
+      { command: "ls -la", name: "la" },
+    ]);
+  });
+
+  /** Abbreviation設定を削除できることを検証します。 */
+  it("removes a command abbreviation", async (): Promise<void> => {
+    const state = await executeBookmarkCliCommand(
+      unabbrInput,
+      createCommandDependenciesWithState(abbreviatedExtensionState),
+    );
+
+    expect(state.statusText).toBe("unabbr g");
+    expect(state.extensionState.settings.commandAbbreviations).toStrictEqual([]);
   });
 });
 

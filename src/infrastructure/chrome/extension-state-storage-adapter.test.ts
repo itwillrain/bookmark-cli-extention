@@ -28,6 +28,17 @@ const versionOneStoragePayload = {
   },
 };
 
+/** Version two storage payload fixture。 */
+const versionTwoStoragePayload = {
+  ...createInitialExtensionState(),
+  schemaVersion: 2,
+  settings: {
+    commandAliases: [{ command: "go", name: "g" }],
+    preferNerdFont: true,
+    promptStyle: "plain",
+  },
+};
+
 /** 実行日時fixture。 */
 const executedAt = "2026-05-03T00:00:00.000Z";
 
@@ -147,9 +158,28 @@ describe("createChromeExtensionStateStorage migration", (): void => {
 
     await expect(storage.readExtensionState()).resolves.toStrictEqual({
       ...versionOneStoragePayload,
-      schemaVersion: 2,
+      schemaVersion: 3,
       settings: {
+        commandAbbreviations: [],
         commandAliases: [],
+        preferNerdFont: true,
+        promptStyle: "plain",
+      },
+    });
+  });
+
+  /** Version two保存状態をabbreviation対応schemaへmigrationできることを検証。 */
+  it("migrates version two extension state", async (): Promise<void> => {
+    const storage = createChromeExtensionStateStorage(
+      createReadonlyStorageArea(versionTwoStoragePayload),
+    );
+
+    await expect(storage.readExtensionState()).resolves.toStrictEqual({
+      ...versionTwoStoragePayload,
+      schemaVersion: 3,
+      settings: {
+        commandAbbreviations: [],
+        commandAliases: [{ command: "go", name: "g" }],
         preferNerdFont: true,
         promptStyle: "plain",
       },

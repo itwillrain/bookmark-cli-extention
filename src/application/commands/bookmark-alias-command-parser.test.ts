@@ -1,17 +1,67 @@
 import { describe, expect, it } from "vitest";
 import { parseBookmarkCommand } from "./bookmark-command-parser";
 
+/** Abbr一覧command入力です。 */
+const abbrListInput = "abbr";
+
+/** Abbr設定command入力です。 */
+const abbrSetInput = "abbr g=go";
+
+/** 引用符付きabbr設定command入力です。 */
+const quotedAbbrSetInput = "abbr la='ls -la'";
+
+/** Unabbr command入力です。 */
+const unabbrInput = "unabbr g";
+
 /** Alias一覧command入力です。 */
 const aliasListInput = "alias";
 
 /** Alias設定command入力です。 */
 const aliasSetInput = "alias g=go";
 
-/** 引用符付きalias設定command入力です。 */
-const quotedAliasSetInput = "alias la='ls -la'";
-
 /** Unalias command入力です。 */
 const unaliasInput = "unalias g";
+
+/** Command abbreviation parserのテストスイートです。 */
+describe("parseBookmarkCommand abbr commands", (): void => {
+  /** Abbr一覧commandを解析できることを検証。 */
+  it("parses abbr list command", (): void => {
+    expect(parseBookmarkCommand(abbrListInput)).toStrictEqual({
+      abbreviationName: "",
+      commandInput: "",
+      kind: "abbr",
+      operation: "list",
+    });
+  });
+
+  /** Abbr設定commandを解析できることを検証。 */
+  it("parses abbr set command", (): void => {
+    expect(parseBookmarkCommand(abbrSetInput)).toStrictEqual({
+      abbreviationName: "g",
+      commandInput: "go",
+      kind: "abbr",
+      operation: "set",
+    });
+  });
+
+  /** 引用符付きabbr設定commandを解析できることを検証。 */
+  it("parses quoted abbr set command", (): void => {
+    expect(parseBookmarkCommand(quotedAbbrSetInput)).toStrictEqual({
+      abbreviationName: "la",
+      commandInput: "ls -la",
+      kind: "abbr",
+      operation: "set",
+    });
+  });
+
+  /** Unabbr commandを解析できることを検証。 */
+  it("parses unabbr command", (): void => {
+    expect(parseBookmarkCommand(unabbrInput)).toStrictEqual({
+      abbreviationName: "g",
+      kind: "unabbr",
+    });
+  });
+});
 
 /** Command alias parserのテストスイートです。 */
 describe("parseBookmarkCommand alias commands", (): void => {
@@ -30,16 +80,6 @@ describe("parseBookmarkCommand alias commands", (): void => {
     expect(parseBookmarkCommand(aliasSetInput)).toStrictEqual({
       aliasName: "g",
       commandInput: "go",
-      kind: "alias",
-      operation: "set",
-    });
-  });
-
-  /** 引用符付きalias設定commandを解析できることを検証。 */
-  it("parses quoted alias set command", (): void => {
-    expect(parseBookmarkCommand(quotedAliasSetInput)).toStrictEqual({
-      aliasName: "la",
-      commandInput: "ls -la",
       kind: "alias",
       operation: "set",
     });

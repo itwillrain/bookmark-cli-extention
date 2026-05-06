@@ -42,6 +42,7 @@ Folderを削除する場合は、配下のBookmarkとfolderも削除するため
 | `tree`   | Bookmark Treeを階層表示する            | 対象 |
 | `help`   | ヘルプを表示する                       | 対象 |
 | `grep`   | pipeで結果一覧を絞り込む               | 対象 |
+| `copy`   | 直前結果またはpipe出力をcopyする       | 対象 |
 | `clear`  | 画面上のscrollback transcriptを消す    | 対象 |
 | `history` | Chrome閲覧履歴を表示する             | 対象 |
 | `recent` | 最近開いたBookmarkを表示する           | 対象 |
@@ -205,11 +206,11 @@ Chrome Bookmark IDとparent IDは `-l` の詳細行へ統合します。
 
 `-la` と `-al` は `-l -a` と同じ意味です。
 
-`ll` は `ls -l` のaliasです。
+`ll` は `ls -l` の組み込み別名です。
 
 ユーザー定義aliasはPopupの設定画面、または疑似CLIの `alias` / `unalias` で追加、削除、保存します。
 
-aliasは先頭command tokenだけを1回展開します。
+aliasは先頭command tokenだけを実行時に1回展開します。
 
 alias展開後のcommand種別は実行だけでなく、`clear` のscrollback transcript削除のようなUI副作用にも適用します。
 
@@ -256,6 +257,50 @@ unalias <name>
 ```bash
 unalias g
 unalias la
+```
+
+## `abbr`
+
+空白またはEnter確定時に展開するcommand abbreviationを一覧表示、または設定します。
+
+```bash
+abbr
+abbr <name>=<command>
+```
+
+```bash
+abbr
+abbr g=go
+abbr la='ls -la'
+```
+
+`abbr` は現在のabbreviation一覧を表示します。
+
+`abbr <name>=<command>` はabbreviationを追加または上書きします。
+
+abbreviation名は空白とpipe記号を含まない1 tokenに限定します。
+
+abbreviationは再帰的に展開しません。
+
+abbreviationは先頭command tokenの後ろに空白を入力した時点で、入力欄上のcommandへ展開します。
+
+未展開のままEnter確定した場合も、transcriptの実行commandと履歴へ展開後commandを保存します。
+
+たとえば `g = go` と設定している場合、`g ` と入力した時点で `go ` に展開します。
+
+`g stripe` をEnterで確定すると `go stripe` として表示、実行、履歴保存します。
+
+## `unabbr`
+
+command abbreviationを削除します。
+
+```bash
+unabbr <name>
+```
+
+```bash
+unabbr g
+unabbr la
 ```
 
 ## `cd`
@@ -380,7 +425,7 @@ history | grep docs
 recent | grep stripe
 ```
 
-v1でpipe sourceにできるcommandは `ls`、`ll`、`find`、`history`、`tree`、`recent`、`freq`、`help` です。
+v1でpipe sourceにできるcommandは `pwd`、`ls`、`ll`、`find`、`history`、`tree`、`recent`、`freq`、`help` です。
 
 `grep` はtitle、folder path、url、description、details、result種別を大文字小文字を区別せずに部分一致で検索します。
 
@@ -389,6 +434,44 @@ v1でpipe sourceにできるcommandは `ls`、`ll`、`find`、`history`、`tree`
 `grep` はpipe stageとして扱い、standalone commandとしては扱いません。
 
 未対応のpipe stageや書き込み系commandをpipe sourceにした場合は、未対応commandとして扱います。
+
+## `copy`
+
+直前結果またはpipe sourceの表示内容をclipboardへcopyします。
+
+```bash
+copy [--url|--path|--title] <result-number>
+pwd | copy
+<result-command> | copy
+```
+
+```bash
+copy 1
+copy --url 1
+copy --path 1
+copy --title 1
+pwd | copy
+ls | copy
+find stripe | grep dashboard | copy
+```
+
+`copy 1` は直前結果1番のURLをcopyします。
+
+対象がURLを持たないfolderの場合、`copy 1` はfolder pathをcopyします。
+
+`copy --url 1` はURLだけをcopyします。
+
+URLを持たない結果に `--url` を指定した場合はcopyしません。
+
+`copy --path 1` はCLI上で対象を指せるpathをcopyします。
+
+Bookmarkの場合は `folderPath/title`、folderの場合はfolder pathをcopyします。
+
+`copy --title 1` はtitleをcopyします。
+
+`pwd | copy` は現在pathをcopyします。
+
+`ls | copy` や `find ... | copy` は表示行をplain textとしてcopyします。
 
 ## `clear`
 

@@ -71,8 +71,25 @@ describe("suggestBookmarkCommands prefix", (): void => {
   });
 });
 
-/** Bookmark command suggestionのalias commandテストスイート。 */
-describe("suggestBookmarkCommands alias commands", (): void => {
+/** Bookmark command suggestionのcopy commandテストスイート。 */
+describe("suggestBookmarkCommands copy commands", (): void => {
+  /** Copy commandをprefixから補完候補へ出せることを検証。 */
+  it("suggests copy command by prefix", (): void => {
+    expect(suggestBookmarkCommands("co").map((suggestion) => suggestion.commandName)).toStrictEqual(
+      ["copy"],
+    );
+  });
+});
+
+/** Bookmark command suggestionのabbr commandテストスイート。 */
+describe("suggestBookmarkCommands abbr commands", (): void => {
+  /** Abbr commandをprefixから補完候補へ出せることを検証。 */
+  it("suggests abbr command by prefix", (): void => {
+    expect(suggestBookmarkCommands("ab").map((suggestion) => suggestion.commandName)).toStrictEqual(
+      ["abbr"],
+    );
+  });
+
   /** Alias commandをprefixから補完候補へ出せることを検証。 */
   it("suggests alias command by prefix", (): void => {
     expect(
@@ -90,6 +107,22 @@ describe("suggestBookmarkCommands aliases", (): void => {
         commandName: "g",
         completion: "g ",
         description: "alias: go",
+      },
+      {
+        commandName: "go",
+        completion: "go ",
+        description: "検索上位のBookmarkを開く",
+      },
+    ]);
+  });
+
+  /** 設定済みabbreviationをcommand suggestionへ出すことを検証。 */
+  it("suggests configured command abbreviations", (): void => {
+    expect(suggestBookmarkCommands("g", [], [{ command: "go", name: "g" }])).toStrictEqual([
+      {
+        commandName: "g",
+        completion: "g ",
+        description: "abbr: go",
       },
       {
         commandName: "go",

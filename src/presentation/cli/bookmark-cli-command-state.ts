@@ -15,6 +15,16 @@ import type { CurrentDirectory } from "../../domain/bookmarks/current-directory"
 import type { ExtensionState } from "../../domain/storage/extension-state";
 
 /**
+ * Clipboard書き込みportです。
+ */
+export interface ClipboardWriterPort {
+  /**
+   * Clipboardへtextを書き込みます。
+   */
+  readonly writeText: (text: string) => Promise<void>;
+}
+
+/**
  * Bookmark削除の確認待ち状態です。
  */
 export interface BookmarkCliRemovePendingConfirmation {
@@ -69,6 +79,10 @@ export interface BookmarkCliCommandDependencies {
    * 現在日時を返すport。
    */
   readonly now?: () => string;
+  /**
+   * Clipboard書き込みportです。
+   */
+  readonly clipboard?: ClipboardWriterPort;
   /**
    * Bookmark作成port。
    */

@@ -87,6 +87,7 @@ area別には次のlabelを使います。
 - `area: history`
 - `area: tags`
 - `area: aliases`
+- `area: abbreviations`
 - `area: popup`
 - `area: hotkey`
 - `area: release`

@@ -10,6 +10,12 @@ const multipleGrepPipeCommandInput = "find stripe | grep dashboard | grep work";
 /** History commandをpipe sourceにする入力です。 */
 const historyGrepCommandInput = "history github --limit 20 | grep docs";
 
+/** Pwd commandをcopy pipe sourceにする入力です。 */
+const printWorkingDirectoryCopyCommandInput = "pwd | copy";
+
+/** Ls commandをgrepしてcopyする入力です。 */
+const listGrepCopyCommandInput = "ls Work | grep stripe | copy";
+
 /** 未対応pipe stage付きcommandの入力です。 */
 const unsupportedPipeStageCommandInput = "ls Work | sort";
 
@@ -87,6 +93,54 @@ describe("parseBookmarkCommand history pipe commands", (): void => {
         {
           kind: "grep",
           queryInput: "docs",
+        },
+      ],
+    });
+  });
+});
+
+/**
+ * Bookmark copy pipe command parserの正常系テストスイートです。
+ */
+describe("parseBookmarkCommand copy pipe commands", (): void => {
+  /**
+   * Pwd commandとcopy stageをpipe commandとして解析できることを検証します。
+   */
+  it("parses pwd piped to copy", (): void => {
+    expect(parseBookmarkCommand(printWorkingDirectoryCopyCommandInput)).toStrictEqual({
+      kind: "pipe",
+      source: {
+        kind: "pwd",
+      },
+      stages: [
+        {
+          kind: "copy",
+        },
+      ],
+    });
+  });
+
+  /**
+   * Grep後のcopy stageをpipe commandとして解析できることを検証します。
+   */
+  it("parses grep followed by copy", (): void => {
+    expect(parseBookmarkCommand(listGrepCopyCommandInput)).toStrictEqual({
+      kind: "pipe",
+      source: {
+        kind: "ls",
+        options: {
+          all: false,
+          long: false,
+        },
+        pathInput: "Work",
+      },
+      stages: [
+        {
+          kind: "grep",
+          queryInput: "stripe",
+        },
+        {
+          kind: "copy",
         },
       ],
     });

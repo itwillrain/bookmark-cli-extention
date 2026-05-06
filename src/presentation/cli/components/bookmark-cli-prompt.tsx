@@ -46,6 +46,17 @@ const PowerlineSeparator = (): ReactElement => (
 );
 
 /**
+ * Powerline promptのsymbol segmentを描画。
+ * @returns {ReactElement} Symbol segment element。
+ */
+const PowerlineSymbolSegment = (): ReactElement => (
+  <span className="inline-flex bg-zinc-900" aria-hidden="true">
+    <PowerlineSeparator />
+    <span className="px-2 text-emerald-200">{promptSymbol}</span>
+  </span>
+);
+
+/**
  * Powerline promptを描画。
  * @returns {ReactElement} Powerline prompt element。
  */
@@ -57,10 +68,7 @@ const PowerlinePrompt = (): ReactElement => (
     <span className="bg-emerald-500 px-2 text-zinc-950" aria-hidden="true">
       {promptCommandName}
     </span>
-    <PowerlineSeparator />
-    <span className="bg-zinc-900 px-2 text-emerald-200" aria-hidden="true">
-      {promptSymbol}
-    </span>
+    <PowerlineSymbolSegment />
   </span>
 );
 

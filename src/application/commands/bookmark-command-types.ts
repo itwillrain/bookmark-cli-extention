@@ -6,6 +6,7 @@ import type {
   RecentBookmarksCommand,
 } from "./bookmark-usage-command-types";
 import type { FindBookmarkCommand, GoBookmarkCommand } from "./bookmark-search-command-types";
+import type { BookmarkCliCopyValueKind } from "../../domain/cli/bookmark-cli-copy";
 
 export type {
   BrowserHistoryCommand,
@@ -224,6 +225,44 @@ export interface GrepPipeStageCommand {
 }
 
 /**
+ * Copy pipe stage commandです。
+ */
+export interface CopyPipeStageCommand {
+  /**
+   * Pipe stage種別です。
+   */
+  readonly kind: "copy";
+}
+
+/**
+ * Pipe stage commandです。
+ */
+export type PipeStageCommand = CopyPipeStageCommand | GrepPipeStageCommand;
+
+/**
+ * Copy対象の値種別です。
+ */
+export type CopyBookmarkValueKind = BookmarkCliCopyValueKind;
+
+/**
+ * Clipboard copy commandです。
+ */
+export interface CopyBookmarkCommand {
+  /**
+   * Command種別です。
+   */
+  readonly kind: "copy";
+  /**
+   * 対象の直前結果番号です。
+   */
+  readonly targetInput: string;
+  /**
+   * Copyする値種別です。
+   */
+  readonly valueKind: CopyBookmarkValueKind;
+}
+
+/**
  * 空入力commandです。
  */
 export interface EmptyBookmarkCommand {
@@ -247,6 +286,11 @@ export interface ClearBookmarkCommand {
  * Command alias操作種別です。
  */
 export type AliasBookmarkCommandOperation = "list" | "set";
+
+/**
+ * Command abbreviation操作種別です。
+ */
+export type AbbrBookmarkCommandOperation = "list" | "set";
 
 /**
  * Command alias設定commandです。
@@ -282,6 +326,42 @@ export interface UnaliasBookmarkCommand {
    * Command種別です。
    */
   readonly kind: "unalias";
+}
+
+/**
+ * Command abbreviation設定commandです。
+ */
+export interface AbbrBookmarkCommand {
+  /**
+   * Abbreviation名です。
+   */
+  readonly abbreviationName: string;
+  /**
+   * 展開後command入力です。
+   */
+  readonly commandInput: string;
+  /**
+   * Command種別です。
+   */
+  readonly kind: "abbr";
+  /**
+   * Abbreviation操作種別です。
+   */
+  readonly operation: AbbrBookmarkCommandOperation;
+}
+
+/**
+ * Command abbreviation削除commandです。
+ */
+export interface UnabbrBookmarkCommand {
+  /**
+   * 削除対象abbreviation名です。
+   */
+  readonly abbreviationName: string;
+  /**
+   * Command種別です。
+   */
+  readonly kind: "unabbr";
 }
 
 /**
@@ -325,6 +405,7 @@ export type PipeSourceBookmarkCommand =
   | FrequentBookmarksCommand
   | HelpBookmarkCommand
   | ListDirectoryCommand
+  | PrintWorkingDirectoryCommand
   | RecentBookmarksCommand
   | ShowDirectoryTreeCommand;
 
@@ -343,16 +424,18 @@ export interface PipeBookmarkCommand {
   /**
    * Pipe stage一覧です。
    */
-  readonly stages: readonly GrepPipeStageCommand[];
+  readonly stages: readonly PipeStageCommand[];
 }
 
 /**
  * 解析済みBookmark commandです。
  */
 export type ParsedBookmarkCommand =
+  | AbbrBookmarkCommand
   | AliasBookmarkCommand
   | ChangeDirectoryCommand
   | ClearBookmarkCommand
+  | CopyBookmarkCommand
   | EmptyBookmarkCommand
   | FindBookmarkCommand
   | BrowserHistoryCommand
@@ -370,5 +453,6 @@ export type ParsedBookmarkCommand =
   | RenameBookmarkCommand
   | ShowDirectoryTreeCommand
   | TagBookmarkCommand
+  | UnabbrBookmarkCommand
   | UnaliasBookmarkCommand
   | UnknownBookmarkCommand;

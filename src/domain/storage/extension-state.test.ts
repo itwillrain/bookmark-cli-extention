@@ -5,6 +5,7 @@ import {
   createInitialExtensionState,
   createPersistedCurrentDirectory,
   maxCommandHistoryEntries,
+  updateCommandAbbreviations,
   updateCommandAliases,
 } from "./extension-state";
 import { describe, expect, it } from "vitest";
@@ -76,8 +77,9 @@ describe("createInitialExtensionState", (): void => {
         folderPath: "/",
         updatedAt: "",
       },
-      schemaVersion: 2,
+      schemaVersion: 3,
       settings: {
+        commandAbbreviations: [],
         commandAliases: [],
         preferNerdFont: false,
         promptStyle: "powerline",
@@ -85,6 +87,22 @@ describe("createInitialExtensionState", (): void => {
       usageByBookmarkId: {},
       virtualTagsByBookmarkId: {},
     });
+  });
+});
+
+/** Command abbreviation設定更新のテストスイート。 */
+describe("updateCommandAbbreviations", (): void => {
+  /**
+   * Command abbreviationを正規化して設定へ反映できることを検証。
+   */
+  it("updates command abbreviations", (): void => {
+    const state = createInitialExtensionState();
+    const nextState = updateCommandAbbreviations(state, [
+      { command: " go ", name: " g " },
+      { command: "", name: "empty" },
+    ]);
+
+    expect(nextState.settings.commandAbbreviations).toStrictEqual([{ command: "go", name: "g" }]);
   });
 });
 

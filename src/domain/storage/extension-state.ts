@@ -2,7 +2,7 @@ import { type CommandAlias, normalizeCommandAliases } from "../cli/command-alias
 import type { CurrentDirectory } from "../bookmarks/current-directory";
 
 /** 保存データschema versionの現在値。 */
-export const currentExtensionStateSchemaVersion = 2;
+export const currentExtensionStateSchemaVersion = 3;
 
 /** 保存する入力履歴の最大件数。 */
 export const maxCommandHistoryEntries = 100;
@@ -64,6 +64,8 @@ export type PromptStyle = "plain" | "powerline";
 export interface ExtensionSettings {
   /** Command alias一覧。 */
   readonly commandAliases: readonly CommandAlias[];
+  /** Command abbreviation一覧。 */
+  readonly commandAbbreviations: readonly CommandAlias[];
   /** Nerd Font互換iconを優先するか。 */
   readonly preferNerdFont: boolean;
   /** CLI promptの表示style。 */
@@ -124,6 +126,7 @@ export const createInitialExtensionState = (): ExtensionState => ({
   ),
   schemaVersion: currentExtensionStateSchemaVersion,
   settings: {
+    commandAbbreviations: [],
     commandAliases: [],
     preferNerdFont: false,
     promptStyle: powerlinePromptStyle,
@@ -221,5 +224,26 @@ export const updateCommandAliases = (
   settings: {
     ...state.settings,
     commandAliases: normalizeCommandAliases(commandAliases),
+  },
+});
+
+/**
+ * Command abbreviation設定を更新します。
+ * @param {ExtensionState} state 更新前の拡張状態です。
+ * @param {readonly CommandAlias[]} commandAbbreviations 保存するcommand abbreviation一覧です。
+ * @returns {ExtensionState} command abbreviation更新後の拡張状態です。
+ * @example
+ * ```ts
+ * const result = updateCommandAbbreviations(state, commandAbbreviations);
+ * ```
+ */
+export const updateCommandAbbreviations = (
+  state: ExtensionState,
+  commandAbbreviations: readonly CommandAlias[],
+): ExtensionState => ({
+  ...state,
+  settings: {
+    ...state.settings,
+    commandAbbreviations: normalizeCommandAliases(commandAbbreviations),
   },
 });

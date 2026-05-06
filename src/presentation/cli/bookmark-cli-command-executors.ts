@@ -5,6 +5,10 @@ import type {
 import type { UnknownBookmarkCommand } from "../../application/commands/bookmark-command-parser";
 import { createEmptyResultState } from "./bookmark-cli-state-builders";
 
+export {
+  executeAbbrCommand,
+  executeUnabbrCommand,
+} from "./bookmark-cli-abbreviation-command-executors";
 export { executeAliasCommand, executeUnaliasCommand } from "./bookmark-cli-alias-command-executors";
 export {
   executeChangeDirectoryCommand,
@@ -12,6 +16,7 @@ export {
   executePrintWorkingDirectoryCommand,
   executeShowDirectoryTreeCommand,
 } from "./bookmark-cli-directory-command-executors";
+export { executeCopyCommand } from "./bookmark-cli-copy-command-executors";
 export { executeHelpCommand } from "./bookmark-cli-help-command-executors";
 export { executeMarkCommand } from "./bookmark-cli-mark-command-executors";
 export {

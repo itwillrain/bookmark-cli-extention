@@ -41,6 +41,18 @@ const bookmarkCliHelpTopics = [
     usage: ["unalias <name>"],
   },
   {
+    commandName: "abbr",
+    description: "空白またはEnter確定時に展開するcommand abbreviationを表示または設定する",
+    examples: ["abbr", "abbr g=go", "abbr la='ls -la'"],
+    usage: ["abbr", "abbr <name>=<command>"],
+  },
+  {
+    commandName: "unabbr",
+    description: "command abbreviationを削除する",
+    examples: ["unabbr g", "unabbr la"],
+    usage: ["unabbr <name>"],
+  },
+  {
     commandName: "go",
     description: "Bookmarkを検索して開く",
     examples: ["go stripe bill", "go #prod admin", "go 3", "go -l stripe"],
@@ -67,6 +79,12 @@ const bookmarkCliHelpTopics = [
     description: "pipeで結果一覧を絞り込む",
     examples: ["ls | grep stripe", "find docs | grep github"],
     usage: ["<result-command> | grep <query>", "<result-command> | grep <query> | grep <query>"],
+  },
+  {
+    commandName: "copy",
+    description: "直前結果またはpipe出力をclipboardへcopyする",
+    examples: ["copy 1", "copy --path 1", "copy --title 1", "pwd | copy", "ls | copy"],
+    usage: ["copy [--url|--path|--title] <result-number>", "pwd | copy", "<result-command> | copy"],
   },
   {
     commandName: "ls",

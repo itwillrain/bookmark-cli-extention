@@ -229,3 +229,32 @@ describe("persistCommandExecutionState command settings", (): void => {
     ]);
   });
 });
+
+/** Extension state abbr command settings保存use caseのテストスイート。 */
+describe("persistCommandExecutionState abbr command settings", (): void => {
+  /** Abbr commandが更新したsettingsを保持できることを検証。 */
+  it("keeps abbr command updated settings when requested", async (): Promise<void> => {
+    const commandUpdatedState = {
+      ...createInitialExtensionState(),
+      settings: {
+        ...createInitialExtensionState().settings,
+        commandAbbreviations: [{ command: "ls -la", name: "la" }],
+      },
+    };
+    const recordingStorage = createRecordingStorage(createInitialExtensionState());
+
+    const result = await persistCommandExecutionState({
+      commandInput: "abbr la='ls -la'",
+      currentDirectory: "/",
+      extensionState: commandUpdatedState,
+      now,
+      preserveExtensionSettings: true,
+      repository: createBookmarkRepository(),
+      storage: recordingStorage.storage,
+    });
+
+    expect(result.ok && result.value.settings.commandAbbreviations).toStrictEqual([
+      { command: "ls -la", name: "la" },
+    ]);
+  });
+});
