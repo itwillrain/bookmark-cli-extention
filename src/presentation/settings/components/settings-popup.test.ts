@@ -15,11 +15,11 @@ const unconfiguredShortcutLabel = "未設定";
 /** Popup headingです。 */
 const settingsHeading = "設定";
 
-/** Alias headingです。 */
-const aliasHeading = "Alias";
+/** Abbr headingです。 */
+const aliasHeading = "Abbr";
 
-/** Alias保存button labelです。 */
-const saveAliasesButtonLabel = "Aliasを保存";
+/** Abbr保存button labelです。 */
+const saveAliasesButtonLabel = "Abbrを保存";
 
 /**
  * Test用のCLI page open callbackです。

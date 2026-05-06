@@ -205,13 +205,13 @@ Chrome Bookmark IDとparent IDは `-l` の詳細行へ統合します。
 
 `-la` と `-al` は `-l -a` と同じ意味です。
 
-`ll` は `ls -l` のaliasです。
+`ll` は `ls -l` の組み込み別名です。
 
-ユーザー定義aliasはPopupの設定画面、または疑似CLIの `alias` / `unalias` で追加、削除、保存します。
+ユーザー定義command abbreviationはPopupの設定画面、または疑似CLIの `abbr` / `unabbr` で追加、削除、保存します。
 
-aliasは先頭command tokenだけを1回展開します。
+abbreviationは先頭command tokenだけを1回展開します。
 
-alias展開後のcommand種別は実行だけでなく、`clear` のscrollback transcript削除のようなUI副作用にも適用します。
+abbreviation展開後のcommand種別は実行だけでなく、`clear` のscrollback transcript削除のようなUI副作用にも適用します。
 
 ```bash
 g stripe
@@ -222,41 +222,45 @@ la /Work
 
 代表的なエラーは `folder_not_found`、`chrome_bookmarks_failed` です。
 
-## `alias`
+## `abbr`
 
-command aliasを一覧表示、または設定します。
+command abbreviationを一覧表示、または設定します。
 
 ```bash
-alias
-alias <name>=<command>
+abbr
+abbr <name>=<command>
 ```
 
 ```bash
-alias
-alias g=go
-alias la='ls -la'
+abbr
+abbr g=go
+abbr la='ls -la'
 ```
 
-`alias` は現在のalias一覧を表示します。
+`abbr` は現在のabbreviation一覧を表示します。
 
-`alias <name>=<command>` はaliasを追加または上書きします。
+`abbr <name>=<command>` はabbreviationを追加または上書きします。
 
-alias名は空白とpipe記号を含まない1 tokenに限定します。
+abbreviation名は空白とpipe記号を含まない1 tokenに限定します。
 
-aliasは再帰的に展開しません。
+abbreviationは再帰的に展開しません。
 
-## `unalias`
+`alias` はv1.3.0以降も互換入力として受け付けます。
 
-command aliasを削除します。
+## `unabbr`
+
+command abbreviationを削除します。
 
 ```bash
-unalias <name>
+unabbr <name>
 ```
 
 ```bash
-unalias g
-unalias la
+unabbr g
+unabbr la
 ```
+
+`unalias` はv1.3.0以降も互換入力として受け付けます。
 
 ## `cd`
 

@@ -42,12 +42,12 @@ const whitespacePattern = /\s+/u;
 /** Bookmark CLI command一覧。 */
 const bookmarkCommandCatalog = [
   {
-    commandName: "alias",
-    description: "command aliasを表示または設定",
+    commandName: "abbr",
+    description: "command abbreviationを表示または設定",
   },
   {
-    commandName: "unalias",
-    description: "command aliasを削除",
+    commandName: "unabbr",
+    description: "command abbreviationを削除",
   },
   {
     commandName: "find",
@@ -130,7 +130,7 @@ const bookmarkCommandCatalog = [
  */
 const createAliasCommandCatalogItem = (alias: CommandAlias): BookmarkCommandCatalogItem => ({
   commandName: alias.name,
-  description: `alias: ${alias.command}`,
+  description: `abbr: ${alias.command}`,
 });
 
 /**

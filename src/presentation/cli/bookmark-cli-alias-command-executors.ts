@@ -15,17 +15,20 @@ import { createCommandState, createEmptyResultState } from "./bookmark-cli-state
 import type { BookmarkCliResultItem } from "./components/bookmark-cli-screen";
 import { updateCommandAliases } from "../../domain/storage/extension-state";
 
-/** Alias list status textです。 */
-const aliasListStatusText = "aliases";
+/** 単数形abbreviation list status textです。 */
+const singularAbbreviationListStatusText = "abbreviation";
 
-/** Alias未設定status textです。 */
-const noAliasesStatusText = "No aliases";
+/** 複数形abbreviation list status textです。 */
+const pluralAbbreviationListStatusText = "abbreviations";
 
-/** Alias設定失敗status prefixです。 */
-const invalidAliasStatusPrefix = "Invalid alias";
+/** Abbreviation未設定status textです。 */
+const noAbbreviationsStatusText = "No abbreviations";
 
-/** Alias未検出status prefixです。 */
-const aliasNotFoundStatusPrefix = "Alias not found";
+/** Abbreviation設定失敗status prefixです。 */
+const invalidAbbreviationStatusPrefix = "Invalid abbr";
+
+/** Abbreviation未検出status prefixです。 */
+const abbreviationNotFoundStatusPrefix = "Abbr not found";
 
 /** Help resultのfolder path表示です。 */
 const aliasResultFolderPath = "/";
@@ -39,6 +42,9 @@ const emptyAliasName = "";
 /** 空のalias件数です。 */
 const emptyAliasCount = 0;
 
+/** 単数形alias件数です。 */
+const singleAliasCount = 1;
+
 /**
  * Alias表示文字列を作ります。
  * @param {string} aliasName alias名です。
@@ -46,7 +52,7 @@ const emptyAliasCount = 0;
  * @returns {string} alias表示文字列です。
  */
 const createAliasDisplayText = (aliasName: string, commandInput: string): string =>
-  `alias ${aliasName}='${commandInput}'`;
+  `abbr ${aliasName}='${commandInput}'`;
 
 /**
  * Alias一覧status textを作ります。
@@ -55,10 +61,14 @@ const createAliasDisplayText = (aliasName: string, commandInput: string): string
  */
 const createAliasListStatusText = (aliasCount: number): string => {
   if (aliasCount === emptyAliasCount) {
-    return noAliasesStatusText;
+    return noAbbreviationsStatusText;
   }
 
-  return `${String(aliasCount)} ${aliasListStatusText}`;
+  if (aliasCount === singleAliasCount) {
+    return `${String(aliasCount)} ${singularAbbreviationListStatusText}`;
+  }
+
+  return `${String(aliasCount)} ${pluralAbbreviationListStatusText}`;
 };
 
 /**
@@ -129,7 +139,7 @@ const executeAliasSetCommand = (
   if (!hasSavedAlias(nextState, command)) {
     return createEmptyResultState(
       dependencies,
-      `${invalidAliasStatusPrefix}: ${command.aliasName}`,
+      `${invalidAbbreviationStatusPrefix}: ${command.aliasName}`,
     );
   }
 
@@ -175,7 +185,7 @@ export const executeUnaliasCommand = (
   if (command.aliasName === emptyAliasName || !hasAliasName(dependencies, command.aliasName)) {
     return createEmptyResultState(
       dependencies,
-      `${aliasNotFoundStatusPrefix}: ${command.aliasName}`,
+      `${abbreviationNotFoundStatusPrefix}: ${command.aliasName}`,
     );
   }
 
@@ -187,6 +197,6 @@ export const executeUnaliasCommand = (
         removeCommandAlias(dependencies.extensionState.settings.commandAliases, command.aliasName),
       ),
     },
-    `unalias ${command.aliasName}`,
+    `unabbr ${command.aliasName}`,
   );
 };

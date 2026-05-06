@@ -71,13 +71,18 @@ describe("suggestBookmarkCommands prefix", (): void => {
   });
 });
 
-/** Bookmark command suggestionのalias commandテストスイート。 */
-describe("suggestBookmarkCommands alias commands", (): void => {
-  /** Alias commandをprefixから補完候補へ出せることを検証。 */
-  it("suggests alias command by prefix", (): void => {
-    expect(
-      suggestBookmarkCommands("ali").map((suggestion) => suggestion.commandName),
-    ).toStrictEqual(["alias"]);
+/** Bookmark command suggestionのabbr commandテストスイート。 */
+describe("suggestBookmarkCommands abbr commands", (): void => {
+  /** Abbr commandをprefixから補完候補へ出せることを検証。 */
+  it("suggests abbr command by prefix", (): void => {
+    expect(suggestBookmarkCommands("ab").map((suggestion) => suggestion.commandName)).toStrictEqual(
+      ["abbr"],
+    );
+  });
+
+  /** 互換用alias commandを補完候補に出さないことを検証。 */
+  it("does not suggest legacy alias command by prefix", (): void => {
+    expect(suggestBookmarkCommands("ali")).toStrictEqual([]);
   });
 });
 
@@ -89,7 +94,7 @@ describe("suggestBookmarkCommands aliases", (): void => {
       {
         commandName: "g",
         completion: "g ",
-        description: "alias: go",
+        description: "abbr: go",
       },
       {
         commandName: "go",

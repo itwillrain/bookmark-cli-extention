@@ -29,16 +29,16 @@ const emptyTopicInput = "";
 /** Bookmark CLI help topic一覧。 */
 const bookmarkCliHelpTopics = [
   {
-    commandName: "alias",
-    description: "command aliasを表示または設定する",
-    examples: ["alias", "alias g=go", "alias la='ls -la'"],
-    usage: ["alias", "alias <name>=<command>"],
+    commandName: "abbr",
+    description: "command abbreviationを表示または設定する",
+    examples: ["abbr", "abbr g=go", "abbr la='ls -la'"],
+    usage: ["abbr", "abbr <name>=<command>"],
   },
   {
-    commandName: "unalias",
-    description: "command aliasを削除する",
-    examples: ["unalias g", "unalias la"],
-    usage: ["unalias <name>"],
+    commandName: "unabbr",
+    description: "command abbreviationを削除する",
+    examples: ["unabbr g", "unabbr la"],
+    usage: ["unabbr <name>"],
   },
   {
     commandName: "go",
@@ -165,12 +165,26 @@ const bookmarkCliHelpTopics = [
   },
 ] as const satisfies readonly BookmarkCliHelpTopic[];
 
+/** 互換用help topic名から正規topic名への対応。 */
+const legacyHelpTopicAliases: Readonly<Record<string, string>> = {
+  alias: "abbr",
+  unalias: "unabbr",
+} as const;
+
 /**
  * Help topic入力を検索用に正規化。
  * @param {string} topicInput Help topic入力。
  * @returns {string} 正規化済みtopic入力。
  */
 const normalizeHelpTopicInput = (topicInput: string): string => topicInput.trim().toLowerCase();
+
+/**
+ * Help topic名を正規topic名へ解決。
+ * @param {string} topicName 正規化済みhelp topic名。
+ * @returns {string} 正規topic名。
+ */
+const resolveHelpTopicName = (topicName: string): string =>
+  legacyHelpTopicAliases[topicName] ?? topicName;
 
 /**
  * Bookmark CLI help topic一覧を返す。
@@ -201,8 +215,7 @@ export const findBookmarkCliHelpTopic = (
     return helpTopicMissing;
   }
 
-  return (
-    bookmarkCliHelpTopics.find((topic) => topic.commandName === normalizedTopicInput) ??
-    helpTopicMissing
-  );
+  const topicName = resolveHelpTopicName(normalizedTopicInput);
+
+  return bookmarkCliHelpTopics.find((topic) => topic.commandName === topicName) ?? helpTopicMissing;
 };

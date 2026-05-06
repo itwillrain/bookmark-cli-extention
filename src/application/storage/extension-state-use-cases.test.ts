@@ -215,7 +215,7 @@ describe("persistCommandExecutionState command settings", (): void => {
     const recordingStorage = createRecordingStorage(createInitialExtensionState());
 
     const result = await persistCommandExecutionState({
-      commandInput: "alias la='ls -la'",
+      commandInput: "abbr la='ls -la'",
       currentDirectory: "/",
       extensionState: commandUpdatedState,
       now,

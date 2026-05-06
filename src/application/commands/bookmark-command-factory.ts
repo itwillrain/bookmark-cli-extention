@@ -49,11 +49,17 @@ const changeDirectoryCommandName = "cd";
 /** Clear command名です。 */
 const clearCommandName = "clear";
 
-/** Alias command名です。 */
-const aliasCommandName = "alias";
+/** Abbr command名です。 */
+const abbrCommandName = "abbr";
 
-/** Unalias command名です。 */
-const unaliasCommandName = "unalias";
+/** 互換用Alias command名です。 */
+const legacyAliasCommandName = "alias";
+
+/** Unabbr command名です。 */
+const unabbrCommandName = "unabbr";
+
+/** 互換用Unalias command名です。 */
+const legacyUnaliasCommandName = "unalias";
 
 /** Help command名です。 */
 const helpCommandName = "help";
@@ -188,17 +194,17 @@ const createClearCommand = (): ParsedBookmarkCommand => ({
 });
 
 /**
- * Alias commandを作ります。
+ * Abbr commandを作ります。
  * @param {CommandParseContext} context Command parse contextです。
- * @returns {ParsedBookmarkCommand} Alias commandです。
+ * @returns {ParsedBookmarkCommand} Abbr commandです。
  */
 const createAliasCommand = (context: CommandParseContext): ParsedBookmarkCommand =>
   parseAliasBookmarkCommand(context.query);
 
 /**
- * Unalias commandを作ります。
+ * Unabbr commandを作ります。
  * @param {CommandParseContext} context Command parse contextです。
- * @returns {ParsedBookmarkCommand} Unalias commandです。
+ * @returns {ParsedBookmarkCommand} Unabbr commandです。
  */
 const createUnaliasCommand = (context: CommandParseContext): ParsedBookmarkCommand =>
   parseUnaliasBookmarkCommand(context.queryParts);
@@ -302,7 +308,7 @@ const createUnknownCommand = (context: CommandParseContext): ParsedBookmarkComma
  * Command名ごとのfactoryです。
  */
 const bookmarkCommandFactories: Readonly<Record<string, BookmarkCommandFactory>> = {
-  [aliasCommandName]: createAliasCommand,
+  [abbrCommandName]: createAliasCommand,
   [changeDirectoryCommandName]: createChangeDirectoryCommand,
   [clearCommandName]: createClearCommand,
   [findCommandName]: createFindBookmarkCommand,
@@ -310,6 +316,8 @@ const bookmarkCommandFactories: Readonly<Record<string, BookmarkCommandFactory>>
   [goCommandName]: createGoBookmarkCommand,
   [browserHistoryCommandName]: createBrowserHistoryCommand,
   [helpCommandName]: createHelpCommand,
+  [legacyAliasCommandName]: createAliasCommand,
+  [legacyUnaliasCommandName]: createUnaliasCommand,
   [listDirectoryCommandName]: createListDirectoryCommand,
   [longListDirectoryCommandName]: createListDirectoryCommand,
   [makeDirectoryCommandName]: createMakeDirectoryCommand,
@@ -322,7 +330,7 @@ const bookmarkCommandFactories: Readonly<Record<string, BookmarkCommandFactory>>
   [renameBookmarkCommandName]: createRenameBookmarkCommand,
   [showDirectoryTreeCommandName]: createTreeCommand,
   [tagBookmarkCommandName]: createTagBookmarkCommand,
-  [unaliasCommandName]: createUnaliasCommand,
+  [unabbrCommandName]: createUnaliasCommand,
 };
 
 /**
