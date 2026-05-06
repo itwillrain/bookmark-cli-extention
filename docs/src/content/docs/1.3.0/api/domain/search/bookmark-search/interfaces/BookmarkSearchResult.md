@@ -1,0 +1,41 @@
+---
+editUrl: false
+next: false
+prev: false
+title: BookmarkSearchResult
+slug: 1.3.0/api/domain/search/bookmark-search/interfaces/bookmarksearchresult
+---
+
+Defined in: [domain/search/bookmark-search.ts:101](https://github.com/itwillrain/bookmark-cli-extention/blob/e75af1576b65f6fe9199cf19b21a180e7f60454e/src/domain/search/bookmark-search.ts#L101)
+
+Bookmark検索結果です。
+
+## Properties
+
+### entry
+
+> `readonly` **entry**: [`SearchableEntry`](/1.3.0/api/domain/search/bookmark-search/type-aliases/searchableentry/)
+
+Defined in: [domain/search/bookmark-search.ts:105](https://github.com/itwillrain/bookmark-cli-extention/blob/e75af1576b65f6fe9199cf19b21a180e7f60454e/src/domain/search/bookmark-search.ts#L105)
+
+検索に一致したEntryです。
+
+***
+
+### matches
+
+> `readonly` **matches**: readonly [`BookmarkSearchMatch`](/1.3.0/api/domain/search/bookmark-search/interfaces/bookmarksearchmatch/)\[]
+
+Defined in: [domain/search/bookmark-search.ts:113](https://github.com/itwillrain/bookmark-cli-extention/blob/e75af1576b65f6fe9199cf19b21a180e7f60454e/src/domain/search/bookmark-search.ts#L113)
+
+Fuse.jsが返したmatch情報です。
+
+***
+
+### score
+
+> `readonly` **score**: `number`
+
+Defined in: [domain/search/bookmark-search.ts:109](https://github.com/itwillrain/bookmark-cli-extention/blob/e75af1576b65f6fe9199cf19b21a180e7f60454e/src/domain/search/bookmark-search.ts#L109)
+
+CLI表示用の一致scoreです。
