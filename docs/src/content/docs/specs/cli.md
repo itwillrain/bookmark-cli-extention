@@ -36,6 +36,7 @@ Popupは疑似CLI本体ではなく、設定画面として扱います。
 - 補完候補用の下余白は候補表示中だけ確保する
 - 破壊的操作は結果表示エリアで確認してから実行する
 - promptは `bookmark-cli $` を基準にし、Powerline風表示はprompt側へ限定する
+- Powerline風promptでは、後続segmentの背景色をseparator領域にも伸ばす
 - 候補と結果一覧はterminalの出力としてplainな一覧表示にする
 - 結果一覧のplain text表現はcopy、詳細表示、fallback用に保持する
 
