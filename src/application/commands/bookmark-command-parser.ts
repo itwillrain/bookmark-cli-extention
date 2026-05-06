@@ -4,37 +4,11 @@ import type {
   ParsedBookmarkCommand,
   PipeBookmarkCommand,
   PipeSourceBookmarkCommand,
+  PipeStageCommand,
   UnknownBookmarkCommand,
 } from "./bookmark-command-types";
 
-export type {
-  AbbrBookmarkCommand,
-  AliasBookmarkCommand,
-  BrowserHistoryCommand,
-  ChangeDirectoryCommand,
-  ClearBookmarkCommand,
-  EmptyBookmarkCommand,
-  FindBookmarkCommand,
-  FrequentBookmarksCommand,
-  GoBookmarkCommand,
-  HelpBookmarkCommand,
-  ListDirectoryCommand,
-  MakeDirectoryCommand,
-  MarkBookmarkCommand,
-  MoveBookmarkCommand,
-  PipeBookmarkCommand,
-  PipeSourceBookmarkCommand,
-  ParsedBookmarkCommand,
-  PrintWorkingDirectoryCommand,
-  RecentBookmarksCommand,
-  RemoveBookmarkCommand,
-  RenameBookmarkCommand,
-  ShowDirectoryTreeCommand,
-  TagBookmarkCommand,
-  UnabbrBookmarkCommand,
-  UnaliasBookmarkCommand,
-  UnknownBookmarkCommand,
-} from "./bookmark-command-types";
+export type * from "./bookmark-command-types";
 
 /** 空command名です。 */
 const emptyCommandName = "";
@@ -44,6 +18,9 @@ const pipeOperator = "|";
 
 /** Grep command名です。 */
 const grepCommandName = "grep";
+
+/** Copy command名です。 */
+const copyCommandName = "copy";
 
 /** 空のpipe stage数です。 */
 const emptyPipeStageCount = 0;
@@ -117,11 +94,11 @@ const createUnknownCommand = (commandName: string, rawInput: string): UnknownBoo
 
 /**
  * 値がUnknown commandかを判定します。
- * @param {UnknownBookmarkCommand | readonly GrepPipeStageCommand[]} value 判定する値です。
+ * @param {UnknownBookmarkCommand | readonly PipeStageCommand[]} value 判定する値です。
  * @returns {boolean} Unknown commandならtrueです。
  */
 const isUnknownBookmarkCommand = (
-  value: UnknownBookmarkCommand | readonly GrepPipeStageCommand[],
+  value: UnknownBookmarkCommand | readonly PipeStageCommand[],
 ): value is UnknownBookmarkCommand => !Array.isArray(value);
 
 /**
@@ -137,6 +114,7 @@ const isPipeSourceBookmarkCommand = (
   command.kind === "help" ||
   command.kind === "history" ||
   command.kind === "ls" ||
+  command.kind === "pwd" ||
   command.kind === "recent" ||
   command.kind === "tree";
 
@@ -176,21 +154,61 @@ const parseGrepPipeStage = (
 };
 
 /**
+ * Pipe stage segmentをcopy stageへ変換します。
+ * @param {CommandParseContext} context Command parse contextです。
+ * @param {string} rawInput 正規化済み入力全体です。
+ * @returns {PipeStageCommand | UnknownBookmarkCommand} Copy stageまたはunknown commandです。
+ */
+const parseCopyPipeStage = (
+  context: CommandParseContext,
+  rawInput: string,
+): PipeStageCommand | UnknownBookmarkCommand => {
+  if (context.query !== emptyCommandName) {
+    return createUnknownCommand(context.commandName, rawInput);
+  }
+
+  return { kind: "copy" };
+};
+
+/**
+ * Pipe stage segmentをstage commandへ変換します。
+ * @param {string} segment pipe stage segmentです。
+ * @param {string} rawInput 正規化済み入力全体です。
+ * @returns {PipeStageCommand | UnknownBookmarkCommand} pipe stageまたはunknown commandです。
+ */
+const parsePipeStage = (
+  segment: string,
+  rawInput: string,
+): PipeStageCommand | UnknownBookmarkCommand => {
+  const context = createCommandParseContext(segment);
+
+  if (context.commandName === grepCommandName) {
+    return parseGrepPipeStage(segment, rawInput);
+  }
+
+  if (context.commandName === copyCommandName) {
+    return parseCopyPipeStage(context, rawInput);
+  }
+
+  return createUnknownCommand(context.commandName, rawInput);
+};
+
+/**
  * Pipe stage一覧を作成します。
  * @param {readonly string[]} stageSegments pipe stage segment一覧です。
  * @param {string} rawInput 正規化済み入力全体です。
- * @returns {GrepPipeStageCommand[] | UnknownBookmarkCommand} pipe stage一覧またはunknown commandです。
+ * @returns {PipeStageCommand[] | UnknownBookmarkCommand} pipe stage一覧またはunknown commandです。
  */
-const parseGrepPipeStages = (
+const parsePipeStages = (
   stageSegments: readonly string[],
   rawInput: string,
-): readonly GrepPipeStageCommand[] | UnknownBookmarkCommand => {
-  const stages: GrepPipeStageCommand[] = [];
+): readonly PipeStageCommand[] | UnknownBookmarkCommand => {
+  const stages: PipeStageCommand[] = [];
 
   for (const segment of stageSegments) {
-    const stage = parseGrepPipeStage(segment, rawInput);
+    const stage = parsePipeStage(segment, rawInput);
 
-    if (stage.kind !== grepCommandName) {
+    if (stage.kind !== grepCommandName && stage.kind !== copyCommandName) {
       return stage;
     }
 
@@ -229,7 +247,7 @@ const parsePipeBookmarkCommand = (normalizedInput: string): ParsedBookmarkComman
     return createUnknownCommand(getUnsupportedPipeSourceCommandName(source), normalizedInput);
   }
 
-  const stages = parseGrepPipeStages(stageSegments, normalizedInput);
+  const stages = parsePipeStages(stageSegments, normalizedInput);
 
   if (isUnknownBookmarkCommand(stages)) {
     return stages;

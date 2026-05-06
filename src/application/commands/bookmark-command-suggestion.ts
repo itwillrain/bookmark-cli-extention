@@ -79,6 +79,10 @@ const bookmarkCommandCatalog = [
     description: "現在folderを表示",
   },
   {
+    commandName: "copy",
+    description: "直前結果またはpipe出力をclipboardへcopy",
+  },
+  {
     commandName: "tree",
     description: "folder treeを表示",
   },

@@ -3,10 +3,12 @@ import type {
   BookmarkCliCommandState,
 } from "./bookmark-cli-command-state";
 import type {
+  GrepPipeStageCommand,
   PipeBookmarkCommand,
   PipeSourceBookmarkCommand,
 } from "../../application/commands/bookmark-command-parser";
 import { createCommandState } from "./bookmark-cli-state-builders";
+import { executeCopyPipeStage } from "./bookmark-cli-copy-command-executors";
 import { filterBookmarkCliResultItemsByGrep } from "./bookmark-cli-grep-filter";
 
 /**
@@ -17,8 +19,24 @@ export type PipeSourceCommandExecutor = (
   dependencies: BookmarkCliCommandDependencies,
 ) => Promise<BookmarkCliCommandState>;
 
+/**
+ * Pipe stage適用contextです。
+ */
+interface PipeStageApplicationContext {
+  /** Command実行に必要な依存です。 */
+  readonly dependencies: BookmarkCliCommandDependencies;
+  /** Pipe stage一覧です。 */
+  readonly stages: PipeBookmarkCommand["stages"];
+}
+
 /** Grep match status suffixです。 */
 const grepMatchStatusSuffix = "matches";
+
+/** 先頭pipe stage indexです。 */
+const firstPipeStageIndex = 0;
+
+/** 次のpipe stage indexへ進めるoffsetです。 */
+const nextPipeStageIndexOffset = 1;
 
 /**
  * Grep match件数のstatus textを作ります。
@@ -71,7 +89,7 @@ const filterLastResultEntriesByIndexes = (
  */
 const applyGrepPipeStage = (
   state: BookmarkCliCommandState,
-  stage: PipeBookmarkCommand["stages"][number],
+  stage: GrepPipeStageCommand,
 ): BookmarkCliCommandState => {
   const grepResult = filterBookmarkCliResultItemsByGrep(state.resultItems, stage.queryInput);
   const nextState = {
@@ -93,22 +111,90 @@ const applyGrepPipeStage = (
 };
 
 /**
- * Grep stage一覧をcommand stateへ順に適用します。
+ * Pipe stageをcommand stateへ適用します。
  * @param {BookmarkCliCommandState} state pipe source実行状態です。
- * @param {PipeBookmarkCommand["stages"]} stages grep stage一覧です。
- * @returns {BookmarkCliCommandState} pipe適用後のcommand stateです。
+ * @param {PipeBookmarkCommand["stages"][number]} stage pipe stageです。
+ * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存です。
+ * @returns {Promise<BookmarkCliCommandState>} pipe stage適用後のcommand stateです。
  */
-const applyGrepPipeStages = (
+const applyPipeStage = async (
   state: BookmarkCliCommandState,
-  stages: PipeBookmarkCommand["stages"],
-): BookmarkCliCommandState => {
-  let currentState = state;
-
-  for (const stage of stages) {
-    currentState = applyGrepPipeStage(currentState, stage);
+  stage: PipeBookmarkCommand["stages"][number],
+  dependencies: BookmarkCliCommandDependencies,
+): Promise<BookmarkCliCommandState> => {
+  if (stage.kind === "copy") {
+    return executeCopyPipeStage(state, dependencies);
   }
 
-  return currentState;
+  await Promise.resolve();
+
+  return applyGrepPipeStage(state, stage);
+};
+
+/**
+ * Pipe stage indexが範囲外かを判定します。
+ * @param {PipeBookmarkCommand["stages"]} stages pipe stage一覧です。
+ * @param {number} stageIndex pipe stage indexです。
+ * @returns {boolean} 範囲外ならtrueです。
+ */
+const isPipeStageIndexOutOfRange = (
+  stages: PipeBookmarkCommand["stages"],
+  stageIndex: number,
+): boolean => stageIndex >= stages.length;
+
+/**
+ * 次に適用するpipe stage indexを返します。
+ * @param {number} stageIndex 現在のpipe stage indexです。
+ * @returns {number} 次のpipe stage indexです。
+ */
+const getNextPipeStageIndex = (stageIndex: number): number => stageIndex + nextPipeStageIndexOffset;
+
+/**
+ * 指定indexからpipe stageをcommand stateへ順に適用します。
+ * @param {BookmarkCliCommandState} state pipe source実行状態です。
+ * @param {PipeStageApplicationContext} context pipe stage適用contextです。
+ * @param {number} stageIndex 適用するpipe stage indexです。
+ * @returns {Promise<BookmarkCliCommandState>} pipe適用後のcommand stateです。
+ */
+const applyPipeStagesFromIndex = async (
+  state: BookmarkCliCommandState,
+  context: PipeStageApplicationContext,
+  stageIndex: number,
+): Promise<BookmarkCliCommandState> => {
+  if (isPipeStageIndexOutOfRange(context.stages, stageIndex)) {
+    return state;
+  }
+
+  const stage = context.stages[stageIndex];
+
+  if (!stage) {
+    return state;
+  }
+
+  const nextState = await applyPipeStage(state, stage, context.dependencies);
+
+  return applyPipeStagesFromIndex(nextState, context, getNextPipeStageIndex(stageIndex));
+};
+
+/**
+ * Pipe stage一覧をcommand stateへ順に適用します。
+ * @param {BookmarkCliCommandState} state pipe source実行状態です。
+ * @param {PipeBookmarkCommand["stages"]} stages pipe stage一覧です。
+ * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存です。
+ * @returns {Promise<BookmarkCliCommandState>} pipe適用後のcommand stateです。
+ */
+const applyPipeStages = async (
+  state: BookmarkCliCommandState,
+  stages: PipeBookmarkCommand["stages"],
+  dependencies: BookmarkCliCommandDependencies,
+): Promise<BookmarkCliCommandState> => {
+  const context = {
+    dependencies,
+    stages,
+  } satisfies PipeStageApplicationContext;
+  const nextState = await applyPipeStagesFromIndex(state, context, firstPipeStageIndex);
+
+  return nextState;
 };
 
 /**
@@ -125,5 +211,5 @@ export const executePipeCommand = async (
 ): Promise<BookmarkCliCommandState> => {
   const sourceState = await executeSource(command.source, dependencies);
 
-  return applyGrepPipeStages(sourceState, command.stages);
+  return applyPipeStages(sourceState, command.stages, dependencies);
 };

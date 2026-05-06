@@ -16,6 +16,7 @@ export {
   executePrintWorkingDirectoryCommand,
   executeShowDirectoryTreeCommand,
 } from "./bookmark-cli-directory-command-executors";
+export { executeCopyCommand } from "./bookmark-cli-copy-command-executors";
 export { executeHelpCommand } from "./bookmark-cli-help-command-executors";
 export { executeMarkCommand } from "./bookmark-cli-mark-command-executors";
 export {

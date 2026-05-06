@@ -19,6 +19,7 @@ import {
   parseRenameBookmarkCommand,
 } from "./bookmark-organize-command-parser";
 import type { ParsedBookmarkCommand } from "./bookmark-command-types";
+import { parseCopyBookmarkCommand } from "./bookmark-copy-command-parser";
 import { parseListDirectoryCommand } from "./bookmark-list-command-parser";
 import { parseMarkBookmarkCommand } from "./bookmark-mark-command-parser";
 import { parseShowDirectoryTreeCommand } from "./bookmark-tree-command-parser";
@@ -50,6 +51,9 @@ const changeDirectoryCommandName = "cd";
 
 /** Clear command名です。 */
 const clearCommandName = "clear";
+
+/** Copy command名です。 */
+const copyCommandName = "copy";
 
 /** Abbr command名です。 */
 const abbrCommandName = "abbr";
@@ -196,6 +200,14 @@ const createClearCommand = (): ParsedBookmarkCommand => ({
 });
 
 /**
+ * Copy commandを作ります。
+ * @param {CommandParseContext} context Command parse contextです。
+ * @returns {ParsedBookmarkCommand} Copy commandです。
+ */
+const createCopyCommand = (context: CommandParseContext): ParsedBookmarkCommand =>
+  parseCopyBookmarkCommand(context.queryParts);
+
+/**
  * Alias commandを作ります。
  * @param {CommandParseContext} context Command parse contextです。
  * @returns {ParsedBookmarkCommand} Alias commandです。
@@ -330,6 +342,7 @@ const bookmarkCommandFactories: Readonly<Record<string, BookmarkCommandFactory>>
   [aliasCommandName]: createAliasCommand,
   [changeDirectoryCommandName]: createChangeDirectoryCommand,
   [clearCommandName]: createClearCommand,
+  [copyCommandName]: createCopyCommand,
   [findCommandName]: createFindBookmarkCommand,
   [frequentBookmarksCommandName]: createFrequentBookmarksCommand,
   [goCommandName]: createGoBookmarkCommand,

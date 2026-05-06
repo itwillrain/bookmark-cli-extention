@@ -134,7 +134,7 @@ Bookmark行の既定アクションは `go <result-number>` です。
 - Popupから `chrome://extensions/shortcuts` を開き、ユーザーがhot keyを変更できるようにする
 - Popupでcommand aliasを設定できる
 - 疑似CLI内でも `alias` / `unalias` でcommand aliasを設定できる
-- 疑似CLI内でも `abbr` / `unabbr` で、Enter確定時に展開するcommand abbreviationを設定できる
+- 疑似CLI内でも `abbr` / `unabbr` で、空白またはEnter確定時に展開するcommand abbreviationを設定できる
 
 ## コマンド設計方針
 
@@ -143,6 +143,7 @@ Bookmark行の既定アクションは `go <result-number>` です。
 - `ls`、`cd`、`pwd`、`tree` でBookmark Treeの現在地を扱う
 - `help`、`man <command>`、`<command> --help`、`<command> -h` でCLI内から使い方を確認できるようにする
 - `ls | grep hoge` のように結果一覧をpipeで絞り込めるようにする
+- `pwd | copy` や `copy 1` でCLI上のpathやURLをclipboardへ送れるようにする
 - `history` でChrome閲覧履歴だけを一覧表示し、`history | grep hoge` で絞り込めるようにする
 - `mkdir`、`mv`、`rename` は対象と変更先を解決できたら即時実行する
 - `rm` は対話確認または `-f` / `--force` で実行する
@@ -387,7 +388,7 @@ Work/Research
 
 先頭候補の前は末尾候補へ循環します。
 
-## pipeとgrep
+## pipeとgrep/copy
 
 v1では、結果一覧を出す読み取りcommandに対して `grep` pipe stageを使えます。
 
@@ -413,11 +414,25 @@ history | grep github
 find stripe | grep dashboard | grep work
 ```
 
-v1でpipe sourceにできるcommandは `ls`、`ll`、`find`、`history`、`tree`、`recent`、`freq`、`help` です。
+`copy` pipe stageは、pipe sourceの表示結果をclipboardへ送ります。
+
+```bash
+pwd | copy
+ls | copy
+find stripe | grep dashboard | copy
+```
+
+`pwd | copy` は現在pathをcopyします。
+
+`ls | copy` や `find ... | copy` は表示行をplain textとしてcopyします。
+
+v1でpipe sourceにできるcommandは `pwd`、`ls`、`ll`、`find`、`history`、`tree`、`recent`、`freq`、`help` です。
 
 `mv`、`rm`、`rename`、`mkdir`、`mark`、`tag` のような書き込み系commandは、意図しない副作用を避けるためpipe sourceにしません。
 
 `grep` はpipe stageとして扱い、standalone commandとしては扱いません。
+
+`copy` はpipe stageとstandalone commandの両方に対応します。
 
 ## 整理操作と確認
 
@@ -660,7 +675,7 @@ unalias la
 
 ### abbr
 
-Enter確定時に展開するcommand abbreviationを一覧表示、または設定します。
+空白またはEnter確定時に展開するcommand abbreviationを一覧表示、または設定します。
 
 ```bash
 abbr
@@ -672,9 +687,13 @@ abbr la='ls -la'
 
 `abbr <name>=<command>` はabbreviationを追加または上書きします。
 
-abbreviationはEnter確定時に入力欄とtranscriptの実行commandへ展開します。
+abbreviationは先頭command tokenの後ろに空白を入力した時点で、入力欄上のcommandへ展開します。
 
-たとえば `g = go` と設定している場合、`g stripe` をEnterで確定すると `go stripe` として表示、実行、履歴保存します。
+未展開のままEnter確定した場合も、transcriptの実行commandと履歴へ展開後commandを保存します。
+
+たとえば `g = go` と設定している場合、`g ` と入力した時点で `go ` に展開します。
+
+`g stripe` をEnterで確定すると `go stripe` として表示、実行、履歴保存します。
 
 ### unabbr
 
@@ -757,6 +776,31 @@ clear
 ```
 
 現在ディレクトリ、直前のコマンド入力履歴、保存済みBookmarkデータは変更しません。
+
+### copy
+
+直前結果またはpipe sourceの表示内容をclipboardへcopyします。
+
+```bash
+copy 1
+copy --url 1
+copy --path 1
+copy --title 1
+pwd | copy
+ls | copy
+```
+
+`copy 1` は直前結果1番のURLをcopyします。
+
+URLを持たないfolderでは、`copy 1` はfolder pathをcopyします。
+
+`copy --url 1` はURLだけをcopyし、URLを持たないfolderではcopyしません。
+
+`copy --path 1` はCLI上で対象を指せるpathをcopyします。
+
+Bookmarkの場合は `folderPath/title`、folderの場合はfolder pathをcopyします。
+
+`copy --title 1` はtitleをcopyします。
 
 ## v1整理コマンド
 

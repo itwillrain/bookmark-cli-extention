@@ -71,6 +71,16 @@ describe("suggestBookmarkCommands prefix", (): void => {
   });
 });
 
+/** Bookmark command suggestionのcopy commandテストスイート。 */
+describe("suggestBookmarkCommands copy commands", (): void => {
+  /** Copy commandをprefixから補完候補へ出せることを検証。 */
+  it("suggests copy command by prefix", (): void => {
+    expect(suggestBookmarkCommands("co").map((suggestion) => suggestion.commandName)).toStrictEqual(
+      ["copy"],
+    );
+  });
+});
+
 /** Bookmark command suggestionのabbr commandテストスイート。 */
 describe("suggestBookmarkCommands abbr commands", (): void => {
   /** Abbr commandをprefixから補完候補へ出せることを検証。 */

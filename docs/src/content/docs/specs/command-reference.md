@@ -42,6 +42,7 @@ Folderを削除する場合は、配下のBookmarkとfolderも削除するため
 | `tree`   | Bookmark Treeを階層表示する            | 対象 |
 | `help`   | ヘルプを表示する                       | 対象 |
 | `grep`   | pipeで結果一覧を絞り込む               | 対象 |
+| `copy`   | 直前結果またはpipe出力をcopyする       | 対象 |
 | `clear`  | 画面上のscrollback transcriptを消す    | 対象 |
 | `history` | Chrome閲覧履歴を表示する             | 対象 |
 | `recent` | 最近開いたBookmarkを表示する           | 対象 |
@@ -260,7 +261,7 @@ unalias la
 
 ## `abbr`
 
-Enter確定時に展開するcommand abbreviationを一覧表示、または設定します。
+空白またはEnter確定時に展開するcommand abbreviationを一覧表示、または設定します。
 
 ```bash
 abbr
@@ -281,9 +282,13 @@ abbreviation名は空白とpipe記号を含まない1 tokenに限定します。
 
 abbreviationは再帰的に展開しません。
 
-abbreviationはEnter確定時に入力欄とtranscriptの実行commandへ展開します。
+abbreviationは先頭command tokenの後ろに空白を入力した時点で、入力欄上のcommandへ展開します。
 
-たとえば `g = go` と設定している場合、`g stripe` をEnterで確定すると `go stripe` として表示、実行、履歴保存します。
+未展開のままEnter確定した場合も、transcriptの実行commandと履歴へ展開後commandを保存します。
+
+たとえば `g = go` と設定している場合、`g ` と入力した時点で `go ` に展開します。
+
+`g stripe` をEnterで確定すると `go stripe` として表示、実行、履歴保存します。
 
 ## `unabbr`
 
@@ -420,7 +425,7 @@ history | grep docs
 recent | grep stripe
 ```
 
-v1でpipe sourceにできるcommandは `ls`、`ll`、`find`、`history`、`tree`、`recent`、`freq`、`help` です。
+v1でpipe sourceにできるcommandは `pwd`、`ls`、`ll`、`find`、`history`、`tree`、`recent`、`freq`、`help` です。
 
 `grep` はtitle、folder path、url、description、details、result種別を大文字小文字を区別せずに部分一致で検索します。
 
@@ -429,6 +434,44 @@ v1でpipe sourceにできるcommandは `ls`、`ll`、`find`、`history`、`tree`
 `grep` はpipe stageとして扱い、standalone commandとしては扱いません。
 
 未対応のpipe stageや書き込み系commandをpipe sourceにした場合は、未対応commandとして扱います。
+
+## `copy`
+
+直前結果またはpipe sourceの表示内容をclipboardへcopyします。
+
+```bash
+copy [--url|--path|--title] <result-number>
+pwd | copy
+<result-command> | copy
+```
+
+```bash
+copy 1
+copy --url 1
+copy --path 1
+copy --title 1
+pwd | copy
+ls | copy
+find stripe | grep dashboard | copy
+```
+
+`copy 1` は直前結果1番のURLをcopyします。
+
+対象がURLを持たないfolderの場合、`copy 1` はfolder pathをcopyします。
+
+`copy --url 1` はURLだけをcopyします。
+
+URLを持たない結果に `--url` を指定した場合はcopyしません。
+
+`copy --path 1` はCLI上で対象を指せるpathをcopyします。
+
+Bookmarkの場合は `folderPath/title`、folderの場合はfolder pathをcopyします。
+
+`copy --title 1` はtitleをcopyします。
+
+`pwd | copy` は現在pathをcopyします。
+
+`ls | copy` や `find ... | copy` は表示行をplain textとしてcopyします。
 
 ## `clear`
 

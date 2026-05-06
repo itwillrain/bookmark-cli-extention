@@ -42,7 +42,7 @@ const bookmarkCliHelpTopics = [
   },
   {
     commandName: "abbr",
-    description: "Enter確定時に展開するcommand abbreviationを表示または設定する",
+    description: "空白またはEnter確定時に展開するcommand abbreviationを表示または設定する",
     examples: ["abbr", "abbr g=go", "abbr la='ls -la'"],
     usage: ["abbr", "abbr <name>=<command>"],
   },
@@ -79,6 +79,12 @@ const bookmarkCliHelpTopics = [
     description: "pipeで結果一覧を絞り込む",
     examples: ["ls | grep stripe", "find docs | grep github"],
     usage: ["<result-command> | grep <query>", "<result-command> | grep <query> | grep <query>"],
+  },
+  {
+    commandName: "copy",
+    description: "直前結果またはpipe出力をclipboardへcopyする",
+    examples: ["copy 1", "copy --path 1", "copy --title 1", "pwd | copy", "ls | copy"],
+    usage: ["copy [--url|--path|--title] <result-number>", "pwd | copy", "<result-command> | copy"],
   },
   {
     commandName: "ls",

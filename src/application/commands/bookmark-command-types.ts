@@ -6,6 +6,7 @@ import type {
   RecentBookmarksCommand,
 } from "./bookmark-usage-command-types";
 import type { FindBookmarkCommand, GoBookmarkCommand } from "./bookmark-search-command-types";
+import type { BookmarkCliCopyValueKind } from "../../domain/cli/bookmark-cli-copy";
 
 export type {
   BrowserHistoryCommand,
@@ -224,6 +225,44 @@ export interface GrepPipeStageCommand {
 }
 
 /**
+ * Copy pipe stage commandです。
+ */
+export interface CopyPipeStageCommand {
+  /**
+   * Pipe stage種別です。
+   */
+  readonly kind: "copy";
+}
+
+/**
+ * Pipe stage commandです。
+ */
+export type PipeStageCommand = CopyPipeStageCommand | GrepPipeStageCommand;
+
+/**
+ * Copy対象の値種別です。
+ */
+export type CopyBookmarkValueKind = BookmarkCliCopyValueKind;
+
+/**
+ * Clipboard copy commandです。
+ */
+export interface CopyBookmarkCommand {
+  /**
+   * Command種別です。
+   */
+  readonly kind: "copy";
+  /**
+   * 対象の直前結果番号です。
+   */
+  readonly targetInput: string;
+  /**
+   * Copyする値種別です。
+   */
+  readonly valueKind: CopyBookmarkValueKind;
+}
+
+/**
  * 空入力commandです。
  */
 export interface EmptyBookmarkCommand {
@@ -366,6 +405,7 @@ export type PipeSourceBookmarkCommand =
   | FrequentBookmarksCommand
   | HelpBookmarkCommand
   | ListDirectoryCommand
+  | PrintWorkingDirectoryCommand
   | RecentBookmarksCommand
   | ShowDirectoryTreeCommand;
 
@@ -384,7 +424,7 @@ export interface PipeBookmarkCommand {
   /**
    * Pipe stage一覧です。
    */
-  readonly stages: readonly GrepPipeStageCommand[];
+  readonly stages: readonly PipeStageCommand[];
 }
 
 /**
@@ -395,6 +435,7 @@ export type ParsedBookmarkCommand =
   | AliasBookmarkCommand
   | ChangeDirectoryCommand
   | ClearBookmarkCommand
+  | CopyBookmarkCommand
   | EmptyBookmarkCommand
   | FindBookmarkCommand
   | BrowserHistoryCommand

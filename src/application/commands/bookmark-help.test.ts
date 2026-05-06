@@ -10,6 +10,9 @@ const historyHelpTopicName = "history";
 /** Grep help topic名です。 */
 const grepHelpTopicName = "grep";
 
+/** Copy help topic名です。 */
+const copyHelpTopicName = "copy";
+
 /** Abbr help topic名です。 */
 const abbrHelpTopicName = "abbr";
 
@@ -38,6 +41,7 @@ describe("bookmark CLI help catalog", (): void => {
     expect(topicNames).toContain(goHelpTopicName);
     expect(topicNames).toContain(historyHelpTopicName);
     expect(topicNames).toContain(grepHelpTopicName);
+    expect(topicNames).toContain(copyHelpTopicName);
     expect(topicNames).toContain(aliasHelpTopicName);
     expect(topicNames).toContain(abbrHelpTopicName);
   });
@@ -61,6 +65,25 @@ describe("bookmark CLI help catalog", (): void => {
    */
   it("returns false for unknown help topic", (): void => {
     expect(findBookmarkCliHelpTopic(unknownHelpTopicName)).toBe(false);
+  });
+});
+
+/**
+ * Bookmark CLI copy help catalogのテストスイートです。
+ */
+describe("bookmark CLI copy help catalog", (): void => {
+  /**
+   * Copy topicから直前結果とpipe copyの使い方を取得できることを検証します。
+   */
+  it("finds copy help topic", (): void => {
+    const topic = findBookmarkCliHelpTopic(copyHelpTopicName);
+
+    expect(topic).not.toBe(false);
+
+    if (topic !== false) {
+      expect(topic.usage).toContain("copy [--url|--path|--title] <result-number>");
+      expect(topic.examples).toContain("pwd | copy");
+    }
   });
 });
 

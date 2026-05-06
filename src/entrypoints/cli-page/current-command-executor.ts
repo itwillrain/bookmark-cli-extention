@@ -3,6 +3,7 @@ import { type ResultCursorIndex, resultCursorCleared } from "../../domain/bookma
 import type { BookmarkCliCommandState } from "../../presentation/cli/bookmark-cli-command-state";
 import type { LaunchContext } from "../../application/bookmarks/mark-bookmark-use-case";
 import { expandCommandAlias } from "../../domain/cli/command-alias";
+import { expandSubmittedCommandAbbreviation } from "../../domain/cli/command-abbreviation";
 import { parseBookmarkCommand } from "../../application/commands/bookmark-command-parser";
 
 /** Command state setter。 */
@@ -81,17 +82,6 @@ const isTranscriptClearCommand = (
   inputValue: string,
   commandAliases: BookmarkCliCommandState["extensionState"]["settings"]["commandAliases"],
 ): boolean => parseBookmarkCommand(expandCommandAlias(inputValue, commandAliases)).kind === "clear";
-
-/**
- * 確定入力をcommand abbreviationで展開。
- * @param {string} inputValue CLI入力値。
- * @param {readonly CommandAlias[]} commandAbbreviations command abbreviation一覧。
- * @returns {string} abbreviation展開後の入力値。
- */
-const expandSubmittedCommandAbbreviation = (
-  inputValue: string,
-  commandAbbreviations: BookmarkCliCommandState["extensionState"]["settings"]["commandAbbreviations"],
-): string => expandCommandAlias(inputValue, commandAbbreviations);
 
 /**
  * Command abbreviationが展開されたか判定。

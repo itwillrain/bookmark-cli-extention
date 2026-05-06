@@ -14,6 +14,7 @@ import {
   executeAliasCommand,
   executeBrowserHistoryCommand,
   executeChangeDirectoryCommand,
+  executeCopyCommand,
   executeEmptyCommand,
   executeFindCommand,
   executeGoCommand,
@@ -316,6 +317,7 @@ const pipeSourceCommandExecutors = {
   help: executeParsedHelpCommand,
   history: executeParsedBrowserHistoryCommand,
   ls: executeParsedListDirectoryCommand,
+  pwd: executeParsedPrintWorkingDirectoryCommand,
   recent: executeParsedUsageCommand,
   tree: executeParsedShowDirectoryTreeCommand,
 } satisfies Readonly<Record<PipeSourceBookmarkCommand["kind"], ParsedBookmarkCommandExecutor>>;
@@ -348,6 +350,25 @@ const executeParsedPipeCommand = async (
 ): Promise<BookmarkCliCommandState> => {
   if (command.kind === "pipe") {
     return executePipeCommand(command, dependencies, executePipeSourceCommand);
+  }
+
+  await Promise.resolve();
+
+  return executeEmptyCommand(dependencies);
+};
+
+/**
+ * Copy command executor adapterです。
+ * @param {ParsedBookmarkCommand} command Parsed commandです。
+ * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存です。
+ * @returns {Promise<BookmarkCliCommandState>} 画面に反映する状態です。
+ */
+const executeParsedCopyCommand = async (
+  command: ParsedBookmarkCommand,
+  dependencies: BookmarkCliCommandDependencies,
+): Promise<BookmarkCliCommandState> => {
+  if (command.kind === "copy") {
+    return executeCopyCommand(command, dependencies);
   }
 
   await Promise.resolve();
@@ -420,6 +441,7 @@ const parsedBookmarkCommandExecutors = {
   alias: executeParsedAliasCommand,
   cd: executeParsedChangeDirectoryCommand,
   clear: executeParsedEmptyCommand,
+  copy: executeParsedCopyCommand,
   empty: executeParsedEmptyCommand,
   find: executeParsedFindCommand,
   freq: executeParsedUsageCommand,
