@@ -482,26 +482,28 @@ mv "GitHub" Work/DevTools
 Bookmarkまたはfolderを削除します。
 
 ```bash
-rm <item>
-rm -f <item>
-rm --force <item>
-rm -r <item>
-rm -rf <item>
-rm --recursive --force <item>
+rm <path-or-index>
+rm -f <path-or-index>
+rm --force <path-or-index>
+rm -r <path-or-index>
+rm -rf <path-or-index>
+rm --recursive --force <path-or-index>
 ```
 
 ```bash
 rm 5
-rm -f 5
-rm -r 2
-rm -rf 2
+rm ./Stripe Dashboard
+rm -r ./Archive
+rm -rf /Other Bookmarks
 ```
 
-`rm <item>` は対象を表示し、`Remove <title>? y/N` の確認待ちに入ります。
+`rm <path-or-index>` は対象を表示し、`Remove <title>? y/N` の確認待ちに入ります。
+
+対象は直前の結果番号、または現在ディレクトリからの相対path、rootからの絶対pathで指定します。
 
 確認待ちはcommand行とは別の新しいstatus output行に表示します。
 
-`rm` は直前の結果番号から対象を解決するため、削除対象の行を結果一覧として再表示しません。
+`rm` は削除対象の行を結果一覧として再表示しません。
 
 確認待ちの次の入力で `y` または `yes` を入力すると削除します。
 

@@ -200,16 +200,12 @@ export const parseMoveBookmarkCommand = (queryParts: readonly string[]): MoveBoo
  */
 export const parseRemoveBookmarkCommand = (
   queryParts: readonly string[],
-): RemoveBookmarkCommand => {
-  const [targetInput = emptyString] = createRemoveValueTokens(queryParts);
-
-  return {
-    force: hasForceOption(queryParts),
-    kind: "rm",
-    recursive: hasRecursiveOption(queryParts),
-    targetInput,
-  };
-};
+): RemoveBookmarkCommand => ({
+  force: hasForceOption(queryParts),
+  kind: "rm",
+  recursive: hasRecursiveOption(queryParts),
+  targetInput: joinValueTokens(createRemoveValueTokens(queryParts)),
+});
 
 /**
  * Rename commandを解析。

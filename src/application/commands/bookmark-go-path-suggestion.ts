@@ -5,6 +5,9 @@ import type { CurrentDirectory } from "../../domain/bookmarks/current-directory"
 /** Go command名。 */
 const goBookmarkCommandName = "go";
 
+/** Rm command名。 */
+const removeBookmarkCommandName = "rm";
+
 /** Go bookmark suggestion入力。 */
 export interface CreateGoBookmarkPathSuggestionsInput {
   /** Bookmark entry一覧。 */
@@ -31,12 +34,12 @@ const isChildBookmarkEntry = (parentPath: CurrentDirectory, entry: BookmarkEntry
   entry.kind === "bookmark" && entry.folderPath === parentPath;
 
 /**
- * Go command名かを判定。
+ * Bookmark path suggestion対象command名かを判定。
  * @param {string} commandName command名。
- * @returns {boolean} Go commandならtrue。
+ * @returns {boolean} Bookmark path suggestion対象ならtrue。
  */
-const isGoBookmarkCommandName = (commandName: string): boolean =>
-  commandName === goBookmarkCommandName;
+const isBookmarkPathSuggestionCommandName = (commandName: string): boolean =>
+  commandName === goBookmarkCommandName || commandName === removeBookmarkCommandName;
 
 /**
  * Bookmark titleがprefixに一致するかを判定。
@@ -67,7 +70,7 @@ const createGoBookmarkSuggestion = (
 };
 
 /**
- * Go command向けBookmark path suggestionを作成。
+ * Bookmark path suggestion対象command向けBookmark path suggestionを作成。
  * @param {CreateGoBookmarkPathSuggestionsInput} input Go bookmark suggestion入力。
  * @returns {readonly BookmarkDirectorySuggestion[]} Bookmark suggestion一覧。
  * @example
@@ -85,7 +88,7 @@ const createGoBookmarkSuggestion = (
 export const createGoBookmarkPathSuggestions = (
   input: CreateGoBookmarkPathSuggestionsInput,
 ): readonly BookmarkDirectorySuggestion[] => {
-  if (!isGoBookmarkCommandName(input.commandName)) {
+  if (!isBookmarkPathSuggestionCommandName(input.commandName)) {
     return [];
   }
 

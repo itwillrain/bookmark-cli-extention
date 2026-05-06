@@ -13,6 +13,9 @@ const grepHelpTopicName = "grep";
 /** Tree help topic名です。 */
 const treeHelpTopicName = "tree";
 
+/** Rm help topic名です。 */
+const removeHelpTopicName = "rm";
+
 /** Unknown help topic名です。 */
 const unknownHelpTopicName = "missing";
 
@@ -84,6 +87,25 @@ describe("bookmark CLI tree help catalog", (): void => {
     if (topic !== false) {
       expect(topic.usage).toContain("tree [-d] [path] [--depth <number>]");
       expect(topic.examples).toContain("tree -d Work");
+    }
+  });
+});
+
+/**
+ * Bookmark CLI rm help catalogのテストスイートです。
+ */
+describe("bookmark CLI rm help catalog", (): void => {
+  /**
+   * Rm topicからpathまたはindex指定の削除仕様を確認できることを検証します。
+   */
+  it("finds rm help topic with path or index target", (): void => {
+    const topic = findBookmarkCliHelpTopic(removeHelpTopicName);
+
+    expect(topic).not.toBe(false);
+
+    if (topic !== false) {
+      expect(topic.usage).toContain("rm <path-or-index>");
+      expect(topic.examples).toContain("rm ./Stripe Dashboard");
     }
   });
 });

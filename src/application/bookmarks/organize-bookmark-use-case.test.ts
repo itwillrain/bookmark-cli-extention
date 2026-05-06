@@ -54,6 +54,9 @@ const lastResultEntries = [stripeBookmarkEntry] as const;
 /** 対象result number入力。 */
 const targetInput = "1";
 
+/** Bookmark path対象入力。 */
+const targetBookmarkPathInput = "./Admin/Stripe Dashboard";
+
 /** 移動先folder path入力。 */
 const targetFolderPathInput = "Archive";
 
@@ -209,6 +212,29 @@ describe("removeBookmark", (): void => {
       recursive: false,
       repository: createBookmarkRepository(),
       targetInput,
+    });
+
+    expect(result.ok).toBe(true);
+    expect(recordingOrganizer.removedEntries).toStrictEqual([{ id: "42" }]);
+  });
+});
+
+/** Remove path対象use caseのテストスイート。 */
+describe("removeBookmark by path", (): void => {
+  /**
+   * RmをBookmark path対象で実行できることを検証。
+   */
+  it("removes bookmark by path when forced", async (): Promise<void> => {
+    const recordingOrganizer = createRecordingOrganizer();
+
+    const result = await removeBookmark({
+      currentDirectory,
+      force: true,
+      lastResultEntries: [],
+      organizer: recordingOrganizer.organizer,
+      recursive: false,
+      repository: createBookmarkRepository(),
+      targetInput: targetBookmarkPathInput,
     });
 
     expect(result.ok).toBe(true);

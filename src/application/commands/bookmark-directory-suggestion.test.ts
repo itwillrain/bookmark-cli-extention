@@ -220,3 +220,69 @@ describe("suggestBookmarkDirectoryPaths for go", (): void => {
     ]);
   });
 });
+
+/**
+ * Rm command向けpath suggestionのテストスイート。
+ */
+describe("suggestBookmarkDirectoryPaths for rm", (): void => {
+  /**
+   * Rm commandではrecursiveなしで現在ディレクトリ直下のBookmark候補だけを返すことを検証。
+   */
+  it("suggests bookmark paths for rm path prefix", (): void => {
+    const suggestions = suggestBookmarkDirectoryPaths({
+      bookmarkTree,
+      currentDirectory: "/Work",
+      inputValue: "rm ./",
+    });
+
+    expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual(["rm ./eza"]);
+  });
+
+  /**
+   * Rm commandのrecursive option後ではfolder候補だけを返すことを検証。
+   */
+  it("suggests folder paths for rm recursive option path prefix", (): void => {
+    const suggestions = suggestBookmarkDirectoryPaths({
+      bookmarkTree,
+      currentDirectory: "/Work",
+      inputValue: "rm -r ./A",
+    });
+
+    expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual(["rm -r ./Admin"]);
+  });
+});
+
+/**
+ * Rm command向けnested path suggestionのテストスイート。
+ */
+describe("suggestBookmarkDirectoryPaths for rm nested path", (): void => {
+  /**
+   * Rm commandではfolder配下のBookmarkをpath prefixで返すことを検証。
+   */
+  it("suggests bookmark paths under a child folder for rm path prefix", (): void => {
+    const suggestions = suggestBookmarkDirectoryPaths({
+      bookmarkTree,
+      currentDirectory: "/Work",
+      inputValue: "rm ./Admin/S",
+    });
+
+    expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual([
+      "rm ./Admin/Stripe Dashboard",
+    ]);
+  });
+
+  /**
+   * Rm commandではspaceを含むBookmark title prefixをpathとして扱うことを検証。
+   */
+  it("keeps spaced bookmark path prefix for rm suggestions", (): void => {
+    const suggestions = suggestBookmarkDirectoryPaths({
+      bookmarkTree,
+      currentDirectory: "/Work",
+      inputValue: "rm ./Admin/Stripe D",
+    });
+
+    expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual([
+      "rm ./Admin/Stripe Dashboard",
+    ]);
+  });
+});

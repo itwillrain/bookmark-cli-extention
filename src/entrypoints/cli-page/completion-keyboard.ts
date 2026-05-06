@@ -236,6 +236,12 @@ const selectCompletion = (
     return true;
   }
 
+  if (!isEmptyInputValue(input.inputValue)) {
+    input.setSelectedResultIndex(resultCursorCleared);
+
+    return true;
+  }
+
   return selectResult(input, direction);
 };
 /**

@@ -137,12 +137,12 @@ const bookmarkCliHelpTopics = [
   {
     commandName: "rm",
     description: "Bookmarkまたはfolderを削除する",
-    examples: ["rm 3", "rm -f 3", "rm -r 2", "rm -rf 2"],
+    examples: ["rm 3", "rm ./Stripe Dashboard", "rm -r ./Archive", "rm -rf ./Archive"],
     usage: [
-      "rm <result-number>",
-      "rm -f <result-number>",
-      "rm -r <result-number>",
-      "rm -rf <result-number>",
+      "rm <path-or-index>",
+      "rm -f <path-or-index>",
+      "rm -r <path-or-index>",
+      "rm -rf <path-or-index>",
     ],
   },
   {
