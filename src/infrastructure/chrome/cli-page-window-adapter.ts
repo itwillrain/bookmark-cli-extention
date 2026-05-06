@@ -103,13 +103,50 @@ const cliPopupWindowType = "popup" satisfies ChromeWindowCreateType;
 const cliPageWindowIdMissing = false;
 
 /** 保存済みCLI page window IDです。 */
-type StoredCliPageWindowId = number | typeof cliPageWindowIdMissing;
+export type StoredCliPageWindowId = number | typeof cliPageWindowIdMissing;
 
 /** 実行中のCLI page window open taskがない状態です。 */
 const openCliPageWindowTaskMissing = false;
 
 /** CLI page window open taskです。 */
 type OpenCliPageWindowTask = Promise<void> | typeof openCliPageWindowTaskMissing;
+
+/** CLI page window ID storageです。 */
+export interface CliPageWindowIdStoragePort {
+  /** 保存済みCLI page window IDを削除します。 */
+  readonly clearCliPageWindowId: () => Promise<void>;
+  /** 保存済みCLI page window IDを読み込みます。 */
+  readonly readCliPageWindowId: () => Promise<StoredCliPageWindowId>;
+  /** CLI page window IDを保存します。 */
+  readonly writeCliPageWindowId: (windowId: number) => Promise<void>;
+}
+
+/** CLI page window IDを保存しないstorageです。 */
+const cliPageWindowIdStorageMissing = {
+  /**
+   * 保存済みCLI page window IDを削除します。
+   * @returns {Promise<void>} 削除完了Promiseです。
+   */
+  clearCliPageWindowId: async (): Promise<void> => {
+    await Promise.resolve();
+  },
+  /**
+   * 保存済みCLI page window IDを読み込みます。
+   * @returns {Promise<StoredCliPageWindowId>} 保存済みwindow IDです。
+   */
+  readCliPageWindowId: async (): Promise<StoredCliPageWindowId> => {
+    await Promise.resolve();
+
+    return cliPageWindowIdMissing;
+  },
+  /**
+   * CLI page window IDを保存します。
+   * @returns {Promise<void>} 保存完了Promiseです。
+   */
+  writeCliPageWindowId: async (): Promise<void> => {
+    await Promise.resolve();
+  },
+} satisfies CliPageWindowIdStoragePort;
 
 /**
  * CLI page用popup window作成入力を作ります。
@@ -186,6 +223,18 @@ const findFocusedCliPageWindow = (
   url: string,
 ): ChromeWindow | undefined =>
   filterCliPageWindows(windows, url).find((window) => window.focused === true);
+
+/**
+ * 保存済みIDと一致するfocus中windowを取得します。
+ * @param {readonly ChromeWindow[]} windows Chrome window一覧です。
+ * @param {number} windowId 保存済みwindow IDです。
+ * @returns {ChromeWindow | undefined} Focus中の保存済みwindowです。
+ */
+const findFocusedWindowById = (
+  windows: readonly ChromeWindow[],
+  windowId: number,
+): ChromeWindow | undefined =>
+  windows.find((window) => window.id === windowId && window.focused === true);
 
 /**
  * 重複CLI page windowを閉じます。
@@ -321,14 +370,49 @@ export interface ChromeCliPageWindowLauncher {
 /**
  * Chrome windows APIをCLI page launcherへ変換します。
  * @param {ChromeWindowsApi} windowsApi Chrome windows APIです。
+ * @param {CliPageWindowIdStoragePort} windowIdStorage CLI page window ID storageです。
  * @returns {ChromeCliPageWindowLauncher} CLI page launcherです。
  */
-// oxlint-disable-next-line max-lines-per-function -- mutableなwindow IDとsingle-flight taskを同じclosureで保持するため。
+// oxlint-disable-next-line max-lines-per-function, max-statements -- mutableなwindow IDとsingle-flight taskを同じclosureで保持するため。
 export const createChromeCliPageWindowLauncher = (
   windowsApi: ChromeWindowsApi,
+  windowIdStorage: CliPageWindowIdStoragePort = cliPageWindowIdStorageMissing,
 ): ChromeCliPageWindowLauncher => {
   let cliPageWindowId: StoredCliPageWindowId = cliPageWindowIdMissing;
   let openCliPageWindowTask: OpenCliPageWindowTask = openCliPageWindowTaskMissing;
+
+  /**
+   * 保存済みCLI page window IDを読み込みます。
+   * @returns {Promise<StoredCliPageWindowId>} 保存済みCLI page window IDです。
+   */
+  const readCliPageWindowId = async (): Promise<StoredCliPageWindowId> => {
+    if (cliPageWindowId !== cliPageWindowIdMissing) {
+      return cliPageWindowId;
+    }
+
+    cliPageWindowId = await windowIdStorage.readCliPageWindowId();
+
+    return cliPageWindowId;
+  };
+
+  /**
+   * CLI page window IDを保存します。
+   * @param {number} windowId CLI page window IDです。
+   * @returns {Promise<void>} 保存完了Promiseです。
+   */
+  const writeCliPageWindowId = async (windowId: number): Promise<void> => {
+    cliPageWindowId = windowId;
+    await windowIdStorage.writeCliPageWindowId(windowId);
+  };
+
+  /**
+   * CLI page window ID保存を削除します。
+   * @returns {Promise<void>} 削除完了Promiseです。
+   */
+  const clearCliPageWindowId = async (): Promise<void> => {
+    cliPageWindowId = cliPageWindowIdMissing;
+    await windowIdStorage.clearCliPageWindowId();
+  };
 
   /**
    * 実在するCLI page windowを前面へ戻します。
@@ -336,9 +420,15 @@ export const createChromeCliPageWindowLauncher = (
    * @returns {Promise<boolean>} 前面復帰できた場合はtrueです。
    */
   const focusDiscoveredCliPageWindowIfExists = async (url: string): Promise<boolean> => {
-    cliPageWindowId = await focusDiscoveredCliPageWindow(windowsApi, url);
+    const discoveredWindowId = await focusDiscoveredCliPageWindow(windowsApi, url);
 
-    return cliPageWindowId !== cliPageWindowIdMissing;
+    if (discoveredWindowId === cliPageWindowIdMissing) {
+      return false;
+    }
+
+    await writeCliPageWindowId(discoveredWindowId);
+
+    return true;
   };
 
   /**
@@ -346,14 +436,16 @@ export const createChromeCliPageWindowLauncher = (
    * @returns {Promise<boolean>} 前面復帰できた場合はtrueです。
    */
   const focusExistingCliPageWindow = async (): Promise<boolean> => {
-    if (cliPageWindowId === cliPageWindowIdMissing) {
+    const storedWindowId = await readCliPageWindowId();
+
+    if (storedWindowId === cliPageWindowIdMissing) {
       return false;
     }
 
-    const focused = await focusCliPageWindow(windowsApi, cliPageWindowId);
+    const focused = await focusCliPageWindow(windowsApi, storedWindowId);
 
     if (!focused) {
-      cliPageWindowId = cliPageWindowIdMissing;
+      await clearCliPageWindowId();
     }
 
     return focused;
@@ -373,7 +465,11 @@ export const createChromeCliPageWindowLauncher = (
       return;
     }
 
-    cliPageWindowId = await createCliPageWindow(windowsApi, url);
+    const createdWindowId = await createCliPageWindow(windowsApi, url);
+
+    if (createdWindowId !== cliPageWindowIdMissing) {
+      await writeCliPageWindowId(createdWindowId);
+    }
   };
 
   /**
@@ -396,6 +492,35 @@ export const createChromeCliPageWindowLauncher = (
   };
 
   /**
+   * 保存済みCLI page windowがfocus中なら閉じます。
+   * @returns {Promise<boolean>} 閉じられた場合はtrueです。
+   */
+  const closeFocusedStoredCliPageWindow = async (): Promise<boolean> => {
+    const storedWindowId = await readCliPageWindowId();
+
+    if (storedWindowId === cliPageWindowIdMissing) {
+      return false;
+    }
+
+    const focusedWindow = findFocusedWindowById(
+      await windowsApi.getAll(createCliPageWindowGetAllQuery()),
+      storedWindowId,
+    );
+
+    if (resolveStoredCliPageWindowId(focusedWindow) === cliPageWindowIdMissing) {
+      return false;
+    }
+
+    const closed = await closeCliPageWindow(windowsApi, storedWindowId);
+
+    if (closed) {
+      await clearCliPageWindowId();
+    }
+
+    return closed;
+  };
+
+  /**
    * Focus中のCLI pageを閉じます。
    * @param {string} url CLI page URLです。
    * @returns {Promise<boolean>} 閉じられた場合はtrueです。
@@ -403,7 +528,13 @@ export const createChromeCliPageWindowLauncher = (
   const closeFocusedCliPageWindow = async (url: string): Promise<boolean> => {
     const closed = await closeFocusedDiscoveredCliPageWindow(windowsApi, url);
 
-    return closed;
+    if (closed) {
+      await clearCliPageWindowId();
+
+      return true;
+    }
+
+    return closeFocusedStoredCliPageWindow();
   };
 
   return { closeFocusedCliPageWindow, openCliPageWindow };

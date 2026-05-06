@@ -1,5 +1,6 @@
 import type { LaunchContext } from "../application/bookmarks/mark-bookmark-use-case";
 import { addToolbarActionClickListener } from "../infrastructure/chrome/toolbar-action-adapter";
+import { createChromeCliPageWindowIdStorage } from "../infrastructure/chrome/cli-page-window-id-storage-adapter";
 import { createChromeCliPageWindowLauncher } from "../infrastructure/chrome/cli-page-window-adapter";
 import { createChromeLaunchContextStorage } from "../infrastructure/chrome/launch-context-storage-adapter";
 import { isOpenCliPageMessage } from "./popup/popup-messages";
@@ -25,9 +26,17 @@ const firstTabIndex = 0;
 const launchContextStorage = createChromeLaunchContextStorage(browser.storage.session);
 
 /**
+ * CLI page window ID storageです。
+ */
+const cliPageWindowIdStorage = createChromeCliPageWindowIdStorage(browser.storage.session);
+
+/**
  * CLI page window launcherです。
  */
-const cliPageWindowLauncher = createChromeCliPageWindowLauncher(browser.windows);
+const cliPageWindowLauncher = createChromeCliPageWindowLauncher(
+  browser.windows,
+  cliPageWindowIdStorage,
+);
 
 /**
  * Launch context生成に使うtabの最小shapeです。
