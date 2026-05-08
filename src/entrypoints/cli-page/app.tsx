@@ -24,6 +24,7 @@ import {
 import { BookmarkCliAppScreen } from "./bookmark-cli-app-screen";
 import type { LaunchContext } from "../../application/bookmarks/mark-bookmark-use-case";
 import { createAppCommandRuntime } from "./app-command-runtime";
+import { createBookmarkCliSuggestionClickHandler } from "./suggestion-click-handler";
 import { createBrowserClipboardWriter } from "../../infrastructure/browser/clipboard-adapter";
 import { createChromeCurrentWindowCloser } from "../../infrastructure/chrome/current-window-adapter";
 import { createChromeExtensionStateStorage } from "../../infrastructure/chrome/extension-state-storage-adapter";
@@ -33,6 +34,7 @@ import { createCommandExecutionErrorHandler } from "./app-command-handlers";
 import { createInitialExtensionState } from "../../domain/storage/extension-state";
 import { currentDirectoryRoot } from "../../domain/bookmarks/current-directory";
 import { parseBookmarkCommand } from "../../application/commands/bookmark-command-parser";
+import { resolveLatestLaunchContext } from "./launch-context-resolution";
 import { useBookmarkCliAppKeyboard } from "./use-bookmark-cli-app-keyboard";
 import { useBookmarkCliCursorState } from "./use-bookmark-cli-cursor-state";
 import { useBookmarkCliTranscript } from "./use-bookmark-cli-transcript";
@@ -73,11 +75,6 @@ const bookmarkCreator = createChromeBookmarkCreator(browser.bookmarks);
 const bookmarkOrganizer = createChromeBookmarkOrganizer(browser.bookmarks);
 
 /**
- * Chrome Tabs APIを使うopenerです。
- */
-const bookmarkOpener = createChromeBookmarkOpener(browser.tabs);
-
-/**
  * Chrome History APIを使うhistory repositoryです。
  */
 const historyRepository = createChromeHistoryRepository(browser.history);
@@ -91,6 +88,11 @@ const extensionStateStorage = createChromeExtensionStateStorage(browser.storage.
  * Chrome Storage Session APIを使うlaunch context storage。
  */
 const launchContextStorage = createChromeLaunchContextStorage(browser.storage.session);
+
+/**
+ * Chrome Tabs APIを使うopenerです。
+ */
+const bookmarkOpener = createChromeBookmarkOpener(browser.tabs, launchContextStorage);
 
 /**
  * Chrome Windows APIを使う現在window closerです。
@@ -252,9 +254,13 @@ const executeAndPersistCommand = async (
   commandState: BookmarkCliCommandState,
   launchContext: LaunchContext | undefined,
 ): Promise<BookmarkCliCommandState> => {
+  const latestLaunchContext = await resolveLatestLaunchContext({
+    fallbackLaunchContext: launchContext,
+    storage: launchContextStorage,
+  });
   const nextState = await executeBookmarkCliCommand(
     inputValue,
-    createCommandDependencies(commandState, launchContext),
+    createCommandDependencies(commandState, latestLaunchContext),
   );
 
   return persistNextCommandState(inputValue, nextState);
@@ -350,6 +356,11 @@ export const App = (): ReactElement => {
         ),
         commandAbbreviations: commandState.extensionState.settings.commandAbbreviations,
         setInputValue,
+      })}
+      onSuggestionClick={createBookmarkCliSuggestionClickHandler({
+        setInputValue,
+        setSelectedResultIndex: cursors.setSelectedResultIndex,
+        setSelectedSuggestionIndex: cursors.setSelectedSuggestionIndex,
       })}
       onSubmit={commandRuntime.submitCommand}
       selectedResultIndex={cursors.selectedResultIndex}

@@ -4,6 +4,7 @@ import {
   suggestBookmarkDirectoryPaths,
 } from "./bookmark-directory-suggestion";
 import { describe, expect, it } from "vitest";
+import { createBookmarkEntryIdTargetInput } from "../../domain/bookmarks/bookmark-entry-id-target";
 
 /** Work folder entry。 */
 const workFolderEntry = {
@@ -235,7 +236,9 @@ describe("suggestBookmarkDirectoryPaths for rm", (): void => {
       inputValue: "rm ./",
     });
 
-    expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual(["rm ./eza"]);
+    expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual([
+      `rm ${createBookmarkEntryIdTargetInput(ezaBookmarkEntry.id)}`,
+    ]);
   });
 
   /**
@@ -248,7 +251,9 @@ describe("suggestBookmarkDirectoryPaths for rm", (): void => {
       inputValue: "rm -r ./A",
     });
 
-    expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual(["rm -r ./Admin"]);
+    expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual([
+      `rm -r ${createBookmarkEntryIdTargetInput(adminFolderEntry.id)}`,
+    ]);
   });
 });
 
@@ -267,7 +272,7 @@ describe("suggestBookmarkDirectoryPaths for rm nested path", (): void => {
     });
 
     expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual([
-      "rm ./Admin/Stripe Dashboard",
+      `rm ${createBookmarkEntryIdTargetInput(stripeBookmarkEntry.id)}`,
     ]);
   });
 
@@ -282,7 +287,7 @@ describe("suggestBookmarkDirectoryPaths for rm nested path", (): void => {
     });
 
     expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual([
-      "rm ./Admin/Stripe Dashboard",
+      `rm ${createBookmarkEntryIdTargetInput(stripeBookmarkEntry.id)}`,
     ]);
   });
 });

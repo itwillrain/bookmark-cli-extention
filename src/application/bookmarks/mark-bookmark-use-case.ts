@@ -54,6 +54,8 @@ export interface MarkCurrentTabInput {
   readonly targetFolderPathInput: string;
   /** Bookmark title入力。 */
   readonly titleInput: string;
+  /** Bookmark titleが明示されたか。 */
+  readonly titleSpecified: boolean;
 }
 
 /** 現在タブ保存成功値。 */
@@ -82,9 +84,6 @@ const unsupportedTabErrorCode = "unsupported_tab";
 
 /** Already markedのエラーcode。 */
 const alreadyMarkedErrorCode = "already_marked";
-
-/** 空文字。 */
-const emptyString = "";
 
 /**
  * 成功結果を作成。
@@ -188,7 +187,7 @@ const resolveTargetFolderPath = (input: MarkCurrentTabInput): CurrentDirectory =
 const resolveBookmarkTitle = (input: MarkCurrentTabInput, launchContext: LaunchContext): string => {
   const titleInput = input.titleInput.trim();
 
-  if (titleInput === emptyString) {
+  if (!input.titleSpecified) {
     return launchContext.title;
   }
 
@@ -233,6 +232,7 @@ const createBookmarkInput = (input: CreateBookmarkInputInput): CreatedBookmarkIn
  *   launchContext,
  *   repository,
  *   titleInput: "",
+ *   titleSpecified: false,
  * });
  * ```
  */

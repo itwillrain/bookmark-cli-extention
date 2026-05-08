@@ -2,6 +2,7 @@
 
 import type { BookmarkEntry, BookmarkTree } from "../../domain/bookmarks/bookmark-tree";
 import {
+  type BookmarkOpenContext,
   type BookmarkOpenerPort,
   type BookmarkRepositoryPort,
   type BrowserHistoryRepositoryPort,
@@ -118,6 +119,10 @@ interface RecordingBookmarkOpener {
    */
   readonly openedUrls: readonly string[];
   /**
+   * 開いたURLの文脈一覧です。
+   */
+  readonly openedContexts: readonly (BookmarkOpenContext | undefined)[];
+  /**
    * Bookmark URLを開くportです。
    */
   readonly opener: BookmarkOpenerPort;
@@ -163,18 +168,22 @@ const createBrowserHistoryRepository = (): BrowserHistoryRepositoryPort => ({
  */
 const createRecordingBookmarkOpener = (): RecordingBookmarkOpener => {
   const openedUrls: string[] = [];
+  const openedContexts: (BookmarkOpenContext | undefined)[] = [];
 
   /**
    * 開いたURLを記録します。
    * @param {string} url 開くURLです。
+   * @param {BookmarkOpenContext | undefined} context 開くURLの文脈です。
    * @returns {Promise<void>} 記録完了を表すPromiseです。
    */
-  const openBookmarkUrl = async (url: string): Promise<void> => {
+  const openBookmarkUrl = async (url: string, context?: BookmarkOpenContext): Promise<void> => {
     openedUrls.push(url);
+    openedContexts.push(context);
     await Promise.resolve();
   };
 
   return {
+    openedContexts,
     openedUrls,
     opener: { openBookmarkUrl },
   };
@@ -259,6 +268,7 @@ describe("goBookmark with candidate", (): void => {
 
     expect(result.ok).toBe(true);
     expect(recordingOpener.openedUrls).toStrictEqual(["https://dashboard.stripe.com/"]);
+    expect(recordingOpener.openedContexts).toStrictEqual([{ title: "Stripe Dashboard" }]);
 
     if (result.ok) {
       expect(result.value.entry.id).toBe("42");
@@ -299,6 +309,7 @@ describe("goBookmark with candidate", (): void => {
 
     expect(result.ok).toBe(true);
     expect(recordingOpener.openedUrls).toStrictEqual(["https://docs.github.com/"]);
+    expect(recordingOpener.openedContexts).toStrictEqual([{ title: "GitHub Docs" }]);
 
     if (result.ok) {
       expect(result.value.entry.kind).toBe("history");
@@ -324,6 +335,7 @@ describe("goBookmark by result number", (): void => {
 
     expect(result.ok).toBe(true);
     expect(recordingOpener.openedUrls).toStrictEqual(["https://github.com/pulls"]);
+    expect(recordingOpener.openedContexts).toStrictEqual([{ title: "GitHub Pull Requests" }]);
 
     if (result.ok) {
       expect(result.value.entry.id).toBe("43");
@@ -344,6 +356,7 @@ describe("goBookmark by result number", (): void => {
 
     expect(result.ok).toBe(true);
     expect(recordingOpener.openedUrls).toStrictEqual(["https://docs.github.com/"]);
+    expect(recordingOpener.openedContexts).toStrictEqual([{ title: "GitHub Docs" }]);
 
     if (result.ok) {
       expect(result.value.entry.kind).toBe("history");

@@ -1,5 +1,6 @@
 import type { BookmarkEntry, BookmarkTree } from "../../domain/bookmarks/bookmark-tree";
 import { describe, expect, it } from "vitest";
+import { createBookmarkEntryIdTargetInput } from "../../domain/bookmarks/bookmark-entry-id-target";
 import { suggestBookmarkDirectoryPaths } from "./bookmark-directory-suggestion";
 
 /** Folder候補を多く持つ親folder entry。 */
@@ -44,11 +45,40 @@ const stripeBookmarkEntry = {
   url: "https://dashboard.stripe.com/",
 } satisfies BookmarkEntry;
 
+/** 先に見つかる空title Bookmark entry fixture。 */
+const firstEmptyTitleBookmarkEntry = {
+  childrenCount: 0,
+  folderPath: "/Work",
+  id: "empty-1",
+  kind: "bookmark",
+  parentId: workFolderEntry.id,
+  title: "",
+  url: "https://first.example.com/",
+} satisfies BookmarkEntry;
+
+/** クリック対象の空title Bookmark entry fixture。 */
+const secondEmptyTitleBookmarkEntry = {
+  childrenCount: 0,
+  folderPath: "/Work",
+  id: "empty-2",
+  kind: "bookmark",
+  parentId: workFolderEntry.id,
+  title: "",
+  url: "https://second.example.com/",
+} satisfies BookmarkEntry;
+
 /** Bookmark tree fixture。 */
 const bookmarkTree = {
   bookmarks: [stripeBookmarkEntry],
   entries: [workFolderEntry, ...folderEntries, stripeBookmarkEntry],
   folders: [workFolderEntry, ...folderEntries],
+} satisfies BookmarkTree;
+
+/** 空title Bookmarkを含むBookmark tree fixture。 */
+const emptyTitleBookmarkTree = {
+  bookmarks: [firstEmptyTitleBookmarkEntry, secondEmptyTitleBookmarkEntry],
+  entries: [workFolderEntry, firstEmptyTitleBookmarkEntry, secondEmptyTitleBookmarkEntry],
+  folders: [workFolderEntry],
 } satisfies BookmarkTree;
 
 /**
@@ -66,7 +96,7 @@ describe("suggestBookmarkDirectoryPaths for rm full candidate list", (): void =>
     });
 
     expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual([
-      "rm ./Stripe Dashboard",
+      `rm ${createBookmarkEntryIdTargetInput(stripeBookmarkEntry.id)}`,
     ]);
   });
 
@@ -80,15 +110,37 @@ describe("suggestBookmarkDirectoryPaths for rm full candidate list", (): void =>
       inputValue: "rm -r ./",
     });
 
-    expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual([
-      "rm -r ./A",
-      "rm -r ./B",
-      "rm -r ./C",
-      "rm -r ./D",
-      "rm -r ./E",
-      "rm -r ./F",
-      "rm -r ./G",
-      "rm -r ./H",
+    expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual(
+      folderEntries.map((entry) => `rm -r ${createBookmarkEntryIdTargetInput(entry.id)}`),
+    );
+  });
+});
+
+/**
+ * Rm command向け空title Bookmark suggestionのテストスイート。
+ */
+describe("suggestBookmarkDirectoryPaths for empty title rm candidates", (): void => {
+  /**
+   * 空title Bookmarkが複数ある場合も各候補をentry ID targetに補完することを検証。
+   */
+  it("uses entry-id completions for empty title bookmarks", (): void => {
+    const suggestions = suggestBookmarkDirectoryPaths({
+      bookmarkTree: emptyTitleBookmarkTree,
+      currentDirectory: "/Work",
+      inputValue: "rm ./",
+    });
+
+    expect(suggestions).toStrictEqual([
+      {
+        commandName: "./",
+        completion: `rm ${createBookmarkEntryIdTargetInput(firstEmptyTitleBookmarkEntry.id)}`,
+        description: "https://first.example.com/",
+      },
+      {
+        commandName: "./",
+        completion: `rm ${createBookmarkEntryIdTargetInput(secondEmptyTitleBookmarkEntry.id)}`,
+        description: "https://second.example.com/",
+      },
     ]);
   });
 });
@@ -101,12 +153,20 @@ describe("suggestBookmarkDirectoryPaths for rm combined option", (): void => {
    * Recursive force optionでもFolder候補だけをTab巡回対象にすることを検証。
    */
   it("keeps only folder candidates selectable with recursive force option", (): void => {
+    const [firstFolderEntry] = folderEntries;
+
+    if (!firstFolderEntry) {
+      throw new TypeError("Missing first folder entry fixture");
+    }
+
     const suggestions = suggestBookmarkDirectoryPaths({
       bookmarkTree,
       currentDirectory: "/Work",
       inputValue: "rm -rf ./A",
     });
 
-    expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual(["rm -rf ./A"]);
+    expect(suggestions.map((suggestion) => suggestion.completion)).toStrictEqual([
+      `rm -rf ${createBookmarkEntryIdTargetInput(firstFolderEntry.id)}`,
+    ]);
   });
 });

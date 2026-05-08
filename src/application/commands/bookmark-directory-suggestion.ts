@@ -6,6 +6,7 @@ import {
   getParentFolderPath,
   resolveFolderPath,
 } from "../../domain/bookmarks/current-directory";
+import { createBookmarkEntryIdTargetInput } from "../../domain/bookmarks/bookmark-entry-id-target";
 import { createGoBookmarkPathSuggestions } from "./bookmark-go-path-suggestion";
 
 /** Bookmark CLI directory suggestion。 */
@@ -663,6 +664,25 @@ const shouldSuggestBookmarks = (context: DirectoryPathCompletionContext): boolea
   context.targetKind === entrySuggestionTargetKind;
 
 /**
+ * Directory suggestion completion targetを作成。
+ * @param {DirectoryPathCompletionContext} context completion context。
+ * @param {BookmarkEntry} entry bookmarkまたはfolder entry。
+ * @param {string} pathCompletion path補完値。
+ * @returns {string} Completion target。
+ */
+const createDirectorySuggestionCompletionTarget = (
+  context: DirectoryPathCompletionContext,
+  entry: BookmarkEntry,
+  pathCompletion: string,
+): string => {
+  if (context.commandName === removeBookmarkCommandName) {
+    return createBookmarkEntryIdTargetInput(entry.id);
+  }
+
+  return pathCompletion;
+};
+
+/**
  * Directory suggestionを作成。
  * @param {DirectoryPathCompletionContext} context completion context。
  * @param {PathCompletionParts} parts path completion parts。
@@ -675,10 +695,15 @@ const createDirectorySuggestion = (
   entry: BookmarkEntry,
 ): BookmarkDirectorySuggestion => {
   const pathCompletion = `${parts.pathCompletionBase}${entry.title}`;
+  const completionTarget = createDirectorySuggestionCompletionTarget(
+    context,
+    entry,
+    pathCompletion,
+  );
 
   return {
     commandName: pathCompletion,
-    completion: `${context.commandPrefix}${pathCompletion}`,
+    completion: `${context.commandPrefix}${completionTarget}`,
     description: entry.url ?? entry.folderPath,
   };
 };

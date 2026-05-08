@@ -3,10 +3,6 @@ import type {
   CreatedBookmarkInput,
 } from "../../application/bookmarks/mark-bookmark-use-case";
 import type {
-  BookmarkOpenerPort,
-  BookmarkRepositoryPort,
-} from "../../application/bookmarks/bookmark-use-cases";
-import type {
   BookmarkOrganizerPort,
   CreateFolderInput,
   MoveEntryInput,
@@ -19,6 +15,14 @@ import {
   type RawBookmarkTreeNode,
   normalizeBookmarkTree,
 } from "../../domain/bookmarks/bookmark-tree";
+import type { BookmarkRepositoryPort } from "../../application/bookmarks/bookmark-use-cases";
+
+export {
+  createChromeBookmarkOpener,
+  type ChromeCreatedTab,
+  type ChromeTabCreateProperties,
+  type ChromeTabsApi,
+} from "./bookmark-opener-adapter";
 
 /**
  * Chrome Bookmarks APIのうちadapterが使う最小shapeです。
@@ -105,28 +109,6 @@ export interface ChromeBookmarkUpdateProperties {
    * 更新後titleです。
    */
   readonly title: string;
-}
-
-/**
- * Chrome Tabs APIでtabを作成する入力です。
- * @see https://developer.chrome.com/docs/extensions/reference/api/tabs#method-create
- */
-export interface ChromeTabCreateProperties {
-  /**
-   * 開くURLです。
-   */
-  readonly url: string;
-}
-
-/**
- * Chrome Tabs APIのうちadapterが使う最小shapeです。
- * @see https://developer.chrome.com/docs/extensions/reference/api/tabs
- */
-export interface ChromeTabsApi {
-  /**
-   * 新しいtabを作成します。
-   */
-  readonly create: (createProperties: ChromeTabCreateProperties) => Promise<unknown>;
 }
 
 /** 子要素なしのchildren countです。 */
@@ -279,22 +261,4 @@ export const createChromeBookmarkOrganizer = (
     createBookmarkEntryFromRawNode(await bookmarksApi.update(input.id, { title: input.title }), "");
 
   return { createFolder, moveEntry, removeEntry, removeFolderTree, renameEntry };
-};
-
-/**
- * Chrome Tabs APIをApplication層のopener portへ変換します。
- * @param {ChromeTabsApi} tabsApi Chrome Tabs APIです。
- * @returns {BookmarkOpenerPort} Bookmark URLを開くportです。
- */
-export const createChromeBookmarkOpener = (tabsApi: ChromeTabsApi): BookmarkOpenerPort => {
-  /**
-   * Chrome Tabs APIでBookmark URLを開きます。
-   * @param {string} url 開くURLです。
-   * @returns {Promise<void>} Tab作成完了を表すPromiseです。
-   */
-  const openBookmarkUrl = async (url: string): Promise<void> => {
-    await tabsApi.create({ url });
-  };
-
-  return { openBookmarkUrl };
 };

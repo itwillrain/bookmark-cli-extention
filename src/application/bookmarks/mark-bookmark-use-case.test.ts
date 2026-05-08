@@ -116,6 +116,7 @@ describe("markCurrentTab creation", (): void => {
       repository: createBookmarkRepository(),
       targetFolderPathInput: "Work",
       titleInput: "",
+      titleSpecified: false,
     });
 
     expect(result.ok).toBe(true);
@@ -145,6 +146,7 @@ describe("markCurrentTab root creation", (): void => {
       repository: createBookmarkRepository(),
       targetFolderPathInput: "",
       titleInput: "",
+      titleSpecified: false,
     });
 
     expect(result.ok).toBe(true);
@@ -152,6 +154,36 @@ describe("markCurrentTab root creation", (): void => {
       {
         parentId: "1",
         title: "Production Admin",
+        url: "https://admin.example.com/",
+      },
+    ]);
+  });
+});
+
+/** Mark current tab空title保存のテストスイート。 */
+describe("markCurrentTab empty title creation", (): void => {
+  /**
+   * 空titleが明示された場合は起動元タブtitleへfallbackしないことを検証。
+   */
+  it("creates bookmark with explicit empty title", async (): Promise<void> => {
+    const recordingCreator = createRecordingBookmarkCreator();
+
+    const result = await markCurrentTab({
+      allowDuplicate: false,
+      creator: recordingCreator.creator,
+      currentDirectory: "/",
+      launchContext,
+      repository: createBookmarkRepository(),
+      targetFolderPathInput: "",
+      titleInput: "",
+      titleSpecified: true,
+    });
+
+    expect(result.ok).toBe(true);
+    expect(recordingCreator.createdBookmarks).toStrictEqual([
+      {
+        parentId: "1",
+        title: "",
         url: "https://admin.example.com/",
       },
     ]);
@@ -173,6 +205,7 @@ describe("markCurrentTab launch context validation", (): void => {
       repository: createBookmarkRepository(),
       targetFolderPathInput: "",
       titleInput: "",
+      titleSpecified: false,
     });
 
     expect(result).toMatchObject({
@@ -202,6 +235,7 @@ describe("markCurrentTab duplicate detection", (): void => {
       repository: createBookmarkRepository(),
       targetFolderPathInput: "",
       titleInput: "",
+      titleSpecified: false,
     });
 
     expect(result).toMatchObject({

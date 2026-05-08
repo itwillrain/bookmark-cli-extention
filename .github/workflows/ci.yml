@@ -35,6 +35,10 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Run secret lint
+        if: github.event_name == 'pull_request'
+        run: pnpm run lint:secrets
+
       - name: Run checks
         run: pnpm run check
 

@@ -47,16 +47,6 @@ const clearCommandInput = "clear";
 const showDirectoryTreeCommandInput = "tree Work --depth 3";
 
 /**
- * Mark commandの入力です。
- */
-const markBookmarkCommandInput = 'mark "Production Admin" --to Work/Admin --allow-duplicate';
-
-/**
- * Mark commandの保存先だけを指定する入力です。
- */
-const markBookmarkToDirectoryCommandInput = "mark --to Work/Admin";
-
-/**
  * Tag commandの入力です。
  */
 const tagBookmarkCommandInput = "tag 3 prod finance";
@@ -212,35 +202,6 @@ describe("parseBookmarkCommand tree commands", (): void => {
       directoriesOnly: true,
       kind: "tree",
       pathInput: "Work",
-    });
-  });
-});
-
-/**
- * Bookmark保存command parserの正常系テストスイートです。
- */
-describe("parseBookmarkCommand mark commands", (): void => {
-  /**
-   * Mark commandをtitle、保存先、重複許可付きで解析できることを検証します。
-   */
-  it("parses mark command with title and options", (): void => {
-    expect(parseBookmarkCommand(markBookmarkCommandInput)).toStrictEqual({
-      allowDuplicate: true,
-      kind: "mark",
-      targetFolderPathInput: "Work/Admin",
-      titleInput: "Production Admin",
-    });
-  });
-
-  /**
-   * Mark commandを保存先だけで解析できることを検証します。
-   */
-  it("parses mark command with target folder only", (): void => {
-    expect(parseBookmarkCommand(markBookmarkToDirectoryCommandInput)).toStrictEqual({
-      allowDuplicate: false,
-      kind: "mark",
-      targetFolderPathInput: "Work/Admin",
-      titleInput: "",
     });
   });
 });

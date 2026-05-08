@@ -357,6 +357,10 @@ Command suggestionはfish shellの補完に近い操作感を目指します。
 
 現在のprompt直下にfloating候補を表示し、`Tab` で候補選択を進め、`Shift+Tab` で候補選択を戻し、`Enter` で選択中のfloating候補を入力へ確定します。
 
+候補をpointerでクリックまたはタップした場合も、選択中候補の `Enter` と同じく入力へ確定します。
+
+候補のpointer操作だけではcommandを即時実行しません。
+
 `Ctrl+r` はCLI入力履歴をfloating候補として表示します。
 
 履歴候補は新しい順に並べ、現在入力中の文字列を含む履歴だけに絞り込めます。

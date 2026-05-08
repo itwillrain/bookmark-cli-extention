@@ -17,22 +17,49 @@ export interface BookmarkCliSuggestionItem {
 }
 
 /**
+ * Bookmark CLI suggestionを選択したときのhandler。
+ */
+export type BookmarkCliSuggestionClickHandler = (suggestionItem: BookmarkCliSuggestionItem) => void;
+
+/**
  * Bookmark CLI suggestion list props。
  */
 export interface BookmarkCliSuggestionListProps {
   /** 選択中suggestion index。 */
   readonly selectedSuggestionIndex: CompletionCursorIndex;
+  /** Suggestionをpointerで確定するhandler。 */
+  readonly onSuggestionClick: BookmarkCliSuggestionClickHandler;
   /** 表示するsuggestion一覧。 */
   readonly suggestionItems: readonly BookmarkCliSuggestionItem[];
   /** Terminal body直下のoverlay位置。 */
   readonly style?: Readonly<CSSProperties>;
 }
 
+/**
+ * Suggestionのmouse down eventとして扱う最小shape。
+ */
+export interface BookmarkCliSuggestionMouseDownEvent {
+  /** Browser既定のfocus移動やsubmitを止める。 */
+  readonly preventDefault: () => void;
+}
+
+/**
+ * Suggestion mouse downの補完入力。
+ */
+export interface CompleteBookmarkCliSuggestionMouseDownInput {
+  /** Mouse down event。 */
+  readonly event: BookmarkCliSuggestionMouseDownEvent;
+  /** Suggestion確定handler。 */
+  readonly onSuggestionClick: BookmarkCliSuggestionClickHandler;
+  /** 確定するsuggestion item。 */
+  readonly suggestionItem: BookmarkCliSuggestionItem;
+}
+
 /** 空のitem count。 */
 const emptyItemCount = 0;
 
 /** Prompt直下にfloating表示するsuggestion wrapperのclassName。 */
-const suggestionListWrapperClassName = "pointer-events-none absolute z-20 mt-2";
+const suggestionListWrapperClassName = "absolute z-20 mt-2";
 
 /** Floatingだがterminal outputとして見せるsuggestion listのclassName。 */
 const suggestionListClassName =
@@ -40,14 +67,17 @@ const suggestionListClassName =
 
 /** 選択中suggestion itemのclassName。 */
 const selectedSuggestionItemClassName =
-  "grid grid-cols-[minmax(0,8rem)_minmax(0,1fr)] items-center gap-3 bg-zinc-900/90 px-2 py-1 text-xs text-zinc-100";
+  "grid cursor-pointer grid-cols-[minmax(0,8rem)_minmax(0,1fr)] items-center gap-3 bg-zinc-900/90 px-2 py-1 text-xs text-zinc-100";
 
 /** 通常suggestion itemのclassName。 */
 const suggestionItemClassName =
-  "grid grid-cols-[minmax(0,8rem)_minmax(0,1fr)] items-center gap-3 px-2 py-1 text-xs text-zinc-300";
+  "grid cursor-pointer grid-cols-[minmax(0,8rem)_minmax(0,1fr)] items-center gap-3 px-2 py-1 text-xs text-zinc-300";
 
 /** 選択中suggestionをscroll対象として示す属性値。 */
 const selectedSuggestionScrollTarget = "selected-suggestion";
+
+/** Suggestion item keyの区切り文字。 */
+const suggestionItemKeySeparator = "::";
 
 /** Suggestion item描画入力。 */
 interface SuggestionItemRenderInput {
@@ -57,6 +87,8 @@ interface SuggestionItemRenderInput {
   readonly suggestionItemIndex: number;
   /** 選択中suggestion index。 */
   readonly selectedSuggestionIndex: CompletionCursorIndex;
+  /** Suggestionをpointerで確定するhandler。 */
+  readonly onSuggestionClick: BookmarkCliSuggestionClickHandler;
   /** 選択中suggestion item ref。 */
   readonly selectedSuggestionItemRef: RefObject<HTMLLIElement | null>;
 }
@@ -118,6 +150,32 @@ const createSuggestionItemRefProps = (
 };
 
 /**
+ * Suggestion itemのReact keyを作る。
+ * @param {BookmarkCliSuggestionItem} suggestionItem Suggestion item。
+ * @returns {string} React key。
+ */
+const createSuggestionItemKey = (suggestionItem: BookmarkCliSuggestionItem): string =>
+  [suggestionItem.commandName, suggestionItem.completion, suggestionItem.description].join(
+    suggestionItemKeySeparator,
+  );
+
+/**
+ * Suggestion itemのmouse downを入力補完として処理。
+ * @param {CompleteBookmarkCliSuggestionMouseDownInput} input Suggestion mouse downの補完入力。
+ * @returns {void} 返り値なし。
+ * @example
+ * ```ts
+ * completeBookmarkCliSuggestionMouseDown({ event, onSuggestionClick, suggestionItem });
+ * ```
+ */
+export const completeBookmarkCliSuggestionMouseDown = (
+  input: CompleteBookmarkCliSuggestionMouseDownInput,
+): void => {
+  input.event.preventDefault();
+  input.onSuggestionClick(input.suggestionItem);
+};
+
+/**
  * Suggestion itemを描画。
  * @param {SuggestionItemRenderInput} input Suggestion item描画入力。
  * @returns {ReactElement} Suggestion item element。
@@ -130,7 +188,14 @@ const renderSuggestionItem = (input: SuggestionItemRenderInput): ReactElement =>
       aria-selected={selected}
       className={createSuggestionItemClassName(input)}
       data-scroll-target={resolveSuggestionScrollTarget(input)}
-      key={input.suggestionItem.commandName}
+      key={createSuggestionItemKey(input.suggestionItem)}
+      onMouseDown={(event) => {
+        completeBookmarkCliSuggestionMouseDown({
+          event,
+          onSuggestionClick: input.onSuggestionClick,
+          suggestionItem: input.suggestionItem,
+        });
+      }}
       role="option"
       {...createSuggestionItemRefProps(input)}
     >
@@ -173,6 +238,7 @@ export const BookmarkCliSuggestionList = (
       <ol className={suggestionListClassName} role="listbox">
         {props.suggestionItems.map((suggestionItem, suggestionItemIndex) =>
           renderSuggestionItem({
+            onSuggestionClick: props.onSuggestionClick,
             selectedSuggestionIndex: props.selectedSuggestionIndex,
             selectedSuggestionItemRef,
             suggestionItem,

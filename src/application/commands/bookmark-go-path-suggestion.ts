@@ -1,6 +1,7 @@
 import type { BookmarkDirectorySuggestion } from "./bookmark-directory-suggestion";
 import type { BookmarkEntry } from "../../domain/bookmarks/bookmark-tree";
 import type { CurrentDirectory } from "../../domain/bookmarks/current-directory";
+import { createBookmarkEntryIdTargetInput } from "../../domain/bookmarks/bookmark-entry-id-target";
 
 /** Go command名。 */
 const goBookmarkCommandName = "go";
@@ -51,6 +52,25 @@ const bookmarkTitleMatchesPrefix = (title: string, titlePrefix: string): boolean
   title.toLowerCase().startsWith(titlePrefix.toLowerCase());
 
 /**
+ * Bookmark suggestion completion targetを作成。
+ * @param {CreateGoBookmarkPathSuggestionsInput} input Go bookmark suggestion入力。
+ * @param {BookmarkEntry} entry Bookmark entry。
+ * @param {string} pathCompletion path補完値。
+ * @returns {string} Completion target。
+ */
+const createBookmarkSuggestionCompletionTarget = (
+  input: CreateGoBookmarkPathSuggestionsInput,
+  entry: BookmarkEntry,
+  pathCompletion: string,
+): string => {
+  if (input.commandName === removeBookmarkCommandName) {
+    return createBookmarkEntryIdTargetInput(entry.id);
+  }
+
+  return pathCompletion;
+};
+
+/**
  * Bookmark suggestionを作成。
  * @param {CreateGoBookmarkPathSuggestionsInput} input Go bookmark suggestion入力。
  * @param {BookmarkEntry} entry Bookmark entry。
@@ -61,10 +81,11 @@ const createGoBookmarkSuggestion = (
   entry: BookmarkEntry,
 ): BookmarkDirectorySuggestion => {
   const pathCompletion = `${input.pathCompletionBase}${entry.title}`;
+  const completionTarget = createBookmarkSuggestionCompletionTarget(input, entry, pathCompletion);
 
   return {
     commandName: pathCompletion,
-    completion: `${input.commandPrefix}${pathCompletion}`,
+    completion: `${input.commandPrefix}${completionTarget}`,
     description: entry.url ?? entry.folderPath,
   };
 };
