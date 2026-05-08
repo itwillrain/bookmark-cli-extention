@@ -106,13 +106,23 @@ export interface BrowserHistoryRepositoryPort {
 }
 
 /**
+ * Bookmark URLを開く文脈です。
+ */
+export interface BookmarkOpenContext {
+  /**
+   * 開くURLの表示titleです。
+   */
+  readonly title: string;
+}
+
+/**
  * Bookmark URLを開くportです。
  */
 export interface BookmarkOpenerPort {
   /**
    * Bookmark URLを開きます。
    */
-  readonly openBookmarkUrl: (url: string) => Promise<void>;
+  readonly openBookmarkUrl: (url: string, context?: BookmarkOpenContext) => Promise<void>;
 }
 
 /**
@@ -326,7 +336,7 @@ const goBookmarkByResultNumber = async (
     return createNotFoundFailure(input.query);
   }
 
-  await input.opener.openBookmarkUrl(result.entry.url);
+  await input.opener.openBookmarkUrl(result.entry.url, { title: result.entry.title });
 
   return createSuccess(result);
 };
@@ -393,7 +403,7 @@ export const goBookmark = async (
   }
 
   const [topResult] = results;
-  await input.opener.openBookmarkUrl(topResult.entry.url);
+  await input.opener.openBookmarkUrl(topResult.entry.url, { title: topResult.entry.title });
 
   return createSuccess(topResult);
 };

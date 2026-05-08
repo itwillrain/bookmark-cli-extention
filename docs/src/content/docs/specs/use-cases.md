@@ -88,8 +88,11 @@ go #prod admin
 3. 最上位候補が明確な場合は、そのURLを開く
 4. 候補が曖昧な場合は、番号付き一覧を表示して選択を求める
 5. 疑似CLIから開いた利用統計を更新する
+6. CLIからURLを開いた場合は、開いたURLを次の `mark` 対象として保存する
 
 完了条件は、該当BookmarkまたはChrome履歴URLが新しいtabまたは既存tabで開くことです。
+
+CLI windowにfocusが残っていてbrowser windowがactiveになっていない場合も、直前にCLIから開いたURLは `mark` の保存対象になります。
 
 候補がない場合は `not_found` を返します。
 
@@ -147,6 +150,7 @@ pathを省略した `cd` は `/` へ戻ります。
 
 ```bash
 mark
+mark ""
 mark "Production Admin" --to Work/Admin
 ```
 
@@ -155,15 +159,24 @@ mark "Production Admin" --to Work/Admin
 1. ユーザーがhot key、popup、拡張actionからDedicated extension pageを開く
 2. background entrypointがCLI起動元タブの `LaunchContext` を保存する
 3. ユーザーが `mark` を入力する
-4. Application層が保存先folderを解決する
-5. 重複URLを検査する
-6. Chrome Bookmarks APIでBookmarkを作成する
+4. CLI pageは `storage.session` から最新の `LaunchContext` を読み直す
+5. Application層が保存先folderを解決する
+6. 重複URLを検査する
+7. Chrome Bookmarks APIでBookmarkを作成する
 
 完了条件は、CLI起動元タブが指定folderへ保存されることです。
+
+直前にCLIの `go` からBookmarkまたはChrome履歴URLを開いている場合は、そのURLをCLI起動元タブより新しい保存対象として扱います。
+
+title未指定の場合はCLI起動元タブのtitleをBookmark titleとして使います。
+
+`mark ""` のように空titleを明示した場合は、Bookmark Barにfaviconだけを表示できるように空titleのBookmarkとして保存します。
 
 CLI起動元タブのURLまたはtitleを取得できない場合は `unsupported_tab` を返します。
 
 Dedicated extension pageがすでに開いている場合、拡張actionは既存windowを前面へ戻します。
+
+既存windowを前面へ戻した場合も、`mark` は前面へ戻す直前に保存された最新の `LaunchContext` を使います。
 
 Dedicated extension pageがfocus中の場合、hot key再押下は既存windowを閉じます。
 

@@ -1,4 +1,8 @@
-import { BookmarkCliScreen, type BookmarkCliScreenProps } from "./bookmark-cli-screen";
+import {
+  BookmarkCliScreen,
+  type BookmarkCliScreenProps,
+  type BookmarkCliSuggestionItem,
+} from "./bookmark-cli-screen";
 import { describe, expect, it } from "vitest";
 import { completionCursorCleared } from "../../../domain/cli/completion-cursor";
 import { createElement } from "react";
@@ -116,12 +120,24 @@ const handleSubmit = (): void => {
   globalThis.dispatchEvent(new Event("bookmark-cli-test-submit"));
 };
 
+/**
+ * Test用のsuggestion click callback。
+ * @param {BookmarkCliSuggestionItem} suggestionItem 選択されたsuggestion item。
+ * @returns {void} 返り値なし。
+ */
+const handleSuggestionClick = (suggestionItem: BookmarkCliSuggestionItem): void => {
+  globalThis.dispatchEvent(
+    new CustomEvent("bookmark-cli-test-suggestion-click", { detail: suggestionItem.completion }),
+  );
+};
+
 /** Bookmark CLI screen props fixture。 */
 const baseProps = {
   inputValue,
   onInputChange: handleInputChange,
   onInputKeyDown: handleInputKeyDown,
   onSubmit: handleSubmit,
+  onSuggestionClick: handleSuggestionClick,
   preferNerdFont: false,
   promptStyle: "powerline",
   selectedResultIndex: resultCursorCleared,

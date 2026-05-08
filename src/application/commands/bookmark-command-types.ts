@@ -114,6 +114,10 @@ export interface MarkBookmarkCommand {
    * Bookmark title入力です。
    */
   readonly titleInput: string;
+  /**
+   * Bookmark titleが明示されたかです。
+   */
+  readonly titleSpecified: boolean;
 }
 
 /**

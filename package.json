@@ -1,6 +1,6 @@
 {
   "name": "bookmark-cli-extention",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "description": "Bookmark CLI browser extension built with WXT.",
   "type": "module",
   "private": true,
@@ -22,7 +22,7 @@
     "docs:preview": "pnpm --dir docs run preview",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "lint": "pnpm run lint:secrets && pnpm run lint:oxlint && pnpm run lint:docs",
+    "lint": "pnpm run lint:oxlint && pnpm run lint:docs",
     "lint:docs": "eslint \"**/*.{ts,tsx}\"",
     "lint:jsdoc-style": "eslint \"**/*.{ts,tsx}\" --rule \"bookmark-jsdoc-style/no-desu-ending:error\"",
     "lint:fix": "oxlint --fix . && eslint \"**/*.{ts,tsx}\" --fix",

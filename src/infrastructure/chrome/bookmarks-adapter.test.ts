@@ -58,6 +58,9 @@ const firstBookmarkIndex = 0;
  */
 const targetUrl = "https://dashboard.stripe.com/";
 
+/** 作成されたtab ID fixtureです。 */
+const createdTabId = 42;
+
 /**
  * Chrome Tabs APIの記録fixtureです。
  */
@@ -204,11 +207,18 @@ const createRecordingTabsApi = (): RecordingTabsApi => {
   /**
    * Tab作成入力を記録します。
    * @param {ChromeTabCreateProperties} createProperties tab作成入力です。
-   * @returns {Promise<void>} 記録完了を表すPromiseです。
+   * @returns {ReturnType<ChromeTabsApi["create"]>} 作成されたtabです。
    */
-  const create = async (createProperties: ChromeTabCreateProperties): Promise<void> => {
+  const create = async (
+    createProperties: ChromeTabCreateProperties,
+  ): ReturnType<ChromeTabsApi["create"]> => {
     createdTabs.push(createProperties);
     await Promise.resolve();
+
+    return {
+      id: createdTabId,
+      url: createProperties.url,
+    };
   };
 
   return {

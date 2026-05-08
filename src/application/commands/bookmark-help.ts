@@ -131,8 +131,13 @@ const bookmarkCliHelpTopics = [
   {
     commandName: "mark",
     description: "CLI起動元タブをBookmarkへ保存する",
-    examples: ["mark", "mark --to Work/Admin", 'mark "Production Admin" --to Work/Admin'],
-    usage: ["mark [title] [--to <path>] [--allow-duplicate]"],
+    examples: [
+      "mark",
+      'mark ""',
+      "mark --to Work/Admin",
+      'mark "Production Admin" --to Work/Admin',
+    ],
+    usage: ["mark [title] [--to <path>] [--allow-duplicate]", 'mark "" [--to <path>]'],
   },
   {
     commandName: "tag",

@@ -18,6 +18,7 @@ import {
 } from "./bookmark-organization-use-case-helpers";
 import type { BookmarkCliEntry } from "../../domain/cli/bookmark-cli-entry";
 import type { BookmarkCommandResult } from "./bookmark-use-cases";
+import { parseBookmarkEntryIdTargetInput } from "../../domain/bookmarks/bookmark-entry-id-target";
 
 /** Recursive必須error code。 */
 const recursiveRequiredErrorCode = "invalid_argument";
@@ -99,6 +100,40 @@ const findBookmarkEntryByPath = (
 };
 
 /**
+ * Entry IDに対応するBookmark entryを検索。
+ * @param {BookmarkTree} bookmarkTree Bookmark Tree。
+ * @param {string} entryId Entry ID。
+ * @returns {BookmarkEntry | undefined} Bookmark entry。
+ */
+const findEntryById = (bookmarkTree: BookmarkTree, entryId: string): BookmarkEntry | undefined =>
+  bookmarkTree.entries.find((entry) => entry.id === entryId);
+
+/**
+ * Entry ID入力から削除対象entryを解決。
+ * @param {BookmarkTree} bookmarkTree Bookmark Tree。
+ * @param {string} targetInput 対象入力。
+ * @returns {BookmarkCommandResult<BookmarkEntry> | false} 対象entry解決結果。
+ */
+const resolveTargetEntryById = (
+  bookmarkTree: BookmarkTree,
+  targetInput: string,
+): BookmarkCommandResult<BookmarkEntry> | false => {
+  const entryId = parseBookmarkEntryIdTargetInput(targetInput);
+
+  if (entryId === false) {
+    return false;
+  }
+
+  const entry = findEntryById(bookmarkTree, entryId);
+
+  if (entry) {
+    return createSuccess(entry);
+  }
+
+  return createFailure("not_found", `Bookmark target was not found: ${targetInput}`);
+};
+
+/**
  * Path入力から削除対象entryを解決。
  * @param {BookmarkTree} bookmarkTree Bookmark Tree。
  * @param {CurrentDirectory} currentDirectory 現在ディレクトリ。
@@ -145,6 +180,11 @@ const resolveRemoveTargetEntry = async (
   }
 
   const bookmarkTree = await input.repository.getBookmarkTree();
+  const entryIdResolution = resolveTargetEntryById(bookmarkTree, input.targetInput);
+
+  if (entryIdResolution !== false) {
+    return entryIdResolution;
+  }
 
   return resolveTargetEntryByPath(bookmarkTree, input.currentDirectory, input.targetInput);
 };

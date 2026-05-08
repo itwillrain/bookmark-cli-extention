@@ -127,6 +127,19 @@ const handleStoryInputKeyDown = (): void => {
 };
 
 /**
+ * Story用のsuggestion click callbackです。
+ * @param {BookmarkCliSuggestionItem} suggestionItem 選択されたsuggestion itemです。
+ * @returns {void} 返り値はありません。
+ */
+const handleStorySuggestionClick = (suggestionItem: BookmarkCliSuggestionItem): void => {
+  globalThis.dispatchEvent(
+    new CustomEvent("bookmark-cli-story-suggestion-click", {
+      detail: suggestionItem.completion,
+    }),
+  );
+};
+
+/**
  * Bookmark CLI画面 Story のmetadataです。
  */
 const meta = {
@@ -135,6 +148,7 @@ const meta = {
     onInputChange: handleStoryInputChange,
     onInputKeyDown: handleStoryInputKeyDown,
     onSubmit: handleStorySubmit,
+    onSuggestionClick: handleStorySuggestionClick,
     preferNerdFont: false,
     promptStyle: "powerline",
     selectedResultIndex: resultCursorCleared,

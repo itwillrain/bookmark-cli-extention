@@ -1,6 +1,9 @@
+import type {
+  BookmarkCliSuggestionClickHandler,
+  BookmarkCliSuggestionItem,
+} from "../../presentation/cli/components/bookmark-cli-suggestion-list";
 import type { BookmarkCliCommandState } from "../../presentation/cli/bookmark-cli-controller";
 import { BookmarkCliScreen } from "../../presentation/cli/components/bookmark-cli-screen";
-import type { BookmarkCliSuggestionItem } from "../../presentation/cli/components/bookmark-cli-suggestion-list";
 import type { BookmarkCliTranscriptEntry } from "../../presentation/cli/bookmark-cli-transcript";
 import type { CompletionCursorIndex } from "../../domain/cli/completion-cursor";
 import type { ReactElement } from "react";
@@ -20,6 +23,8 @@ export interface BookmarkCliAppScreenProps {
   readonly keyboard: UseBookmarkCliKeyboardValue;
   /** 入力値変更handler。 */
   readonly onInputChange: InputChangeHandler;
+  /** Suggestionをpointerで確定するhandler。 */
+  readonly onSuggestionClick: BookmarkCliSuggestionClickHandler;
   /** 選択中result index。 */
   readonly selectedResultIndex: ResultCursorIndex;
   /** 選択中suggestion index。 */
@@ -42,6 +47,7 @@ export const BookmarkCliAppScreen = (props: BookmarkCliAppScreenProps): ReactEle
     inputValue={props.inputValue}
     onInputChange={props.onInputChange}
     onInputKeyDown={props.keyboard.handleInputKeyDown}
+    onSuggestionClick={props.onSuggestionClick}
     onSubmit={props.onSubmit}
     preferNerdFont={props.commandState.extensionState.settings.preferNerdFont}
     promptStyle={props.commandState.extensionState.settings.promptStyle}

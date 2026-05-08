@@ -1,4 +1,5 @@
 import {
+  type BookmarkCliSuggestionClickHandler,
   type BookmarkCliSuggestionItem,
   BookmarkCliSuggestionList,
 } from "./bookmark-cli-suggestion-list";
@@ -32,6 +33,10 @@ export interface BookmarkCliTerminalBodyProps {
    * 入力欄のkey操作callbackです。
    */
   readonly onInputKeyDown: (event: CommandInputKeyEvent) => void;
+  /**
+   * Suggestionをpointerで確定するcallbackです。
+   */
+  readonly onSuggestionClick: BookmarkCliSuggestionClickHandler;
   /**
    * Commandを実行するcallbackです。
    */
@@ -216,6 +221,7 @@ export const BookmarkCliTerminalBody = (props: BookmarkCliTerminalBodyProps): Re
         suggestionState,
       })}
       <BookmarkCliSuggestionList
+        onSuggestionClick={props.onSuggestionClick}
         selectedSuggestionIndex={props.selectedSuggestionIndex}
         style={suggestionOverlayStyle}
         suggestionItems={props.suggestionItems}

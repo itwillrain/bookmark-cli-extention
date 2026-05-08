@@ -57,6 +57,7 @@ export const executeMarkCommand = async (
     repository: dependencies.repository,
     targetFolderPathInput: command.targetFolderPathInput,
     titleInput: command.titleInput,
+    titleSpecified: command.titleSpecified,
   };
   const result = await markCurrentTab(addLaunchContextToInput(input, dependencies));
 

@@ -374,6 +374,8 @@ Work/Research
 
 `rm` はrecursive指定がない場合はBookmarkだけを候補にし、`-r`、`-R`、`--recursive` を指定した場合はfolderだけを候補にします。
 
+`rm` の補完候補を確定した場合は、titleが空または同名でも対象を取り違えないように `entry-id:<bookmark-entry-id>` 形式へ補完します。
+
 候補一覧が表示領域を超える場合でも候補自体は全件を保持し、TabキーやShift+Tabキーで全候補を巡回します。
 
 `cd ../` は親ディレクトリ直下のfolderを候補にします。
@@ -447,6 +449,8 @@ Folderを削除する場合は、配下のBookmarkとfolderも削除するため
 `rm` は通常実行では確認待ちに入ります。
 
 `rm` の対象は直前の結果番号、または現在ディレクトリからの相対path、rootからの絶対pathで指定します。
+
+補完候補から確定した場合は、内部的に `entry-id:<bookmark-entry-id>` 形式の対象指定も受け付けます。
 
 確認待ちの次の入力で `y` または `yes` を入力すると削除します。
 
@@ -546,14 +550,22 @@ go #finance stripe
 
 保存先を指定する場合は、`--to` にfolder pathを渡します。
 
+直前に `go` でBookmarkまたはChrome履歴URLを開いている場合は、browserのactive tab focusに依存せず、そのURLを保存対象にします。
+
 titleを指定しない場合は、現在のタブのtitleをBookmark titleとして使います。
 
 titleを指定した場合は、指定した文字列をBookmark titleとして使います。
 
+空titleを明示したい場合は `mark ""` を使います。
+
+Bookmark Barにfaviconだけを置きたい場合は、空titleのBookmark作成を許可します。
+
 ```bash
 mark
+mark ""
 mark "Production Admin"
 mark --to Work/Admin
+mark "" --to Work/Admin
 mark "Production Admin" --to Work/Admin
 ```
 
@@ -581,6 +593,10 @@ mark "Production Admin" --to Work/Admin --allow-duplicate
 
 title、url、folder pathを対象にfuzzy検索し、もっとも一致したBookmarkを開きます。
 
+BookmarkまたはChrome履歴URLを開いた場合は、そのURLを次の `mark` 対象として `LaunchContext` に保存します。
+
+これにより、CLI windowにfocusが残ったままでも、直前にCLIから開いたページを `mark` で保存できます。
+
 ```bash
 go stripe bill
 go github pr
@@ -607,6 +623,7 @@ find "github.com" --format json
 
 ```bash
 mark
+mark ""
 mark "Production Admin"
 mark --to Work/Admin
 mark --allow-duplicate

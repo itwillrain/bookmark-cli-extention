@@ -21,6 +21,9 @@ const previousTokenOffset = 1;
 /** 見つからないindex。 */
 const notFoundIndex = -1;
 
+/** 空のtitle token数。 */
+const emptyTitleTokenCount = 0;
+
 /** 先頭と末尾の二重引用符に一致する正規表現。 */
 const wrappingDoubleQuotePattern = /^"|"$/gu;
 
@@ -75,16 +78,28 @@ const isTitleToken = (queryParts: readonly string[], token: string, index: numbe
   !isMarkOptionToken(token) && !isTargetFolderValueToken(queryParts, index);
 
 /**
+ * Mark commandのtitle token一覧を取得。
+ * @param {readonly string[]} queryParts query token一覧。
+ * @returns {readonly string[]} title token一覧。
+ */
+const getMarkBookmarkTitleTokens = (queryParts: readonly string[]): readonly string[] =>
+  queryParts.filter((token, index) => isTitleToken(queryParts, token, index));
+
+/**
+ * Mark commandにtitle入力が含まれるかを判定。
+ * @param {readonly string[]} queryParts query token一覧。
+ * @returns {boolean} title入力が含まれるならtrue。
+ */
+const hasMarkBookmarkTitle = (queryParts: readonly string[]): boolean =>
+  getMarkBookmarkTitleTokens(queryParts).length > emptyTitleTokenCount;
+
+/**
  * Mark commandのtitleを正規化。
  * @param {readonly string[]} queryParts query token一覧。
  * @returns {string} 正規化したtitle入力。
  */
 const normalizeMarkBookmarkTitle = (queryParts: readonly string[]): string =>
-  stripWrappingDoubleQuotes(
-    queryParts
-      .filter((token, index) => isTitleToken(queryParts, token, index))
-      .join(commandTokenSeparator),
-  );
+  stripWrappingDoubleQuotes(getMarkBookmarkTitleTokens(queryParts).join(commandTokenSeparator));
 
 /**
  * Mark commandを解析。
@@ -93,7 +108,7 @@ const normalizeMarkBookmarkTitle = (queryParts: readonly string[]): string =>
  * @example
  * ```ts
  * const result = parseMarkBookmarkCommand(["--to", "./Work", "Stripe"]);
- * // { kind: "mark", targetFolderPathInput: "./Work", titleInput: "Stripe", allowDuplicate: false }
+ * // { kind: "mark", targetFolderPathInput: "./Work", titleInput: "Stripe", titleSpecified: true, allowDuplicate: false }
  * ```
  */
 export const parseMarkBookmarkCommand = (queryParts: readonly string[]): MarkBookmarkCommand => ({
@@ -101,4 +116,5 @@ export const parseMarkBookmarkCommand = (queryParts: readonly string[]): MarkBoo
   kind: "mark",
   targetFolderPathInput: findTargetFolderPathInput(queryParts),
   titleInput: normalizeMarkBookmarkTitle(queryParts),
+  titleSpecified: hasMarkBookmarkTitle(queryParts),
 });
