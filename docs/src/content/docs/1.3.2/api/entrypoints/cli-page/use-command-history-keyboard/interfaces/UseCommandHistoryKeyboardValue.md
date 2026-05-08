@@ -1,0 +1,45 @@
+---
+editUrl: false
+next: false
+prev: false
+title: UseCommandHistoryKeyboardValue
+slug: 1.3.2/api/entrypoints/cli-page/use-command-history-keyboard/interfaces/usecommandhistorykeyboardvalue
+---
+
+Defined in: [entrypoints/cli-page/use-command-history-keyboard.ts:33](https://github.com/itwillrain/bookmark-cli-extention/blob/3762fcea2bb0c7afa531d8b0e939b361be0a717a/src/entrypoints/cli-page/use-command-history-keyboard.ts#L33)
+
+Command history keyboard hook戻り値。
+
+## Properties
+
+### clearHistoryCursor
+
+> `readonly` **clearHistoryCursor**: () => `void`
+
+Defined in: [entrypoints/cli-page/use-command-history-keyboard.ts:35](https://github.com/itwillrain/bookmark-cli-extention/blob/3762fcea2bb0c7afa531d8b0e939b361be0a717a/src/entrypoints/cli-page/use-command-history-keyboard.ts#L35)
+
+Command history cursorを解除。
+
+#### Returns
+
+`void`
+
+***
+
+### moveCommandHistoryInput
+
+> `readonly` **moveCommandHistoryInput**: (`direction`) => `boolean`
+
+Defined in: [entrypoints/cli-page/use-command-history-keyboard.ts:37](https://github.com/itwillrain/bookmark-cli-extention/blob/3762fcea2bb0c7afa531d8b0e939b361be0a717a/src/entrypoints/cli-page/use-command-history-keyboard.ts#L37)
+
+Command historyを入力欄へ反映。
+
+#### Parameters
+
+##### direction
+
+[`CommandHistoryCursorDirection`](/1.3.2/api/domain/storage/command-history-navigation/type-aliases/commandhistorycursordirection/)
+
+#### Returns
+
+`boolean`
