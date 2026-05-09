@@ -99,6 +99,14 @@ const bookmarkCommandCatalog = [
     description: "Chrome履歴を表示",
   },
   {
+    commandName: "doctor",
+    description: "Bookmark Treeの整理候補を診断",
+  },
+  {
+    commandName: "dupes",
+    description: "重複Bookmarkを検出",
+  },
+  {
     commandName: "mark",
     description: "現在tabをBookmarkに保存",
   },

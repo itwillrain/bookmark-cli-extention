@@ -7,6 +7,7 @@ import type {
 } from "./bookmark-usage-command-types";
 import type { FindBookmarkCommand, GoBookmarkCommand } from "./bookmark-search-command-types";
 import type { BookmarkCliCopyValueKind } from "../../domain/cli/bookmark-cli-copy";
+import type { BookmarkDiagnosticChecks } from "../../domain/bookmarks/bookmark-diagnostics";
 
 export type {
   BrowserHistoryCommand,
@@ -215,6 +216,34 @@ export interface RenameBookmarkCommand {
 }
 
 /**
+ * Bookmark Tree診断commandです。
+ */
+export interface DoctorBookmarkCommand {
+  /**
+   * 有効にする診断種別です。
+   */
+  readonly checks: BookmarkDiagnosticChecks;
+  /**
+   * Command種別です。
+   */
+  readonly kind: "doctor";
+}
+
+/**
+ * Bookmark重複検出commandです。
+ */
+export interface DupesBookmarkCommand {
+  /**
+   * 有効にする診断種別です。
+   */
+  readonly checks: BookmarkDiagnosticChecks;
+  /**
+   * Command種別です。
+   */
+  readonly kind: "dupes";
+}
+
+/**
  * Grep pipe stage commandです。
  */
 export interface GrepPipeStageCommand {
@@ -405,6 +434,8 @@ export interface UnknownBookmarkCommand {
  */
 export type PipeSourceBookmarkCommand =
   | BrowserHistoryCommand
+  | DoctorBookmarkCommand
+  | DupesBookmarkCommand
   | FindBookmarkCommand
   | FrequentBookmarksCommand
   | HelpBookmarkCommand
@@ -441,6 +472,8 @@ export type ParsedBookmarkCommand =
   | ClearBookmarkCommand
   | CopyBookmarkCommand
   | EmptyBookmarkCommand
+  | DoctorBookmarkCommand
+  | DupesBookmarkCommand
   | FindBookmarkCommand
   | BrowserHistoryCommand
   | GoBookmarkCommand

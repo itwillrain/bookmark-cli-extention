@@ -145,6 +145,7 @@ Bookmark行の既定アクションは `go <result-number>` です。
 - `ls | grep hoge` のように結果一覧をpipeで絞り込めるようにする
 - `pwd | copy` や `copy 1` でCLI上のpathやURLをclipboardへ送れるようにする
 - `history` でChrome閲覧履歴だけを一覧表示し、`history | grep hoge` で絞り込めるようにする
+- `doctor` でBookmark Treeの整理候補を検出し、`dupes` で重複Bookmarkを検出できるようにする
 - `mkdir`、`mv`、`rename` は対象と変更先を解決できたら即時実行する
 - `rm` は対話確認または `-f` / `--force` で実行する
 - 人間が読む番号付き一覧と、機械が読むJSON形式を切り替えられるようにする
@@ -428,13 +429,53 @@ find stripe | grep dashboard | copy
 
 `ls | copy` や `find ... | copy` は表示行をplain textとしてcopyします。
 
-v1でpipe sourceにできるcommandは `pwd`、`ls`、`ll`、`find`、`history`、`tree`、`recent`、`freq`、`help` です。
+v1でpipe sourceにできるcommandは `pwd`、`ls`、`ll`、`find`、`history`、`tree`、`recent`、`freq`、`doctor`、`dupes`、`help` です。
 
 `mv`、`rm`、`rename`、`mkdir`、`mark`、`tag` のような書き込み系commandは、意図しない副作用を避けるためpipe sourceにしません。
 
 `grep` はpipe stageとして扱い、standalone commandとしては扱いません。
 
 `copy` はpipe stageとstandalone commandの両方に対応します。
+
+## doctor / dupes
+
+`doctor` はBookmark Treeの整理候補を検出します。
+
+`dupes` は重複Bookmark検出に特化したshortcut commandです。
+
+初期実装で扱う診断項目は次のとおりです。
+
+- 空titleのBookmark
+- 同じURLを持つBookmark
+- 同じtitleを持つBookmark
+
+```bash
+doctor
+doctor --empty-title
+doctor --duplicate-url
+doctor --duplicate-title
+doctor --all
+dupes
+dupes --url
+dupes --title
+dupes --all
+```
+
+`doctor` のdefaultは `--empty-title` と `--duplicate-url` を対象にします。
+
+`dupes` のdefaultは `--url` です。
+
+`--duplicate-title` または `dupes --title` は、trim後に大文字小文字を区別せず同じtitleになったBookmarkを検出します。
+
+空titleは `empty-title` として扱い、title重複からは除外します。
+
+診断結果は通常のBookmark resultとして表示し、直前結果一覧にも保存します。
+
+そのため、`go 1`、`copy --url 1`、`rm 2` のように診断後の番号指定操作へ繋げられます。
+
+空titleのBookmarkは表示上だけ `(empty title)` として描画します。
+
+実際のBookmark titleは変更しません。
 
 ## 整理操作と確認
 

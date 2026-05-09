@@ -110,6 +110,8 @@ const isPipeSourceBookmarkCommand = (
   command: ParsedBookmarkCommand,
 ): command is PipeSourceBookmarkCommand =>
   command.kind === "find" ||
+  command.kind === "doctor" ||
+  command.kind === "dupes" ||
   command.kind === "freq" ||
   command.kind === "help" ||
   command.kind === "history" ||

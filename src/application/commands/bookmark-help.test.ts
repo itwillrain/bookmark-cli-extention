@@ -7,6 +7,12 @@ const goHelpTopicName = "go";
 /** History help topic名です。 */
 const historyHelpTopicName = "history";
 
+/** Doctor help topic名です。 */
+const doctorHelpTopicName = "doctor";
+
+/** Dupes help topic名です。 */
+const dupesHelpTopicName = "dupes";
+
 /** Grep help topic名です。 */
 const grepHelpTopicName = "grep";
 
@@ -40,6 +46,8 @@ describe("bookmark CLI help catalog", (): void => {
 
     expect(topicNames).toContain(goHelpTopicName);
     expect(topicNames).toContain(historyHelpTopicName);
+    expect(topicNames).toContain(doctorHelpTopicName);
+    expect(topicNames).toContain(dupesHelpTopicName);
     expect(topicNames).toContain(grepHelpTopicName);
     expect(topicNames).toContain(copyHelpTopicName);
     expect(topicNames).toContain(aliasHelpTopicName);
@@ -65,6 +73,41 @@ describe("bookmark CLI help catalog", (): void => {
    */
   it("returns false for unknown help topic", (): void => {
     expect(findBookmarkCliHelpTopic(unknownHelpTopicName)).toBe(false);
+  });
+});
+
+/**
+ * Bookmark CLI diagnostic help catalogのテストスイートです。
+ */
+describe("bookmark CLI diagnostic help catalog", (): void => {
+  /**
+   * Doctor topicから診断optionを取得できることを検証します。
+   */
+  it("finds doctor help topic", (): void => {
+    const topic = findBookmarkCliHelpTopic(doctorHelpTopicName);
+
+    expect(topic).not.toBe(false);
+
+    if (topic !== false) {
+      expect(topic.usage).toContain(
+        "doctor [--empty-title|--duplicate-url|--duplicate-title|--all]",
+      );
+      expect(topic.examples).toContain("doctor | grep duplicate-url");
+    }
+  });
+
+  /**
+   * Dupes topicから重複検出optionを取得できることを検証します。
+   */
+  it("finds dupes help topic", (): void => {
+    const topic = findBookmarkCliHelpTopic(dupesHelpTopicName);
+
+    expect(topic).not.toBe(false);
+
+    if (topic !== false) {
+      expect(topic.usage).toContain("dupes [--url|--title|--all]");
+      expect(topic.examples).toContain("dupes --title");
+    }
   });
 });
 

@@ -71,6 +71,29 @@ describe("suggestBookmarkCommands prefix", (): void => {
   });
 });
 
+/**
+ * Bookmark command suggestionの診断command prefixテストスイート。
+ */
+describe("suggestBookmarkCommands diagnostic prefix", (): void => {
+  /**
+   * Doctor commandをprefixから補完候補へ出せることを検証。
+   */
+  it("suggests doctor command by prefix", (): void => {
+    expect(suggestBookmarkCommands("do").map((suggestion) => suggestion.commandName)).toStrictEqual(
+      ["doctor"],
+    );
+  });
+
+  /**
+   * Dupes commandをprefixから補完候補へ出せることを検証。
+   */
+  it("suggests dupes command by prefix", (): void => {
+    expect(suggestBookmarkCommands("du").map((suggestion) => suggestion.commandName)).toStrictEqual(
+      ["dupes"],
+    );
+  });
+});
+
 /** Bookmark command suggestionのcopy commandテストスイート。 */
 describe("suggestBookmarkCommands copy commands", (): void => {
   /** Copy commandをprefixから補完候補へ出せることを検証。 */

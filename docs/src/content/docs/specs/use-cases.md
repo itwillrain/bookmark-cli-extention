@@ -39,6 +39,8 @@ OSターミナル連携はv1に含めません。
 | UC-08 | 利用頻度から再訪する     | `recent`, `freq`                   | Slice 7       |
 | UC-09 | 疑似CLIを快適に操作する  | hot key, keybinding, result view   | Slice 7       |
 | UC-10 | Chrome履歴から再訪する   | `history`, `find`, `go`            | Slice 8       |
+| UC-11 | Popupで設定する          | hot key, command alias             | 後続          |
+| UC-12 | Bookmark Treeを診断する  | `doctor`, `dupes`                  | 後続          |
 
 ## UC-01: Bookmarkを検索する
 
@@ -365,3 +367,28 @@ alias展開後のcommand種別は、`clear` によるscrollback transcript削除
 abbreviationは `settings.commandAbbreviations` に保存し、空白で先頭command tokenを確定した時点で入力欄へ展開します。
 
 未展開のままEnter確定した場合も、transcriptの実行commandと履歴へ展開後commandを保存します。
+
+## UC-12: Bookmark Treeを診断する
+
+ユーザーは整理前に、空titleや重複URLのBookmarkを見つけます。
+
+主コマンドは `doctor` と `dupes` です。
+
+```bash
+doctor
+doctor --empty-title
+dupes
+dupes --title
+```
+
+基本フローは次のとおりです。
+
+1. ユーザーが `doctor` を実行する
+2. Application層がBookmark Treeを取得する
+3. Domain層が空title、重複URL、重複titleを検出する
+4. Presentation層が診断結果を通常のBookmark resultとして表示する
+5. ユーザーが結果番号を使って `go 1`、`copy --url 1`、`rm 2` などを実行する
+
+完了条件は、診断結果を番号付き一覧として表示し、直前結果一覧として再利用できることです。
+
+`doctor` と `dupes` はBookmarkを変更しません。

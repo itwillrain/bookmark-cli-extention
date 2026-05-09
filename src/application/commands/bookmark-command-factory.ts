@@ -11,6 +11,10 @@ import {
   parseFrequentBookmarksCommand,
   parseRecentBookmarksCommand,
 } from "./bookmark-usage-command-parser";
+import {
+  parseDoctorBookmarkCommand,
+  parseDupesBookmarkCommand,
+} from "./bookmark-diagnostic-command-parser";
 import { parseFindBookmarkCommand, parseGoBookmarkCommand } from "./bookmark-search-command-parser";
 import {
   parseMakeDirectoryCommand,
@@ -39,6 +43,12 @@ const frequentBookmarksCommandName = "freq";
 
 /** History command名です。 */
 const browserHistoryCommandName = "history";
+
+/** Doctor command名です。 */
+const doctorCommandName = "doctor";
+
+/** Dupes command名です。 */
+const dupesCommandName = "dupes";
 
 /** Ls command名です。 */
 const listDirectoryCommandName = "ls";
@@ -171,6 +181,22 @@ const createFrequentBookmarksCommand = (context: CommandParseContext): ParsedBoo
  */
 const createBrowserHistoryCommand = (context: CommandParseContext): ParsedBookmarkCommand =>
   parseBrowserHistoryCommand(context.queryParts);
+
+/**
+ * Doctor commandを作ります。
+ * @param {CommandParseContext} context Command parse contextです。
+ * @returns {ParsedBookmarkCommand} Doctor commandです。
+ */
+const createDoctorBookmarkCommand = (context: CommandParseContext): ParsedBookmarkCommand =>
+  parseDoctorBookmarkCommand(context.queryParts);
+
+/**
+ * Dupes commandを作ります。
+ * @param {CommandParseContext} context Command parse contextです。
+ * @returns {ParsedBookmarkCommand} Dupes commandです。
+ */
+const createDupesBookmarkCommand = (context: CommandParseContext): ParsedBookmarkCommand =>
+  parseDupesBookmarkCommand(context.queryParts);
 
 /**
  * Ls commandを作ります。
@@ -343,6 +369,8 @@ const bookmarkCommandFactories: Readonly<Record<string, BookmarkCommandFactory>>
   [changeDirectoryCommandName]: createChangeDirectoryCommand,
   [clearCommandName]: createClearCommand,
   [copyCommandName]: createCopyCommand,
+  [doctorCommandName]: createDoctorBookmarkCommand,
+  [dupesCommandName]: createDupesBookmarkCommand,
   [findCommandName]: createFindBookmarkCommand,
   [frequentBookmarksCommandName]: createFrequentBookmarksCommand,
   [goCommandName]: createGoBookmarkCommand,

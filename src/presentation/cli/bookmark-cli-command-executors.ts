@@ -17,6 +17,10 @@ export {
   executeShowDirectoryTreeCommand,
 } from "./bookmark-cli-directory-command-executors";
 export { executeCopyCommand } from "./bookmark-cli-copy-command-executors";
+export {
+  executeDoctorBookmarkCommand,
+  executeDupesBookmarkCommand,
+} from "./bookmark-cli-diagnostic-command-executors";
 export { executeHelpCommand } from "./bookmark-cli-help-command-executors";
 export { executeMarkCommand } from "./bookmark-cli-mark-command-executors";
 export {

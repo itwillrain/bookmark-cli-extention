@@ -75,6 +75,18 @@ const bookmarkCliHelpTopics = [
     ],
   },
   {
+    commandName: "doctor",
+    description: "Bookmark Treeの整理候補を診断する",
+    examples: ["doctor", "doctor --duplicate-title", "doctor | grep duplicate-url"],
+    usage: ["doctor [--empty-title|--duplicate-url|--duplicate-title|--all]"],
+  },
+  {
+    commandName: "dupes",
+    description: "重複Bookmarkを検出する",
+    examples: ["dupes", "dupes --title", "dupes --all"],
+    usage: ["dupes [--url|--title|--all]"],
+  },
+  {
     commandName: "grep",
     description: "pipeで結果一覧を絞り込む",
     examples: ["ls | grep stripe", "find docs | grep github"],

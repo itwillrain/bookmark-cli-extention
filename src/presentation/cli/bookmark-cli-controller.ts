@@ -15,6 +15,8 @@ import {
   executeBrowserHistoryCommand,
   executeChangeDirectoryCommand,
   executeCopyCommand,
+  executeDoctorBookmarkCommand,
+  executeDupesBookmarkCommand,
   executeEmptyCommand,
   executeFindCommand,
   executeGoCommand,
@@ -158,6 +160,48 @@ const executeParsedBrowserHistoryCommand = async (
 ): Promise<BookmarkCliCommandState> => {
   if (command.kind === "history") {
     const state = await executeBrowserHistoryCommand(command, dependencies);
+
+    return state;
+  }
+
+  await Promise.resolve();
+
+  return executeEmptyCommand(dependencies);
+};
+
+/**
+ * Doctor command executor adapterです。
+ * @param {ParsedBookmarkCommand} command Parsed commandです。
+ * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存です。
+ * @returns {Promise<BookmarkCliCommandState>} 画面に反映する状態です。
+ */
+const executeParsedDoctorBookmarkCommand = async (
+  command: ParsedBookmarkCommand,
+  dependencies: BookmarkCliCommandDependencies,
+): Promise<BookmarkCliCommandState> => {
+  if (command.kind === "doctor") {
+    const state = await executeDoctorBookmarkCommand(command, dependencies);
+
+    return state;
+  }
+
+  await Promise.resolve();
+
+  return executeEmptyCommand(dependencies);
+};
+
+/**
+ * Dupes command executor adapterです。
+ * @param {ParsedBookmarkCommand} command Parsed commandです。
+ * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存です。
+ * @returns {Promise<BookmarkCliCommandState>} 画面に反映する状態です。
+ */
+const executeParsedDupesBookmarkCommand = async (
+  command: ParsedBookmarkCommand,
+  dependencies: BookmarkCliCommandDependencies,
+): Promise<BookmarkCliCommandState> => {
+  if (command.kind === "dupes") {
+    const state = await executeDupesBookmarkCommand(command, dependencies);
 
     return state;
   }
@@ -312,6 +356,8 @@ const executeParsedTagCommand = async (
  * Pipe source kindごとのexecutorです。
  */
 const pipeSourceCommandExecutors = {
+  doctor: executeParsedDoctorBookmarkCommand,
+  dupes: executeParsedDupesBookmarkCommand,
   find: executeParsedFindCommand,
   freq: executeParsedUsageCommand,
   help: executeParsedHelpCommand,
@@ -442,6 +488,8 @@ const parsedBookmarkCommandExecutors = {
   cd: executeParsedChangeDirectoryCommand,
   clear: executeParsedEmptyCommand,
   copy: executeParsedCopyCommand,
+  doctor: executeParsedDoctorBookmarkCommand,
+  dupes: executeParsedDupesBookmarkCommand,
   empty: executeParsedEmptyCommand,
   find: executeParsedFindCommand,
   freq: executeParsedUsageCommand,
