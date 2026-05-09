@@ -89,15 +89,29 @@ jobs:
       - name: Zip Firefox extension
         run: pnpm run zip:firefox
 
+      - name: Zip AMO source package
+        run: pnpm run zip:amo-sources -- "${RELEASE_VERSION}"
+        env:
+          RELEASE_VERSION: ${{ inputs.version }}
+
       - name: Collect release assets
         run: |
           mkdir -p release-assets
-          find dist -maxdepth 1 -type f -name "*-${RELEASE_VERSION}-*.zip" -exec cp {} release-assets/ \;
+          PACKAGE_NAME="$(node -p "require('./package.json').name")"
+          RELEASE_ASSETS=(
+            "dist/${PACKAGE_NAME}-${RELEASE_VERSION}-chrome.zip"
+            "dist/${PACKAGE_NAME}-${RELEASE_VERSION}-firefox.zip"
+            "dist/${PACKAGE_NAME}-${RELEASE_VERSION}-amo-sources.zip"
+          )
 
-          if [ -z "$(find release-assets -maxdepth 1 -type f -name "*.zip" -print -quit)" ]; then
-            echo "No zip assets were generated."
-            exit 1
-          fi
+          for asset in "${RELEASE_ASSETS[@]}"; do
+            if [ ! -f "${asset}" ]; then
+              echo "Missing release asset: ${asset}"
+              exit 1
+            fi
+
+            cp "${asset}" release-assets/
+          done
 
           ls -la release-assets
         env:

@@ -36,6 +36,7 @@
     "test:storybook": "storybook build --test",
     "test:watch": "vitest",
     "zip": "wxt zip",
+    "zip:amo-sources": "tsx tools/amo-source-package.ts",
     "zip:firefox": "wxt zip -b firefox"
   },
   "devDependencies": {
