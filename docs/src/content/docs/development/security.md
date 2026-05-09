@@ -35,6 +35,10 @@ major updateは自動merge対象にしません。
 
 Dependabot PRはCI、test、buildを通過したものだけauto-merge候補にします。
 
+GitHub Actionsの `GITHUB_TOKEN` はpull requestをapproveできないため、CIはDependabot PRへauto-mergeを設定するところまでを担当します。
+
+branch protectionでreviewを必須にしている場合、maintainerまたは別の承認用botがapproveした後にauto-mergeされます。
+
 ## Alert対応
 
 Dependabot alertが作成されたら、まずseverity、影響範囲、fixed versionの有無を確認します。
