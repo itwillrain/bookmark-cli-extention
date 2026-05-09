@@ -129,6 +129,12 @@ const bookmarkCliHelpTopics = [
     usage: ["clear"],
   },
   {
+    commandName: "version",
+    description: "Bookmark CLIのversionを表示する",
+    examples: ["version", "-v", "--version", "--v", "-version"],
+    usage: ["version", "-v", "--version", "--v", "-version"],
+  },
+  {
     commandName: "mark",
     description: "CLI起動元タブをBookmarkへ保存する",
     examples: [

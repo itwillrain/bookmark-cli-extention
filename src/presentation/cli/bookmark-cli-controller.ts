@@ -28,6 +28,7 @@ import {
   executeUnabbrCommand,
   executeUnaliasCommand,
   executeUnknownCommand,
+  executeVersionCommand,
 } from "./bookmark-cli-command-executors";
 import { executeParsedOrganizeCommand } from "./bookmark-cli-organize-command-router";
 import { executeParsedUsageCommand } from "./bookmark-cli-usage-command-router";
@@ -309,6 +310,25 @@ const executeParsedTagCommand = async (
 };
 
 /**
+ * Version command executor adapterです。
+ * @param {ParsedBookmarkCommand} command Parsed commandです。
+ * @param {BookmarkCliCommandDependencies} dependencies command実行に必要な依存です。
+ * @returns {Promise<BookmarkCliCommandState>} 画面に反映する状態です。
+ */
+const executeParsedVersionCommand = async (
+  command: ParsedBookmarkCommand,
+  dependencies: BookmarkCliCommandDependencies,
+): Promise<BookmarkCliCommandState> => {
+  await Promise.resolve();
+
+  if (command.kind === "version") {
+    return executeVersionCommand(dependencies);
+  }
+
+  return executeEmptyCommand(dependencies);
+};
+
+/**
  * Pipe source kindごとのexecutorです。
  */
 const pipeSourceCommandExecutors = {
@@ -462,6 +482,7 @@ const parsedBookmarkCommandExecutors = {
   unabbr: executeParsedUnabbrCommand,
   unalias: executeParsedUnaliasCommand,
   unknown: executeParsedUnknownCommand,
+  version: executeParsedVersionCommand,
 } satisfies Readonly<Record<ParsedBookmarkCommand["kind"], ParsedBookmarkCommandExecutor>>;
 
 /**

@@ -52,6 +52,21 @@ const changeDirectoryCommandName = "cd";
 /** Clear command名です。 */
 const clearCommandName = "clear";
 
+/** Version command名です。 */
+const versionCommandName = "version";
+
+/** 短いversion option名です。 */
+const shortVersionOption = "-v";
+
+/** 長いversion option名です。 */
+const longVersionOption = "--version";
+
+/** 長い短縮version option名です。 */
+const abbreviatedLongVersionOption = "--v";
+
+/** 互換用version option名です。 */
+const legacyLongVersionOption = "-version";
+
 /** Copy command名です。 */
 const copyCommandName = "copy";
 
@@ -197,6 +212,14 @@ const createChangeDirectoryCommand = (context: CommandParseContext): ParsedBookm
  */
 const createClearCommand = (): ParsedBookmarkCommand => ({
   kind: "clear",
+});
+
+/**
+ * Version commandを作ります。
+ * @returns {ParsedBookmarkCommand} Version commandです。
+ */
+const createVersionCommand = (): ParsedBookmarkCommand => ({
+  kind: "version",
 });
 
 /**
@@ -362,6 +385,11 @@ const bookmarkCommandFactories: Readonly<Record<string, BookmarkCommandFactory>>
   [tagBookmarkCommandName]: createTagBookmarkCommand,
   [unabbrCommandName]: createUnabbrCommand,
   [unaliasCommandName]: createUnaliasCommand,
+  [versionCommandName]: createVersionCommand,
+  [shortVersionOption]: createVersionCommand,
+  [longVersionOption]: createVersionCommand,
+  [abbreviatedLongVersionOption]: createVersionCommand,
+  [legacyLongVersionOption]: createVersionCommand,
 };
 
 /**

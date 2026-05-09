@@ -27,6 +27,16 @@ const helpGoInput = "help go";
 const helpHistoryInput = "help history";
 
 /**
+ * Version表示commandの入力一覧。
+ */
+const versionCommandInputs = ["version", "-v", "--version", "--v", "-version"] as const;
+
+/**
+ * 拡張機能version fixture。
+ */
+const extensionVersionFixture = "1.3.2";
+
+/**
  * Root current directory。
  */
 const rootCurrentDirectory = "/";
@@ -127,6 +137,7 @@ const createCommandDependencies = (): BookmarkCliCommandDependencies => ({
   creator: bookmarkCreator,
   currentDirectory: rootCurrentDirectory,
   extensionState: initialExtensionState,
+  extensionVersion: extensionVersionFixture,
   lastResultEntries: emptyLastResultEntries,
   opener: bookmarkOpener,
   repository: createBookmarkRepository(),
@@ -164,6 +175,24 @@ describe("executeBookmarkCliCommand help commands", (): void => {
       },
     ]);
   });
+});
+
+/**
+ * Bookmark version CLI controllerのテストスイート。
+ */
+describe("executeBookmarkCliCommand version command", (): void => {
+  /**
+   * Version commandとversion option aliasでversionを表示できることを検証。
+   */
+  it.each(versionCommandInputs)(
+    "returns extension version for %s",
+    async (input): Promise<void> => {
+      const state = await executeBookmarkCliCommand(input, createCommandDependencies());
+
+      expect(state.statusText).toBe("bookmark-cli 1.3.2");
+      expect(state.resultItems).toStrictEqual([]);
+    },
+  );
 });
 
 /**

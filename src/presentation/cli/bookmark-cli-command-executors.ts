@@ -33,6 +33,7 @@ export {
   executeRecentBookmarksCommand,
 } from "./bookmark-cli-usage-command-executors";
 export { executeBrowserHistoryCommand } from "./bookmark-cli-history-command-executors";
+export { executeVersionCommand } from "./bookmark-cli-version-command-executors";
 
 /**
  * 初期状態のstatus textです。

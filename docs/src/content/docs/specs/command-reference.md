@@ -44,6 +44,7 @@ Folderを削除する場合は、配下のBookmarkとfolderも削除するため
 | `grep`   | pipeで結果一覧を絞り込む               | 対象 |
 | `copy`   | 直前結果またはpipe出力をcopyする       | 対象 |
 | `clear`  | 画面上のscrollback transcriptを消す    | 対象 |
+| `version` | 拡張機能のversionを表示する          | 対象 |
 | `history` | Chrome閲覧履歴を表示する             | 対象 |
 | `recent` | 最近開いたBookmarkを表示する           | 対象 |
 | `freq`   | よく開くBookmarkを表示する             | 対象 |
@@ -484,6 +485,26 @@ clear
 現在ディレクトリ、コマンド入力履歴、保存済みBookmarkデータは削除しません。
 
 `clear` 自体は通常の入力としてコマンド入力履歴へ保存できます。
+
+代表的なエラーはありません。
+
+## `version`
+
+拡張機能manifestのversionを表示します。
+
+```bash
+version
+-v
+--version
+--v
+-version
+```
+
+```text
+bookmark-cli 1.3.2
+```
+
+結果一覧を持たないstatus-only outputとして表示します。
 
 代表的なエラーはありません。
 
