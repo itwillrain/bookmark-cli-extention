@@ -25,6 +25,9 @@ const treeHelpTopicName = "tree";
 /** Rm help topic名です。 */
 const removeHelpTopicName = "rm";
 
+/** Version help topic名です。 */
+const versionHelpTopicName = "version";
+
 /** Unknown help topic名です。 */
 const unknownHelpTopicName = "missing";
 
@@ -44,6 +47,7 @@ describe("bookmark CLI help catalog", (): void => {
     expect(topicNames).toContain(copyHelpTopicName);
     expect(topicNames).toContain(aliasHelpTopicName);
     expect(topicNames).toContain(abbrHelpTopicName);
+    expect(topicNames).toContain(versionHelpTopicName);
   });
 
   /**
@@ -65,6 +69,25 @@ describe("bookmark CLI help catalog", (): void => {
    */
   it("returns false for unknown help topic", (): void => {
     expect(findBookmarkCliHelpTopic(unknownHelpTopicName)).toBe(false);
+  });
+});
+
+/**
+ * Bookmark CLI version help catalogのテストスイートです。
+ */
+describe("bookmark CLI version help catalog", (): void => {
+  /**
+   * Version topicからversion表示の使い方を取得できることを検証します。
+   */
+  it("finds version help topic", (): void => {
+    const topic = findBookmarkCliHelpTopic(versionHelpTopicName);
+
+    expect(topic).not.toBe(false);
+
+    if (topic !== false) {
+      expect(topic.usage).toContain("--version");
+      expect(topic.examples).toContain("-version");
+    }
   });
 });
 

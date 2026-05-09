@@ -91,6 +91,18 @@ const bookmarkCommandCatalog = [
     description: "画面上の実行結果を消す",
   },
   {
+    commandName: "version",
+    description: "Bookmark CLIのversionを表示",
+  },
+  {
+    commandName: "-v",
+    description: "Bookmark CLIのversionを表示",
+  },
+  {
+    commandName: "--version",
+    description: "Bookmark CLIのversionを表示",
+  },
+  {
     commandName: "help",
     description: "コマンドの使い方を表示",
   },

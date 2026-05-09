@@ -64,6 +64,10 @@ export interface BookmarkCliCommandDependencies {
    */
   readonly lastResultEntries: readonly BookmarkCliEntry[];
   /**
+   * 表示対象の拡張機能versionです。
+   */
+  readonly extensionVersion?: string;
+  /**
    * 確認待ち操作です。
    */
   readonly pendingConfirmation?: BookmarkCliPendingConfirmation;

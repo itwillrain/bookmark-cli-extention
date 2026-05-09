@@ -287,6 +287,16 @@ export interface ClearBookmarkCommand {
 }
 
 /**
+ * Version表示commandです。
+ */
+export interface VersionBookmarkCommand {
+  /**
+   * Command種別です。
+   */
+  readonly kind: "version";
+}
+
+/**
  * Command alias操作種別です。
  */
 export type AliasBookmarkCommandOperation = "list" | "set";
@@ -459,4 +469,5 @@ export type ParsedBookmarkCommand =
   | TagBookmarkCommand
   | UnabbrBookmarkCommand
   | UnaliasBookmarkCommand
-  | UnknownBookmarkCommand;
+  | UnknownBookmarkCommand
+  | VersionBookmarkCommand;

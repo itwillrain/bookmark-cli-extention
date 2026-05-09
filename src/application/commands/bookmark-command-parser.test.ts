@@ -42,6 +42,11 @@ const printWorkingDirectoryCommandInput = "pwd";
 const clearCommandInput = "clear";
 
 /**
+ * Version commandの入力一覧です。
+ */
+const versionCommandInputs = ["version", "-v", "--version", "--v", "-version"] as const;
+
+/**
  * Tree commandの入力です。
  */
 const showDirectoryTreeCommandInput = "tree Work --depth 3";
@@ -163,6 +168,20 @@ describe("parseBookmarkCommand directory commands", (): void => {
   it("parses clear command", (): void => {
     expect(parseBookmarkCommand(clearCommandInput)).toStrictEqual({
       kind: "clear",
+    });
+  });
+});
+
+/**
+ * Bookmark version command parserの正常系テストスイートです。
+ */
+describe("parseBookmarkCommand version commands", (): void => {
+  /**
+   * Version commandとversion option aliasを解析できることを検証します。
+   */
+  it.each(versionCommandInputs)("parses version command input %s", (versionCommandInput): void => {
+    expect(parseBookmarkCommand(versionCommandInput)).toStrictEqual({
+      kind: "version",
     });
   });
 });

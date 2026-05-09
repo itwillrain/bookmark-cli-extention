@@ -105,6 +105,11 @@ const currentWindowCloser = createChromeCurrentWindowCloser(browser.windows);
 const clipboardWriter = createBrowserClipboardWriter(navigator.clipboard);
 
 /**
+ * Manifestから取得した拡張機能versionです。
+ */
+const extensionVersion = browser.runtime.getManifest().version;
+
+/**
  * 現在日時ISO文字列を返します。
  * @returns {string} 現在日時ISO文字列。
  */
@@ -159,6 +164,7 @@ const createCommandDependencies = (
     creator: bookmarkCreator,
     currentDirectory: commandState.currentDirectory,
     extensionState: commandState.extensionState,
+    extensionVersion,
     historyRepository,
     lastResultEntries: commandState.lastResultEntries,
     now: nowIsoString,

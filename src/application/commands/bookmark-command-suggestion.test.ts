@@ -71,6 +71,28 @@ describe("suggestBookmarkCommands prefix", (): void => {
   });
 });
 
+/** Bookmark command suggestionのversion commandテストスイート。 */
+describe("suggestBookmarkCommands version command", (): void => {
+  /**
+   * Version commandをprefixから補完候補へ出せることを検証。
+   */
+  it("suggests version command by prefix", (): void => {
+    expect(suggestBookmarkCommands("v").map((suggestion) => suggestion.commandName)).toStrictEqual([
+      "version",
+    ]);
+  });
+
+  /**
+   * Version optionをprefixから補完候補へ出せることを検証。
+   */
+  it("suggests version options by prefix", (): void => {
+    expect(suggestBookmarkCommands("-").map((suggestion) => suggestion.commandName)).toStrictEqual([
+      "-v",
+      "--version",
+    ]);
+  });
+});
+
 /** Bookmark command suggestionのcopy commandテストスイート。 */
 describe("suggestBookmarkCommands copy commands", (): void => {
   /** Copy commandをprefixから補完候補へ出せることを検証。 */

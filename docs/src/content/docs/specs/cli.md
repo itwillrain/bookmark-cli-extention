@@ -142,6 +142,7 @@ Bookmark行の既定アクションは `go <result-number>` です。
 - `mark` で現在のタブを現在のディレクトリへ保存する
 - `ls`、`cd`、`pwd`、`tree` でBookmark Treeの現在地を扱う
 - `help`、`man <command>`、`<command> --help`、`<command> -h` でCLI内から使い方を確認できるようにする
+- `version`、`-v`、`--version`、`--v`、`-version` で拡張機能のversionを表示する
 - `ls | grep hoge` のように結果一覧をpipeで絞り込めるようにする
 - `pwd | copy` や `copy 1` でCLI上のpathやURLをclipboardへ送れるようにする
 - `history` でChrome閲覧履歴だけを一覧表示し、`history | grep hoge` で絞り込めるようにする
@@ -793,6 +794,24 @@ clear
 ```
 
 現在ディレクトリ、直前のコマンド入力履歴、保存済みBookmarkデータは変更しません。
+
+### version
+
+拡張機能manifestのversionを表示します。
+
+```bash
+version
+-v
+--version
+--v
+-version
+```
+
+出力はstatus-only outputとして新しい行に表示します。
+
+```text
+bookmark-cli 1.3.2
+```
 
 ### copy
 
